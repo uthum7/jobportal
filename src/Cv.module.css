@@ -1,0 +1,203 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 15px 10%;
+  color: black;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.navLinks button {
+  background: none;
+  border: none;
+  color: black;
+  margin: 0 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.navLinks button:hover {
+  text-decoration: underline;
+}
+
+.resumeBuilder {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  background: #ffffff;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  height: 100%;
+  border-radius: 15px;
+}
+
+.profile {
+  text-align: center;
+}
+
+.profileImg {
+  width: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+nav ul li {
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+nav ul li:hover,
+.active {
+  background: #e3e3e3;
+  border-radius: 5px;
+}
+
+.content {
+  margin-left: 270px;
+  flex-grow: 1;
+  padding: 30px;
+  width: calc(100% - 270px);
+}
+
+.navigationButtons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.navButton {
+  background: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.navButton:hover {
+  background: #0056b3;
+}
+
+.formContainer {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-left: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.formColumns {
+  display: flex;
+  gap: 40px;
+}
+
+.formLeft,
+.formRight {
+  flex: 1;
+}
+
+input {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.saveBtn {
+  background: green;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: auto;
+  min-width: 100px;
+  margin-top: 10px;
+}
+
+.cvPreview {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  margin-left: 20px;
+  width: 96%;
+}
+
+.cvHeader {
+  text-align: center;
+  background: rgb(62, 105, 224);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.cvSection h4 {
+  border-bottom: 2px solid rgb(62, 105, 224);
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.education {
+  margin-bottom: 20px;
+}
+
+.job {
+  margin-bottom: 20px;
+}
+
+.jobHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.job h5 {
+  margin: 0;
+}
+
+.job span {
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .resumeBuilder {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: relative;
+    height: auto;
+  }
+
+  .content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .formColumns {
+    flex-direction: column;
+  }
+}

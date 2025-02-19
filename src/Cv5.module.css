@@ -1,0 +1,130 @@
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 15px 10%;
+  color: black;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.navLinks button {
+  background: none;
+  border: none;
+  color: black;
+  margin: 0 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.navLinks button:hover {
+  text-decoration: underline;
+}
+.resumeDashboard {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.resumeCards {
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+}
+
+.resumeCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #eef7ee;
+  padding: 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  transition: 0.3s;
+  flex: 1;
+}
+
+.resumeCard:hover {
+  background: #d6e9d6;
+}
+
+.resumeIcon {
+  font-size: 1.5rem;
+  color: #4caf50;
+}
+
+/* CV Preview Section */
+.cvPreview {
+  margin-top: 30px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cvHeader {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 10px;
+  background: rgb(3, 38, 151);
+  color: white;
+  border-radius: 8px;
+}
+
+.cvContact {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-weight: bold;
+}
+
+.cvSummary {
+  text-align: justify;
+  font-size: 0.95rem;
+  padding: 10px;
+}
+
+.cvSubtitle {
+  color: rgb(38, 0, 255);
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.cvExperience {
+  background: #f7f7f7;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.cvExperience h4 {
+  color: rgb(38, 0, 255);
+  font-weight: bold;
+}
+
+.cvExperience span {
+  float: right;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.cvExperience p {
+  margin-top: 5px;
+  font-size: 0.95rem;
+  text-align: justify;
+}

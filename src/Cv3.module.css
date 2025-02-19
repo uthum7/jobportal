@@ -1,0 +1,296 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa;
+  }
+  
+  .resume-builder {
+    display: flex;
+    min-height: 100vh;
+  }
+
+/* nav bar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px 10%;
+    color: black;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.navLinks button {
+    background: none;
+    border: none;
+    color: black;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.navLinks button:hover {
+    text-decoration: underline;
+}
+/* side bar */
+.sidebar {
+    width: 250px;
+    background: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    height: 100%;
+    border-radius: 15px;
+}
+
+.sidebar .profile {
+    text-align: center;
+}
+
+.profileImg {
+    width: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    padding: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+nav ul li:hover, .active {
+    background: #e3e3e3;
+    border-radius: 5px;
+}
+.content {
+    margin-left: 270px;
+    flex-grow: 1;
+    padding: 20px;
+   /* width: calc(100% - 270px); *//* Adjusted width to take more space */
+  
+  }
+
+.navigationButtons {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.navButton {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.navButton:hover {
+    background: #0056b3;
+}
+
+.skillForm {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    width: 95%;
+    margin-left: auto;
+    margin-right: 20px;
+}
+.skillForm h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+    color: #333;
+}
+
+.skillInput {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.skillInput input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.skillInput select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.skillInput button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.skillInput button:hover {
+    background-color: #0056b3;
+}
+
+.skillsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skillItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.skillItem span {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.stars {
+    flex: 1;
+    color: #ffd700;
+    font-size: 20px;
+    text-align: center;
+}
+
+.skillActions {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.skillActions button {
+    padding: 5px 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.skillActions button:first-child {
+    background-color: #4CAF50;
+}
+
+.skillActions button:hover {
+    opacity: 0.8;
+}
+
+.cvPreview {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 95%; /* Increased width */
+  
+    
+  }
+  
+  .cvHeader {
+    text-align: center;
+    background: rgb(62, 105, 224);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .cvSection h4 {
+    border-bottom: 2px solid rgb(62,105,224);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    text-align: center;
+  }
+  .education{
+    margin-bottom: 20px;
+  }
+  .job{
+    margin-bottom: 20px;
+  }
+  .jobHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .job h5 {
+    margin: 0;
+  }
+  .job span {
+    font-size: 14px;
+    color: #666;
+  }
+  .skillsPreview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skillPreview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.skillName {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.skillRating {
+    color: #ffd700;
+    font-size: 20px;
+}
+  
+  @media (max-width: 768px) {
+    .resumeBuilder {
+      flex-direction: column;
+    }
+  
+    .sidebar {
+      width: 100%;
+      position: relative;
+      height: auto;
+    }
+  
+    .content {
+      margin-left: 0;
+      width: 100%; /* Full width on small screens */
+    }
+  
+    .formColumns {
+      flex-direction: column; /* Stack columns vertically on small screens */
+    }
+  }
