@@ -1,0 +1,153 @@
+/* Global Styles */
+body {
+    font-family: "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+    
+    background-color: #f8f9fa;
+  }
+  
+  /* Hero Section */
+  .hero {
+    position: relative;
+    height: 80vh;
+    display: flex;
+    background-image: url('../assets/img/herobg.jpg');
+  
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    padding: 40px;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+  }
+  
+  .hero-content {
+    position: relative;
+    max-width: 50%;
+    z-index: 1;
+  }
+  
+  .hero h1 {
+    font-size: 2.8rem;
+    font-weight: bold;
+  }
+  
+  .hero p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+  }
+  
+  .stats {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .stat {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  /* Job Search */
+  .search-box {
+    position: relative;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+  }
+  
+  .search-box input,
+  .search-box select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .search-btn {
+    width: 100%;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .search-btn:hover {
+    background: #218838;
+  }
+  
+  /* Partners */
+  .partners {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  .partners-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+  }
+  
+  .partners-grid img {
+    height: 50px;
+  }
+  
+  /* Featured Jobs */
+  .featured-jobs {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  .job-list {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .job-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .job-card img {
+    width: 50px;
+    margin-bottom: 10px;
+  }
+  
+  
+  .salary {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .apply-btn {
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .apply-btn:hover {
+    background: #0056b3;
+  }
+  
