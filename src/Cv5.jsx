@@ -2,20 +2,14 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Cv5.module.css"; // Importing the CSS Module
 import { FaFilePdf, FaPlus } from "react-icons/fa";
+import Navbar from "./components/Navbar/Navbar";
+
 
 function Cv5() {
   const navigate = useNavigate();
   return (
     <div>
-       <nav className={styles.navbar}>
-              <h1 className={styles.logo}>JOB PORTAL</h1>
-              <div className={styles.navLinks}>
-                <button>For Candidates</button>
-                <button>For Employers</button>
-                <button>Pages</button>
-                <button>Help</button>
-              </div>
-            </nav>
+       <Navbar />
       <div className={styles.resumeDashboard}>
         {/* My Resume Section */}
         <h2 className={styles.sectionTitle}>My Resume</h2>

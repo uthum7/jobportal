@@ -1,25 +1,11 @@
 import React from "react";
 import "./CreateAccount.css"; // Import external CSS
-
+import Navbar from './Navbar/Navbar'; 
 const CreateAccount = () => {
   return (
     <div className="create-account-page">
       {/* Navbar */}
-      <header className="navbar">
-        <div className="logo">
-          <img src="/logo.png" alt="Job Portal Logo" />
-          <span>JOB PORTAL</span>
-        </div>
-        <nav>
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/">For Candidates</a></li>
-            <li><a href="/">For Employers</a></li>
-            <li><a href="/">Pages</a></li>
-            <li><a href="/">Help</a></li>
-          </ul>
-        </nav>
-      </header>
+      
 
       {/* Hero Section */}
       <section className="hero-section">
