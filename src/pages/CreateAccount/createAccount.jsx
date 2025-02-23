@@ -10,7 +10,7 @@ const CreateAccount = () => {
       {/* Hero Section */}
       <section className="hero-section">
         <h1>Create An Account</h1>
-        <p>Create an account or sign in</p>
+        <p>Create an account or sign in</p> 
       </section>
 
       {/* Form Section */}

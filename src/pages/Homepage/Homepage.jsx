@@ -1,9 +1,9 @@
-import React from 'react';
-import Navbar from './Navbar/Navbar'; 
-import './HomePage.css'; // Import external CSS for HomePage
-import Footer from "./Footer/Footer";
+import React from "react";
+import Navbar from "../../components/Navbar/Navbar.jsx"; 
+import "../../pages/Homepage/Homepage.css";             
+import Footer from "../../components/Footer/Footer.jsx"; 
 
-//background-image: url('../assets/img/herobg.jpg');
+
 
 
 const JobPortal = () => {
