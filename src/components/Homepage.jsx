@@ -16,12 +16,12 @@ const JobPortal = () => {
         <div className="hero-content">
          
           <h1>
-            Find & Hire <br />
-            <span>Top Experts on Job Stock</span>
+          Find a Job & Hire <br />
+            <span>Top Experts on JobPortal</span>
           </h1>
           <p>
             Getting a new job is never easy. Check what new jobs we have in
-            store for you on Job Stock.
+            store for you on JobPortal.
           </p>
           <div className="stats">
             <div className="stat">
