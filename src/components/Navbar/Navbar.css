@@ -5,7 +5,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    
+
   }
   
   /* Navbar Content */
@@ -74,7 +75,7 @@
   }
   
   .sign-out {
-    background-color: #1e7e34;
+    background-color: #28a745;
   }
   
   .sign-out:hover {
