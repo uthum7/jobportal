@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Cv5.module.css"; // Importing the CSS Module
 import { FaFilePdf, FaPlus } from "react-icons/fa";
-import Navbar from "./components/Navbar/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 
 
 function Cv5() {

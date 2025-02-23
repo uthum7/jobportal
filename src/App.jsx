@@ -1,14 +1,14 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom'; // Removed BrowserRouter
 import Navbar from "./components/Navbar/Navbar";
-import Homepage from "./components/Homepage.jsx";
+import Homepage from "./pages/Homepage/Homepage.jsx";
 import Footer from "./components/Footer/Footer";
 
-import Cv from './Cv';
-import Cv2 from './Cv2';
-import Cv3 from './Cv3';
-import Cv4 from './Cv4';
-import Cv5 from './Cv5';
+import Cv from './pages/Cv/Cv.jsx';
+import Cv2 from './pages/Cv2/Cv2.jsx';
+import Cv3 from './pages/Cv3/Cv3.jsx';
+import Cv4 from './pages/Cv4/Cv4.jsx';
+import Cv5 from './pages/Cv5/Cv5.jsx';
 
 function App() {
     return (
