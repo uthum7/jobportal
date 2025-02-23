@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom'; // Removed BrowserRouter
 import Navbar from "./components/Navbar/Navbar";
 import Homepage from "./components/Homepage.jsx";
+import Footer from "./components/Footer/Footer";
 
 import Cv from './Cv';
 import Cv2 from './Cv2';
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/Cv4" element={<Cv4 />} />
                 <Route path="/Cv5" element={<Cv5 />} />
             </Routes>
+            <Footer />
         </>
     );
 }
