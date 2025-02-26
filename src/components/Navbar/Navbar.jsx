@@ -1,22 +1,18 @@
-import React, { useState } from "react";
-import { FaSignInAlt, FaCloudUploadAlt } from "react-icons/fa";
-import "./Navbar.css"; // Import the CSS file
-import logo from "../../assets/img/logo.png";
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./Navbar.css"; 
+import logo from "../../assets/img/logo.png"; 
 
-
-
-const Navbar = () => {
+const Navbar = ({ onSignupClick,onRegisterClick }) => {
   return (
     <header className="navbar">
       <div className="container">
-        {/* Logo */}
         <div className="logo">
-        <img src={logo} alt="Job Portal" />
-          
+          <Link to="/">
+            <img src={logo} alt="Job Portal Logo" />
+          </Link>
         </div>
 
-        {/* Navigation Links */}
         <nav className="nav-links">
           <Link to="/" className="active">Home</Link>
           <Link to="/jobseeker">Jobseeker</Link>
@@ -27,10 +23,9 @@ const Navbar = () => {
           <Link to="/contact">Contact Us</Link>
         </nav>
 
-        {/* Buttons */}
         <div className="nav-buttons">
-          <button className="btn sign-in">Sign In</button>
-          <button className="btn sign-out">Sign Out</button>
+          <button className="btn sign-in" onClick={onSignupClick}>Sign In</button> {/* ✅ Fix button click */}
+          <button className="btn sign-out" onClick={onRegisterClick}>Registration</button>
         </div>
       </div>
     </header>

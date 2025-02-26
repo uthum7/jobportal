@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Step 1: Import useNavigate
 import styles from "./Cv.module.css"; // Import CSS Module
 
 const Cv = () => {
- const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
     initials: "",
@@ -25,15 +25,7 @@ const Cv = () => {
 
   return (
     <div>
-      <nav className={styles.navbar}>
-        <h1 className={styles.logo}>JOB PORTAL</h1>
-        <div className={styles.navLinks}>
-          <button>For Candidates</button>
-          <button>For Employers</button>
-          <button>Pages</button>
-          <button>Help</button>
-        </div>
-      </nav>
+
 
       <div className={styles.resumeBuilder}>
         <aside className={styles.sidebar}>

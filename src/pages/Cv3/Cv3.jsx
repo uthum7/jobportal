@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import styles from './Cv3.module.css'; // Import CSS Module
 
 const Cv3 = () => {
@@ -54,15 +54,7 @@ const Cv3 = () => {
 
   return (
     <div>
-      <nav className={styles.navbar}>
-        <h1 className={styles.logo}>JOB PORTAL</h1>
-        <div className={styles.navLinks}>
-          <button>For Candidates</button>
-          <button>For Employers</button>
-          <button>Pages</button>
-          <button>Help</button>
-        </div>
-      </nav>
+
 
       <div className={styles.resumeBuilder}>
         <aside className={styles.sidebar}>
