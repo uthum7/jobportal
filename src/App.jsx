@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar.jsx"; 
 import "./pages/Homepage/Homepage.css";           
 import Footer from "./components/Footer/Footer.jsx"; 
+import Admin from "./pages/Admin/Admin.jsx";
+
 
 import Homepage from "./pages/Homepage/Homepage.jsx"; 
 import Cv from './pages/Cv/Cv.jsx';
@@ -15,9 +17,11 @@ function App() {
     return (
         <>
             <Navbar />
+           
 
             <Routes>
                 <Route path="/" element={<Homepage />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="/Cv" element={<Cv />} />
                 <Route path="/Cv2" element={<Cv2 />} />
                 <Route path="/Cv3" element={<Cv3 />} />
