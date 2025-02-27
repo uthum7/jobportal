@@ -39,7 +39,7 @@ const Cv = () => {
         <aside className={styles.sidebar}>
           <div className={styles.profile}>
             <img src="profile.jpg" alt="User" className={styles.profileImg} />
-            <h4>Piyumi Hansamali</h4>
+            <h4>Uthum Wijayanayaka</h4>
             <span className={styles.rating}>⭐⭐⭐⭐⭐ 4.7</span>
           </div>
           <nav>
