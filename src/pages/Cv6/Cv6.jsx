@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import styles from "./Cv2.module.css"; // Import CSS Module
+import { useNavigate } from "react-router-dom";
+import styles from "./Cv6.module.css"; // Import CSS Module
 
 const Cv2 = () => {
   const navigate = useNavigate();
@@ -14,15 +14,8 @@ const Cv2 = () => {
     phone: "",
     profilePicture: null,
     summary: "",
-    SchoolName: "",
-    startDate: "",
-    endDate: "",
-    universityName: "",
-    uniStartDate: "",
-    uniEndDate: "",
-    uniMoreDetails: "",
   });
-
+  const [experiences, setExperiences] = useState([]); // State for professional experiences
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   const handleChange = (e) => {
@@ -37,9 +30,25 @@ const Cv2 = () => {
     }
   };
 
+  const handleExperienceChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedExperiences = [...experiences];
+    updatedExperiences[index][name] = value;
+    setExperiences(updatedExperiences);
+  };
+
+  const addExperience = () => {
+    setExperiences([...experiences, { Profession: "", PstartDate: "", PendDate: "", Pmoredetails: "" }]);
+  };
+
+  const removeExperience = (index) => {
+    const updatedExperiences = experiences.filter((_, i) => i !== index);
+    setExperiences(updatedExperiences);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    console.log({ ...formData, experiences });
   };
 
   const toggleSidebar = () => {
@@ -75,37 +84,66 @@ const Cv2 = () => {
 
         <main className={`${styles.content} ${isSidebarVisible ? styles.shifted : ""}`}>
           <div className={styles.navigationButtons}>
-            <button className={styles.navButton} onClick={() => navigate('/Cv')}>Previous</button>
-            <button className={styles.navButton} onClick={() => navigate('/Cv6')}>Next</button>
+            <button className={styles.navButton} onClick={() => navigate("/Cv2")}>Previous</button>
+            <button className={styles.navButton} onClick={() => navigate("/Cv3")}>Next</button>
           </div>
           <div className={styles.formContainer}>
-            <h3>Education Details</h3>
+            <h3>Professional Experience</h3>
             <form onSubmit={handleSubmit}>
-              <h4>School Details</h4>
-              <input type="text" name="SchoolName" placeholder="School Name" value={formData.SchoolName} onChange={handleChange} required />
-              <div className={styles.formColumns}>
-                <div className={styles.formLeft}>
-                  <input type="date" name="startDate" placeholder="Entry Date" value={formData.startDate} onChange={handleChange} required />
+              {experiences.map((experience, index) => (
+                <div key={index} className={styles.experienceForm}>
+                  <input
+                    type="text"
+                    name="Profession"
+                    placeholder="Profession"
+                    value={experience.Profession}
+                    onChange={(e) => handleExperienceChange(index, e)}
+                    required
+                  />
+                  <div className={styles.formColumns}>
+                    <div className={styles.formLeft}>
+                      <input
+                        type="date"
+                        name="PstartDate"
+                        placeholder="Entry Date"
+                        value={experience.PstartDate}
+                        onChange={(e) => handleExperienceChange(index, e)}
+                        required
+                      />
+                    </div>
+                    <div className={styles.formRight}>
+                      <input
+                        type="date"
+                        name="PendDate"
+                        placeholder="Leaving Date"
+                        value={experience.PendDate}
+                        onChange={(e) => handleExperienceChange(index, e)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <textarea
+                    name="Pmoredetails"
+                    placeholder="More Details About Your Profession"
+                    value={experience.Pmoredetails}
+                    onChange={(e) => handleExperienceChange(index, e)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className={styles.removeButton}
+                    onClick={() => removeExperience(index)}
+                  >
+                    Remove Experience
+                  </button>
                 </div>
-                <div className={styles.formRight}>
-                  <input type="date" name="endDate" placeholder="Leaving Date" value={formData.endDate} onChange={handleChange} required />
-                </div>
-              </div>
-              <input type="text" name="moreDetails" placeholder="moreDetails" value={formData.moreDetails} onChange={handleChange} required />
-              
-
-              <h4>University Details</h4>
-              <input type="text" name="universityName" placeholder="University Name" value={formData.universityName} onChange={handleChange} required />
-              <div className={styles.formColumns}>
-                <div className={styles.formLeft}>
-                  <input type="date" name="uniStartDate" placeholder="Entry Date" value={formData.uniStartDate} onChange={handleChange} required />
-                </div>
-                <div className={styles.formRight}>
-                  <input type="date" name="uniEndDate" placeholder="Leaving Date" value={formData.uniEndDate} onChange={handleChange} required />
-                </div>
-              </div>
-              <input type="text" name="uniMoreDetails" placeholder="About Your Degree Program & Degree" value={formData.uniMoreDetails} onChange={handleChange} required />
-              <button type="submit" className={styles.saveBtn}>Save</button>
+              ))}
+              <button type="button" className={styles.addButton} onClick={addExperience}>
+                Add Experience
+              </button>
+              <button type="submit" className={styles.saveBtn}>
+                Save
+              </button>
             </form>
           </div>
 
@@ -113,10 +151,9 @@ const Cv2 = () => {
             <div className={styles.cvContainer}>
               <div className={styles.cvLeft}>
                 <div className={styles.profileSection}>
-                  {/* Profile Picture Upload */}
                   <label htmlFor="profilePicture" className={styles.profilePictureLabel}>
                     <img
-                      src={formData.profilePicture || "profile.jpg"} // Display uploaded image or default
+                      src={formData.profilePicture || "profile.jpg"}
                       alt="Profile"
                       className={styles.profileImage}
                     />
@@ -126,9 +163,9 @@ const Cv2 = () => {
                       name="profilePicture"
                       accept="image/*"
                       onChange={handleChange}
-                      style={{ display: "none" }} // Hide the default file input
+                      style={{ display: "none" }}
                     />
-                    <span className={styles.uploadIcon}>📷</span> {/* Upload icon */}
+                    <span className={styles.uploadIcon}>📷</span>
                   </label>
                   <h2>{formData.fullName || "Saman Kumara"}</h2>
                   <h3>{formData.jobTitle || "Full Stack Developer"}</h3>
@@ -142,14 +179,14 @@ const Cv2 = () => {
                 <div className={styles.education}>
                   <h4>Education</h4>
                   <div className={styles.educationItem}>
-                    <h5>{formData.universityName || "University of Moratuwa"}</h5>
-                    <span>{formData.uniStartDate || "2022"} </span> - <span>{formData.uniEndDate || "2024"}</span>
-                    <p>{formData.uniMoreDetails || "Bachelor of Science in Computer Science"}</p>
+                    <h5>University of Moratuwa</h5>
+                    <span>2022 - 2025</span>
+                    <p>Bachelor of Science in Computer Science</p>
                   </div>
                   <div className={styles.educationItem}>
-                    <h5>{formData.SchoolName || "Rahula College Matara"}</h5>
-                    <span>{formData.startDate || "2018"} </span> - <span>{formData.endDate || "2021"}</span>
-                    <p>{formData.moreDetails || "Advanced Level in Physical Science"}</p>
+                    <h5>Rahula College Matara</h5>
+                    <span>2018 - 2021</span>
+                    <p>Advanced Level in Physical Science</p>
                   </div>
                 </div>
               </div>
@@ -158,34 +195,19 @@ const Cv2 = () => {
                 <div className={styles.profilePara}>
                   <h4>Profile</h4>
                   <p>
-                    {formData.summary ||
-                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects."
-                    }
+                    {formData.profilePara ||
+                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects."}
                   </p>
                 </div>
                 <div className={styles.experience}>
                   <h4>Professional Experience</h4>
-                  <div className={styles.experienceItem}>
-                    <h5>Full Stack Developer</h5>
-                    <span>2024 - Present</span>
-                    <p>
-                      Developed and maintained web applications using React and Node.js. Collaborated with cross-functional teams to deliver high-quality software solutions.
-                    </p>
-                  </div>
-                  <div className={styles.experienceItem}>
-                    <h5>Software Engineer</h5>
-                    <span>2022 - 2024</span>
-                    <p>
-                      Designed and implemented backend services and APIs. Conducted code reviews and mentored junior developers.
-                    </p>
-                  </div>
-                  <div className={styles.experienceItem}>
-                    <h5>Junior Developer</h5>
-                    <span>2020 - 2022</span>
-                    <p>
-                      Assisted in the development of web applications and learned best practices in software development.
-                    </p>
-                  </div>
+                  {experiences.map((experience, index) => (
+                    <div key={index} className={styles.experienceItem}>
+                      <h5>{experience.Profession || "Software Engineer"}</h5>
+                      <span>{experience.PstartDate || "2022"} - {experience.PendDate || "2024"}</span>
+                      <p>{experience.Pmoredetails || "Designed and implemented backend services and APIs."}</p>
+                    </div>
+                  ))}
                 </div>
                 <div className={styles.skillsColumns}>
                   <h4>Skills</h4>
@@ -208,8 +230,7 @@ const Cv2 = () => {
                   <h4>Summary</h4>
                   <p>
                     {formData.summary ||
-                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects."
-                    }
+                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects."}
                   </p>
                 </div>
                 <div className={styles.references}>

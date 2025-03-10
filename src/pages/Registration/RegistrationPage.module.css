@@ -89,29 +89,16 @@
   
   /* Input Field */
   .modalInput {
-    width: 100%;
+    width: 90%;
     padding: 12px;
-    margin: 8px 0;
+    margin-top: 8px ;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
+  
   }
   
-  /* Terms & Privacy Policy Container */
-  .termsContainer {
-    display: flex;
-    align-items: center;
-    margin: 10px 0;
-  }
-  
-  .termsCheckbox {
-    margin-right: 10px;
-  }
-  
-  .termsText {
-    font-size: 12px;
-    color: #333;
-  }
+
   
   /* Register Button */
   .registerBtn {

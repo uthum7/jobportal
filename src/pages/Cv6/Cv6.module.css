@@ -120,18 +120,20 @@ nav ul li:hover,
   background: white;
   padding: 20px;
   border-radius: 8px;
-  margin-left: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
 }
 
 .formColumns {
   display: flex;
-  gap: 40px;
+  gap: 10px;
+  width: 98%;
 }
 
 .formLeft,
 .formRight {
   flex: 1;
+  width: 50%;
 }
 
 input {
@@ -143,13 +145,12 @@ input {
 }
 
 textarea {
-  width: 100%; /* Full width */
-  height: 150px; /* Fixed height */
+  width: 95%;
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  resize: vertical; /* Allow vertical resizing */
+  resize: vertical;
 }
 
 .saveBtn {
@@ -162,6 +163,46 @@ textarea {
   width: auto;
   min-width: 100px;
   margin-top: 10px;
+}
+
+.addButton {
+  background: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+  width: auto;
+  min-width: 165px;
+  text-align: center;
+  margin-right: 5px;
+}
+
+.addButton:hover {
+  background: #0056b3;
+}
+
+.removeButton {
+  background: #ff4d4d;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+  width: auto;
+  min-width: 100px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.removeButton:hover {
+  background: #cc0000;
 }
 
 .cvPreview {
@@ -208,18 +249,18 @@ textarea {
   margin-bottom: 15px;
 }
 
-.profileImage {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 10px;
-}
-
-.contactInfo, .education, .profileSection, .experience, .skills, .references, .profilePara {
+.contactInfo,
+.education,
+.profileSection,
+.experience,
+.skills,
+.references,
+.profilePara {
   margin-bottom: 20px;
 }
 
-.educationItem, .experienceItem {
+.educationItem,
+.experienceItem {
   margin-bottom: 15px;
 }
 
@@ -303,7 +344,8 @@ textarea {
     flex-direction: column;
   }
 
-  .cvLeft, .cvRight {
+  .cvLeft,
+  .cvRight {
     width: 100%;
   }
 

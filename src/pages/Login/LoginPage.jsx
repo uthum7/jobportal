@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./LoginPage.module.css"; // Import external CSS
 import { AiOutlineClose } from "react-icons/ai";
-import loginImage from '../../assets/img/sign-in.png';
+import loginImage from '../../assets/img/logo_img.jpeg';
 
 const LoginModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null; // Hide if modal is not open
@@ -29,23 +29,20 @@ const LoginModal = ({ isOpen, onClose }) => {
           {/* Left Side Image */}
           <div className={styles.modalImage}>
             <img src={loginImage} alt="Login Illustration" />
-            <p className={styles.helpText}>Help! Please sign in so we can continue.</p>
           </div>
 
           {/* Right Side Login Form */}
           <div className={styles.modalForm}>
-            <h2 className={styles.modalTitle}>
-              <button className={styles.tabButton} onClick={handleRegister}>Register</button>
-              <button className={`${styles.tabButton} ${styles.activeTab}`}>Sign In</button>
-            </h2>
+          
             <form onSubmit={handleSignIn}>
-              <input type="email" placeholder="Email" className={styles.modalInput} required />
-              <p className={styles.infoText}>We will send you a one-time sign-in link.</p>
-              <button type="submit" className={styles.magicLinkBtn}>Sign in with Magic Link</button>
+              <h2 className={styles.modalTitle}>Sign in</h2>
+              <p className={styles.modalSubtitle}>Welcome back! Sign in to continue</p>
+              <input type="text" placeholder="Username" className={styles.modalInput} required />
+              <input type="text" placeholder="Password" className={styles.modalInput} required />
+           
+              <button type="submit" className={styles.magicLinkBtn}>Sign in</button>
             </form>
-            <button className={styles.passwordBtn}>Switch to Password</button>
-            <p className={styles.orText}>Or Sign In with:</p>
-            <button className={styles.googleBtn}>Google</button>
+            
           </div>
         </div>
       </div>

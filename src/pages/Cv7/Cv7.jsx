@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import styles from "./Cv2.module.css"; // Import CSS Module
+import styles from "./Cv7.module.css"; // Import CSS Module
 
 const Cv2 = () => {
   const navigate = useNavigate();
@@ -13,16 +13,8 @@ const Cv2 = () => {
     email: "",
     phone: "",
     profilePicture: null,
-    summary: "",
-    SchoolName: "",
-    startDate: "",
-    endDate: "",
-    universityName: "",
-    uniStartDate: "",
-    uniEndDate: "",
-    uniMoreDetails: "",
+    summary: ""
   });
-
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
   const handleChange = (e) => {
@@ -48,6 +40,8 @@ const Cv2 = () => {
 
   return (
     <div>
+
+
       <div className={styles.resumeBuilder}>
         {!isSidebarVisible && (
           <button className={styles.toggleButton} onClick={toggleSidebar}>
@@ -75,36 +69,14 @@ const Cv2 = () => {
 
         <main className={`${styles.content} ${isSidebarVisible ? styles.shifted : ""}`}>
           <div className={styles.navigationButtons}>
-            <button className={styles.navButton} onClick={() => navigate('/Cv')}>Previous</button>
-            <button className={styles.navButton} onClick={() => navigate('/Cv6')}>Next</button>
+            <button className={styles.navButton} onClick={() => navigate('/Cv4')}>Previous</button>
+            <button className={styles.navButton} onClick={() => navigate('/Cv5')}>Next</button>
           </div>
           <div className={styles.formContainer}>
-            <h3>Education Details</h3>
+            <h3>References</h3>
             <form onSubmit={handleSubmit}>
-              <h4>School Details</h4>
-              <input type="text" name="SchoolName" placeholder="School Name" value={formData.SchoolName} onChange={handleChange} required />
-              <div className={styles.formColumns}>
-                <div className={styles.formLeft}>
-                  <input type="date" name="startDate" placeholder="Entry Date" value={formData.startDate} onChange={handleChange} required />
-                </div>
-                <div className={styles.formRight}>
-                  <input type="date" name="endDate" placeholder="Leaving Date" value={formData.endDate} onChange={handleChange} required />
-                </div>
-              </div>
-              <input type="text" name="moreDetails" placeholder="moreDetails" value={formData.moreDetails} onChange={handleChange} required />
-              
-
-              <h4>University Details</h4>
-              <input type="text" name="universityName" placeholder="University Name" value={formData.universityName} onChange={handleChange} required />
-              <div className={styles.formColumns}>
-                <div className={styles.formLeft}>
-                  <input type="date" name="uniStartDate" placeholder="Entry Date" value={formData.uniStartDate} onChange={handleChange} required />
-                </div>
-                <div className={styles.formRight}>
-                  <input type="date" name="uniEndDate" placeholder="Leaving Date" value={formData.uniEndDate} onChange={handleChange} required />
-                </div>
-              </div>
-              <input type="text" name="uniMoreDetails" placeholder="About Your Degree Program & Degree" value={formData.uniMoreDetails} onChange={handleChange} required />
+              <input type="text" name="References" placeholder="References" value={formData.References} onChange={handleChange} required />
+             
               <button type="submit" className={styles.saveBtn}>Save</button>
             </form>
           </div>
@@ -142,24 +114,25 @@ const Cv2 = () => {
                 <div className={styles.education}>
                   <h4>Education</h4>
                   <div className={styles.educationItem}>
-                    <h5>{formData.universityName || "University of Moratuwa"}</h5>
-                    <span>{formData.uniStartDate || "2022"} </span> - <span>{formData.uniEndDate || "2024"}</span>
-                    <p>{formData.uniMoreDetails || "Bachelor of Science in Computer Science"}</p>
+                    <h5>University of Moratuwa</h5>
+                    <span>2022 - 2025</span>
+                    <p>Bachelor of Science in Computer Science</p>
                   </div>
                   <div className={styles.educationItem}>
-                    <h5>{formData.SchoolName || "Rahula College Matara"}</h5>
-                    <span>{formData.startDate || "2018"} </span> - <span>{formData.endDate || "2021"}</span>
-                    <p>{formData.moreDetails || "Advanced Level in Physical Science"}</p>
+                    <h5>Rahula College Matara</h5>
+                    <span>2018 - 2021</span>
+                    <p>Advanced Level in Physical Science</p>
                   </div>
                 </div>
+
               </div>
               <div className={styles.verticalLine}></div>
               <div className={styles.cvRight}>
                 <div className={styles.profilePara}>
                   <h4>Profile</h4>
                   <p>
-                    {formData.summary ||
-                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects."
+                    {formData.profilePara ||
+                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects. There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonableProficient in JavaScript, React, Node.js, and database management. Passionate about creating efficient and user-friendly solutions."
                     }
                   </p>
                 </div>
@@ -203,18 +176,19 @@ const Cv2 = () => {
                       <li className={styles.listItem}>Problem Solving</li>
                     </ul>
                   </div>
+
                 </div>
                 <div className={styles.summary}>
                   <h4>Summary</h4>
                   <p>
                     {formData.summary ||
-                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects."
+                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects.There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable Proficient in JavaScript, React, Node.js, and database management. Passionate about creating efficient and user-friendly solutions."
                     }
                   </p>
                 </div>
                 <div className={styles.references}>
                   <h4>References</h4>
-                  <p>John Doe - Senior Developer at Tech Corp - john.doe@techcorp.com</p>
+                  <p>{formData.References ||"John Doe - Senior Developer at Tech Corp - john.doe@techcorp.com"} </p>
                   <p>Jane Smith - Project Manager at Innovate LLC - jane.smith@innovate.com</p>
                 </div>
               </div>

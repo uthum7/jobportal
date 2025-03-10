@@ -1,15 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./RegistrationPage.module.css"; // Import external CSS
 import { AiOutlineClose } from "react-icons/ai";
-import registerImage from '../../assets/img/sign-up.png'; // Replace with your registration image
+import registerImage from '../../assets/img/regimg.jpeg'; // Replace with your registration image
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const RegistrationModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null; // Hide if modal is not open
+const RegistrationModal = ({ onClose }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState(""); 
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  function sendData(e) {
     e.preventDefault();
-    // Handle registration logic here
-  };
+    
+    const newRegisterUser = {
+      userName: name, // Corrected the variable name
+      email,
+      password,
+      confirmPassword
+    };
+
+    axios.post("http://localhost:8090/registerusers/add", newRegisterUser)
+      .then(() => {
+        alert("User Added");
+        navigate("/login");
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  }
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
@@ -30,39 +51,54 @@ const RegistrationModal = ({ isOpen, onClose }) => {
           {/* Right Side Registration Form */}
           <div className={styles.modalForm}>
             <h2 className={styles.modalTitle}>Register</h2>
-            <form onSubmit={handleRegister}>
-              {/* Given Name Field */}
+            <form onSubmit={sendData}>
+              {/* Name Field */}
               <input
                 type="text"
-                placeholder="Given Name"
+                onChange={(e) => setName(e.target.value)}
+                value={name} // Fixed from userName to name
+                placeholder="Username"
                 className={styles.modalInput}
+                name="userName"
                 required
               />
 
               {/* Email Field */}
               <input
-                type="email"
-                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                type="text"
+                placeholder="Email Address"
                 className={styles.modalInput}
+                name="email"
                 required
               />
 
-              {/* Terms & Privacy Policy Checkbox */}
-              <div className={styles.termsContainer}>
-                <input
-                  type="checkbox"
-                  id="terms"
-                  className={styles.termsCheckbox}
-                  required
-                />
-                <label htmlFor="terms" className={styles.termsText}>
-                  I consent to the Terms & Privacy Policy.
-                </label>
-              </div>
+              {/* Password Field */}
+              <input
+                type="text"
+                onChange={(e) => setPassword(e.target.value)} 
+                value={password}
+                placeholder="Create Password"
+                className={styles.modalInput}
+                name="password"
+                required
+              />
+
+              {/* Confirm Password Field */}
+              <input
+                type="text" // Fixed input type from text to password
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={confirmPassword}
+                placeholder="Confirm Password"
+                className={styles.modalInput}
+                name="confirmPassword"
+                required
+              />
 
               {/* Register Button */}
               <button type="submit" className={styles.registerBtn}>
-                Register Now
+                Register Account
               </button>
             </form>
 
@@ -72,7 +108,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
 
             {/* Additional Info */}
             <p className={styles.infoText}>
-              A password can be set after you sign up if you prefer. Meanwhile, your information is secure and private.
+              Already have an account? <a href="/login">Login</a>
             </p>
           </div>
         </div>
