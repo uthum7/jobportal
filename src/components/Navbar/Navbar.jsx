@@ -4,16 +4,13 @@ import "./Navbar.css"; // Import the CSS file
 import logo from "../../assets/img/logo.png";
 import { Link } from 'react-router-dom';
 
-
-
 const Navbar = () => {
   return (
     <header className="navbar">
       <div className="container">
         {/* Logo */}
         <div className="logo">
-        <img src={logo} alt="Job Portal" />
-          
+          <img src={logo || "/placeholder.svg"} alt="Job Portal" />
         </div>
 
         {/* Navigation Links */}
@@ -22,7 +19,7 @@ const Navbar = () => {
           <Link to="/jobseeker">Jobseeker</Link>
           <Link to="/employee">Employee</Link>
           <Link to="/mentor">Mentor</Link>
-          <Link to="/mentee">Mentee</Link>
+          <Link to="/counselee/dashboard">Counselee</Link> {/* Changed href to to */}
           <Link to="/about">About Us</Link>
           <Link to="/contact">Contact Us</Link>
         </nav>
