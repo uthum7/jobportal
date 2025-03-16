@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import styles from "./Cv.module.css";
+import { getUserId } from "../../utils/auth";
 
 const Cv = () => {
   const navigate = useNavigate();
@@ -18,11 +19,12 @@ const Cv = () => {
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
+  // Handle form input change
   const handleChange = (e) => {
     if (e.target.name === "profilePicture") {
       const file = e.target.files[0];
       if (file) {
-        const imageUrl = URL.createObjectURL(file); // Create a URL for the uploaded file
+        const imageUrl = URL.createObjectURL(file);
         setFormData({ ...formData, [e.target.name]: imageUrl });
       }
     } else {
@@ -30,11 +32,44 @@ const Cv = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    const userId = getUserId();
+    if (!userId) {
+      alert("User not logged in");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8091/cvRoutes/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        body: JSON.stringify({
+          userId,
+          step: "personalInfo",
+          data: formData,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Personal details saved successfully");
+      } else {
+        alert(`Error: ${data.error}`); // Fixed error message formatting
+      }
+    } catch (error) {
+      console.error("Error saving CV:", error);
+      alert("An error occurred while saving your CV. Please try again.");
+    }
   };
 
+  // Toggle sidebar visibility
   const toggleSidebar = () => {
     setIsSidebarVisible(!isSidebarVisible);
   };
@@ -42,12 +77,14 @@ const Cv = () => {
   return (
     <div>
       <div className={styles.resumeBuilder}>
+        {/* Sidebar Button */}
         {!isSidebarVisible && (
           <button className={styles.toggleButton} onClick={toggleSidebar}>
             ☰
           </button>
         )}
 
+        {/* Sidebar */}
         <aside className={`${styles.sidebar} ${isSidebarVisible ? styles.visible : ""}`}>
           <div className={styles.profile}>
             <img src="profile.jpg" alt="User" className={styles.profileImg} />
@@ -66,6 +103,7 @@ const Cv = () => {
           </button>
         </aside>
 
+        {/* Main Content */}
         <main className={`${styles.content} ${isSidebarVisible ? styles.shifted : ""}`}>
           <div className={styles.navigationButtons}>
             <button className={styles.navButton}>Previous</button>
@@ -73,24 +111,25 @@ const Cv = () => {
           </div>
           <div className={styles.formContainer}>
             <h3>Personal Details</h3>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}> {/* Use onSubmit instead of onClick */}
               <div className={styles.formColumns}>
                 <div className={styles.formLeft}>
-                  <input type="text" name="fullName" placeholder="Full Name" value={formData.fullName} onChange={handleChange} required />
-                  <input type="text" name="initials" placeholder="Name with Initials" value={formData.initials} onChange={handleChange} required />
-                  <input type="text" name="jobTitle" placeholder="Job Title" value={formData.jobTitle} onChange={handleChange} required />
-          
+                  <input type="text" id="fullName" name="fullName" placeholder="Full Name" autoComplete="name" value={formData.fullName} onChange={handleChange} required />
+                  <input type="text" id="initials" name="initials" placeholder="Name with Initials" value={formData.initials} onChange={handleChange} required />
+                  <input type="text" id="jobTitle" name="jobTitle" placeholder="Job Title" value={formData.jobTitle} onChange={handleChange} required />
                 </div>
                 <div className={styles.formRight}>
-                  <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} required />
-                  <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-                  <input type="tel" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
+                  <input type="text" id="address" name="address" placeholder="Address" value={formData.address} onChange={handleChange} required />
+                  <input type="text" id="address2" name="address2" placeholder="Address Line 2" value={formData.address2} onChange={handleChange} />
+                  <input type="email" id="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+                  <input type="tel" id="phone" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
                 </div>
               </div>
               <textarea
-                name="profilePara"
+                id="summary"
+                name="summary"
                 placeholder="Add Your Profile Details"
-                value={formData.profilePara}
+                value={formData.summary}
                 onChange={handleChange}
                 required
               />
@@ -102,10 +141,9 @@ const Cv = () => {
             <div className={styles.cvContainer}>
               <div className={styles.cvLeft}>
                 <div className={styles.profileSection}>
-                  {/* Profile Picture Upload */}
                   <label htmlFor="profilePicture" className={styles.profilePictureLabel}>
                     <img
-                      src={formData.profilePicture || "profile.jpg"} // Display uploaded image or default
+                      src={formData.profilePicture || "profile.jpg"}
                       alt="Profile"
                       className={styles.profileImage}
                     />
@@ -115,9 +153,9 @@ const Cv = () => {
                       name="profilePicture"
                       accept="image/*"
                       onChange={handleChange}
-                      style={{ display: "none" }} // Hide the default file input
+                      style={{ display: "none" }}
                     />
-                    <span className={styles.uploadIcon}>📷</span> {/* Upload icon */}
+                    <span className={styles.uploadIcon}>📷</span>
                   </label>
                   <h2>{formData.fullName || "Saman Kumara"}</h2>
                   <h3>{formData.jobTitle || "Full Stack Developer"}</h3>
@@ -128,80 +166,12 @@ const Cv = () => {
                   <p>{formData.email || "samankumara@gmail.com"}</p>
                   <p>{formData.address || "123 Anywhere St., Any City"}</p>
                 </div>
-                <div className={styles.education}>
-                  <h4>Education</h4>
-                  <div className={styles.educationItem}>
-                    <h5>University of Moratuwa</h5>
-                    <span>2022 - 2025</span>
-                    <p>Bachelor of Science in Computer Science</p>
-                  </div>
-                  <div className={styles.educationItem}>
-                    <h5>Rahula College Matara</h5>
-                    <span>2018 - 2021</span>
-                    <p>Advanced Level in Physical Science</p>
-                  </div>
-                </div>
-                
               </div>
               <div className={styles.verticalLine}></div>
               <div className={styles.cvRight}>
-              <div className={styles.profilePara}>
+                <div className={styles.profilePara}>
                   <h4>Profile</h4>
-                  <p>
-                    {formData.profilePara ||
-                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects. There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonableProficient in JavaScript, React, Node.js, and database management. Passionate about creating efficient and user-friendly solutions."
-                    }
-                  </p>
-                </div>
-                <div className={styles.experience}>
-                  <h4>Professional Experience</h4>
-                  <div className={styles.experienceItem}>
-                    <h5>Full Stack Developer</h5>
-                    <span>2024 - Present</span>
-                    <p>
-                      Developed and maintained web applications using React and Node.js. Collaborated with cross-functional teams to deliver high-quality software solutions.
-                    </p>
-                  </div>
-                  <div className={styles.experienceItem}>
-                    <h5>Software Engineer</h5>
-                    <span>2022 - 2024</span>
-                    <p>
-                      Designed and implemented backend services and APIs. Conducted code reviews and mentored junior developers.
-                    </p>
-                  </div>
-                  <div className={styles.experienceItem}>
-                    <h5>Junior Developer</h5>
-                    <span>2020 - 2022</span>
-                    <p>
-                      Assisted in the development of web applications and learned best practices in software development.
-                    </p>
-                  </div>
-                </div>
-                <div className={styles.skillsColumns}>
-                  <h4>Skills</h4>
-                  <div className={styles.skillsColumn}>
-                    <ul>
-                      <li className={styles.listItem}>JavaScript</li>
-                      <li className={styles.listItem}>React</li>
-                      <li className={styles.listItem}>Node.js</li>
-                      <li className={styles.listItem}>Database Management</li>
-                      <li className={styles.listItem}>Project Management</li>
-                      <li className={styles.listItem}>HTML/CSS</li>
-                      <li className={styles.listItem}>Git</li>
-                      <li className={styles.listItem}>REST APIs</li>
-                      <li className={styles.listItem}>Agile Methodologies</li>
-                      <li className={styles.listItem}>Problem Solving</li>
-                    </ul>
-                  </div>
-                
-                </div>
-                <div className={styles.summary}>
-                  <h4>Summary</h4>
-                  <p>
-                    {formData.summary ||
-                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects.There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable Proficient in JavaScript, React, Node.js, and database management. Passionate about creating efficient and user-friendly solutions."
-                    }
-                  </p>
+                  <p>{formData.summary || "Experienced Full Stack Developer..."}</p>
                 </div>
                 <div className={styles.references}>
                   <h4>References</h4>

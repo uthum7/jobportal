@@ -12,17 +12,20 @@ import Cv4 from './pages/Cv4/Cv4.jsx';
 import Cv5 from './pages/Cv5/Cv5.jsx';
 import Cv6 from './pages/Cv6/Cv6.jsx';
 import Cv7 from './pages/Cv7/Cv7.jsx';
-import Login from "./pages/Login/LoginPage";  // ✅ Fixed import (previously wrongly named "SignupModal")
-import Registration from  "./pages/Registration/RegistrationModal";  // ✅ Fixed import (previously wrongly named "SignupPage")
+
+import Login from "./pages/Login/LoginPage";
+import Registration from "./pages/Registration/RegistrationModal";  
 
 function App() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
     return (
         <>
-            <Navbar onSignupClick={() => setIsModalOpen(true)}
-              onRegisterClick={() => setIsRegisterOpen(true)} />  {/* ✅ Ensure prop is passed properly */}
+            <Navbar 
+              onSignupClick={() => setIsLoginOpen(true)}
+              onRegisterClick={() => setIsRegisterOpen(true)} 
+            />
 
             <Routes>
                 <Route path="/" element={<Homepage />} />
@@ -35,9 +38,13 @@ function App() {
                 <Route path="/Cv7" element={<Cv7 />} />
             </Routes>
 
-            {/* ✅ Show modal when `isModalOpen` is true */}
-            <Login isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-            <Registration isOpen={isRegisterOpen} onClose={() => setIsRegisterOpen(false)} />
+            {/* ✅ Pass `openLoginModal` to RegistrationModal */}
+            <Login isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+            <Registration 
+              isOpen={isRegisterOpen} 
+              onClose={() => setIsRegisterOpen(false)} 
+              openLoginModal={() => setIsLoginOpen(true)} 
+            />
             <Footer />
         </>
     );

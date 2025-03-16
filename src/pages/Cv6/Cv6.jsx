@@ -94,17 +94,26 @@ const Cv2 = () => {
                 <div key={index} className={styles.experienceForm}>
                   <input
                     type="text"
-                    name="Profession"
-                    placeholder="Profession"
+                    name="jobtitle"
+                    placeholder="jobtitle"
                     value={experience.Profession}
                     onChange={(e) => handleExperienceChange(index, e)}
                     required
                   />
+                  <input
+                    type="text"
+                    name="companyName"
+                    placeholder="Company Name"
+                    value={experience.comanyName}
+                    onChange={(e) => handleExperienceChange(index, e)}
+                    required
+                  /> 
+
                   <div className={styles.formColumns}>
                     <div className={styles.formLeft}>
                       <input
                         type="date"
-                        name="PstartDate"
+                        name="jstartDate"
                         placeholder="Entry Date"
                         value={experience.PstartDate}
                         onChange={(e) => handleExperienceChange(index, e)}
