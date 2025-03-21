@@ -231,41 +231,39 @@
   margin: 0;
 }
 
-.search-container {
+/* Search Box */
+.search-box {
   display: flex;
-  gap: 8px;
-  max-width: 450px;
-  width: 100%;
+  max-width: 500px;
+  margin-left: auto;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ddd;
 }
 
-.search-input {
+.search-box input {
   flex: 1;
-  padding: 10px 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  padding: 10px 15px;
+  border: none;
+  outline: none;
+  font-size: 14px;
 }
 
-.search-button {
-  padding: 8px 16px;
-  background-color: #2563eb;
+.search-box button {
+  background-color: #28a745;
   color: white;
   border: none;
-  border-radius: 6px;
+  padding: 10px 15px;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: 14px;
 }
 
-.search-button:hover {
-  background-color: #1d4ed8;
-}
-
-.search-icon {
-  font-size: 0.85rem;
+.search-box button:hover {
+  background-color: #218838;
 }
 
 /* Expertise Groups */

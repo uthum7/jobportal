@@ -27,6 +27,16 @@ import Cv3 from './pages/Cv3/Cv3.jsx';
 import Cv4 from './pages/Cv4/Cv4.jsx';
 import Cv5 from './pages/Cv5/Cv5.jsx';
 
+import CounselorDashboard from "./pages/counselor/dashboard.jsx"
+import CounselorProfile from "./pages/counselor/profile.jsx"
+import CounselorBookings from "./pages/counselor/bookings.jsx"
+import CounselorSchedule from "./pages/counselor/schedule.jsx"
+import CounselorCounselees from "./pages/counselor/counselees.jsx"
+import CounselorMessages from "./pages/counselor/messages.jsx"
+import CounselorChangePassword from "./pages/counselor/change-password.jsx"
+import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx"
+
+
 function App() {
     return (
         <>
@@ -52,6 +62,19 @@ function App() {
         <Route path="/counselee/messages" element={<Messages />} />
         <Route path="/counselee/change-password" element={<ChangePassword />} />
         <Route path="/counselee/delete-account" element={<DeleteAccount />} />
+        
+         {/* Counselor Routes */}
+         <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
+        <Route path="/counselor/profile" element={<CounselorProfile />} />
+        <Route path="/counselor/bookings" element={<CounselorBookings />} />
+        <Route path="/counselor/schedule" element={<CounselorSchedule />} />
+        <Route path="/counselor/counselees" element={<CounselorCounselees />} />
+        <Route path="/counselor/messages" element={<CounselorMessages />} />
+        <Route path="/counselor/change-password" element={<CounselorChangePassword />} />
+        <Route path="/counselor/delete-account" element={<CounselorDeleteAccount />} />
+        
+        
+        
         <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<Homepage />} />
           
