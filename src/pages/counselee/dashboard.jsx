@@ -239,16 +239,15 @@ export default function CounseleeDashboard() {
         <div className="counselor-section">
           <div className="section-header">
             <h2>Available Counselors by Expertise</h2>
-            <div className="search-container">
+            <div className="search-box">
               <input
                 type="text"
                 placeholder="Search by name, expertise, education..."
-                className="search-input"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button className="search-button" onClick={handleSearch}>
-                <FaSearch className="search-icon" /> Search
+              <button onClick={handleSearch}>
+                <FaSearch /> Search
               </button>
             </div>
           </div>
