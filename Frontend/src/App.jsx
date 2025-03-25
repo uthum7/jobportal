@@ -7,10 +7,8 @@ import Footer from "./components/Footer/Footer.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 
 
-<<<<<<< HEAD:Frontend/src/App.jsx
 import Homepage from "./pages/Homepage/Homepage.jsx"; 
 import Managecounselor from "./pages/Admin/managecounselor.jsx";
-=======
 import CounseleeDashboard from "./pages/counselee/dashboard.jsx"
 import CounseleeProfile from "./pages/counselee/profile.jsx"
 import CounseleeBookings from "./pages/counselee/bookings.jsx"
@@ -23,8 +21,7 @@ import Messages from "./pages/counselee/messages.jsx"
 import ChangePassword from "./pages/counselee/change-password.jsx"
 import DeleteAccount from "./pages/counselee/delete-account.jsx"
 import Logout from "./pages/counselee/logout.jsx"
-import Homepage from "./pages/Homepage/Homepage.jsx"
->>>>>>> 82767a42ec10a9ac49dc7f1d5b9c609081df4506:src/App.jsx
+
 
 import Cv from './pages/Cv/Cv.jsx';
 import Cv2 from './pages/Cv2/Cv2.jsx';
