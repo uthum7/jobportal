@@ -1,0 +1,196 @@
+/* Main Layout */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    background-color: #f3f4f6;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    width: 12rem;
+    background-color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+  }
+  
+  .profile-image {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 9999px;
+  }
+  
+  .profile-name {
+    margin-top: 0.5rem;
+    font-weight: 600;
+    color: #1f2937;
+
+  }
+  
+  .nav-title {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+  }
+  
+  .nav-menu {
+    margin-top: 0.5rem;
+  }
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: #4b5563;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .nav-item:hover {
+    background-color: #d1fae5; /* Green hover color */
+  }
+  
+  .nav-item.active {
+    background-color: #ecfdf5;
+    color: #047857;
+  }
+  
+  .nav-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+  }
+  
+  .notification-badge {
+    margin-left: 0.5rem;
+    background-color: #10b981;
+    color: white;
+    border-radius: 9999px;
+    width: 1rem;
+    height: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+  }
+  
+  /* Main Content Styles */
+  .main-content {
+    flex: 1;
+    padding: 1.5rem;
+  }
+  
+  .header {
+    margin-bottom: 1rem;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  .breadcrumb-separator {
+    margin: 0 0.5rem;
+  }
+  
+  /* Stats Cards */
+  .stats-container {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .stats-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .icon-container {
+    background-color: #f3f4f6;
+    padding: 0.75rem;
+    border-radius: 9999px;
+    margin-right: 1rem;
+  }
+  
+  .stats-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: black; /* Icons in black as requested */
+  }
+  
+  .stats-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .stats-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .stats-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+  /* Chart Styles */
+  .chart-container {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+  }
+  
+  .chart-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .legend-color {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 9999px;
+    margin-right: 0.5rem;
+  }
+  
+  .legend-color.applied {
+    background-color: #10b981; /* Green for applied jobs */
+  }
+  
+  .legend-color.saved {
+    background-color: #f59e0b; /* Orange for saved jobs */
+  }
+  
+  .chart {
+    height: 16rem;
+  }

@@ -12,6 +12,8 @@ import Cv2 from './pages/Cv2/Cv2.jsx';
 import Cv3 from './pages/Cv3/Cv3.jsx';
 import Cv4 from './pages/Cv4/Cv4.jsx';
 import Cv5 from './pages/Cv5/Cv5.jsx';
+import Dashboard from './pages/JobSeeker/Dashboard/Dashboard.jsx';
+import JobPortal from './pages/JobSeeker/ApplyForAjob/JobPortal.jsx';
 
 function App() {
     return (
@@ -27,6 +29,8 @@ function App() {
                 <Route path="/Cv3" element={<Cv3 />} />
                 <Route path="/Cv4" element={<Cv4 />} />
                 <Route path="/Cv5" element={<Cv5 />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/jobportal" element={<JobPortal />} />
             </Routes>
 
             <Footer />
