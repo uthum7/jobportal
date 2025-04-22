@@ -1,188 +1,344 @@
-import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Cv.module.css";
-import { getUserId } from "../../utils/auth";
+import { getUserId, isAuthenticated } from "../../utils/auth";
+import { useCVForm } from "../../context/CVFormContext";
 
 const Cv = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    fullName: "",
-    initials: "",
-    jobTitle: "",
-    address: "",
-    address2: "",
-    email: "",
-    phone: "",
-    profilePicture: null,
-    summary: "",
-  });
+  const {
+    resumeData,
+    updateResumeSection,
+    fetchResumeData,
+    loading: contextLoading,
+    error: contextError,
+  } = useCVForm();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [localError, setLocalError] = useState(null);
+  const [previewImg, setPreviewImg] = useState(null);
 
-  // Handle form input change
-  const handleChange = (e) => {
-    if (e.target.name === "profilePicture") {
-      const file = e.target.files[0];
-      if (file) {
-        const imageUrl = URL.createObjectURL(file);
-        setFormData({ ...formData, [e.target.name]: imageUrl });
+  const personalInfo = resumeData.personalInfo;
+  const educationData = resumeData.educationDetails || {};
+
+
+  useEffect(() => {
+    const loadResume = async () => {
+      try {
+        setIsLoading(true);
+        const userId = getUserId();
+        if (!userId) throw new Error("User not authenticated");
+
+        await fetchResumeData(userId);
+      } catch (err) {
+        console.error("Error loading resume:", err);
+        setLocalError(err.message);
+        if (err.message.includes("authenticated")) navigate("/login");
+      } finally {
+        setIsLoading(false);
       }
+    };
+
+    if (isAuthenticated()) {
+      loadResume();
     } else {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+      setLocalError("User not authenticated");
     }
+  }, [navigate, fetchResumeData]);
+
+  const handleChange = (e) => {
+    const { name, value, files, type } = e.target;
+    const newValue = type === "file" ? files[0] : value;
+
+    if (type === "file" && files[0]) {
+      setPreviewImg(URL.createObjectURL(files[0]));
+    }
+
+    updateResumeSection("personalInfo", {
+      ...personalInfo,
+      [name]: newValue,
+    });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const userId = getUserId();
+    const token = localStorage.getItem("authToken");
+
     if (!userId) {
-      alert("User not logged in");
+      setLocalError("User not authenticated. Please login.");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:8091/cvRoutes/update", {
+      setIsLoading(true);
+      const res = await fetch("http://localhost:8091/api/cv/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("authToken")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           userId,
           step: "personalInfo",
-          data: formData,
+          data: personalInfo,
         }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("Personal details saved successfully");
-      } else {
-        alert(`Error: ${data.error}`); // Fixed error message formatting
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to save data");
       }
-    } catch (error) {
-      console.error("Error saving CV:", error);
-      alert("An error occurred while saving your CV. Please try again.");
+
+      alert("Personal details saved successfully");
+      navigate("/Cv2");
+    } catch (err) {
+      console.error("Error saving CV:", err);
+      setLocalError(err.message || "An error occurred while saving your CV.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Toggle sidebar visibility
-  const toggleSidebar = () => {
-    setIsSidebarVisible(!isSidebarVisible);
+  const toggleSidebar = () => setIsSidebarVisible(!isSidebarVisible);
+
+  const formatDate = (date) => {
+    try {
+      return new Date(date).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+      });
+    } catch {
+      return "Date";
+    }
   };
 
+  if (isLoading || contextLoading) {
+    return <div className={styles.loading}>Loading...</div>;
+  }
+
+  if (localError || contextError) {
+    return (
+      <div className={styles.error}>
+        <p>Error: {localError || contextError}</p>
+        <button onClick={() => navigate("/login")}>Go to Login</button>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <div className={styles.resumeBuilder}>
-        {/* Sidebar Button */}
-        {!isSidebarVisible && (
-          <button className={styles.toggleButton} onClick={toggleSidebar}>
-            ☰
-          </button>
-        )}
+    <div className={styles.resumeBuilder}>
+      {!isSidebarVisible && (
+        <button className={styles.toggleButton} onClick={toggleSidebar}>
+          ☰
+        </button>
+      )}
 
-        {/* Sidebar */}
-        <aside className={`${styles.sidebar} ${isSidebarVisible ? styles.visible : ""}`}>
-          <div className={styles.profile}>
-            <img src="profile.jpg" alt="User" className={styles.profileImg} />
-            <h4>Piyumi Hansamali</h4>
-            <span className={styles.rating}>⭐⭐⭐⭐⭐ 4.7</span>
-          </div>
-          <nav>
-            <ul>
-              <li>📋 My Profile</li>
-              <li className={styles.active}>📄 My Resumes</li>
-              <li>✅ Applied Jobs</li>
-            </ul>
-          </nav>
-          <button className={styles.closeButton} onClick={toggleSidebar}>
-            ✕
-          </button>
-        </aside>
+      <aside className={`${styles.sidebar} ${isSidebarVisible ? styles.visible : ""}`}>
+        <div className={styles.profile}>
+          <img
+            src={
+              previewImg ||
+              (personalInfo.profilePicture
+                ? URL.createObjectURL(personalInfo.profilePicture)
+                : "profile.jpg")
+            }
+            alt="User"
+            className={styles.profileImg}
+          />
+          <h4>{personalInfo.fullname || "User Name"}</h4>
+          <p className={styles.rating}>⭐⭐⭐⭐⭐ 4.7</p>
+        </div>
+        <nav>
+          <ul>
+            <li>📋 My Profile</li>
+            <li className={styles.active}>📄 My Resumes</li>
+            <li>✅ Applied Jobs</li>
+          </ul>
+        </nav>
+        <button className={styles.closeButton} onClick={toggleSidebar}>
+          ✕
+        </button>
+      </aside>
 
-        {/* Main Content */}
-        <main className={`${styles.content} ${isSidebarVisible ? styles.shifted : ""}`}>
-          <div className={styles.navigationButtons}>
-            <button className={styles.navButton}>Previous</button>
-            <button className={styles.navButton} onClick={() => navigate('/Cv2')}>Next</button>
-          </div>
-          <div className={styles.formContainer}>
-            <h3>Personal Details</h3>
-            <form onSubmit={handleSubmit}> {/* Use onSubmit instead of onClick */}
-              <div className={styles.formColumns}>
-                <div className={styles.formLeft}>
-                  <input type="text" id="fullName" name="fullName" placeholder="Full Name" autoComplete="name" value={formData.fullName} onChange={handleChange} required />
-                  <input type="text" id="initials" name="initials" placeholder="Name with Initials" value={formData.initials} onChange={handleChange} required />
-                  <input type="text" id="jobTitle" name="jobTitle" placeholder="Job Title" value={formData.jobTitle} onChange={handleChange} required />
+      <main className={`${styles.content} ${isSidebarVisible ? styles.shifted : ""}`}>
+        <div className={styles.navigationButtons}>
+          <button className={styles.navButton}>Previous</button>
+          <button className={styles.navButton} onClick={() => navigate("/Cv2")}>
+            Next
+          </button>
+        </div>
+
+        <div className={styles.formContainer}>
+          <h3>Personal Details</h3>
+          <form onSubmit={handleSubmit}>
+            <div className={styles.formColumns}>
+              <div className={styles.formLeft}>
+                <input
+                  type="text"
+                  name="fullname"
+                  placeholder="Full Name"
+                  value={personalInfo.fullname || ""}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="text"
+                  name="nameWithInitials"
+                  placeholder="Name with Initials"
+                  value={personalInfo.nameWithInitials || ""}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="text"
+                  name="jobTitle"
+                  placeholder="Job Title"
+                  value={personalInfo.jobTitle || ""}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className={styles.formRight}>
+                <input
+                  type="text"
+                  name="address"
+                  placeholder="Address"
+                  value={personalInfo.address || ""}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="text"
+                  name="addressOptional"
+                  placeholder="Address Optional"
+                  value={personalInfo.addressOptional || ""}
+                  onChange={handleChange}
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={personalInfo.email || ""}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Phone Number"
+                  value={personalInfo.phone || ""}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+            <textarea
+              name="profileParagraph"
+              placeholder="Add Your Profile Details"
+              value={personalInfo.profileParagraph || ""}
+              onChange={handleChange}
+              required
+            />
+            <button type="submit" className={styles.saveBtn} disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save"}
+            </button>
+          </form>
+        </div>
+
+        <div className={styles.cvPreview}>
+          <div className={styles.cvContainer}>
+            <div className={styles.cvLeft}>
+              <div className={styles.profileSection}>
+                <label htmlFor="profilePicture" className={styles.profilePictureLabel}>
+                  <img
+                    src={
+                      previewImg ||
+                      (personalInfo.profilePicture
+                        ? URL.createObjectURL(personalInfo.profilePicture)
+                        : "profile.jpg")
+                    }
+                    alt="Profile"
+                    className={styles.profileImage}
+                  />
+                  <input
+                    type="file"
+                    id="profilePicture"
+                    name="profilePicture"
+                    accept="image/*"
+                    onChange={handleChange}
+                    style={{ display: "none" }}
+                  />
+                  <span className={styles.uploadIcon}>📷</span>
+                </label>
+                <h3>{personalInfo.jobTitle || "Your Profession"}</h3>
+                <h2>{personalInfo.fullname || "Your Name"}</h2>
+              </div>
+              <div className={styles.contactInfo}>
+                <h4>Contact</h4>
+                <p>{personalInfo.phone || "Phone"}</p>
+                <p>{personalInfo.email || "Email"}</p>
+                <p>{personalInfo.address || "Address"}</p>
+              </div>
+
+              <div className={styles.education}>
+                <h4>Education</h4>
+                <div className={styles.educationItem}>
+                  <h5>{educationData.universitiyName || "University of Moratuwa"}</h5>
+                  <span>{educationData.uniStartDate || "2022"}</span> - <span>{educationData.uniEndDate || "2024"}</span>
+                  <p>{educationData.uniMoreDetails || "Bachelor of Science in Computer Science"}</p>
                 </div>
-                <div className={styles.formRight}>
-                  <input type="text" id="address" name="address" placeholder="Address" value={formData.address} onChange={handleChange} required />
-                  <input type="text" id="address2" name="address2" placeholder="Address Line 2" value={formData.address2} onChange={handleChange} />
-                  <input type="email" id="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-                  <input type="tel" id="phone" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
+                <div className={styles.educationItem}>
+                  <h5>{educationData.SchoolName || "Rahula College Matara"}</h5>
+                  <span>{educationData.startDate || "2018"}</span> - <span>{educationData.endDate || "2021"}</span>
+                  <p>{educationData.moreDetails || "Advanced Level in Physical Science"}</p>
                 </div>
               </div>
-              <textarea
-                id="summary"
-                name="summary"
-                placeholder="Add Your Profile Details"
-                value={formData.summary}
-                onChange={handleChange}
-                required
-              />
-              <button type="submit" className={styles.saveBtn}>Save</button>
-            </form>
-          </div>
 
-          <div className={styles.cvPreview}>
-            <div className={styles.cvContainer}>
-              <div className={styles.cvLeft}>
-                <div className={styles.profileSection}>
-                  <label htmlFor="profilePicture" className={styles.profilePictureLabel}>
-                    <img
-                      src={formData.profilePicture || "profile.jpg"}
-                      alt="Profile"
-                      className={styles.profileImage}
-                    />
-                    <input
-                      type="file"
-                      id="profilePicture"
-                      name="profilePicture"
-                      accept="image/*"
-                      onChange={handleChange}
-                      style={{ display: "none" }}
-                    />
-                    <span className={styles.uploadIcon}>📷</span>
-                  </label>
-                  <h2>{formData.fullName || "Saman Kumara"}</h2>
-                  <h3>{formData.jobTitle || "Full Stack Developer"}</h3>
-                </div>
-                <div className={styles.contactInfo}>
-                  <h4>Contact</h4>
-                  <p>{formData.phone || "0771200506"}</p>
-                  <p>{formData.email || "samankumara@gmail.com"}</p>
-                  <p>{formData.address || "123 Anywhere St., Any City"}</p>
-                </div>
+            </div>
+            <div className={styles.verticalLine}></div>
+            <div className={styles.cvRight}>
+              <div className={styles.profilePara}>
+                <h4>Profile</h4>
+                <p>{personalInfo.profileParagraph || "Your profile summary"}</p>
               </div>
-              <div className={styles.verticalLine}></div>
-              <div className={styles.cvRight}>
-                <div className={styles.profilePara}>
-                  <h4>Profile</h4>
-                  <p>{formData.summary || "Experienced Full Stack Developer..."}</p>
-                </div>
-                <div className={styles.references}>
-                  <h4>References</h4>
-                  <p>John Doe - Senior Developer at Tech Corp - john.doe@techcorp.com</p>
-                  <p>Jane Smith - Project Manager at Innovate LLC - jane.smith@innovate.com</p>
-                </div>
+              <div className={styles.experience}>
+                <h4>Professional Experience</h4>
+                {resumeData.professionalExperience?.map((exp, index) => (
+                  <div key={index} className={styles.experienceItem}>
+                    <h5>{exp.pjobTitle || "Job Title"}</h5>
+                    <span>
+                      {formatDate(exp.jstartDate)} - {formatDate(exp.jendDate)}
+                    </span>
+                    <p>{exp.jobDescription || "Job description"}</p>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.skillsColumns}>
+                <h4>Skills</h4>
+                <ul>
+                  {resumeData.skill?.map((skill, index) => (
+                    <li key={index} className={styles.listItem}>
+                      {skill.skillName || "Skill"} ({skill.skillLevel || "Level"})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className={styles.summary}>
+                <h4>Summary</h4>
+                <p>{resumeData.summary || "Professional summary"}</p>
+              </div>
+             
+              <div className={styles.references}>
+                <h4>References</h4>
+                <p>John Doe - Senior Developer at Tech Corp - john.doe@techcorp.com</p>
+                <p>Jane Smith - Project Manager at Innovate LLC - jane.smith@innovate.com</p>
               </div>
             </div>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

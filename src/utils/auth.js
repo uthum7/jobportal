@@ -1,33 +1,126 @@
 import jwt_decode from "jwt-decode";
 
-// Save Token in Local Storage
+// ==================== TOKEN OPERATIONS ==================== //
+
 export const saveToken = (token) => {
-  localStorage.setItem("authToken", token);
+  if (typeof window === "undefined") return false;
+
+  try {
+    localStorage.setItem("authToken", token);
+    return true;
+  } catch (error) {
+    console.error("Failed to save token:", error);
+    return false;
+  }
 };
 
-// Get User ID from Token
-export const getUserId = () => {
-  if (typeof window === "undefined") return null; // Prevents SSR issues
+export const getToken = () => {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("authToken");
+};
 
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    console.error("No authToken found in localStorage");
-    return null;
+export const removeToken = () => {
+  if (typeof window === "undefined") return false;
+
+  try {
+    localStorage.removeItem("authToken");
+    return true;
+  } catch (error) {
+    console.error("Failed to remove token:", error);
+    return false;
   }
+};
+
+// ==================== AUTH STATE ==================== //
+
+export const validateToken = () => {
+  try {
+    const payload = getTokenPayload();
+    return !!payload;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const isAuthenticated = () => {
+  return validateToken();
+};
+
+export const isTokenExpired = () => {
+  const payload = getTokenPayload();
+  return !payload || (payload.exp && Date.now() >= payload.exp * 1000);
+};
+
+export const getTokenPayload = () => {
+  const token = getToken();
+  if (!token) return null;
 
   try {
     const decoded = jwt_decode(token);
-    console.log("Decoded Token:", decoded); // Debugging
 
-    return decoded.user?.id || decoded.sub || null; // Adjust according to your token structure
+    if (!decoded.userId) {
+      throw new Error("Token missing required userId claim");
+    }
+
+    if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+      console.warn("Token expired");
+      removeToken();
+      return null;
+    }
+
+    return decoded;
   } catch (error) {
-    console.error("Invalid token", error);
+    console.error("Invalid token:", error);
+    removeToken();
     return null;
   }
 };
 
-// Logout User
-export const logout = () => {
-  localStorage.removeItem("authToken");
-  window.location.reload(); // Refresh page after logout
+// ==================== USER OPERATIONS ==================== //
+
+export const getUserId = () => {
+  const payload = getTokenPayload();
+  return payload?.userId || null;
 };
+
+export const getValidUserId = () => {
+  const userId = getUserId();
+  if (!userId) {
+    removeToken();
+    throw new Error("User not authenticated - please login again");
+  }
+  return userId;
+};
+
+export const getUserInfo = () => {
+  const payload = getTokenPayload();
+  return payload
+    ? {
+        userId: payload.userId,
+        email: payload.email || null,
+        name: payload.name || null,
+      }
+    : null;
+};
+
+export const logout = ({ redirect = true, redirectPath = "/login" } = {}) => {
+  removeToken();
+  if (redirect && typeof window !== "undefined") {
+    window.location.replace(redirectPath);
+  }
+};
+
+// ==================== SESSION MANAGEMENT ==================== //
+
+export const initAuth = () => {
+  const isValid = validateToken();
+  if (!isValid) removeToken();
+
+  return {
+    isAuthenticated: isValid,
+    userInfo: getUserInfo(),
+  };
+};
+
+// Optionally run on file import
+// initAuth(); // Uncomment if needed on every app start

@@ -33,7 +33,7 @@ const RegistrationModal = ({ isOpen, onClose,openLoginModal }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8091/registerusers/add",
+        "http://localhost:8091/api/register/register",
         newRegisterUser
       );
 

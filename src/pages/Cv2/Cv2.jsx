@@ -1,45 +1,53 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import styles from "./Cv2.module.css"; // Import CSS Module
+import { useNavigate } from "react-router-dom";
+import styles from "./Cv2.module.css";
+import { getUserId } from "../../utils/auth";
+import { useCVForm } from "../../context/CVFormContext";
+import { saveEducationDetails } from "../../services/api";
 
 const Cv2 = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    fullName: "",
-    initials: "",
-    jobTitle: "",
-    address: "",
-    address2: "",
-    email: "",
-    phone: "",
-    profilePicture: null,
-    summary: "",
-    SchoolName: "",
-    startDate: "",
-    endDate: "",
-    universityName: "",
-    uniStartDate: "",
-    uniEndDate: "",
-    uniMoreDetails: "",
-  });
-
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [previewImg, setPreviewImg] = useState(null);
+
+  const { resumeData, updateEducationDetails } = useCVForm();
+  const educationData = resumeData.educationDetails || {};
+  const personalInfo = resumeData.personalInfo || {}; // ✅ Renamed from "personal"
 
   const handleChange = (e) => {
-    if (e.target.name === "profilePicture") {
-      const file = e.target.files[0];
+    const { name, value, type, files } = e.target;
+
+    if (type === "file") {
+      const file = files[0];
       if (file) {
-        const imageUrl = URL.createObjectURL(file); // Create a URL for the uploaded file
-        setFormData({ ...formData, [e.target.name]: imageUrl });
+        setPreviewImg(URL.createObjectURL(file));
       }
     } else {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+      updateEducationDetails({
+        ...educationData,
+        [name]: value,
+      });
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    const userId = getUserId();
+    if (!userId) {
+      alert("User not logged in");
+      return;
+    }
+
+    try {
+      await saveEducationDetails(userId, educationData);
+      updateEducationDetails(educationData);
+      alert("Education details saved successfully");
+      navigate("/Cv6");
+    } catch (error) {
+      console.error("Error saving education details:", error);
+      alert("An error occurred while saving. Please try again.");
+    }
   };
 
   const toggleSidebar = () => {
@@ -47,181 +55,186 @@ const Cv2 = () => {
   };
 
   return (
-    <div>
-      <div className={styles.resumeBuilder}>
-        {!isSidebarVisible && (
-          <button className={styles.toggleButton} onClick={toggleSidebar}>
-            ☰
-          </button>
-        )}
+    <div className={styles.resumeBuilder}>
+      {!isSidebarVisible && (
+        <button className={styles.toggleButton} onClick={toggleSidebar}>
+          ☰
+        </button>
+      )}
 
-        <aside className={`${styles.sidebar} ${isSidebarVisible ? styles.visible : ""}`}>
-          <div className={styles.profile}>
-            <img src="profile.jpg" alt="User" className={styles.profileImg} />
-            <h4>Piyumi Hansamali</h4>
-            <span className={styles.rating}>⭐⭐⭐⭐⭐ 4.7</span>
-          </div>
-          <nav>
-            <ul>
-              <li>📋 My Profile</li>
-              <li className={styles.active}>📄 My Resumes</li>
-              <li>✅ Applied Jobs</li>
-            </ul>
-          </nav>
-          <button className={styles.closeButton} onClick={toggleSidebar}>
-            ✕
-          </button>
-        </aside>
+      <aside className={`${styles.sidebar} ${isSidebarVisible ? styles.visible : ""}`}>
+        <div className={styles.profile}>
+          <img src="profile.jpg" alt="User" className={styles.profileImg} />
+          <h4>Piyumi Hansamali</h4>
+          <span className={styles.rating}>⭐⭐⭐⭐⭐ 4.7</span>
+        </div>
+        <nav>
+          <ul>
+            <li>📋 My Profile</li>
+            <li className={styles.active}>📄 My Resumes</li>
+            <li>✅ Applied Jobs</li>
+          </ul>
+        </nav>
+        <button className={styles.closeButton} onClick={toggleSidebar}>
+          ✕
+        </button>
+      </aside>
 
-        <main className={`${styles.content} ${isSidebarVisible ? styles.shifted : ""}`}>
-          <div className={styles.navigationButtons}>
-            <button className={styles.navButton} onClick={() => navigate('/Cv')}>Previous</button>
-            <button className={styles.navButton} onClick={() => navigate('/Cv6')}>Next</button>
-          </div>
-          <div className={styles.formContainer}>
-            <h3>Education Details</h3>
-            <form onSubmit={handleSubmit}>
-              <h4>School Details</h4>
-              <input type="text" name="SchoolName" placeholder="School Name" value={formData.SchoolName} onChange={handleChange} required />
-              <div className={styles.formColumns}>
-                <div className={styles.formLeft}>
-                  <input type="date" name="startDate" placeholder="Entry Date" value={formData.startDate} onChange={handleChange} required />
+      <main className={`${styles.content} ${isSidebarVisible ? styles.shifted : ""}`}>
+        <div className={styles.navigationButtons}>
+          <button className={styles.navButton} onClick={() => navigate("/Cv")}>Previous</button>
+          <button className={styles.navButton} onClick={() => navigate("/Cv6")}>Next</button>
+        </div>
+
+        <div className={styles.formContainer}>
+          <h3>Education Details</h3>
+          <form onSubmit={handleSubmit}>
+            <h4>School Details</h4>
+            <input
+              type="text"
+              name="SchoolName"
+              placeholder="School Name"
+              value={educationData.SchoolName || ""}
+              onChange={handleChange}
+            />
+            <div className={styles.formColumns}>
+              <div className={styles.formLeft}>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={educationData.startDate || ""}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className={styles.formRight}>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={educationData.endDate || ""}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <input
+              type="text"
+              name="moreDetails"
+              placeholder="Additional Details"
+              value={educationData.moreDetails || ""}
+              onChange={handleChange}
+            />
+
+            <h4>University Details</h4>
+            <input
+              type="text"
+              name="universitiyName"
+              placeholder="University Name"
+              value={educationData.universitiyName || ""}
+              onChange={handleChange}
+            />
+            <div className={styles.formColumns}>
+              <div className={styles.formLeft}>
+                <input
+                  type="date"
+                  name="uniStartDate"
+                  value={educationData.uniStartDate || ""}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className={styles.formRight}>
+                <input
+                  type="date"
+                  name="uniEndDate"
+                  value={educationData.uniEndDate || ""}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <input
+              type="text"
+              name="uniMoreDetails"
+              placeholder="Degree Program & Details"
+              value={educationData.uniMoreDetails || ""}
+              onChange={handleChange}
+            />
+            <button type="submit" className={styles.saveBtn}>Save</button>
+          </form>
+        </div>
+
+        <div className={styles.cvPreview}>
+          <div className={styles.cvContainer}>
+            <div className={styles.cvLeft}>
+              <div className={styles.profileSection}>
+                <label htmlFor="profilePicture" className={styles.profilePictureLabel}>
+                  <img
+                    src={previewImg || "profile.jpg"}
+                    alt="Profile"
+                    className={styles.profileImage}
+                  />
+                  <input
+                    type="file"
+                    id="profilePicture"
+                    name="profilePicture"
+                    accept="image/*"
+                    onChange={handleChange}
+                    style={{ display: "none" }}
+                  />
+                  <span className={styles.uploadIcon}>📷</span>
+                </label>
+                <h3>{personalInfo.jobTitle || "Your Profession"}</h3>
+                <h2>{personalInfo.fullname || "Your Name"}</h2>
+              </div>
+
+              <div className={styles.contactInfo}>
+                <h4>Contact</h4>
+                <p>{personalInfo.phone || "Phone"}</p>
+                <p>{personalInfo.email || "Email"}</p>
+                <p>{personalInfo.address || "Address"}</p>
+              </div>
+
+              <div className={styles.education}>
+                <h4>Education</h4>
+                <div className={styles.educationItem}>
+                  <h5>{educationData.universitiyName || "University of Moratuwa"}</h5>
+                  <span>{educationData.uniStartDate || "2022"}</span> - <span>{educationData.uniEndDate || "2024"}</span>
+                  <p>{educationData.uniMoreDetails || "Bachelor of Science in Computer Science"}</p>
                 </div>
-                <div className={styles.formRight}>
-                  <input type="date" name="endDate" placeholder="Leaving Date" value={formData.endDate} onChange={handleChange} required />
+                <div className={styles.educationItem}>
+                  <h5>{educationData.SchoolName || "Rahula College Matara"}</h5>
+                  <span>{educationData.startDate || "2018"}</span> - <span>{educationData.endDate || "2021"}</span>
+                  <p>{educationData.moreDetails || "Advanced Level in Physical Science"}</p>
                 </div>
               </div>
-              <input type="text" name="moreDetails" placeholder="moreDetails" value={formData.moreDetails} onChange={handleChange} required />
-              
+            </div>
 
-              <h4>University Details</h4>
-              <input type="text" name="universityName" placeholder="University Name" value={formData.universityName} onChange={handleChange} required />
-              <div className={styles.formColumns}>
-                <div className={styles.formLeft}>
-                  <input type="date" name="uniStartDate" placeholder="Entry Date" value={formData.uniStartDate} onChange={handleChange} required />
-                </div>
-                <div className={styles.formRight}>
-                  <input type="date" name="uniEndDate" placeholder="Leaving Date" value={formData.uniEndDate} onChange={handleChange} required />
-                </div>
-              </div>
-              <input type="text" name="uniMoreDetails" placeholder="About Your Degree Program & Degree" value={formData.uniMoreDetails} onChange={handleChange} required />
-              <button type="submit" className={styles.saveBtn}>Save</button>
-            </form>
-          </div>
+            <div className={styles.verticalLine}></div>
 
-          <div className={styles.cvPreview}>
-            <div className={styles.cvContainer}>
-              <div className={styles.cvLeft}>
-                <div className={styles.profileSection}>
-                  {/* Profile Picture Upload */}
-                  <label htmlFor="profilePicture" className={styles.profilePictureLabel}>
-                    <img
-                      src={formData.profilePicture || "profile.jpg"} // Display uploaded image or default
-                      alt="Profile"
-                      className={styles.profileImage}
-                    />
-                    <input
-                      type="file"
-                      id="profilePicture"
-                      name="profilePicture"
-                      accept="image/*"
-                      onChange={handleChange}
-                      style={{ display: "none" }} // Hide the default file input
-                    />
-                    <span className={styles.uploadIcon}>📷</span> {/* Upload icon */}
-                  </label>
-                  <h2>{formData.fullName || "Saman Kumara"}</h2>
-                  <h3>{formData.jobTitle || "Full Stack Developer"}</h3>
-                </div>
-                <div className={styles.contactInfo}>
-                  <h4>Contact</h4>
-                  <p>{formData.phone || "0771200506"}</p>
-                  <p>{formData.email || "samankumara@gmail.com"}</p>
-                  <p>{formData.address || "123 Anywhere St., Any City"}</p>
-                </div>
-                <div className={styles.education}>
-                  <h4>Education</h4>
-                  <div className={styles.educationItem}>
-                    <h5>{formData.universityName || "University of Moratuwa"}</h5>
-                    <span>{formData.uniStartDate || "2022"} </span> - <span>{formData.uniEndDate || "2024"}</span>
-                    <p>{formData.uniMoreDetails || "Bachelor of Science in Computer Science"}</p>
-                  </div>
-                  <div className={styles.educationItem}>
-                    <h5>{formData.SchoolName || "Rahula College Matara"}</h5>
-                    <span>{formData.startDate || "2018"} </span> - <span>{formData.endDate || "2021"}</span>
-                    <p>{formData.moreDetails || "Advanced Level in Physical Science"}</p>
-                  </div>
-                </div>
+            <div className={styles.cvRight}>
+              <div className={styles.profilePara}>
+                <h4>Profile</h4>
+                <p>{personalInfo.profileParagraph || "Your profile summary"}</p>
               </div>
-              <div className={styles.verticalLine}></div>
-              <div className={styles.cvRight}>
-                <div className={styles.profilePara}>
-                  <h4>Profile</h4>
+
+              <div className={styles.experience}>
+                <h4>Professional Experience</h4>
+                <div className={styles.experienceItem}>
+                  <h5>Full Stack Developer</h5>
+                  <span>2024 - Present</span>
                   <p>
-                    {formData.summary ||
-                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects."
-                    }
+                    Developed and maintained web applications using React and Node.js. Collaborated with cross-functional teams to deliver high-quality software solutions.
                   </p>
                 </div>
-                <div className={styles.experience}>
-                  <h4>Professional Experience</h4>
-                  <div className={styles.experienceItem}>
-                    <h5>Full Stack Developer</h5>
-                    <span>2024 - Present</span>
-                    <p>
-                      Developed and maintained web applications using React and Node.js. Collaborated with cross-functional teams to deliver high-quality software solutions.
-                    </p>
-                  </div>
-                  <div className={styles.experienceItem}>
-                    <h5>Software Engineer</h5>
-                    <span>2022 - 2024</span>
-                    <p>
-                      Designed and implemented backend services and APIs. Conducted code reviews and mentored junior developers.
-                    </p>
-                  </div>
-                  <div className={styles.experienceItem}>
-                    <h5>Junior Developer</h5>
-                    <span>2020 - 2022</span>
-                    <p>
-                      Assisted in the development of web applications and learned best practices in software development.
-                    </p>
-                  </div>
-                </div>
-                <div className={styles.skillsColumns}>
-                  <h4>Skills</h4>
-                  <div className={styles.skillsColumn}>
-                    <ul>
-                      <li className={styles.listItem}>JavaScript</li>
-                      <li className={styles.listItem}>React</li>
-                      <li className={styles.listItem}>Node.js</li>
-                      <li className={styles.listItem}>Database Management</li>
-                      <li className={styles.listItem}>Project Management</li>
-                      <li className={styles.listItem}>HTML/CSS</li>
-                      <li className={styles.listItem}>Git</li>
-                      <li className={styles.listItem}>REST APIs</li>
-                      <li className={styles.listItem}>Agile Methodologies</li>
-                      <li className={styles.listItem}>Problem Solving</li>
-                    </ul>
-                  </div>
-                </div>
-                <div className={styles.summary}>
-                  <h4>Summary</h4>
+                <div className={styles.experienceItem}>
+                  <h5>Software Engineer</h5>
+                  <span>2022 - 2024</span>
                   <p>
-                    {formData.summary ||
-                      "Experienced Full Stack Developer with a strong background in developing scalable web applications and managing complex projects."
-                    }
+                    Designed and implemented backend services and APIs. Conducted code reviews and mentored junior developers.
                   </p>
-                </div>
-                <div className={styles.references}>
-                  <h4>References</h4>
-                  <p>John Doe - Senior Developer at Tech Corp - john.doe@techcorp.com</p>
-                  <p>Jane Smith - Project Manager at Innovate LLC - jane.smith@innovate.com</p>
                 </div>
               </div>
             </div>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };

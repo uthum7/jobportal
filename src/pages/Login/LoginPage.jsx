@@ -18,7 +18,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setError(null);
     try {
-      const res = await axios.post("http://localhost:8091/registerusers/login", { email, password });
+      const res = await axios.post("http://localhost:8091/api/register/login", { email, password });
       if (res.status === 201 || res.status === 200) {
         // Save the token using saveToken utility function
         saveToken(res.data.token);
