@@ -1,3 +1,9 @@
+# Dependency directories
+/node_modules
+
+# Environment variables
+.env
+
 # Logs
 logs
 *.log
@@ -5,20 +11,27 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
 
-# Dependency directories
-/node_modules
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Debugging files
+debug.log
+*.debug
 
 # Production build
 /dist
-/dist-ssr
+/build
 
-# Local environment files
-*.local
+# Coverage reports
+/coverage
 
-# Static build files
-*.cache
+# NPM/Yarn
+.npm
+.yarn
 
 # IDE / Editor folders and files
 .vscode/
@@ -35,6 +48,7 @@ Thumbs.db
 ehthumbs.db
 Icon?
 
-# Others
-*.env
-coverage/
+# Temporary files
+tmp/
+temp/
+*.tmp
