@@ -34,7 +34,7 @@ const Navbar = () => {
           <Link to="/" className={isActive("/") ? "active" : ""}>
             Home
           </Link>
-          <Link to="/jobseeker" className={isActive("/jobseeker") ? "active" : ""}>
+          <Link to="/JobSeeker/Dashboard" className={isActive("/jobseeker") ? "active" : ""}>
             Jobseeker
           </Link>
           <Link to="/employee" className={isActive("/employee") ? "active" : ""}>

@@ -1,13 +1,13 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-import Navbar from "./components/Navbar/Navbar.jsx"; 
-import "./pages/Homepage/Homepage.css";           
-import Footer from "./components/Footer/Footer.jsx"; 
+import Navbar from "./components/Navbar/Navbar.jsx";
+import "./pages/Homepage/Homepage.css";
+import Footer from "./components/Footer/Footer.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 
 
-import Homepage from "./pages/Homepage/Homepage.jsx"; 
+import Homepage from "./pages/Homepage/Homepage.jsx";
 import Managecounselor from "./pages/Admin/managecounselor.jsx";
 import CounseleeDashboard from "./pages/counselee/dashboard.jsx"
 import CounseleeProfile from "./pages/counselee/profile.jsx"
@@ -21,7 +21,8 @@ import Messages from "./pages/counselee/messages.jsx"
 import ChangePassword from "./pages/counselee/change-password.jsx"
 import DeleteAccount from "./pages/counselee/delete-account.jsx"
 import Logout from "./pages/counselee/logout.jsx"
-
+import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx"
+import JobPortal from "./pages/JobSeeker/ApplyForAjob/Jobportal.jsx"
 
 import Cv from './pages/Cv/Cv.jsx';
 import Cv2 from './pages/Cv2/Cv2.jsx';
@@ -43,7 +44,7 @@ function App() {
     return (
         <>
             <Navbar />
-           
+
 
             <Routes>
                 <Route path="/" element={<Homepage />} />
@@ -54,33 +55,35 @@ function App() {
                 <Route path="/Cv3" element={<Cv3 />} />
                 <Route path="/Cv4" element={<Cv4 />} />
                 <Route path="/Cv5" element={<Cv5 />} />
-                 <Route path="/counselee/dashboard" element={<CounseleeDashboard />} />
-        <Route path="/counselee/profile" element={<CounseleeProfile />} />
-        <Route path="/counselee/bookings" element={<CounseleeBookings />} />
-        <Route path="/counselee/find-counselor" element={<FindCounselor />} />
-        <Route path="/counselee/counselor/:counselorId" element={<CounselorDetails />} />
-        <Route path="/counselee/time-slots/:counselorId" element={<TimeSlots />} />
-        <Route path="/counselee/payment/:counselorId" element={<Payment />} />
-        <Route path="/counselee/invoice/:counselorId" element={<Invoice />} />
-        <Route path="/counselee/messages" element={<Messages />} />
-        <Route path="/counselee/change-password" element={<ChangePassword />} />
-        <Route path="/counselee/delete-account" element={<DeleteAccount />} />
-        
-         {/* Counselor Routes */}
-         <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
-        <Route path="/counselor/profile" element={<CounselorProfile />} />
-        <Route path="/counselor/bookings" element={<CounselorBookings />} />
-        <Route path="/counselor/schedule" element={<CounselorSchedule />} />
-        <Route path="/counselor/counselees" element={<CounselorCounselees />} />
-        <Route path="/counselor/messages" element={<CounselorMessages />} />
-        <Route path="/counselor/change-password" element={<CounselorChangePassword />} />
-        <Route path="/counselor/delete-account" element={<CounselorDeleteAccount />} />
-        
-        
-        
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/" element={<Homepage />} />
-          
+                <Route path="/JobSeeker/dashboard" element={<JobSeekerDashboard />} />
+                <Route path="/JobSeeker/jobportal" element={<JobPortal />} />
+                <Route path="/counselee/dashboard" element={<CounseleeDashboard />} />
+                <Route path="/counselee/profile" element={<CounseleeProfile />} />
+                <Route path="/counselee/bookings" element={<CounseleeBookings />} />
+                <Route path="/counselee/find-counselor" element={<FindCounselor />} />
+                <Route path="/counselee/counselor/:counselorId" element={<CounselorDetails />} />
+                <Route path="/counselee/time-slots/:counselorId" element={<TimeSlots />} />
+                <Route path="/counselee/payment/:counselorId" element={<Payment />} />
+                <Route path="/counselee/invoice/:counselorId" element={<Invoice />} />
+                <Route path="/counselee/messages" element={<Messages />} />
+                <Route path="/counselee/change-password" element={<ChangePassword />} />
+                <Route path="/counselee/delete-account" element={<DeleteAccount />} />
+
+                {/* Counselor Routes */}
+                <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
+                <Route path="/counselor/profile" element={<CounselorProfile />} />
+                <Route path="/counselor/bookings" element={<CounselorBookings />} />
+                <Route path="/counselor/schedule" element={<CounselorSchedule />} />
+                <Route path="/counselor/counselees" element={<CounselorCounselees />} />
+                <Route path="/counselor/messages" element={<CounselorMessages />} />
+                <Route path="/counselor/change-password" element={<CounselorChangePassword />} />
+                <Route path="/counselor/delete-account" element={<CounselorDeleteAccount />} />
+
+
+
+                <Route path="/logout" element={<Logout />} />
+                <Route path="/" element={<Homepage />} />
+
             </Routes>
 
             <Footer />
