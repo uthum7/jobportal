@@ -1,11 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import "./Sidebar.css"
+import admin from "../../../assets/img/admin.jpg"
+
 const EmployeeSidebar = () => {
     return (
-        <div className="counselee-sidebar">
+        <div className="employee-sidebar">
             <div className="profile-section">
                 <img
-                    src="/assets/img/placeholder-avatar.jpg"
+                    src={admin}
                     alt="User Profile"
                     className="profile-image"
                 />
@@ -15,9 +18,33 @@ const EmployeeSidebar = () => {
             <nav className="sidebar-nav">
                 <Link to="/counselee/dashboard" className="nav-item">
                     {/* <Home className="nav-icon" /> */}
-                    <span>Dashboard</span>
+                    <span>User Dashboard</span>
                 </Link>
-                {/* ... other navigation items */}
+
+                <Link to="/counselee/dashboard" className="nav-item">
+                    {/* <Home className="nav-icon" /> */}
+                    <span>My Profile</span>
+                </Link>
+
+                <Link to="/counselee/dashboard" className="nav-item">
+                    {/* <Home className="nav-icon" /> */}
+                    <span>Posted Jobs</span>
+                </Link>
+
+                <Link to="/counselee/dashboard" className="nav-item">
+                    {/* <Home className="nav-icon" /> */}
+                    <span>User Dashboard</span>
+                </Link>
+                <Link to="/counselee/dashboard" className="nav-item">
+                    {/* <Home className="nav-icon" /> */}
+                    <span>My Profile</span>
+                </Link>
+
+                <Link to="/counselee/dashboard" className="nav-item">
+                    {/* <Home className="nav-icon" /> */}
+                    <span>Posted Jobs</span>
+                </Link>
+
             </nav>
         </div>
     )
