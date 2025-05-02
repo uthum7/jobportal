@@ -22,7 +22,7 @@ import ChangePassword from "./pages/counselee/change-password.jsx"
 import DeleteAccount from "./pages/counselee/delete-account.jsx"
 import Logout from "./pages/counselee/logout.jsx"
 import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx"
-import JobPortal from "./pages/JobSeeker/ApplyForAjob/Jobportal.jsx"
+import MyProfile from "./pages/JobSeeker/MyProfile/MyProfile.jsx"
 
 import Cv from './pages/Cv/Cv.jsx';
 import Cv2 from './pages/Cv2/Cv2.jsx';
@@ -56,7 +56,7 @@ function App() {
                 <Route path="/Cv4" element={<Cv4 />} />
                 <Route path="/Cv5" element={<Cv5 />} />
                 <Route path="/JobSeeker/dashboard" element={<JobSeekerDashboard />} />
-                <Route path="/JobSeeker/jobportal" element={<JobPortal />} />
+                <Route path="/JobSeeker/myprofile" element={<MyProfile />} />
                 <Route path="/counselee/dashboard" element={<CounseleeDashboard />} />
                 <Route path="/counselee/profile" element={<CounseleeProfile />} />
                 <Route path="/counselee/bookings" element={<CounseleeBookings />} />
