@@ -37,6 +37,7 @@ import CounselorCounselees from "./pages/counselor/counselees.jsx"
 import CounselorMessages from "./pages/counselor/messages.jsx"
 import CounselorChangePassword from "./pages/counselor/change-password.jsx"
 import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx"
+import EmployeePage from "./pages/Employee/EmployeePage.jsx"
 
 
 function App() {
@@ -75,6 +76,8 @@ function App() {
         <Route path="/counselor/messages" element={<CounselorMessages />} />
         <Route path="/counselor/change-password" element={<CounselorChangePassword />} />
         <Route path="/counselor/delete-account" element={<CounselorDeleteAccount />} />
+
+        <Route path="/employee" element={<EmployeePage/>}/>
         
         
         
