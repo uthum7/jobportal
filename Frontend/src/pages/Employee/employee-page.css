@@ -3,6 +3,15 @@
     color:yellow;
 } */
 .employee-page{
-    position: relative !important;
     margin-top: 64px;
+    color:black;
+}
+.row{
+    display:flex;
+}
+.sidebar{
+    flex-basis: 30%;
+}
+.middle{
+    flex-basis:70%;
 }
