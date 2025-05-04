@@ -1,7 +1,7 @@
 import User from "../models/user.model.js"
 import{generateToken} from "../lib/utils.js";
 import bcrypt from "bcryptjs"
-import cloudinary from "../LIB/cloudinary.js";
+import cloudinary from "../lib/cloudinary.js";
 
 
 export const signup = async (req,res)=>{
@@ -39,7 +39,7 @@ export const signup = async (req,res)=>{
                 _id: newUser._id,
                 fullName:newUser.fullName,
                 email:newUser.email,
-                profilepic:newUser.profilepic,
+                profilePic:newUser.profilepic,
 
             });
 
@@ -75,10 +75,10 @@ export const login = async (req,res)=>{
             _id:user._id,
             fullName:user.fullName,
            email:user.email,
-            profilepic:user.profilepic,
+            profilePic:user.profilepic,
         })
     } catch(error){
-        console.log("error in signup controller",error.message);
+        console.log("error in login controller",error.message);
         res.status(500).json({message:"Internal server Error"});
 
     }
@@ -98,30 +98,29 @@ try{
 
 };
 
-export const updateProfile = async(req, res) =>{
-    try{
-        const {profilepic}=req.body;
-        const userId=req.user._id;
-
-        if (!profilePic){
-            return res.status(400).json({message:"Profile pic is required"});
-
-        }
-
-        const uploadResponse = await cloudinary.upload(profilePic)
-        const updateUser = await User.findByIdAndUpdate(userId,{profilepic:uploadResponse.secure_url},{new:true})
-
-        res.status(200).json(updateUser)
-
-    }catch(error){
-        console.log("error in update profile:",error);
-        res.status(500).json({message:"Internal server Error"});
-
-
+export const updateProfile = async (req, res) => {
+    try {
+      const { profilePic } = req.body;
+      const userId = req.user._id;
+  
+      if (!profilePic) {
+        return res.status(400).json({ message: "Profile pic is required" });
+      }
+  
+      const uploadResponse = await cloudinary.uploader.upload(profilePic);
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { profilePic: uploadResponse.secure_url },
+        { new: true }
+      );
+  
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.log("error in update profile:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-
-};
-
+  };
+  
 export const checkAuth = (req, res)=> {
     try{
         res.status(200).json(req.user);
