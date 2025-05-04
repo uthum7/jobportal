@@ -8,13 +8,25 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { formatMessageTime } from "../../lib/utils.js";
 
 const ChatContainer = () => {
-    const {messages,getMessages ,isMessagesLoading ,selectedUser}= useChatStore()
+    const {messages,getMessages ,isMessagesLoading ,selectedUser, subscribeToMessages,unsubscribeFromMessages}= useChatStore()
     const { authUser } = useAuthStore();
     const messageEndRef = useRef(null);
 
     useEffect(()=> {
-        getMessages(selectedUser._id)
-    },[selectedUser._id, getMessages])
+        getMessages(selectedUser._id);
+
+        subscribeToMessages();
+
+        return () => unsubscribeFromMessages();
+    },[selectedUser._id, getMessages , subscribeToMessages ,unsubscribeFromMessages]);
+
+    //when new message get ,the page will automatically scroll
+    useEffect(() => {
+      if (messageEndRef.current && messages) {
+        messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }, [messages]);
+  
 
     if(isMessagesLoading) {return (
         <div className="flex-1 flex flex-col overflow-auto">
