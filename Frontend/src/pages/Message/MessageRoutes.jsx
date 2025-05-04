@@ -14,7 +14,9 @@ import MessageHomePage from "./MessageHomePage";
 
 
 const MessageRoutes = () => {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers} = useAuthStore();
+
+  console.log(onlineUsers);
 
     const { theme} = useThemeStore()
   const navigate = useNavigate();
