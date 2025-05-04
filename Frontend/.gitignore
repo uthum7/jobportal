@@ -15,8 +15,22 @@ lerna-debug.log*
 /dist-ssr
 
 # Local environment files
+# Dependency directories
+/node_modules
+
+# Production build
+/dist
+/dist-ssr
+
+# Local environment files
 *.local
 
+# Static build files
+*.cache
+
+# IDE / Editor folders and files
+.vscode/
+.idea/
 # Static build files
 *.cache
 
@@ -29,6 +43,15 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# System files 
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# Others
+*.env
+coverage/
 
 # System files
 Thumbs.db
