@@ -1,0 +1,40 @@
+/* src/components/JobCard.css */
+.job-card {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 280px; /* Fixed height for consistency */
+  box-sizing: border-box;
+}
+
+.job-card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.job-card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.see-more-btn {
+  margin-top: auto;
+  padding: 10px 15px;
+  background-color: #1CA774;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.see-more-btn:hover {
+  background-color: #168f60;
+}

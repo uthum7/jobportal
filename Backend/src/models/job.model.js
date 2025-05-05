@@ -17,6 +17,7 @@ const jobSchema = new mongoose.Schema({
   responsibilities: { type: [String], default: [] },
   qualificationSkills: [String],
   tags: [String],
+  
 });
 
 export const Job = mongoose.model("Job", jobSchema);

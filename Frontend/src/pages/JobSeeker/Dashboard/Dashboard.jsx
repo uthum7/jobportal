@@ -14,6 +14,8 @@ import {
 } from 'react-icons/fi';
 import './Dashboard.css';
 import jobseeker from "/src/assets/img/JobSeeker/jobseeker.png";
+import JobseekerSidebar from '../../../components/JobseekerSidebar/JobseekerSidebar';
+
 
 const monthlyData = [
   { name: 'January', applied: 65, saved: 50 },
@@ -33,65 +35,7 @@ const monthlyData = [
 const JobseekerDashboard = () => {
   return (
     <div className="dashboard-container">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="profile-section">
-          <img 
-            src="/src/assets/img/JobSeeker/jobseeker.png" 
-            alt="Profile" 
-            className="profile-image"
-          />
-          <h3 className="profile-name">Gimhani Imasha</h3>
-          <div className="nav-title">Main Navigation</div>
-        </div>
-        <nav className="nav-menu">
-          <div className="nav-item active">
-            <FiHome className="nav-icon" />
-            <span>User Dashboard</span>
-          </div>
-          <div className="nav-item">
-            <FiUser className="nav-icon" />
-            <span>My Profile</span>
-          </div>
-          <div className="nav-item">
-            <FiFileText className="nav-icon" />
-            <span>Create a Resume</span>
-          </div>
-          <div className="nav-item">
-            <FiBriefcase className="nav-icon" />
-            <span>Apply for a job</span>
-          </div>
-          <div className="nav-item">
-            <FiBriefcase className="nav-icon" />
-            <span>Applied jobs</span>
-          </div>
-          <div className="nav-item">
-            <FiBookmark className="nav-icon" />
-            <span>Saved Jobs</span>
-          </div>
-          <div className="nav-item">
-            <FiMessageCircle className="nav-icon" />
-            <span>Find a Counselor</span>
-          </div>
-          <div className="nav-item">
-            <FiMail className="nav-icon" />
-            <span>Messages</span>
-            <span className="notification-badge">3</span>
-          </div>
-          <div className="nav-item">
-            <FiLock className="nav-icon" />
-            <span>Change Password</span>
-          </div>
-          <div className="nav-item">
-            <FiTrash2 className="nav-icon" />
-            <span>Delete Account</span>
-          </div>
-          <div className="nav-item">
-            <FiLogOut className="nav-icon" />
-            <span>Log Out</span>
-          </div>
-        </nav>
-      </div>
+      <JobseekerSidebar />
 
       {/* Main Content */}
       <div className="main-content">
