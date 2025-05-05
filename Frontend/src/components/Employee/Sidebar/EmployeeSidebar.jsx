@@ -12,7 +12,7 @@ const EmployeeSidebar = () => {
                     alt="User Profile"
                     className="profile-image"
                 />
-                <h3>Sanduni Dilhara</h3>
+                <h3>Hansamali Awarjana</h3>
             </div>
 
             <nav className="sidebar-nav">
