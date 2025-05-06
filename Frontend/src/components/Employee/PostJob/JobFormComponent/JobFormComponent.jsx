@@ -97,7 +97,16 @@ const JobFormComponent = () => {
             <div className="row">
               <div className="col-row">
                 <div className="label">Add New Requirement</div>
-                <input type="text" ref={title} className="input-text" />
+                <input type="text" ref={title} className="input-text add-requirement" />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-row">
+                <div className="requirement-container">
+                  <div className="requirement">
+                    <p>Requirement 1</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

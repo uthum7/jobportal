@@ -66,9 +66,21 @@
 }
 
 
-.description {
+.description, .add-requirement {
     width: 1290px;
     border-radius: 5px;
     background-color: #ffffff;
     height: 100px;
+}
+.add-requirement{
+    height:40px;
+}
+
+.requirement{
+    background-color: #134ca161;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: #000;
+    width: 1290px;
 }
