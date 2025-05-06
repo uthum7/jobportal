@@ -1,4 +1,4 @@
-@import "tailwindcss";
+
 
 :root {
   --sonner-success-bg: hsl(142, 71%, 45%);
@@ -57,4 +57,9 @@ button {
     margin-left: 0;
   }
 }
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
