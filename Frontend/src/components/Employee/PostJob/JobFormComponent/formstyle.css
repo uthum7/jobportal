@@ -1,63 +1,74 @@
 @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Jost:ital,wght@0,100..900;1,100..900&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
 
 
-.job-form-component{
-    width:100%;
-    background: linear-gradient(to right,rgba(0,0,0,0.1),rgba(0,0,0,0.1));
-    padding:20px;
+.job-form-component {
+    width: 100%;
+
+    padding: 20px;
     border-radius: 10px;
 }
 
-.input-text{
-    width:650px;
-    height:60px; 
+.input-text {
+    width: 630px;
+    height: 60px;
     border-radius: 5px;
-    border:none;
+    border: none;
+    background-color: #ffffff;
 }
 
-.col, .col-row{
+.form-container {
+    padding: 20px;
+    background: linear-gradient(to right,rgba(0,0,0,0.1),rgba(0,0,0,0.1));
+    border-radius: 10px;
+    margin-bottom: 40px;
+}
+
+.col,
+.col-row {
     margin-top: 20px;
 }
-.col-left{
+
+.col-left {
     margin-left: 30px;
 }
 
-.btn-post-job{
-    width:200px;
-    height:60px;
+.btn-post-job {
+    width: 200px;
+    height: 60px;
     background-color: #1CA774;
-    color:white;
+    color: white;
     border-radius: 5px;
     font-size: 18px;
     font-weight: 600;
     cursor: pointer;
-    border:2px solid transparent;
+    border: 2px solid transparent;
     align-items: right;
     justify-content: right;
-    margin-left: 1130px;
+    margin-left: 1090px;
 }
-.btn-post-job:hover{
+
+.btn-post-job:hover {
     background: transparent;
-    color:black;
-    border:2px solid #1CA774;
+    color: black;
+    border: 2px solid #1CA774;
     transition: 0.3s ease-in-out;
 }
 
-.job-form-component-header{
-    border-bottom: 1px solid rgba(221, 199, 199, 0.47);
-    padding:8px 0px;
+.job-form-component-header {
+    border-bottom: 1px solid rgba(161, 153, 153, 0.638);
+    padding: 8px 0px;
 }
 
 
-.job-form-component-header h3{
+.job-form-component-header h3 {
     font-family: "Inria Sans", sans-serif;
     font-size: 22px;
 }
 
 
-.description{
-    width:1330px;
+.description {
+    width: 1290px;
     border-radius: 5px;
     background-color: #ffffff;
-    height:100px;
+    height: 100px;
 }
