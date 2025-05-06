@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+:root {
+  --sonner-success-bg: hsl(142, 71%, 45%);
+  --sonner-error-bg: hsl(0, 84%, 60%);
+  --sonner-warning-bg: hsl(38, 92%, 50%);
+  --sonner-info-bg: hsl(221, 83%, 53%);
+  --sonner-text-color: white;
+}
+
 * {
   margin: 0;
   padding: 0;

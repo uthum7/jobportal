@@ -1,8 +1,12 @@
 import "./formstyle.css";
 import { useRef, useState } from "react";
+import { toast } from 'sonner';
+
 const JobFormComponent = () => {
-
-
+  const [requirements, setRequirements] = useState([]);
+  const [qualifications, setQualifications] = useState([]);
+  const [responsibilities, setResponsibilities] = useState([]);
+  const [tags, setTags] = useState([]);
   const title = useRef("");
   const location = useRef("");
   const employmentType = useRef("");
@@ -10,7 +14,10 @@ const JobFormComponent = () => {
   const jobType = useRef("");
   const mode = useRef("");
   const jobDescription = useRef("");
-
+  const requirement = useRef("");
+  const qualification = useRef("");
+  const responsibility = useRef("");
+  const tag = useRef("");
   const [titledata, setTitle] = useState("");
   const [locationdata, setLocation] = useState("");
   const [employmentTypedata, setEmploymentType] = useState("");
@@ -29,10 +36,65 @@ const JobFormComponent = () => {
     setJobType(jobType.current.value);
     setMode(mode.current.value);
     setJobDescription(jobDescription.current.value);
-
   }
+
+  const handleAddRequirement = (e) => {
+    e.preventDefault();
+    setRequirements([...requirements, requirement.current.value]);
+    toast.success("Requirement added successfully", {
+      className: 'bg-emerald-700 text-white',
+    });
+    console.log(requirements);
+    requirement.current.value = "";
+  }
+
+  const handleAddQualification = (e) => {
+    e.preventDefault();
+    setQualifications([...qualifications, qualification.current.value]);
+    toast.success("Qualification added successfully", {
+      className: 'bg-emerald-700 text-white',
+    });
+  }
+
+  const handleDeleteRequirement = (index) => {
+    toast.success("Requirement deleted successfully");
+    setRequirements(requirements.filter((_, i) => i !== index));
+    console.log(requirements);
+  }
+
+  const handleDeleteQualification = (index) => {
+    toast.success("Qualification deleted successfully");
+    setQualifications(qualifications.filter((_, i) => i !== index));
+    console.log(qualifications);
+  }
+
+  const handleAddResponsibility = (e) => {
+    e.preventDefault();
+    setResponsibilities([...responsibilities, responsibility.current.value]);
+    toast.success("Responsibility added successfully");
+  }
+
+  const handleDeleteResponsibility = (index) => {
+    toast.success("Responsibility deleted successfully");
+    setResponsibilities(responsibilities.filter((_, i) => i !== index));
+    console.log(responsibilities);
+  }
+
+  const handleAddTag = (e) => {
+    e.preventDefault();
+    setTags([...tags, tag.current.value]);
+    toast.success("Tag added successfully");
+  }
+
+  const handleDeleteTag = (index) => {
+    toast.success("Tag deleted successfully");
+    setTags(tags.filter((_, i) => i !== index));
+    console.log(tags);
+  }
+
   return (
     <>
+
       <div className="job-form-component">
         <form onSubmit={handleSubmit}>
           <div className="basic-info form-container">
@@ -97,21 +159,116 @@ const JobFormComponent = () => {
             <div className="row">
               <div className="col-row">
                 <div className="label">Add New Requirement</div>
-                <input type="text" ref={title} className="input-text add-requirement" />
+                <input type="text" ref={requirement} className="input-text add-requirement" />
+
+                <button type="button" className="btn-add-requirement" onClick={handleAddRequirement}>Add</button>
               </div>
             </div>
             <div className="row">
               <div className="col-row">
                 <div className="requirement-container">
-                  <div className="requirement">
-                    <p>Requirement 1</p>
-                  </div>
+
+                  {
+                    requirements.map((requirement, index) => (
+                      <div className="requirement">
+                        <p key={index} className="requirement-text">{requirement}</p>
+                        <button type="button" className="btn-delete-requirement" onClick={() => handleDeleteRequirement(index)}>X</button>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+          <div className="qualifications form-container">
+            <div className="job-form-component-header">
+              <h3>Qualifications</h3>
+            </div>
+            <div className="row">
+              <div className="col-row">
+                <div className="label">Add New Qualification</div>
+                <input type="text" ref={qualification} className="input-text add-qualification" />
+
+                <button type="button" className="btn-add-qualification" onClick={handleAddQualification}>Add</button>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-row">
+                <div className="qualification-container">
+                  {
+                    qualifications.map((qualification, index) => (
+                      <div className="qualification">
+                        <p key={index} className="qualification-text">{qualification}</p>
+                        <button type="button" className="btn-delete-qualification" onClick={() => handleDeleteQualification(index)}>X</button>
+                      </div>
+                    ))
+                  }
                 </div>
               </div>
             </div>
           </div>
-        </form>
-      </div>
+
+
+          <div className="responsibilities form-container">
+            <div className="job-form-component-header">
+              <h3>Responsibilities</h3>
+            </div>
+            <div className="row">
+              <div className="col-row">
+                <div className="label">Add New Responsibility</div>
+                <input type="text" ref={responsibility} className="input-text add-responsibility" />
+
+                <button type="button" className="btn-add-responsibility" onClick={handleAddResponsibility}>Add</button>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-row">
+                <div className="responsibility-container">
+                  {
+                    responsibilities.map((responsibility, index) => (
+                      <div className="responsibility">
+                        <p key={index} className="responsibility-text">{responsibility}</p>
+                        <button type="button" className="btn-delete-responsibility" onClick={() => handleDeleteResponsibility(index)}>X</button>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="tags form-container">
+            <div className="job-form-component-header">
+              <h3>Tags</h3>
+            </div>
+            <div className="row">
+              <div className="col-row">
+                <div className="label">Add New Tag</div>
+                <input type="text" ref={tag} className="input-text add-tag" />
+
+                <button type="button" className="btn-add-tag" onClick={handleAddTag}>Add</button>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-row">
+                <div className="tag-container">
+                  {
+                    tags.map((tag, index) => (
+                      <div className="tag">
+                        <p key={index} className="tag-text">{tag}</p>
+                        <button type="button" className="btn-delete-tag" onClick={() => handleDeleteTag(index)}>X</button>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </form >
+      </div >
     </>
   )
 }
