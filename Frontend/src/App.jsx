@@ -1,13 +1,13 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-
-import Navbar from "./components/Navbar/Navbar.jsx"; 
-import "./pages/Homepage/Homepage.css";           
-import Footer from "./components/Footer/Footer.jsx"; 
+import { Toaster } from 'sonner';
+import Navbar from "./components/Navbar/Navbar.jsx";
+import "./pages/Homepage/Homepage.css";
+import Footer from "./components/Footer/Footer.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
 
 
-import Homepage from "./pages/Homepage/Homepage.jsx"; 
+import Homepage from "./pages/Homepage/Homepage.jsx";
 import Managecounselor from "./pages/Admin/managecounselor.jsx";
 import CounseleeDashboard from "./pages/counselee/dashboard.jsx"
 import CounseleeProfile from "./pages/counselee/profile.jsx"
@@ -41,21 +41,32 @@ import EmployeePage from "./pages/Employee/EmployeePage.jsx"
 
 
 function App() {
-    return (
-        <>
-            <Navbar />
-           
+  return (
+    <>
+      <Navbar />
+      <Toaster position="top-center" offset={{ bottom: '24px', right: "16px", left: "16px" }} theme="light" toastOptions={{
+        className: 'bg-indigo-600 text-white',
+        classNames: {
+          toast: 'bg-indigo-600 text-white',
+          title: 'text-lg font-bold',
+          description: 'text-indigo-100',
+          success: 'bg-green-600',
+          error: 'bg-red-600',
+          warning: 'bg-yellow-600',
+          info: 'bg-blue-600',
+        }
+      }} />
 
-            <Routes>
-                <Route path="/" element={<Homepage />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/managecounselor" element={<Managecounselor />} />
-                <Route path="/Cv" element={<Cv />} />
-                <Route path="/Cv2" element={<Cv2 />} />
-                <Route path="/Cv3" element={<Cv3 />} />
-                <Route path="/Cv4" element={<Cv4 />} />
-                <Route path="/Cv5" element={<Cv5 />} />
-                 <Route path="/counselee/dashboard" element={<CounseleeDashboard />} />
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/managecounselor" element={<Managecounselor />} />
+        <Route path="/Cv" element={<Cv />} />
+        <Route path="/Cv2" element={<Cv2 />} />
+        <Route path="/Cv3" element={<Cv3 />} />
+        <Route path="/Cv4" element={<Cv4 />} />
+        <Route path="/Cv5" element={<Cv5 />} />
+        <Route path="/counselee/dashboard" element={<CounseleeDashboard />} />
         <Route path="/counselee/profile" element={<CounseleeProfile />} />
         <Route path="/counselee/bookings" element={<CounseleeBookings />} />
         <Route path="/counselee/find-counselor" element={<FindCounselor />} />
@@ -66,9 +77,9 @@ function App() {
         <Route path="/counselee/messages" element={<Messages />} />
         <Route path="/counselee/change-password" element={<ChangePassword />} />
         <Route path="/counselee/delete-account" element={<DeleteAccount />} />
-        
-         {/* Counselor Routes */}
-         <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
+
+        {/* Counselor Routes */}
+        <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
         <Route path="/counselor/profile" element={<CounselorProfile />} />
         <Route path="/counselor/bookings" element={<CounselorBookings />} />
         <Route path="/counselor/schedule" element={<CounselorSchedule />} />
@@ -77,18 +88,18 @@ function App() {
         <Route path="/counselor/change-password" element={<CounselorChangePassword />} />
         <Route path="/counselor/delete-account" element={<CounselorDeleteAccount />} />
 
-        <Route path="/employee" element={<EmployeePage/>}/>
-        
-        
-        
+        <Route path="/employee" element={<EmployeePage />} />
+
+
+
         <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<Homepage />} />
-          
-            </Routes>
 
-            <Footer />
-        </>
-    );
+      </Routes>
+
+      <Footer />
+    </>
+  );
 }
 
 export default App;

@@ -57,6 +57,7 @@
 .job-form-component-header {
     border-bottom: 1px solid rgba(161, 153, 153, 0.638);
     padding: 8px 0px;
+    margin-bottom: 10px;
 }
 
 
@@ -66,21 +67,45 @@
 }
 
 
-.description, .add-requirement {
+.description, .add-requirement, .add-qualification, .add-responsibility, .add-tag {
     width: 1290px;
     border-radius: 5px;
     background-color: #ffffff;
     height: 100px;
 }
-.add-requirement{
+.add-requirement, .add-qualification, .add-responsibility, .add-tag{
     height:40px;
+    margin-bottom: 10px;
+    
 }
-
-.requirement{
-    background-color: #134ca161;
+.btn-add-requirement, .btn-add-qualification, .btn-add-responsibility, .btn-add-tag{
+    width: 100px;
+    height: 40px;
+    background-color: transparent;
+    color: black;
+    border-radius: 5px;
+    font-size: 20px;
+    border: 2px solid #1CA774;
+    font-weight: 600;
+    cursor: pointer;
+}   
+.requirement, .qualification, .responsibility, .tag{
+    background-color: #6e96d261;
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
     color: #000;
-    width: 1290px;
+    width: 800px;
+    display: flex;
+}
+.btn-delete-requirement, .btn-delete-qualification, .btn-delete-responsibility, .btn-delete-tag{
+    width:30px;
+    height:30px;
+    background-color: red;
+    color: white;
+    border-radius: 50px;
+    padding: auto;
+}
+.requirement-text, .qualification-text, .responsibility-text, .tag-text{
+    flex-basis:98%;
 }
