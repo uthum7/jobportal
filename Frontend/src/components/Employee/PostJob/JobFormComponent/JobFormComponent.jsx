@@ -146,11 +146,7 @@ const JobFormComponent = () => {
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-row">
-                <button type="submit" className="btn-post-job">Post Job</button>
-              </div>
-            </div>
+
           </div>
           <div className="requirements form-container">
             <div className="job-form-component-header">
@@ -265,6 +261,12 @@ const JobFormComponent = () => {
                   }
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-row">
+              <button type="submit" className="btn-post-job">Post Job</button>
             </div>
           </div>
         </form >
