@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.route.js";
 import { connectDB } from "./lib/db.js";
 
 import messageRoutes from "./routes/message.route.js";
+import jobPostRoutes from "./routes/JobPost.route.js";
 
 
 
@@ -17,6 +18,7 @@ app.use(express.json())
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/job", jobPostRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on PORT: ${PORT}`);
