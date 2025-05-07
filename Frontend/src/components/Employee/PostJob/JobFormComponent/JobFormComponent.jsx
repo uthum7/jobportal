@@ -8,8 +8,7 @@ const JobFormComponent = () => {
   const [responsibilities, setResponsibilities] = useState([]);
   const [tags, setTags] = useState([]);
   const title = useRef("");
-  const location = useRef("");
-  const employmentType = useRef("");
+  const exp = useRef("");
   const deadline = useRef("");
   const jobType = useRef("");
   const mode = useRef("");
@@ -19,8 +18,7 @@ const JobFormComponent = () => {
   const responsibility = useRef("");
   const tag = useRef("");
   const [titledata, setTitle] = useState("");
-  const [locationdata, setLocation] = useState("");
-  const [employmentTypedata, setEmploymentType] = useState("");
+  const [expdata, setExp] = useState("");
   const [deadlinedata, setDeadline] = useState("");
   const [jobTypedata, setJobType] = useState("");
   const [modedata, setMode] = useState("");
@@ -28,16 +26,20 @@ const JobFormComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    setTitle(title.current.value);
-    setLocation(location.current.value);
-    setEmploymentType(employmentType.current.value);
-    setDeadline(deadline.current.value);
-    setJobType(jobType.current.value);
-    setMode(mode.current.value);
-    setJobDescription(jobDescription.current.value);
+    const job = {
+      JobTitle: title.current.value,
+      JobYearsExperience: exp.current.value,
+      JobMode: mode.current.value,
+      JobType: jobType.current.value,
+      JobDeadline: deadline.current.value ? new Date(deadline.current.value) : null,
+      JobDescription: jobDescription.current.value,
+      Requirements: requirements,
+      Qualifications: qualifications,
+      Responsibilities: responsibilities,
+      Tags: tags,
+    }
+    
   }
-
   const handleAddRequirement = (e) => {
     e.preventDefault();
     setRequirements([...requirements, requirement.current.value]);
@@ -107,8 +109,8 @@ const JobFormComponent = () => {
                 <input type="text" ref={title} className="input-text" />
               </div>
               <div className="col  col-left">
-                <div className="label">Location</div>
-                <input type="text" ref={location} className="input-text" />
+                <div className="label">Years of Experience</div>
+                <input type="text" ref={exp} className="input-text" />
               </div>
             </div>
 
@@ -273,6 +275,7 @@ const JobFormComponent = () => {
       </div >
     </>
   )
+
 }
 
 export default JobFormComponent

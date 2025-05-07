@@ -3,6 +3,6 @@ import { createJobPost } from "../controllers/JobPost.controller.js";
 
 const router = express.Router();
 
-router.get("/create", createJobPost);
+router.post("/create", createJobPost);
 
 export default router;

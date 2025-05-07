@@ -48,6 +48,7 @@ import EmployeePage from "./pages/Employee/EmployeePage.jsx"
 
 import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
 import MessageNavbar from "./components/Navbar/MessageNavbar"; // ✅
+import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
 
 function App() {
   const location = useLocation();
@@ -116,6 +117,7 @@ function App() {
         <Route path="/employee" element={<EmployeePage />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/" element={<Homepage />} />
+        <Route path="/jobform" element={<JobFormComponent />} />
 
 
         
