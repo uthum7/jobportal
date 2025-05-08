@@ -8,34 +8,50 @@ import { Link } from "react-router-dom";
 
 
 const experienceOptions = [
-  { label: "Beginner", value: "Beginner" },
-  { label: "1+ Year", value: "1+ Year" },
-  { label: "2 Year", value: "2 Year" },
-  { label: "3+ Year", value: "3+ Year" },
-  { label: "4+ Year", value: "4+ Year" },
-  { label: "5+ Year", value: "5+ Year" },
-  { label: "10+ Year", value: "10+ Year" },
+  { label: "Beginner", value: 0 },
+  { label: "1 Year", value: 1 },
+  { label: "2 Years", value: 2 },
+  { label: "3 Years", value: 3 },
+  { label: "4 Years", value: 4 },
+  { label: "5 Years", value: 5 },
+  { label: "10+ Years", value: 10 },
 ];
+
+const postedDateOptions = [
+  { label: "Last Hour", value: "last_hour" },
+  { label: "Last 24 Hours", value: "last_24_hours" },
+  { label: "Last Week", value: "last_week" },
+  { label: "Older", value: "older" },
+  { label: "Last 30 Days", value: "last_30_days" },
+];
+
 
 const ApplyForAjob = () => {
   const [jobs, setJobs] = useState([]);
+  const [displayJobs, setDisplayJobs] = useState(jobs);
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState("");
-  const [selectedExperience, setSelectedExperience] = useState([]);
+  const [selectedExperience, setSelectedExperience] = useState(null);
+  const [selectedPostedDate, setSelectedPostedDate] = useState(null);
+
 
   useEffect(() => {
     setLoading(true);
 
     const params = {};
     if (keyword) params.keyword = keyword;
-    if (selectedExperience.length > 0) {
+    /*if (selectedExperience.length > 0) {
       params.experience = selectedExperience.join(",");
+    }*/
+    if (selectedExperience !== null) {
+      params.experience = selectedExperience;
     }
 
     axios
       .get("http://localhost:5001/api/jobs", { params })
       .then((response) => {
         setJobs(response.data);
+        filterJobs(selectedPostedDate, selectedExperience);
         setLoading(false);
       })
       .catch((error) => {
@@ -44,13 +60,69 @@ const ApplyForAjob = () => {
       });
   }, [keyword, selectedExperience]);
 
+  useEffect(() => {
+    // Reapply filters every time jobs or selected filters change
+    filterJobs(selectedPostedDate, selectedExperience);
+  }, [selectedPostedDate, selectedExperience, jobs]);  // Trigger whenever jobs or filters change
+
+
   const handleExperienceChange = (value) => {
-    setSelectedExperience((prev) =>
-      prev.includes(value)
-        ? prev.filter((exp) => exp !== value)
-        : [...prev, value]
-    );
+
+    // Toggle selection: deselect if clicked again
+    const newValue = selectedExperience === value ? null : value;
+    setSelectedExperience(newValue);
+
+    // Filter or show all
+    if (newValue === null) {
+      setDisplayJobs(jobs);
+    } else {
+      const filtered = jobs.filter((job) => job.JobExperienceYears === newValue);
+      setDisplayJobs(filtered);
+    }
   };
+
+
+
+  const handlePostedDateChange = (value) => {
+    const newValue = selectedPostedDate === value ? null : value;
+    setSelectedPostedDate(newValue);
+  };
+
+
+  const filterJobs = (postedDateFilter, experienceFilter) => {
+    let filteredJobs = jobs;
+
+    // Filter by experience
+    if (experienceFilter !== null) {
+      filteredJobs = filteredJobs.filter((job) => job.JobExperienceYears === experienceFilter);
+    }
+
+    // Filter by posted date
+    if (postedDateFilter !== null) {
+      const now = new Date();
+      filteredJobs = filteredJobs.filter((job) => {
+        const postDate = new Date(job.postedDate);
+
+        switch (postedDateFilter) {
+          case "last_hour":
+            return now - postDate <= 60 * 60 * 1000;
+          case "last_24_hours":
+            return now - postDate <= 24 * 60 * 60 * 1000;
+          case "last_week":
+            return now - postDate <= 7 * 24 * 60 * 60 * 1000;
+          case "last_30_days":
+            return now - postDate <= 30 * 24 * 60 * 60 * 1000;
+            case "older":
+              return now - postDate > 30 * 24 * 60 * 60 * 1000;            
+          default:
+            return true;
+        }
+      });
+    }
+
+    setDisplayJobs(filteredJobs);
+  };
+
 
   return (
     <div className="dashboard-container">
@@ -61,10 +133,10 @@ const ApplyForAjob = () => {
         <div className="header">
           <h1 className="page-title">Apply For A Job</h1>
           <div className="breadcrumb">
-  <Link to="/" className="breadcrumb-link">Home</Link>
-  <span className="breadcrumb-separator">/</span>
-  <Link to="/apply-for-a-job" className="breadcrumb-link">Apply For A Job</Link>
-</div>
+            <Link to="/" className="breadcrumb-link">Home</Link>
+            <span className="breadcrumb-separator">/</span>
+            <Link to="/apply-for-a-job" className="breadcrumb-link">Apply For A Job</Link>
+          </div>
 
         </div>
 
@@ -81,6 +153,7 @@ const ApplyForAjob = () => {
               onChange={(e) => setKeyword(e.target.value)}
             />
 
+            {/*Experience Filter */}
             <div className="experience-filter">
               <h5 style={{ color: "#808080", marginTop: "20px" }}>Experience Level</h5>
               <div className="experience-options">
@@ -89,7 +162,7 @@ const ApplyForAjob = () => {
                     <label className="checkbox-container">
                       <input
                         type="checkbox"
-                        checked={selectedExperience.includes(option.value)}
+                        checked={selectedExperience === option.value}
                         onChange={() => handleExperienceChange(option.value)}
                       />
                       <span className="checkmark"></span>
@@ -100,16 +173,38 @@ const ApplyForAjob = () => {
               </div>
 
             </div>
+
+
+            {/* {Posted Date Filter} */}
+            <div className="posted-date-filter">
+              <h5 style={{ color: "#808080", marginTop: "20px" }}>Posted Date</h5>
+              <div className="posted-date-options">
+                {postedDateOptions.map((option) => (
+                  <div key={option.value} className="posted-date-option">
+                    <label className="checkbox-container">
+                      <input
+                        type="checkbox"
+                        checked={selectedPostedDate === option.value}
+                        onChange={() => handlePostedDateChange(option.value)}
+                      />
+
+                      <span className="checkmark"></span>
+                      <span className="option-label">{option.label}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Right job cards */}
           <div className="job-cards-container">
             {loading ? (
               <p>Loading jobs...</p>
-            ) : jobs.length > 0 ? (
-              jobs.map((job) => <JobCard key={job._id} job={job} />)
+            ) : displayJobs.length > 0 ? (
+              displayJobs.map((job) => <JobCard key={job._id} job={job} />)
             ) : (
-              <p>No jobs found matching your criteria.</p>
+              jobs.map((job) => <JobCard key={job._id} job={job} />)
             )}
           </div>
         </div>

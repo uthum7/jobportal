@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+/*import mongoose from "mongoose";
 
 const jobSchema = new mongoose.Schema({
   jobId: { type: String, required: true, unique: true }, // J0001 format
@@ -20,4 +20,24 @@ const jobSchema = new mongoose.Schema({
   
 });
 
+export const Job = mongoose.model("Job", jobSchema);*/
+
+import mongoose from "mongoose";
+
+const jobSchema = new mongoose.Schema({
+  JobTitle: { type: String, required: true },
+  JobExperienceYears: { type: Number, required: true },
+  JobMode: { type: String, required: true }, // e.g., Onsite, Remote
+  JobType: { type: String, required: true },  // e.g., Full-time, Part-time
+  JobDeadline: { type: Date },
+  JobDescription: { type: String, required: true },
+  Requirements: { type: [String], default: [] },
+  Responsibilities: { type: [String], default: [] },
+  Qualifications: { type: [String], default: [] },
+  Tags: { type: [String], default: [] },
+  postedDate: { type: Date, required: true },
+});
+
 export const Job = mongoose.model("Job", jobSchema);
+
+

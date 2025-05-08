@@ -12,10 +12,11 @@ const JobCard = ({ job }) => {
 
   return (
     <div className="job-card">
-      <h3>{job.title}</h3>
-      <p><strong>Type:</strong> {job.jobType}</p>
-      <p><strong>Role:</strong> {job.role}</p>
-      <p><strong>Experience:</strong> {job.experienceYears} years</p>
+      <h3>{job.JobTitle}</h3>
+      <p><strong>Type:</strong> {job.JobType}</p>
+      <p><strong>Mode:</strong> {job.JobMode}</p>
+      <p><strong>Experience:</strong> {job.JobExperienceYears} years</p>
+      <p><strong>Deadline:</strong> {new Date(job.JobDeadline).toLocaleDateString()}</p>
       <button className="see-more-btn" onClick={handleSeeMore}>
         See More
       </button>

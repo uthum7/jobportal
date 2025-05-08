@@ -47,6 +47,23 @@
   align-items: center;
 }
 
+/* Posted date filter styles */
+.posted-date-filter {
+  margin-top: 10px;
+}
+
+.posted-date-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.posted-date-option {
+  display: flex;
+  align-items: center;
+}
+
 /* Custom checkbox styling */
 .checkbox-container {
   display: flex;
@@ -114,8 +131,9 @@
 .job-cards-container {
   flex: 3;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  padding-left: 30px;
 }
 
 @media (max-width: 768px) {
