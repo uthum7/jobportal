@@ -1,4 +1,9 @@
 import React from "react";
+
+import { Toaster } from 'sonner';
+import './index.css';
+import "./pages/Homepage/Homepage.css";
+
 import { Route, Routes, useLocation } from "react-router-dom"; // ✅ add useLocation
 import './index.css';
 
@@ -8,6 +13,7 @@ import "./pages/Homepage/Homepage.css";
 
 import Admin from "./pages/Admin/Admin.jsx";
 import Homepage from "./pages/Homepage/Homepage.jsx"; 
+
 import Managecounselor from "./pages/Admin/managecounselor.jsx";
 
 import CounseleeDashboard from "./pages/counselee/dashboard.jsx";
@@ -29,20 +35,24 @@ import Cv3 from './pages/Cv3/Cv3.jsx';
 import Cv4 from './pages/Cv4/Cv4.jsx';
 import Cv5 from './pages/Cv5/Cv5.jsx';
 
-import CounselorDashboard from "./pages/counselor/dashboard.jsx";
-import CounselorProfile from "./pages/counselor/profile.jsx";
-import CounselorBookings from "./pages/counselor/bookings.jsx";
-import CounselorSchedule from "./pages/counselor/schedule.jsx";
-import CounselorCounselees from "./pages/counselor/counselees.jsx";
-import CounselorMessages from "./pages/counselor/messages.jsx";
-import CounselorChangePassword from "./pages/counselor/change-password.jsx";
-import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx";
+import CounselorDashboard from "./pages/counselor/dashboard.jsx"
+import CounselorProfile from "./pages/counselor/profile.jsx"
+import CounselorBookings from "./pages/counselor/bookings.jsx"
+import CounselorSchedule from "./pages/counselor/schedule.jsx"
+import CounselorCounselees from "./pages/counselor/counselees.jsx"
+import CounselorMessages from "./pages/counselor/messages.jsx"
+import CounselorChangePassword from "./pages/counselor/change-password.jsx"
+import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx"
+import EmployeePage from "./pages/Employee/EmployeePage.jsx"
+
 
 import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
 import MessageNavbar from "./components/Navbar/MessageNavbar"; // ✅
+import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
 
 function App() {
   const location = useLocation();
+
 
   const showMessageNavbar = [
     "/message/messagehome",
@@ -54,11 +64,24 @@ function App() {
 
   return (
     <>
+      <Toaster position="top-center" offset={{ bottom: '24px', right: "16px", left: "16px" }} theme="light" toastOptions={{
+        className: 'bg-indigo-600 text-white',
+        classNames: {
+          toast: 'bg-indigo-600 text-white',
+          title: 'text-lg font-bold',
+          description: 'text-indigo-100',
+          success: 'bg-green-600',
+          error: 'bg-red-600',
+          warning: 'bg-yellow-600',
+          info: 'bg-blue-600',
+        }
+      }} />
       <Navbar />
       {showMessageNavbar && <MessageNavbar />}
 
       
       
+
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/admin" element={<Admin />} />
@@ -89,7 +112,13 @@ function App() {
         <Route path="/counselor/messages" element={<CounselorMessages />} />
         <Route path="/counselor/change-password" element={<CounselorChangePassword />} />
         <Route path="/counselor/delete-account" element={<CounselorDeleteAccount />} />
+
+
+        <Route path="/employee" element={<EmployeePage />} />
         <Route path="/logout" element={<Logout />} />
+        <Route path="/" element={<Homepage />} />
+        <Route path="/jobform" element={<JobFormComponent />} />
+
 
         
         <Route path="/message/*" element={<MessageRoutes />} />
@@ -98,6 +127,7 @@ function App() {
       
       
       <Footer/>
+
     </>
   );
 }

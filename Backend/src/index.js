@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.route.js";
 import { connectDB } from "./lib/db.js";
 
 import messageRoutes from "./routes/message.route.js";
+import jobPostRoutes from "./routes/JobPost.route.js";
 import cookieParser from "cookie-parser";
 import{app,server} from "./lib/socket.js";
 
@@ -24,7 +25,9 @@ app.use(cors({
     }))
 
 app.use("/api/auth", authRoutes);
-app.use("/api/messages", messageRoutes);
+app.use("/api/message", messageRoutes);
+app.use("/api/job", jobPostRoutes);
+
 
 server.listen(PORT, () => {
     console.log(`Server is running on PORT: ${PORT}`);
