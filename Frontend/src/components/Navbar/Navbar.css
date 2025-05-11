@@ -36,13 +36,14 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 200px; /* Fixed width for the logo area */
+  width: auto; /* Changed from fixed 200px width */
 }
 
 .logo img {
-  width: 100%; /* Adjust within the container */
-  height: auto;
-  max-height: 40px;
+  height: 120px; /* Set a fixed height */
+  width: auto; /* Let width adjust proportionally */
+  max-width: 350px; /* Prevent it from getting too wide */
+  object-fit: contain; /* Ensure the image maintains its aspect ratio */
 }
 
 /* Mobile Nav Overlay */
