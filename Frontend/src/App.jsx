@@ -1,8 +1,10 @@
 import React from "react";
-import { Route, Routes, useLocation } from "react-router-dom"; // ✅ add useLocation
+import { Route, Routes, useLocation } from "react-router-dom"; 
 import './index.css';
 
 import Navbar from "./components/Navbar/Navbar.jsx"; 
+import NavbarSimple from "./components/Navbar/NavbarSimple.jsx"; 
+
 import Footer from "./components/Footer/Footer.jsx"; 
 import "./pages/Homepage/Homepage.css";
 
@@ -39,10 +41,13 @@ import CounselorChangePassword from "./pages/counselor/change-password.jsx";
 import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx";
 
 import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
-import MessageNavbar from "./components/Navbar/MessageNavbar"; // ✅
+import MessageNavbar from "./components/Navbar/MessageNavbar"; 
 
 function App() {
   const location = useLocation();
+
+  // Check if the current path starts with "/message"
+  const isMessagePage = location.pathname.startsWith("/message");
 
   const showMessageNavbar = [
     "/message/messagehome",
@@ -52,9 +57,22 @@ function App() {
     "/message/profile"
   ].includes(location.pathname);
 
+  const showNavbarSimple = [
+    "/message/messagehome",
+    "/message/signup",
+    "/message/login",
+    "/message/setting",
+    "/message/profile"
+  ].includes(location.pathname);
+
+
   return (
     <>
-      <Navbar />
+      
+      {/* Only show main Navbar if NOT on a message page */}
+      {!isMessagePage && <Navbar />}
+      {showNavbarSimple && <NavbarSimple />}
+      
       {showMessageNavbar && <MessageNavbar />}
 
       
