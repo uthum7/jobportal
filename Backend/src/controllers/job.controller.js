@@ -4,31 +4,30 @@ export const getJobs = async (req, res) => {
   try {
     const { keyword, experience, postedDate } = req.query;
     const query = {};
+    const andConditions = [];
 
-    // Handle keyword search
+    // Keyword filter (JobTitle, JobDescription, Tags)
     if (keyword) {
-      const regex = new RegExp(keyword, "i"); // Case-insensitive partial match
-      query.$or = [
-        { JobTitle: regex },
-        { JobDescription: regex },
-        { Tags: regex }
-      ];
+      const regex = new RegExp(keyword, "i");
+      andConditions.push({
+        $or: [
+          { JobTitle: regex },
+          { JobDescription: regex },
+          { Tags: regex }
+        ]
+      });
     }
 
-    // Handle experience level filtering
+    // Experience filter
     if (experience) {
-      const experienceValue = parseInt(experience);
-    
-      if (!isNaN(experienceValue)) {
-        if (experienceValue === 0) {
-          // Beginner: Less than 1 year
-          query.JobExperienceYears = { $lt: 1 };
-        } else if (experienceValue === 10) {
-          // 10+ Years
-          query.JobExperienceYears = { $gte: 10 };
+      const exp = parseInt(experience);
+      if (!isNaN(exp)) {
+        if (exp === 0) {
+          andConditions.push({ JobExperienceYears: { $lt: 1 } });
+        } else if (exp === 10) {
+          andConditions.push({ JobExperienceYears: { $gte: 10 } });
         } else {
-          // Exact year match
-          query.JobExperienceYears = experienceValue;
+          andConditions.push({ JobExperienceYears: exp });
         }
       }
     }
@@ -36,43 +35,42 @@ export const getJobs = async (req, res) => {
     // Posted date filter
     if (postedDate) {
       const postedDateFilters = postedDate.split(",");
+      const now = Date.now();
       const postedDateConditions = [];
 
       postedDateFilters.forEach((filter) => {
         switch (filter) {
           case "last_hour":
-            postedDateConditions.push({
-              postedDate: { $gte: new Date(Date.now() - 60 * 60 * 1000) }
-            });
+            postedDateConditions.push({ postedDate: { $gte: new Date(now - 60 * 60 * 1000) } });
             break;
           case "last_24_hours":
-            postedDateConditions.push({
-              postedDate: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
-            });
+            postedDateConditions.push({ postedDate: { $gte: new Date(now - 24 * 60 * 60 * 1000) } });
             break;
           case "last_week":
-            postedDateConditions.push({
-              postedDate: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
-            });
+            postedDateConditions.push({ postedDate: { $gte: new Date(now - 7 * 24 * 60 * 60 * 1000) } });
             break;
           case "last_30_days":
-            postedDateConditions.push({
-              postedDate: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
-            });
+            postedDateConditions.push({ postedDate: { $gte: new Date(now - 30 * 24 * 60 * 60 * 1000) } });
             break;
           case "older":
-            postedDateConditions.push({
-              postedDate: { $lte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
-            });
-            break;
-          default:
+            postedDateConditions.push({ postedDate: { $lt: new Date(now - 30 * 24 * 60 * 60 * 1000) } });
             break;
         }
       });
 
       if (postedDateConditions.length > 0) {
-        query.$or = postedDateConditions;
+        andConditions.push({ $or: postedDateConditions });
       }
+    }
+
+    // Job Type filter
+    if (req.query.jobType) {
+      andConditions.push({ JobType: req.query.jobType });
+    }
+
+    // Combine all conditions
+    if (andConditions.length > 0) {
+      query.$and = andConditions;
     }
 
     const jobs = await Job.find(query).sort({ postedDate: -1 });
@@ -81,6 +79,9 @@ export const getJobs = async (req, res) => {
     res.status(500).json({ error: "Error fetching jobs", details: err.message });
   }
 };
+
+
+
 
 export const createJob = async (req, res) => {
   try {

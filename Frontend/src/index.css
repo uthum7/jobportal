@@ -33,7 +33,7 @@ button {
 /* Ensure footer stays at the bottom */
 .footer {
   z-index: 100;
-  position: relative;
+  /* position: relative; */
   width: 100%;
 }
 
@@ -48,3 +48,26 @@ button {
   }
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* Let only the main scrollbar handle vertical scroll */
+
+}
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 60px;
+  overflow: hidden;
+  /* overflow: auto; */
+}

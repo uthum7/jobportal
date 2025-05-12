@@ -1,5 +1,27 @@
 /* src/pages/JobSeeker/ApplyForAjob/ApplyForAjob.css */
 
+.ApplyJobMainContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Integrated layout for sidebar, filter, and job cards */
+.integrated-layout {
+  display: flex;
+  width: 100%;
+}
+
+.sidebar-wrapper {
+  width: 12rem;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 0;
+}
+
 .job-layout {
   display: flex;
   gap: 20px;
@@ -8,8 +30,8 @@
 
 /* Filter column */
 .filter-panel {
-  flex: 1;
-  max-width: 250px;
+  flex-shrink: 0;
+  width: 250px;
   padding: 15px;
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -94,11 +116,11 @@
   border-radius: 3px;
 }
 
-.checkbox-container:hover input ~ .checkmark {
+.checkbox-container:hover input~.checkmark {
   background-color: #f0f0f0;
 }
 
-.checkbox-container input:checked ~ .checkmark {
+.checkbox-container input:checked~.checkmark {
   background-color: #4CAF50;
   border: 1px solid #4CAF50;
 }
@@ -109,7 +131,7 @@
   display: none;
 }
 
-.checkbox-container input:checked ~ .checkmark:after {
+.checkbox-container input:checked~.checkmark:after {
   display: block;
 }
 
@@ -129,23 +151,82 @@
 
 /* Job cards area */
 .job-cards-container {
-  flex: 3;
+  flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
-  padding-left: 30px;
+}
+
+.footer1 {
+  margin-top: auto;
+  width: 100%;
+}
+
+/* Header styling */
+.header {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-link {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: #6b7280;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .job-cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .integrated-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar-wrapper {
+    width: 100%;
+  }
+  
+  .sidebar {
+    width: 100% !important;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .job-layout {
+    flex-direction: column;
+  }
+  
+  .filter-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .job-cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
   .job-cards-container {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-  .job-layout {
-    flex-direction: column;
-  }
-
-  .filter-panel {
-    max-width: 100%;
+    grid-template-columns: 1fr;
   }
 }

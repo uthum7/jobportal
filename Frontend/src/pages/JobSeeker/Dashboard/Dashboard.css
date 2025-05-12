@@ -6,8 +6,9 @@ body, html {
 /* Main Layout */
 .dashboard-container {
   display: flex;
-  height: 100vh;
+  /* height: 100vh; */
   background-color: #f3f4f6;
+  width: 100%;
 }
 
 /* Main Content Styles */
@@ -123,4 +124,28 @@ body, html {
 
 .chart {
   height: 16rem;
+}
+
+.integrated-layout {
+  display: flex;
+}
+
+.integrated-layout .sidebar {
+  position: static;
+  height: 100%;
+  border-right: 1px solid #e5e7eb;
+}
+
+.integrated-layout .main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #f9fafb;
+}
+
+/* Fix for the job layout to ensure proper alignment */
+.integrated-layout .job-layout {
+  align-items: flex-start;
 }

@@ -42,7 +42,7 @@ import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx"
 
 function App() {
     return (
-        <>
+        <div className="app-layout">
             <Navbar />
 
 
@@ -91,8 +91,8 @@ function App() {
 
             </Routes>
 
-            <Footer />
-        </>
+           
+        </div>
     );
 }
 

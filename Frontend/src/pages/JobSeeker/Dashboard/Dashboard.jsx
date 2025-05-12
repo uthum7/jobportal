@@ -15,6 +15,7 @@ import {
 import './Dashboard.css';
 import jobseeker from "/src/assets/img/JobSeeker/jobseeker.png";
 import JobseekerSidebar from '../../../components/JobseekerSidebar/JobseekerSidebar';
+import Footer from '../../../components/Footer/Footer';
 
 
 const monthlyData = [
@@ -97,6 +98,9 @@ const JobseekerDashboard = () => {
           </div>
         </div>
       </div>
+
+
+      <Footer />
     </div>
   );
 };
