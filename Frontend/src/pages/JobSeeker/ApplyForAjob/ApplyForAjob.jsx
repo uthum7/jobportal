@@ -34,6 +34,13 @@ const jobTypeOptions = [
   { label: "Project Base", value: "Project Base" },
 ];
 
+const jobModeOptions = [
+  { label: "Onsite", value: "Onsite" },
+  { label: "Remote", value: "Remote" },
+  { label: "Hybrid", value: "Hybrid" },
+];
+
+
 const ApplyForAjob = () => {
   const [jobs, setJobs] = useState([]);
   const [displayJobs, setDisplayJobs] = useState([]);
@@ -42,6 +49,8 @@ const ApplyForAjob = () => {
   const [selectedExperience, setSelectedExperience] = useState(null);
   const [selectedPostedDate, setSelectedPostedDate] = useState(null);
   const [selectedJobType, setSelectedJobType] = useState(null);
+  const [selectedJobMode, setSelectedJobMode] = useState(null);
+
 
   useEffect(() => {
     setLoading(true);
@@ -51,6 +60,7 @@ const ApplyForAjob = () => {
     if (selectedExperience !== null) params.experience = selectedExperience;
     if (selectedPostedDate !== null) params.postedDate = selectedPostedDate;
     if (selectedJobType !== null) params.jobType = selectedJobType;
+
 
     axios
       .get("http://localhost:5001/api/jobs", { params })
@@ -119,10 +129,10 @@ const ApplyForAjob = () => {
   return (
     <div className="ApplyJobMainContainer">
       <div className="dashboard-container">
-        
+
         <div className="main-content">
-          
-        <JobseekerSidebar/>
+
+          <JobseekerSidebar />
           <div className="header">
             <h1 className="page-title">Apply For A Job</h1>
             <div className="breadcrumb">

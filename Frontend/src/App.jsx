@@ -1,7 +1,9 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom"; 
+import './index.css';
 
-import Navbar from "./components/Navbar/Navbar.jsx";
+import Navbar from "./components/Navbar/Navbar.jsx"; 
+import NavbarSimple from "./components/Navbar/NavbarSimple.jsx"; 
 import "./pages/Homepage/Homepage.css";
 import Footer from "./components/Footer/Footer.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
@@ -30,31 +32,61 @@ import Cv3 from './pages/Cv3/Cv3.jsx';
 import Cv4 from './pages/Cv4/Cv4.jsx';
 import Cv5 from './pages/Cv5/Cv5.jsx';
 
-import CounselorDashboard from "./pages/counselor/dashboard.jsx"
-import CounselorProfile from "./pages/counselor/profile.jsx"
-import CounselorBookings from "./pages/counselor/bookings.jsx"
-import CounselorSchedule from "./pages/counselor/schedule.jsx"
-import CounselorCounselees from "./pages/counselor/counselees.jsx"
-import CounselorMessages from "./pages/counselor/messages.jsx"
-import CounselorChangePassword from "./pages/counselor/change-password.jsx"
-import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx"
+import CounselorDashboard from "./pages/counselor/dashboard.jsx";
+import CounselorProfile from "./pages/counselor/profile.jsx";
+import CounselorBookings from "./pages/counselor/bookings.jsx";
+import CounselorSchedule from "./pages/counselor/schedule.jsx";
+import CounselorCounselees from "./pages/counselor/counselees.jsx";
+import CounselorMessages from "./pages/counselor/messages.jsx";
+import CounselorChangePassword from "./pages/counselor/change-password.jsx";
+import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx";
 
+
+import MessageNavbar from "./components/Navbar/MessageNavbar"; 
 
 function App() {
-    return (
-        <div className="app-layout">
-            <Navbar />
+  const location = useLocation();
+
+  // Check if the current path starts with "/message"
+  const isMessagePage = location.pathname.startsWith("/message");
+
+  const showMessageNavbar = [
+    "/message/messagehome",
+    "/message/signup",
+    "/message/login",
+    "/message/setting",
+    "/message/profile"
+  ].includes(location.pathname);
+
+  const showNavbarSimple = [
+    "/message/messagehome",
+    "/message/signup",
+    "/message/login",
+    "/message/setting",
+    "/message/profile"
+  ].includes(location.pathname);
 
 
-            <Routes>
-                <Route path="/" element={<Homepage />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/managecounselor" element={<Managecounselor />} />
-                <Route path="/Cv" element={<Cv />} />
-                <Route path="/Cv2" element={<Cv2 />} />
-                <Route path="/Cv3" element={<Cv3 />} />
-                <Route path="/Cv4" element={<Cv4 />} />
-                <Route path="/Cv5" element={<Cv5 />} />
+  return (
+    <>
+      
+      {/* Only show main Navbar if NOT on a message page */}
+      {!isMessagePage && <Navbar />}
+      {showNavbarSimple && <NavbarSimple />}
+      
+      {showMessageNavbar && <MessageNavbar />}
+
+      
+      
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/managecounselor" element={<Managecounselor />} />
+        <Route path="/Cv" element={<Cv />} />
+        <Route path="/Cv2" element={<Cv2 />} />
+        <Route path="/Cv3" element={<Cv3 />} />
+        <Route path="/Cv4" element={<Cv4 />} />
+        <Route path="/Cv5" element={<Cv5 />} />
 
                 {/* JobSeeker Routes */}
                 <Route path="/JobSeeker/dashboard" element={<JobSeekerDashboard />} />
@@ -91,8 +123,8 @@ function App() {
 
             </Routes>
 
-           
-        </div>
+          
+        </>
     );
 }
 
