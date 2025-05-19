@@ -7,7 +7,7 @@ const JobCard = ({ job }) => {
   const navigate = useNavigate();
 
   const handleSeeMore = () => {
-    navigate(`/job-details/${job._id}`);
+    navigate(`/JobSeeker/job-details/${job._id}`);
   };
 
   return (

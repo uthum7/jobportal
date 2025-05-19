@@ -83,6 +83,21 @@ export const getJobs = async (req, res) => {
   }
 };
 
+export const getJobById = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const job = await Job.findById(jobId);
+    
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    
+    res.status(200).json(job);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching job details", details: err.message });
+  }
+};
+
 export const createJob = async (req, res) => {
   try {
     const jobData = req.body;

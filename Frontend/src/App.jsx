@@ -1,9 +1,9 @@
 import React from "react";
-import { Route, Routes, useLocation } from "react-router-dom"; 
+import { Route, Routes, useLocation } from "react-router-dom";
 import './index.css';
 
-import Navbar from "./components/Navbar/Navbar.jsx"; 
-import NavbarSimple from "./components/Navbar/NavbarSimple.jsx"; 
+import Navbar from "./components/Navbar/Navbar.jsx";
+import NavbarSimple from "./components/Navbar/NavbarSimple.jsx";
 import "./pages/Homepage/Homepage.css";
 import Footer from "./components/Footer/Footer.jsx";
 import Admin from "./pages/Admin/Admin.jsx";
@@ -26,6 +26,7 @@ import Logout from "./pages/counselee/logout.jsx"
 import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx"
 import MyProfile from "./pages/JobSeeker/MyProfile/MyProfile.jsx"
 import ApplyForAjob from "./pages/JobSeeker/ApplyForAjob/ApplyForAjob";
+import JobDetails from "./pages/JobSeeker/JobDetails/JobDetails.jsx";
 import Cv from './pages/Cv/Cv.jsx';
 import Cv2 from './pages/Cv2/Cv2.jsx';
 import Cv3 from './pages/Cv3/Cv3.jsx';
@@ -42,7 +43,7 @@ import CounselorChangePassword from "./pages/counselor/change-password.jsx";
 import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx";
 
 
-import MessageNavbar from "./components/Navbar/MessageNavbar"; 
+import MessageNavbar from "./components/Navbar/MessageNavbar";
 
 function App() {
   const location = useLocation();
@@ -69,15 +70,15 @@ function App() {
 
   return (
     <>
-      
+
       {/* Only show main Navbar if NOT on a message page */}
       {!isMessagePage && <Navbar />}
       {showNavbarSimple && <NavbarSimple />}
-      
+
       {showMessageNavbar && <MessageNavbar />}
 
-      
-      
+
+
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/admin" element={<Admin />} />
@@ -88,44 +89,45 @@ function App() {
         <Route path="/Cv4" element={<Cv4 />} />
         <Route path="/Cv5" element={<Cv5 />} />
 
-                {/* JobSeeker Routes */}
-                <Route path="/JobSeeker/dashboard" element={<JobSeekerDashboard />} />
-                <Route path="/JobSeeker/myprofile" element={<MyProfile />} />
-                <Route path="/JobSeeker/apply-for-job" element={<ApplyForAjob />} />
+        {/* JobSeeker Routes */}
+        <Route path="/JobSeeker/dashboard" element={<JobSeekerDashboard />} />
+        <Route path="/JobSeeker/myprofile" element={<MyProfile />} />
+        <Route path="/JobSeeker/apply-for-job" element={<ApplyForAjob />} />
+        <Route path="/JobSeeker/job-details/:jobId" element={<JobDetails />} />
 
-                {/* Counselee Routes */}
-                <Route path="/counselee/dashboard" element={<CounseleeDashboard />} />
-                <Route path="/counselee/profile" element={<CounseleeProfile />} />
-                <Route path="/counselee/bookings" element={<CounseleeBookings />} />
-                <Route path="/counselee/find-counselor" element={<FindCounselor />} />
-                <Route path="/counselee/counselor/:counselorId" element={<CounselorDetails />} />
-                <Route path="/counselee/time-slots/:counselorId" element={<TimeSlots />} />
-                <Route path="/counselee/payment/:counselorId" element={<Payment />} />
-                <Route path="/counselee/invoice/:counselorId" element={<Invoice />} />
-                <Route path="/counselee/messages" element={<Messages />} />
-                <Route path="/counselee/change-password" element={<ChangePassword />} />
-                <Route path="/counselee/delete-account" element={<DeleteAccount />} />
+        {/* Counselee Routes */}
+        <Route path="/counselee/dashboard" element={<CounseleeDashboard />} />
+        <Route path="/counselee/profile" element={<CounseleeProfile />} />
+        <Route path="/counselee/bookings" element={<CounseleeBookings />} />
+        <Route path="/counselee/find-counselor" element={<FindCounselor />} />
+        <Route path="/counselee/counselor/:counselorId" element={<CounselorDetails />} />
+        <Route path="/counselee/time-slots/:counselorId" element={<TimeSlots />} />
+        <Route path="/counselee/payment/:counselorId" element={<Payment />} />
+        <Route path="/counselee/invoice/:counselorId" element={<Invoice />} />
+        <Route path="/counselee/messages" element={<Messages />} />
+        <Route path="/counselee/change-password" element={<ChangePassword />} />
+        <Route path="/counselee/delete-account" element={<DeleteAccount />} />
 
-                {/* Counselor Routes */}
-                <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
-                <Route path="/counselor/profile" element={<CounselorProfile />} />
-                <Route path="/counselor/bookings" element={<CounselorBookings />} />
-                <Route path="/counselor/schedule" element={<CounselorSchedule />} />
-                <Route path="/counselor/counselees" element={<CounselorCounselees />} />
-                <Route path="/counselor/messages" element={<CounselorMessages />} />
-                <Route path="/counselor/change-password" element={<CounselorChangePassword />} />
-                <Route path="/counselor/delete-account" element={<CounselorDeleteAccount />} />
+        {/* Counselor Routes */}
+        <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
+        <Route path="/counselor/profile" element={<CounselorProfile />} />
+        <Route path="/counselor/bookings" element={<CounselorBookings />} />
+        <Route path="/counselor/schedule" element={<CounselorSchedule />} />
+        <Route path="/counselor/counselees" element={<CounselorCounselees />} />
+        <Route path="/counselor/messages" element={<CounselorMessages />} />
+        <Route path="/counselor/change-password" element={<CounselorChangePassword />} />
+        <Route path="/counselor/delete-account" element={<CounselorDeleteAccount />} />
 
 
 
-                <Route path="/logout" element={<Logout />} />
-                <Route path="/" element={<Homepage />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/" element={<Homepage />} />
 
-            </Routes>
+      </Routes>
 
-          
-        </>
-    );
+
+    </>
+  );
 }
 
 export default App;
