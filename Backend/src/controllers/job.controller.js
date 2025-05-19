@@ -2,10 +2,10 @@ import { Job } from "../models/job.model.js";
 
 export const getJobs = async (req, res) => {
   try {
-    const { keyword, experience, postedDate } = req.query;
+    const { keyword, experience, postedDate, jobMode } = req.query;
     const query = {};
     const andConditions = [];
-
+    
     // Keyword filter (JobTitle, JobDescription, Tags)
     if (keyword) {
       const regex = new RegExp(keyword, "i");
@@ -17,7 +17,7 @@ export const getJobs = async (req, res) => {
         ]
       });
     }
-
+    
     // Experience filter
     if (experience) {
       const exp = parseInt(experience);
@@ -31,13 +31,12 @@ export const getJobs = async (req, res) => {
         }
       }
     }
-
+    
     // Posted date filter
     if (postedDate) {
       const postedDateFilters = postedDate.split(",");
       const now = Date.now();
       const postedDateConditions = [];
-
       postedDateFilters.forEach((filter) => {
         switch (filter) {
           case "last_hour":
@@ -57,31 +56,32 @@ export const getJobs = async (req, res) => {
             break;
         }
       });
-
       if (postedDateConditions.length > 0) {
         andConditions.push({ $or: postedDateConditions });
       }
     }
-
+    
     // Job Type filter
     if (req.query.jobType) {
       andConditions.push({ JobType: req.query.jobType });
     }
-
+    
+    // Job Mode filter
+    if (req.query.jobMode) {
+      andConditions.push({ JobMode: req.query.jobMode });
+    }
+    
     // Combine all conditions
     if (andConditions.length > 0) {
       query.$and = andConditions;
     }
-
+    
     const jobs = await Job.find(query).sort({ postedDate: -1 });
     res.status(200).json(jobs);
   } catch (err) {
     res.status(500).json({ error: "Error fetching jobs", details: err.message });
   }
 };
-
-
-
 
 export const createJob = async (req, res) => {
   try {

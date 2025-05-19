@@ -9,6 +9,7 @@ import "../Dashboard/Dashboard.css";
 import { Link } from "react-router-dom";
 import Footer from "../../../components/Footer/Footer.jsx";
 
+// Define options for experience
 const experienceOptions = [
   { label: "Beginner", value: 0 },
   { label: "1 Year", value: 1 },
@@ -19,6 +20,7 @@ const experienceOptions = [
   { label: "10+ Years", value: 10 },
 ];
 
+// Define options for posted date
 const postedDateOptions = [
   { label: "Last Hour", value: "last_hour" },
   { label: "Last 24 Hours", value: "last_24_hours" },
@@ -27,6 +29,7 @@ const postedDateOptions = [
   { label: "Older", value: "older" },
 ];
 
+// Define options for job type
 const jobTypeOptions = [
   { label: "Full-time", value: "Full-time" },
   { label: "Part-time", value: "Part-time" },
@@ -34,6 +37,7 @@ const jobTypeOptions = [
   { label: "Project Base", value: "Project Base" },
 ];
 
+// Define options for job mode
 const jobModeOptions = [
   { label: "Onsite", value: "Onsite" },
   { label: "Remote", value: "Remote" },
@@ -42,6 +46,8 @@ const jobModeOptions = [
 
 
 const ApplyForAjob = () => {
+  
+  // State variables
   const [jobs, setJobs] = useState([]);
   const [displayJobs, setDisplayJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,15 +59,17 @@ const ApplyForAjob = () => {
 
 
   useEffect(() => {
-    setLoading(true);
+    setLoading(true); 
 
+    // Fetch jobs from backend  
     const params = {};
     if (keyword) params.keyword = keyword;
     if (selectedExperience !== null) params.experience = selectedExperience;
     if (selectedPostedDate !== null) params.postedDate = selectedPostedDate;
     if (selectedJobType !== null) params.jobType = selectedJobType;
+if (selectedJobMode !== null) params.jobMode = selectedJobMode;
 
-
+// Make the API request
     axios
       .get("http://localhost:5001/api/jobs", { params })
       .then((response) => {
@@ -69,15 +77,15 @@ const ApplyForAjob = () => {
         setDisplayJobs(response.data);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching jobs:", error);
+      .catch((error) => { 
+        console.error("Error fetching jobs:", error); 
         setLoading(false);
       });
-  }, [keyword, selectedExperience, selectedPostedDate, selectedJobType]);
+  }, [keyword, selectedExperience, selectedPostedDate, selectedJobType, selectedJobMode]); 
 
   useEffect(() => {
-    filterJobs(selectedPostedDate, selectedExperience, selectedJobType);
-  }, [jobs, selectedPostedDate, selectedExperience, selectedJobType]);
+    filterJobs(selectedPostedDate, selectedExperience, selectedJobType, selectedJobMode);
+  }, [jobs, selectedPostedDate, selectedExperience, selectedJobType, selectedJobMode]);
 
   const handleExperienceChange = (value) => {
     setSelectedExperience(selectedExperience === value ? null : value);
@@ -91,7 +99,11 @@ const ApplyForAjob = () => {
     setSelectedJobType(selectedJobType === value ? null : value);
   };
 
-  const filterJobs = (postedDateFilter, experienceFilter, jobTypeFilter) => {
+  const handleJobModeChange = (value) => {
+    setSelectedJobMode(selectedJobMode === value ? null : value);
+  };
+
+  const filterJobs = (postedDateFilter, experienceFilter, jobTypeFilter, jobModeFilter) => {
     let filtered = [...jobs];
 
     if (experienceFilter !== null) {
@@ -121,6 +133,10 @@ const ApplyForAjob = () => {
 
     if (jobTypeFilter !== null) {
       filtered = filtered.filter((job) => job.JobType === jobTypeFilter);
+    }
+
+    if (jobModeFilter !== null) {
+      filtered = filtered.filter((job) => job.JobMode === jobModeFilter);
     }
 
     setDisplayJobs(filtered);
@@ -200,6 +216,25 @@ const ApplyForAjob = () => {
                         type="checkbox"
                         checked={selectedJobType === option.value}
                         onChange={() => handleJobTypeChange(option.value)}
+                      />
+                      <span className="checkmark"></span>
+                      <span className="option-label">{option.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              
+            {/* Job Mode Filter */}
+            <div className="job-mode-filter">
+                <h5 style={{ color: "#808080", marginTop: "20px" }}>Job Mode</h5>
+                <div className="posted-date-options">
+                  {jobModeOptions.map((option) => (
+                    <label key={option.value} className="checkbox-container">
+                      <input
+                        type="checkbox"
+                        checked={selectedJobMode === option.value}
+                        onChange={() => handleJobModeChange(option.value)}
                       />
                       <span className="checkmark"></span>
                       <span className="option-label">{option.label}</span>
