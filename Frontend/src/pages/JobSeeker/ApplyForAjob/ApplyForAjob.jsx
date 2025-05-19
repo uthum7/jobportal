@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import JobCard from "../../../components/JobCard/JobCard.jsx";
-import JobseekerSidebar from "../../../components/JobseekerSidebar/JobseekerSidebar.jsx";
+import JobCard from "../../../components/JobSeeker/JobCard/JobCard.jsx";
+import JobseekerSidebar from "../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar.jsx";
 import "./ApplyForAjob.css";
 import "../Dashboard/Dashboard.css";
 import { Link } from "react-router-dom";

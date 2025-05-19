@@ -13,7 +13,7 @@ import {
   FiBookmark
 } from 'react-icons/fi';
 import './Dashboard.css';
-import JobseekerSidebar from '../../../components/JobseekerSidebar/JobseekerSidebar';
+import JobseekerSidebar from '../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar';
 import Footer from '../../../components/Footer/Footer';
 import { Link } from 'react-router-dom';
 
