@@ -56,7 +56,7 @@ import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
 import MessageNavbar from "./components/Navbar/MessageNavbar"; // ✅
 import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
 
-import MessageNavbar from "./components/Navbar/MessageNavbar"; 
+
 
 
 function App() {
