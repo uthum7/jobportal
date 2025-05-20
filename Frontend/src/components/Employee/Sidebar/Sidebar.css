@@ -18,6 +18,12 @@
     background-color: rgba(255, 255, 255, 0.15);
     border-left-color: #50fa7b;
 }
+
+.active{
+    color:#50fa7b;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left-color: #50fa7b;
+}
 .profile-section{
     padding: 24px;
     text-align: center;

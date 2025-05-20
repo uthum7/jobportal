@@ -52,8 +52,6 @@ import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/Job
 
 function App() {
   const location = useLocation();
-
-
   const showMessageNavbar = [
     "/message/messagehome",
     "/message/signup",
@@ -115,7 +113,8 @@ function App() {
 
 
         <Route path="/employee" element={<EmployeePage />} />
-        <Route path="/logout" element={<Logout />} />
+        {/* <Route path="/employee/dashboard" element={<EmployeeDashboard/>} /> */}
+        <Route path="/logout" element={<Logout />} /> 
         <Route path="/" element={<Homepage />} />
         <Route path="/jobform" element={<JobFormComponent />} />
 
