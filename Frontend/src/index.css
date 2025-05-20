@@ -1,3 +1,65 @@
+
+
+:root {
+  --sonner-success-bg: hsl(142, 71%, 45%);
+  --sonner-error-bg: hsl(0, 84%, 60%);
+  --sonner-warning-bg: hsl(38, 92%, 50%);
+  --sonner-info-bg: hsl(221, 83%, 53%);
+  --sonner-text-color: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+  color: #333;
+  line-height: 1.5;
+  position: relative;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Ensure navbar stays on top */
+.navbar {
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Ensure footer stays at the bottom */
+.footer {
+  z-index: 100;
+  position: relative;
+  width: 100%;
+}
+
+/* Add responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+

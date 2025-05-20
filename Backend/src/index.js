@@ -6,14 +6,15 @@ import authRoutes from "./routes/auth.route.js";
 import { connectDB } from "./lib/db.js";
 
 import messageRoutes from "./routes/message.route.js";
+import jobPostRoutes from "./routes/JobPost.route.js";
 import cookieParser from "cookie-parser";
+import{app,server} from "./lib/socket.js";
 
 
 
 
 dotenv.config(); // <-- Load environment variables
 
-const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json({ limit: "10mb" }));
@@ -24,9 +25,11 @@ app.use(cors({
     }))
 
 app.use("/api/auth", authRoutes);
-app.use("/api/messages", messageRoutes);
+app.use("/api/message", messageRoutes);
+app.use("/api/job", jobPostRoutes);
 
-app.listen(PORT, () => {
+
+server.listen(PORT, () => {
     console.log(`Server is running on PORT: ${PORT}`);
     connectDB();
 });
