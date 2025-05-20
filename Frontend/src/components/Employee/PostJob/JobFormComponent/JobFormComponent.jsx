@@ -1,3 +1,4 @@
+import axios from "axios";
 import "./formstyle.css";
 import { useRef, useState } from "react";
 import { toast } from 'sonner';
@@ -24,6 +25,26 @@ const JobFormComponent = () => {
   const [modedata, setMode] = useState("");
   const [jobDescriptiondata, setJobDescription] = useState("");
 
+
+
+  const clearAll = () =>{
+      title.current.value = "";
+      exp.current.value = "";
+      mode.current.value = "";
+      jobType.current.value = "";
+      deadline.current.value = "";
+      jobDescription.current.value = "";
+      requirement.current.value = "";
+      qualification.current.value = "";
+      responsibility.current.value = "";
+      tag.current.value = "";
+      setJobDescription("");
+      setRequirements([]);
+      setQualifications([]);
+      setResponsibilities([]);
+      setTags([]);
+    }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const job = {
@@ -38,7 +59,29 @@ const JobFormComponent = () => {
       Responsibilities: responsibilities,
       Tags: tags,
     }
-    
+
+    console.log(job)
+    const resp = axios.post("http://localhost:5001/api/job/create", job)
+
+
+    resp.then((res) => {
+      console.log(res.data);
+      if (res.status === 200) {
+        toast.success("Job posted successfully", {
+          className: 'bg-emerald-700 text-white',
+        });
+      } else {
+        toast.error(res.status, {
+          className: 'bg-red-700 text-white',
+        });
+      }
+    }).catch((err) => {
+      console.log(err);
+      toast.error("Error posting job", {
+        className: 'bg-red-700 text-white',
+      });
+    })
+    clearAll();
   }
   const handleAddRequirement = (e) => {
     e.preventDefault();
@@ -56,6 +99,7 @@ const JobFormComponent = () => {
     toast.success("Qualification added successfully", {
       className: 'bg-emerald-700 text-white',
     });
+    qualification.current.value = "";
   }
 
   const handleDeleteRequirement = (index) => {
@@ -74,6 +118,7 @@ const JobFormComponent = () => {
     e.preventDefault();
     setResponsibilities([...responsibilities, responsibility.current.value]);
     toast.success("Responsibility added successfully");
+    responsibility.current.value = "";
   }
 
   const handleDeleteResponsibility = (index) => {
@@ -86,6 +131,7 @@ const JobFormComponent = () => {
     e.preventDefault();
     setTags([...tags, tag.current.value]);
     toast.success("Tag added successfully");
+    tag.current.value = "";
   }
 
   const handleDeleteTag = (index) => {
@@ -147,7 +193,6 @@ const JobFormComponent = () => {
                 <textarea name="job-description" id="job-description" ref={jobDescription} className="description" placeholder="Enter Job Description" rows="10"></textarea>
               </div>
             </div>
-
 
           </div>
           <div className="requirements form-container">
