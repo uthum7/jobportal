@@ -1,4 +1,19 @@
-import Job from "../models/JobPost.model.js";
+import Job from "../models/Job.model.js";
+
+export const getJobCount = async (req, res) => {
+    try {
+        const jobCount = await Job.countDocuments();
+        res.status(200).json({
+            "Message": "Success",
+            "JobCount": jobCount,
+        });
+    } catch (err) {
+        res.json({
+            "Error": err
+        }).status(500);
+    }
+}
+
 
 export const createJobPost = async (req, res) => {
     try {
