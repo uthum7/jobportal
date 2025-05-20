@@ -132,6 +132,51 @@
   .save-job-btn:hover {
     background-color: #e0e0e0;
   }
+
+  /* Yellow color when saved */
+.save-job-btn.saved,
+.save-job-btn:active {
+  background-color: #FFD700;
+  color: #333;
+  border-color: #e6c200;
+}
+
+/* Animation for saved state */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply animation when button is clicked */
+.save-job-btn.animate {
+  animation: pulse 0.4s ease-in-out;
+}
+
+
+
+.save-job-btn::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: radial-gradient(circle, rgba(255,215,0,0.6) 0%, rgba(255,215,0,0) 70%);
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+.save-job-btn.animate::before {
+  animation: sparkle 0.5s ease-out;
+}
   
   /* Job Details Content */
   .job-details-content {
