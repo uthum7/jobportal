@@ -1,13 +1,18 @@
 import React from "react";
 
+
 import { Toaster } from 'sonner';
-import './index.css';
+
 import "./pages/Homepage/Homepage.css";
 
 import { Route, Routes, useLocation } from "react-router-dom"; // ✅ add useLocation
+
+
 import './index.css';
 
 import Navbar from "./components/Navbar/Navbar.jsx"; 
+import NavbarSimple from "./components/Navbar/NavbarSimple.jsx"; 
+
 import Footer from "./components/Footer/Footer.jsx"; 
 import "./pages/Homepage/Homepage.css";
 
@@ -47,11 +52,19 @@ import EmployeePage from "./pages/Employee/EmployeePage.jsx"
 
 
 import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
+
 import MessageNavbar from "./components/Navbar/MessageNavbar"; // ✅
 import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
 
+import MessageNavbar from "./components/Navbar/MessageNavbar"; 
+
+
 function App() {
   const location = useLocation();
+
+
+  // Check if the current path starts with "/message"
+  const isMessagePage = location.pathname.startsWith("/message");
 
 
   const showMessageNavbar = [
@@ -62,8 +75,18 @@ function App() {
     "/message/profile"
   ].includes(location.pathname);
 
+  const showNavbarSimple = [
+    "/message/messagehome",
+    "/message/signup",
+    "/message/login",
+    "/message/setting",
+    "/message/profile"
+  ].includes(location.pathname);
+
+
   return (
     <>
+
       <Toaster position="top-center" offset={{ bottom: '24px', right: "16px", left: "16px" }} theme="light" toastOptions={{
         className: 'bg-indigo-600 text-white',
         classNames: {
@@ -77,6 +100,12 @@ function App() {
         }
       }} />
       <Navbar />
+
+      
+      {/* Only show main Navbar if NOT on a message page */}
+      {!isMessagePage && <Navbar />}
+      {showNavbarSimple && <NavbarSimple />}
+
       {showMessageNavbar && <MessageNavbar />}
 
       
