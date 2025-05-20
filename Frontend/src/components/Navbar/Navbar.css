@@ -1,0 +1,222 @@
+.navbar {
+  background: linear-gradient(to bottom, #1976d2 0%, #ffffff 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 1000;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.08);
+  padding: 0;
+}
+
+.navbar.hide {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: 100vw;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0; /* No side padding */
+  box-sizing: border-box;
+}
+
+.navbar-left {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  margin-left: 0; /* Remove extra margin */
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 18px; /* Add a little breathing space from the edge */
+}
+
+.logo img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(25,118,210,0.08));
+}
+
+.navbar-center {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  transition: all 0.3s;
+  
+}
+
+.nav-links a {
+  color: #0d2544;
+  text-decoration: none;
+  font-size: 1.08rem;
+  font-weight: 520;
+  padding: 8px 18px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-links a.active,
+.nav-links a:hover {
+  background: rgba(25, 118, 210, 0.1);
+  color: #1976d2;
+  font-weight: 700;
+}
+
+.navbar-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 0; /* Remove extra margin */
+  padding-right: 38px; /* Add a little breathing space from the edge */
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn {
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
+  border: none;
+  padding: 8px 22px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.08);
+}
+
+.btn:hover {
+  background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.sign-out {
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+}
+
+.sign-out:hover {
+  background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  margin-left: 16px;
+  z-index: 1100;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  margin: 4px 0;
+  background: #1976d2;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .navbar-container {
+    padding: 0 8px;
+  }
+  .logo {
+    padding-left: 8px;
+  }
+  .navbar-right {
+    padding-right: 8px;
+  }
+  .navbar-center {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+  .nav-links {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, #1976d2 80%, #fff 100%);
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 30px 0 22px 0;
+    z-index: 1001;
+    transform: translateY(-120%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .nav-links.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+    box-shadow: 0 8px 32px rgba(25, 118, 210, 0.13);
+  }
+  .nav-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .hamburger {
+    display: flex;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    height: 54px;
+  }
+  .logo img {
+    height: 28px;
+  }
+  .nav-links {
+    top: 54px;
+    padding: 18px 0 16px 0;
+    gap: 14px;
+  }
+  .btn {
+    padding: 7px 14px;
+    font-size: 0.97rem;
+  }
+}
