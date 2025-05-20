@@ -1,130 +1,407 @@
-/* Navbar */
-.navbar {
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #f5f7fa;
+  --text-color: #333;
+  --background-color: #ffffff;
+  --border-color: #e0e0e0;
+  --hover-color: #357abd;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --shadow-soft: 0 2px 15px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --form-bg: #ffffff;
+  --preview-bg: #fbfbfb;
+  --PageTitle:#123456;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-color);
+  background-color: var(--secondary-color);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.resumeBuilder {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
-  padding: 15px 10%;
-  color: black;
+  flex-direction: column;
+  background-color: var(--secondary-color);
+  padding: 40px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  /* min-height: calc(100vh - 40px); */
+  gap: 20px;
+
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
+.pageHeader {
+  text-align: center;
+  margin-bottom: 0;
+  margin-top: 60px;
+  padding-top: 10px;
 }
 
-.navLinks button {
-  background: none;
+.pageTitle {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--PageTitle);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.pageTitle span {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+@keyframes jump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+
+.pageTitle:hover span {
+  animation: jump 0.5s forwards;
+}
+
+.pageTitle:hover span:nth-child(1) { animation-delay: 0s; }
+.pageTitle:hover span:nth-child(2) { animation-delay: 0.05s; }
+.pageTitle:hover span:nth-child(3) { animation-delay: 0.10s; }
+.pageTitle:hover span:nth-child(4) { animation-delay: 0.15s; }
+.pageTitle:hover span:nth-child(5) { animation-delay: 0.20s; }
+.pageTitle:hover span:nth-child(6) { animation-delay: 0.25s; }
+.pageTitle:hover span:nth-child(7) { animation-delay: 0.30s; }
+.pageTitle:hover span:nth-child(8) { animation-delay: 0.35s; }
+.pageTitle:hover span:nth-child(9) { animation-delay: 0.40s; }
+.pageTitle:hover span:nth-child(10) { animation-delay: 0.45s; }
+.pageTitle:hover span:nth-child(11) { animation-delay: 0.50s; }
+.pageTitle:hover span:nth-child(12) { animation-delay: 0.55s; }
+.pageTitle:hover span:nth-child(13) { animation-delay: 0.60s; }
+.pageTitle:hover span:nth-child(14) { animation-delay: 0.65s; }
+.pageTitle:hover span:nth-child(15) { animation-delay: 0.70s; }
+
+.pageSubtitle {
+  font-size: 22px;
+  font-weight: 400;
+  color: #666;
+  margin-bottom: 0;
+  letter-spacing: 0.5px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.actionButton {
+  background: var(--primary-color);
+  color: white;
+  padding: 12px 24px;
   border: none;
-  color: black;
-  margin: 0 10px;
-  font-size: 16px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.18);
 }
 
-.navLinks button:hover {
-  text-decoration: underline;
-}
-.resumeDashboard {
-  max-width: 900px;
-  margin: auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+.actionButton:hover {
+  background: var(--hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.24);
 }
 
-.sectionTitle {
-  font-size: 1.5rem;
-  font-weight: bold;
+.cvPreview {
+  flex: 7;
+  background: var(--preview-bg);
+  padding: 5px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  margin-top: 10px;
+  margin: 0 auto;
+  height: 600px; 
+  overflow-y: auto;
+  ;
+ 
+}
+
+.cvContainer {
+  display: flex;
+  gap: 30px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cvLeft {
+  width: 32%;
+  background: #f2f7fc;
+  color: var(--text-color);
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cvRight {
+  width: 68%;
+  padding: 35px 30px;
+  background-color: #fff;
+}
+
+.verticalLine {
+  border-left: 1px solid var(--border-color);
+  height: 100%;
+  margin: 0;
+}
+
+.profileImage {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cvRight h4,
+.h4Headers {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.profileSection,
+.experience,
+.skills,
+.summary,
+.references,
+.profilePara {
+  margin-bottom: 25px;
+}
+
+.profileSection h2 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.profileSection h3 {
+  color: #556677;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.contactInfo h4,
+.education h4 {
+  text-align: left;
+  width: 100%;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.contactInfo p {
+  margin: 8px 0;
+  text-align: left;
+  font-size: 20px;
+}
+
+.education {
+  align-items: flex-start !important;
+  text-align: left !important;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.uniPara {
   margin-bottom: 15px;
 }
 
-.resumeCards {
-  display: flex;
-  gap: 15px;
-  justify-content: space-between;
+.educationItem,
+.experienceItem {
+  margin-bottom: 20px;
 }
 
-.resumeCard {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #eef7ee;
-  padding: 15px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
-  transition: 0.3s;
-  flex: 1;
+.educationItem h5,
+.experienceItem h5 {
+  margin-bottom: 5px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
-.resumeCard:hover {
-  background: #d6e9d6;
-}
-
-.resumeIcon {
-  font-size: 1.5rem;
-  color: #4caf50;
-}
-
-/* CV Preview Section */
-.cvPreview {
-  margin-top: 30px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.cvHeader {
-  text-align: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-  padding: 10px;
-  background: rgb(3, 38, 151);
-  color: white;
-  border-radius: 8px;
-}
-
-.cvContact {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  font-weight: bold;
-}
-
-.cvSummary {
-  text-align: justify;
-  font-size: 0.95rem;
-  padding: 10px;
-}
-
-.cvSubtitle {
-  color: rgb(38, 0, 255);
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-.cvExperience {
-  background: #f7f7f7;
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 10px;
-}
-
-.cvExperience h4 {
-  color: rgb(38, 0, 255);
-  font-weight: bold;
-}
-
-.cvExperience span {
-  float: right;
-  font-size: 0.9rem;
+.educationItem span,
+.experienceItem span {
+  font-size: 18px;
   color: #555;
+  display: block;
+  margin-bottom: 8px;
 }
 
-.cvExperience p {
-  margin-top: 5px;
-  font-size: 0.95rem;
-  text-align: justify;
+.educationItem p,
+.experienceItem p {
+  font-size: 20px;
+  line-height: 1.5;
+  color: #444;
+}
+
+.profilePara p, .summary p, .references p {
+  font-size: 20px;
+  line-height: 1.6;
+  color: #444;
+}
+
+.skillsColumns {
+  margin-bottom: 24px;
+}
+
+.skillsList {
+  list-style: none;
+  padding: 0;
+  margin: 20px;
+}
+
+.skillRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.skillName {
+  flex: 1;
+  text-align: left;
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+}
+
+.skillStars {
+  flex: 0 0 auto;
+  text-align: right;
+  min-width: 110px;
+}
+
+.star {
+  font-size: 22px;
+  color: #e0e0e0;
+  margin-left: 3px;
+  transition: color 0.2s;
+}
+
+.checked {
+  color: #FFD700;
+}
+
+/* responsiveness */
+@media (max-width: 1200px) {
+  .cvContainer {
+    flex-direction: column;
+    gap: 0;
+    height: auto;
+  }
+  .cvLeft,
+  .cvRight {
+    width: 100%;
+    padding: 24px 12px;
+  }
+  .verticalLine {
+    display: none;
+  }
+  .cvPreview {
+    height: auto;
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .resumeBuilder {
+    padding: 8px 2px;
+    gap: 12px;
+  }
+  .pageHeader {
+    margin-top: 18px;
+    padding-top: 0;
+  }
+  .pageTitle {
+    font-size: 24px;
+  }
+  .pageSubtitle {
+    font-size: 13px;
+  }
+  .cvPreview {
+    padding: 2px;
+    border-radius: 7px;
+    margin-top: 8px;
+    min-height: 200px;
+  }
+  .profileImage {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 6px;
+  }
+  .cvRight h4,
+  .contactInfo h4,
+  .education h4 {
+    font-size: 13px;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+  }
+  .educationItem h5,
+  .experienceItem h5 {
+    font-size: 13px;
+  }
+  .educationItem span,
+  .experienceItem span {
+    font-size: 11px;
+  }
+  .educationItem p,
+  .experienceItem p,
+  .profilePara p, .summary p, .references p {
+    font-size: 11px;
+  }
+  .skillsList {
+    margin: 6px 0;
+  }
+  .skillName {
+    font-size: 11px;
+  }
+  .star {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: 16px;
+  }
+  .pageSubtitle {
+    font-size: 10px;
+  }
+  .profileImage {
+    width: 36px;
+    height: 36px;
+  }
+  .buttonGroup {
+    flex-direction: column;
+    gap: 10px;
+  }
 }

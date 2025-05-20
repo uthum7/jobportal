@@ -11,10 +11,10 @@
   --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.08);
   --form-bg: #ffffff;
   --preview-bg: #fbfbfb;
-  --PageTitle:#123456;
+  --PageTitle: #123456;
 }
 
-/* Page Header */
+/* Page Header Styles */
 .pageHeader {
   text-align: center;
   margin-bottom: 0;
@@ -69,6 +69,15 @@
 }
 
 /* Main Layout */
+body {
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-color);
+  background-color: var(--secondary-color);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+} 
+
 .resumeBuilder {
   display: flex;
   background-color: var(--secondary-color);
@@ -77,14 +86,13 @@
   margin: 0 auto;
   min-height: calc(100vh - 40px);
   gap: 60px;
-  flex-direction: column;
 }
 
 .content {
   display: flex;
   flex-direction: row;
   gap: 40px;
-  padding: 0;
+  padding: 20px;
   margin: 30px;
   background-color: transparent;
   box-shadow: var(--shadow-soft);
@@ -92,12 +100,31 @@
   overflow: hidden;
   position: relative;
   z-index: 1;
-  padding: 20px;
   height: auto;
 }
 
-.header {
-  margin-top: 40px;
+/* Form Container */
+
+.formContainer,
+.cvPreview {
+  min-width: 0;
+}
+
+
+.formContainer {
+   flex: 0.8 1 0;
+  background: var(--form-bg);
+  padding: 35px 20px;  
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  position: sticky;
+  top: 15px;
+  height: 1560px;
+  width: auto;
+  box-sizing: border-box; 
+}
+
+.formContainer h3 {
   font-size: 24px;
   font-weight: 600;
   color: var(--text-color);
@@ -105,54 +132,29 @@
   margin-left: 5px;
 }
 
-/* Form Container */
-.formContainer {
-  flex: 4;
-  background: var(--form-bg);
-  padding: 35px 40px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-medium);
-  position: sticky;
-  top: 15px;
-  height: 1560px;
-  width: 1700px;
-}
-
-.formColumns {
-  display: flex;
-  gap: 32px;
-  margin-bottom: 24px;
+/* Experience Form */
+.experienceForm {
   background: #f7fafc;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(74, 144, 226, 0.08);
   padding: 32px 28px;
-  align-items: stretch;
-  min-height: 370px;
+  margin-bottom: 24px;
   border: 1px solid var(--border-color);
   transition: box-shadow 0.2s, border-color 0.2s;
-  flex-wrap: wrap;
 }
 
-.formLeft, .formRight {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 18px;
-  min-width: 0;
+.experienceForm:hover {
+  box-shadow: 0 8px 32px rgba(74, 144, 226, 0.14);
+  border-color: var(--primary-color);
 }
 
-.formLeft {
-  border-right: 1.5px solid #e3e9f2;
-  padding-right: 24px;
-}
-
-/* Inputs */
-input, select {
+/* Inputs & Textarea */
+input,
+textarea {
   width: 100%;
   height: 56px;
   box-sizing: border-box;
-  padding: 16px 40px 16px 20px; 
+  padding: 16px 20px;
   margin-bottom: 20px;
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
@@ -163,14 +165,19 @@ input, select {
   color: var(--text-color);
 }
 
-input:focus, select:focus {
+input:focus,
+textarea:focus {
   border-color: var(--primary-color);
   outline: none;
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.13);
   background-color: #fff;
 }
 
-
+textarea {
+  min-height: 120px;
+  height: auto;
+  resize: vertical;
+}
 
 /* Buttons */
 .saveBtn {
@@ -184,7 +191,6 @@ input:focus, select:focus {
   font-weight: 600;
   transition: all 0.3s ease;
   margin-top: 10px;
-  margin-right: 20px;
   width: 100px;
   max-width: 100%;
   letter-spacing: 0.5px;
@@ -199,10 +205,14 @@ input:focus, select:focus {
   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.24);
 }
 
-.skillButton {
-  background:var(--success-color);   
-  color: white;           
-  padding: 12px 20px; 
+.saveBtn:active {
+  transform: translateY(0);
+}
+
+.addButton {
+  background: var(--primary-color);
+  color: white;
+  padding: 12px 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -210,97 +220,56 @@ input:focus, select:focus {
   font-weight: 600;
   transition: all 0.3s ease;
   margin-top: 10px;
-  margin-left: 300px;
+  margin-left: 450px;
   width: 120px;
   max-width: 100%;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(4, 170, 109, 0.18);
+  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.18);
 }
 
-.skillButton:hover {
-  background: #218838;
+.addButton:hover {
+  background: var(--hover-color);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.24);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.24);
 }
 
-.skillButtonContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;   
-  gap: 16px;            
-  margin-top: 10px;
-}
-
-
-
-.editBtn {
-  background: var(--primary-color);
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.deleteBtn {
+.removeButton {
   background: var(--danger-color);
   color: white;
-  padding: 8px 16px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 17px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  width: 120px;
+  max-width: 100%;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.18);
 }
 
+.removeButton:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.24);
+}
 
-/* Skills List */
-.skillsList {
+.buttonsContainer {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+  justify-content: flex-start;
   margin-top: 20px;
 }
 
-.skillItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.2s;
-}
-
-.skillItem:hover {
-  transform: translateY(-2px);
-}
-
-.skillStars {
-  display: flex;
-  gap: 5px;
-}
-
-.star {
-  font-size: 22px;
-  color: #e0e0e0;
-}
-
-.checked {
-  color: #FFD700;
-}
-
-.skillActions {
-  display: flex;
-  gap: 10px;
-}
-
-/* Instruction Section */
+/* Instructions Section */
 .instractionSection {
   background: #f8fafc;
   border: 1px solid #e0e7ef;
   border-radius: 10px;
   padding: 24px 32px;
-  margin-top: 150px;
+  margin-top: 40px;
   margin-bottom: 18px;
   box-shadow: 0 2px 8px rgba(60, 72, 88, 0.07);
   color: #222;
@@ -326,13 +295,13 @@ input:focus, select:focus {
   margin-bottom: 22px;
   font-weight: 500;
   color: #2c3e50;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1.3;
   position: relative;
 }
 
 .instractionDetail {
-  font-size: 14px;
+  font-size: 16px;
   color: #607d8b;
   font-weight: 400;
   margin-top: 6px;
@@ -340,17 +309,18 @@ input:focus, select:focus {
   line-height: 1.5;
 }
 
-/* CV Preview */
+/* CV Preview Section */
 .cvPreview {
-  flex: 7;
+  flex: 1.2 1 0;
   background: var(--preview-bg);
-  padding: 5px;
+  padding: 5px; 
   border-radius: 12px;
   box-shadow: var(--shadow-medium);
   margin-top: 15px;
   height: 1560px;
   min-height: 800px;
   width: auto;
+  box-sizing: border-box; 
 }
 
 .cvContainer {
@@ -387,7 +357,16 @@ input:focus, select:focus {
   margin: 0;
 }
 
-/* Profile Section */
+/* Profile Image */
+.profilePictureLabel {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 25px;
+}
+
 .profileImage {
   width: 140px;
   height: 140px;
@@ -398,13 +377,26 @@ input:focus, select:focus {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Contact Info, Education, Experience, etc. */
+.uploadIcon {
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  background: var(--primary-color);
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
 
-.profilePara h4,
-.experience h4,
-.skillsColumns h4,
-.summary h4,
-.references h4 {
+.uploadIcon:hover {
+  background: var(--hover-color);
+  transform: scale(1.05);
+}
+
+/* CV Content Styles */
+.cvRight h4 {
   border-bottom: 2px solid var(--primary-color);
   padding-bottom: 10px;
   margin-bottom: 20px;
@@ -413,6 +405,30 @@ input:focus, select:focus {
   color: #2c3e50;
 }
 
+.contactInfo,
+.education,
+.profileSection,
+.experience,
+.skills,
+.summary,
+.references,
+.profilePara {
+  margin-bottom: 25px;
+}
+
+.profileSection h2 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.profileSection h3 {
+  color: #556677;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 5px;
+}
 
 .contactInfo h4,
 .education h4 {
@@ -443,7 +459,6 @@ input:focus, select:focus {
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
 }
 
 .educationItem,
@@ -468,16 +483,19 @@ input:focus, select:focus {
 }
 
 .educationItem p,
-.experienceItem p,
-.profilePara p, 
-.summary p, 
-.references p {
+.experienceItem p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #444;
+}
+
+.profilePara p, .summary p, .references p {
   font-size: 16px;
   line-height: 1.6;
   color: #444;
 }
 
-/* --- SKILLS SECTION */
+/* --- SKILLS SECTION: NAMES LEFT, STARS RIGHT, GOLD --- */
 .skillsList {
   list-style: none;
   padding: 0;
@@ -556,6 +574,7 @@ input:focus, select:focus {
     height: auto;
     margin: 0 auto;
     box-sizing: border-box;
+    padding: 24px 12px;
   }
   .cvContainer {
     flex-direction: column;
@@ -578,10 +597,8 @@ input:focus, select:focus {
     padding: 24px 12px;
   }
   .cvPreview {
-    height: auto;
     min-height: 600px;
-    width: 100%;
-    padding: 2px;
+    padding: 24px 12px;
     margin-top: 18px;
   }
 }
@@ -601,9 +618,6 @@ input:focus, select:focus {
   .pageSubtitle {
     font-size: 13px;
   }
-  .header {
-    margin-top: 16px;
-  }
   .formContainer {
     padding: 8px 2px;
     border-radius: 8px;
@@ -611,26 +625,20 @@ input:focus, select:focus {
     width: 100%;
     height: auto;
   }
-  .formColumns {
-    flex-direction: column;
-    gap: 10px;
+  .experienceForm {
     padding: 12px 4px;
-    min-height: auto;
-  }
-  .formLeft,
-  .formRight {
-    border: none;
-    padding: 0;
-    gap: 10px;
   }
   input,
-  select {
+  textarea {
     font-size: 14px;
     padding: 10px 8px;
     height: 36px;
     margin-bottom: 10px;
   }
-  .saveBtn {
+  textarea {
+    min-height: 50px;
+  }
+  .saveBtn, .addButton, .removeButton {
     width: 100%;
     font-size: 12px;
     padding: 8px 0;
@@ -698,13 +706,29 @@ input:focus, select:focus {
   .profilePara p, .summary p, .references p {
     font-size: 11px;
   }
-  .skillsList {
-    margin: 6px 0;
-  }
-  .skillName {
+  .skillsColumns li {
     font-size: 11px;
   }
-  .star {
-    font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: 16px;
+  }
+  .pageSubtitle {
+    font-size: 10px;
+  }
+  .formContainer,
+  .cvPreview {
+    padding: 2px 1px;
+    border-radius: 5px;
+  }
+  .cvLeft,
+  .cvRight {
+    padding: 2px 1px;
+  }
+  .profileImage {
+    width: 36px;
+    height: 36px;
   }
 }

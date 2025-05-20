@@ -1,188 +1,358 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import styles from './Cv3.module.css'; // Import CSS Module
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from './Cv3.module.css';
+import { useCVForm } from '../../context/CVFormContext';
+
+const getUserId = () => {
+  return localStorage.getItem("userId");
+};
 
 const Cv3 = () => {
   const navigate = useNavigate();
-  const [skills, setSkills] = useState([]);
+  const {
+    resumeData,
+    fetchResumeData,
+    addSkill,
+    updateSkill,
+    removeSkill,
+    saveToDatabase,
+  } = useCVForm();
+
   const [skillName, setSkillName] = useState('');
   const [skillRating, setSkillRating] = useState(0);
   const [editingIndex, setEditingIndex] = useState(null);
-  const [formData, setFormData] = useState({
-    fullName: "Saman Kumara",
-    jobTitle: "Full Stack Developer",
-    phone: "0771200506",
-    email: "samankumara@gmail.com",
-    userInfo: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy.",
-    SchoolName: "Rahula Collage Matara",
-    startDate: "2018.01.5",
-    endDate: "2021.12.1",
-    moreDetails: "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.",
-    universityName: "University of Moratuwa",
-    uniStartDate: "2022.01.5",
-    uniEndDate: "2025.12.1",
-    uniMoreDetails: "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old."
-  });
 
-  const handleAddSkill = () => {
-    if (skillName && skillRating > 0) {
-      if (editingIndex !== null) {
-        const updatedSkills = skills.map((skill, index) =>
-          index === editingIndex ? { name: skillName, rating: skillRating } : skill
-        );
-        setSkills(updatedSkills);
-        setEditingIndex(null);
-      } else {
-        setSkills([...skills, { name: skillName, rating: skillRating }]);
-      }
-      setSkillName('');
-      setSkillRating(0);
+
+  useEffect(() => {
+    const userId = getUserId();
+    if (userId) {
+      fetchResumeData(userId);
     }
+  }, []);
+
+
+  const handleAddOrUpdateSkill = () => {
+    if (!skillName || skillRating <= 0) return;
+
+    const newSkill = {
+      skillName,
+      skillLevel: skillRating.toString(),
+    };
+
+    if (editingIndex !== null) {
+      updateSkill(editingIndex, newSkill);
+      setEditingIndex(null);
+    } else {
+      addSkill(newSkill);
+    }
+
+    setSkillName('');
+    setSkillRating(0);
   };
 
-  const handleEditSkill = (index) => {
-    const skill = skills[index];
-    setSkillName(skill.name);
-    setSkillRating(skill.rating);
+
+  const handleEdit = (index) => {
+    const skill = resumeData.skill[index];
+    setSkillName(skill.skillName);
+    setSkillRating(parseInt(skill.skillLevel));
     setEditingIndex(index);
   };
 
-  const handleDeleteSkill = (index) => {
-    const updatedSkills = skills.filter((_, i) => i !== index);
-    setSkills(updatedSkills);
+
+  const handleDelete = (index) => {
+    removeSkill(index);
+    setEditingIndex(null);
+    setSkillName('');
+    setSkillRating(0);
   };
 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const sanitizedSkills = resumeData.skill.map((skill) => ({
+        skillName: skill.skillName,
+        skillLevel: skill.skillLevel,
+      }));
+
+      await saveToDatabase("skill", sanitizedSkills);
+      alert("Skills saved successfully");
+      navigate("/Cv4");
+    } catch (error) {
+      alert("Failed to save skills. Please try again.");
+      console.error(error);
+    }
+  };
+
+
+  const formatDate = (date) => {
+  if (!date) return "Present";
+  try {
+    return new Date(date).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+    });
+  } catch {
+    return "Invalid Date";
+  }
+};
+  const education = resumeData.educationDetails || {};
+  const personal = resumeData.personalInfo || {};
+
   return (
-    <div>
-      <nav className={styles.navbar}>
-        <h1 className={styles.logo}>JOB PORTAL</h1>
-        <div className={styles.navLinks}>
-          <button>For Candidates</button>
-          <button>For Employers</button>
-          <button>Pages</button>
-          <button>Help</button>
-        </div>
-      </nav>
+    <>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>
+          <span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span>
+          <span> </span>
+          <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span>
+        </h1>
+        <p className={styles.pageSubtitle}>Create your professional CV in minutes with AI integrations</p>
+      </header>
+
 
       <div className={styles.resumeBuilder}>
-        <aside className={styles.sidebar}>
-          <div className={styles.profile}>
-            <img src="profile.jpg" alt="User" className={styles.profileImg} />
-            <h4>Piyumi Hansamali</h4>
-            <span className={styles.rating}>⭐⭐⭐⭐⭐ 4.7</span>
-          </div>
-          <nav>
-            <ul>
-              <li>📋 My Profile</li>
-              <li className={styles.active}>📄 My Resumes</li>
-              <li>✅ Applied Jobs</li>
-            </ul>
-          </nav>
-        </aside>
-
         <main className={styles.content}>
-          <div className={styles.navigationButtons}>
-            <button className={styles.navButton} onClick={() => navigate('/Cv2')}>Previous</button>
-            <button className={styles.navButton} onClick={() => navigate('/Cv4')}>Next</button>
-          </div>
 
-          <div className={styles.skillForm}>
-            <h2>Skills</h2>
-            <div className={styles.skillInput}>
-              <input
-                type="text"
-                placeholder="Skill Name"
-                value={skillName}
-                onChange={(e) => setSkillName(e.target.value)}
-              />
-              <select
-                value={skillRating}
-                onChange={(e) => setSkillRating(parseInt(e.target.value))}
-              >
-                <option value="0">Select Rating</option>
-                <option value="1">1 Star</option>
-                <option value="2">2 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="5">5 Stars</option>
-              </select>
-              <button onClick={handleAddSkill}>
-                {editingIndex !== null ? 'Update Skill' : 'Add Skill'}
-              </button>
-            </div>
-            <div className={styles.skillsList}>
-              {skills.map((skill, index) => (
-                <div key={index} className={styles.skillItem}>
-                  <span>{skill.name}</span>
-                  <div className={styles.stars}>
-                    {'★'.repeat(skill.rating).padEnd(5, '☆')}
-                  </div>
-                  <div className={styles.skillActions}>
-                    <button onClick={() => handleEditSkill(index)}>Edit</button>
-                    <button onClick={() => handleDeleteSkill(index)}>Delete</button>
-                  </div>
+          {/* formContainer */}
+          <div className={styles.formContainer}>
+            <h3 className={styles.header}>Skills</h3>
+            <form onSubmit={handleSubmit}>
+              <div className={styles.formColumns}>
+                <div className={styles.formLeft}>
+                  <input
+                    type="text"
+                    name="skillName"
+                    placeholder="Skill Name"
+                    value={skillName}
+                    onChange={(e) => setSkillName(e.target.value)}
+                  
+                  />
+
+                  <select
+                    name="skillRating"
+                    value={skillRating}
+                    onChange={(e) => setSkillRating(parseInt(e.target.value))}
+                    required
+                    >
+                    <option value="0" className={styles.selectInput}>Select Rating</option>
+                    {[1, 2, 3, 4, 5].map((val) => (
+                      <option key={val} value={val}>
+                        {val} Star{val > 1 && "s"}
+                      </option>
+                    ))}
+                  </select>
+                  
+                  <div className={styles.skillButtonContainer}><button
+                    type="button"
+                    className={`${styles.skillButton}`}
+                    onClick={handleAddOrUpdateSkill}
+                  >
+                    {editingIndex !== null ? "Update Skill" : "AddMore"}
+                  </button>
+                    <button type="submit" className={styles.saveBtn}>
+                      Save
+                    </button></div>
+                    
+             
                 </div>
-              ))}
+              </div>
+  
+              {/* skill list */}
+              <div className={styles.skillsList}>
+                {Array.isArray(resumeData.skill) &&
+                  resumeData.skill.map((skill, index) =>
+                    skill && typeof skill.skillName === 'string' ? (
+                      <div key={index} className={styles.skillItem}>
+                        <span>{skill.skillName}</span>
+                        <div className={styles.skillStars}>
+                          {[...Array(5)].map((_, i) => (
+                            <span
+                              key={i}
+                              className={`${styles.star} ${
+                                i < parseInt(skill.skillLevel) ? styles.checked : ""
+                              }`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <div className={styles.skillActions}>
+                          <button
+                            type="button"
+                            className={styles.editBtn}
+                            onClick={() => handleEdit(index)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className={styles.deleteBtn}
+                            onClick={() => handleDelete(index)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ) : null
+                  )}
+              </div>
+              
+            </form>
+
+         
+            {/* Instructions Section */}
+            <div className={styles.instractionSection}>
+              <h3>Instructions</h3>
+              <ul>
+                <li>
+                  Add your skills with ratings.
+                  <div className={styles.instractionDetail}>
+                    Enter skill name and select rating from 1 to 5 stars.
+                  </div>
+                </li>
+                <li>
+                  Click "Add Skill" to add new skills.
+                  <div className={styles.instractionDetail}>
+                    You can edit or delete skills anytime before saving.
+                  </div>
+                </li>
+                <li>
+                  Click "Save" to save your changes.
+                  <div className={styles.instractionDetail}>
+                    Make sure to save before moving to the next step.
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
 
+
+          {/* Preview Section */}    
           <div className={styles.cvPreview}>
-            <div className={styles.cvHeader}>
-              <h2>{formData.fullName}</h2>
-              <h3>{formData.jobTitle}</h3>
-            </div>
-            <p className={styles.contactInfo}>{formData.phone}</p>
-            <p>{formData.email}</p>
-            <p className={styles.userInfo}>{formData.userInfo}</p>
-            <section className={styles.cvSection}>
-              <h4>Education Details</h4>
-              <div className={styles.education}>
-                <div className={styles.school}>
-                  <h5>{formData.SchoolName}</h5>
-                  <span>{formData.startDate}</span> to <span>{formData.endDate}</span>
-                  <p>{formData.moreDetails}</p>
+            <div className={styles.cvContainer}>
+              <div className={styles.cvLeft}>
+
+                <div className={styles.profileSection}>
+                  <img
+                    src={resumeData.personalInfo?.profilePicture || "profile.jpg"}
+                    alt="Profile"
+                    className={styles.profileImage}
+                  />
+                  <h3>{resumeData.personalInfo?.jobTitle || "Your Profession"}</h3>
+                  <h2>{resumeData.personalInfo?.fullname || "Your Name"}</h2>
                 </div>
-                <div className={styles.uni}>
-                  <h5>{formData.universityName}</h5>
-                  <span>{formData.uniStartDate}</span> to <span>{formData.uniEndDate}</span>
-                  <p>{formData.uniMoreDetails}</p>
+
+                <div className={styles.contactInfo}>
+                  <h4>Contact</h4>
+                  <p>{resumeData.personalInfo?.phone || "Phone"}</p>
+                  <p>{resumeData.personalInfo?.email || "Email"}</p>
+                  <p>{resumeData.personalInfo?.address || "Address"}</p>
                 </div>
-              </div>
-            </section>
-            <section className={styles.cvSection}>
-              <h4>Professional Experience</h4>
-              <div className={styles.job}>
-                <div className={styles.jobHeader}>
-                  <h5>Full Stack Developer</h5>
-                  <span>26 December 2024</span>
-                </div>
-                <p>Lorem Ipsum is simply dummy text of the printing industry...</p>
-              </div>
-              <div className={styles.job}>
-                <div className={styles.jobHeader}>
-                  <h5>Software Engineer</h5>
-                  <span>26 December 2024</span>
-                </div>
-                <p>Lorem Ipsum is simply dummy text of the printing industry...</p>
-              </div>
-            </section>
-            <section className={styles.cvSection}>
-              <h4>Professional Skills</h4>
-              <div className={styles.skillsPreview}>
-                {skills.map((skill, index) => (
-                  <div key={index} className={styles.skillPreviewItem}>
-                    <span className={styles.skillName}>{skill.name}</span>
-                    <div className={styles.skillRating}>
-                      {'★'.repeat(skill.rating).padEnd(5, '☆')}
+
+                <div className={styles.education}>
+                  <h4>Education</h4>
+                  {education.universitiyName && (
+                    <div className={styles.educationItem}>
+                      <h5>{education.universitiyName}</h5>
+                      <span>
+                        {formatDate(education.uniStartDate)} - {formatDate(education.uniEndDate)}
+                      </span>
+                      <p>{education.uniMoreDetails}</p>
                     </div>
-                  </div>
-                ))}
+                  )}
+                  {education.schoolName && (
+                    <div className={styles.educationItem}>
+                      <h5>{education.schoolName}</h5>
+                      <span>
+                        {formatDate(education.startDate)} - {formatDate(education.endDate)}
+                      </span>
+                      <p>{education.moreDetails}</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            </section>
+
+              <div className={styles.verticalLine}></div>
+
+              <div className={styles.cvRight}>
+
+                <div className={styles.profilePara}>
+                  <h4>Profile</h4>
+                  <p>{personal.profileParagraph || 'Your profile summary goes here.'}</p>
+                </div>
+
+                {/* experience section */}
+                <div className={styles.experience}>
+                  <h4>Professional Experience</h4>
+                  {Array.isArray(resumeData.professionalExperience) &&
+                  resumeData.professionalExperience.length > 0 ? (
+                    resumeData.professionalExperience.map((exp, index) => (
+                      <div key={index} className={styles.experienceItem}>
+                        <h5>{exp.jobTitle || "Job Title"}</h5>
+                        <span>
+                          {exp.jstartDate ? new Date(exp.jstartDate).toLocaleDateString() : "Start Date"} -{" "}
+                          {exp.jendDate ? new Date(exp.jendDate).toLocaleDateString() : "End Date"}
+                        </span>
+                        <p>{exp.jobDescription || "Job Description"}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No professional experience added yet.</p>
+                  )}
+                </div>
+
+                {/*  skills section */}
+                <div className={styles.skillsColumns}>
+                  <h4 className={styles.h4Headers}>Skills</h4>
+                  <ul className={styles.skillsList}>
+                    {resumeData.skill && resumeData.skill.length > 0 ? (
+                      resumeData.skill.map((skill, index) => (
+                        <li key={index} className={styles.skillRow}>
+                          <span className={styles.skillName}>{skill.skillName || "Skill"}</span>
+                          <span className={styles.skillStars}>
+                            {[...Array(5)].map((_, i) => (
+                              <span
+                                key={i}
+                                className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""
+                                  }`}
+                              >
+                                &#9733;
+                              </span>
+                            ))}
+                          </span>
+                        </li>
+                      ))
+                    ) : (
+                      <li>No skills added yet</li>
+                    )}
+                  </ul>
+                </div>
+
+                {/*  summary and references section */}
+                <div className={styles.summary}>
+                  <h4>Summary</h4>
+                  <p>{resumeData.summary || 'Your personal summary statement.'}</p>
+                </div>
+
+                <div className={styles.references}>
+                  <h4>References</h4>
+                  {Array.isArray(resumeData.references) && resumeData.references.length > 0 ? (
+                    resumeData.references.map((ref, index) => (
+                      <p key={index}>
+                        {ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Contact"}
+                      </p>
+                    ))
+                  ) : (
+                    <p>No references added yet.</p>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </main>
       </div>
-    </div>
+    </>
   );
 };
 

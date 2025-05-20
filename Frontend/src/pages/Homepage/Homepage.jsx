@@ -1,12 +1,13 @@
 import React from "react";
-import Navbar from "../../components/Navbar/Navbar.jsx"; 
-import "../../pages/Homepage/Homepage.css";             
-import Footer from "../../components/Footer/Footer.jsx"; 
+import "../../pages/Homepage/Homepage.css";   
+import{useNavigate} from "react-router-dom";        
+
 
 
 
 
 const JobPortal = () => {
+     const navigate = useNavigate();
   return (
     <div className="job-portal">
      
@@ -48,7 +49,7 @@ const JobPortal = () => {
             <i className="icon">📄</i>
             <h3>AI-Powered CV Builder</h3>
             <p>Effortlessly create professional resumes using AI. Update, download, and share your CVs anytime.</p>
-            <button className="feature-btn">Create Your Resume</button>
+            <button className="feature-btn" onClick={() => navigate('/Cv')}>Create Your Resume</button>
           </div>
 
           <div className="feature-item">

@@ -1,68 +1,80 @@
-"use client"
+import { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
+import logo from "../../assets/img/logo.png";
+import "./Navbar.css";
 
-import { useState, useEffect } from "react"
-import "./Navbar.css" // Import the CSS file
-import logo from "../../assets/img/logo.png"
-import { Link, useLocation } from "react-router-dom"
+const Navbar = ({ onSignupClick, onRegisterClick }) => {
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [hideNavbar, setHideNavbar] = useState(false);
+  const lastScrollY = useRef(window.scrollY);
 
-const Navbar = () => {
-  const location = useLocation()
-  const [currentPath, setCurrentPath] = useState("")
-
+  // Close mobile menu on route change
   useEffect(() => {
-    setCurrentPath(location.pathname)
-  }, [location])
+    setMenuOpen(false);
+  }, [location]);
 
-  // Function to check if a link should be active
+  // Hide/show navbar on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY.current && currentScrollY > 70) {
+        setHideNavbar(true);
+      } else {
+        setHideNavbar(false);
+      }
+      lastScrollY.current = currentScrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Active link logic
   const isActive = (path) => {
-    if (path === "/") {
-      return currentPath === "/"
-    }
-    return currentPath.startsWith(path)
-  }
+    if (path === "/") return location.pathname === "/";
+    return location.pathname.startsWith(path);
+  };
 
   return (
-    <header className="navbar fixed-navbar">
-      <div className="container">
-        {/* Logo */}
-        <div className="logo">
-          <img src={logo || "/placeholder.svg"} alt="Job Portal" />
+    <nav className={`navbar${hideNavbar ? " hide" : ""}`}>
+      <div className="navbar-container">
+        {/* Left: Logo */}
+        <div className="navbar-left">
+          <Link to="/" className="logo">
+            <img src={logo} alt="Logo" />
+          </Link>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="nav-links">
-          <Link to="/" className={isActive("/") ? "active" : ""}>
-            Home
-          </Link>
-          <Link to="/jobseeker" className={isActive("/jobseeker") ? "active" : ""}>
-            Jobseeker
-          </Link>
-          <Link to="/employee" className={isActive("/employee") ? "active" : ""}>
-            Employee
-          </Link>
-          <Link to="/counselor/dashboard" className={isActive("/counselor") ? "active" : ""}>
-            Counselor
-          </Link>
-          <Link to="/counselee/dashboard" className={isActive("/counselee") ? "active" : ""}>
-            Counselee
-          </Link>
-          <Link to="/about" className={isActive("/about") ? "active" : ""}>
-            About Us
-          </Link>
-          <Link to="/contact" className={isActive("/contact") ? "active" : ""}>
-            Contact Us
-          </Link>
-        </nav>
+        {/* Center: Navigation Links */}
+        <div className="navbar-center">
+          <div className={`nav-links${menuOpen ? " open" : ""}`}>
+            <Link to="/" className={isActive("/") ? "active" : ""}>Home</Link>
+            <Link to="/jobseeker" className={isActive("/jobseeker") ? "active" : ""}>Jobseeker</Link>
+            <Link to="/employee" className={isActive("/employee") ? "active" : ""}>Employee</Link>
+            <Link to="/counselor/dashboard" className={isActive("/counselor") ? "active" : ""}>Counselor</Link>
+            <Link to="/counselee/dashboard" className={isActive("/counselee") ? "active" : ""}>Counselee</Link>
+          </div>
+        </div>
 
-        {/* Buttons */}
-        <div className="nav-buttons">
-          <button className="btn sign-in">Sign In</button>
-          <button className="btn sign-out">Sign Out</button>
+        {/* Right: Buttons */}
+        <div className="navbar-right">
+          <div className="nav-buttons">
+            <button className="btn" onClick={onSignupClick}>Sign Up</button>
+            <button className="btn sign-out" onClick={onRegisterClick}>Register</button>
+          </div>
+          <div
+            className={`hamburger${menuOpen ? " open" : ""}`}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span />
+            <span />
+            <span />
+          </div>
         </div>
       </div>
-    </header>
-  )
-}
+    </nav>
 
-export default Navbar
+  );
+};
 
+export default Navbar;
