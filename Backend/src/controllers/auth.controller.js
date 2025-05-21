@@ -3,39 +3,43 @@ import{generateToken} from "../lib/utils.js";
 import bcrypt from "bcryptjs"
 import cloudinary from "../lib/cloudinary.js";
 
-
+// User signup controller - handles new user registration
 export const signup = async (req,res)=>{
     const{fullName,email,password} = req.body 
     try{
 
+        // Validation for required fields
         if(!fullName || !email || !password){
             return res.status(400).json({message:"All fields are required"});
 
             
         }
+         // Password length validation
         if(password.length < 6){
             return res.status(400).json({message:"password must be at least 6 characters"});
         }
 
+         // Check if user already exists with the same email
         const user = await User.findOne({email})
 
         if(user) return res.status(400).json({message:"Email already exists"});
 
+        // Hash the password for security
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password,salt)
 
-        const newUser = new User({
+        const newUser = new User({  // Create new user object
             fullName:fullName,
             email:email,
             password:hashedPassword
         })
 
         if(newUser){
-            //generate jwt token here
+            // Generate JWT token for authentication
             generateToken(newUser._id, res);
-            await newUser.save();
+            await newUser.save(); // Save the user to the database
 
-            res.status(201).json({
+            res.status(201).json({ // Return user data without password
                 _id: newUser._id,
                 fullName:newUser.fullName,
                 email:newUser.email,
@@ -54,24 +58,27 @@ export const signup = async (req,res)=>{
     }
 };
 
+// User login controller - authenticates existing users
 export const login = async (req,res)=>{
     const{email, password}=req.body;
     try{
-        const user = await User.findOne({email});
+        const user = await User.findOne({email});// Find user by email
 
         if (!user){
-            return res.status(400).json({message:"Invalid credentials"});
+            return res.status(400).json({message:"Invalid credentials"});// Return error if user doesn't exist
         }
 
+
+        // Compare password with hashed password in DB
         const isPasswordCorrect = await bcrypt.compare(password,user.password);
         if(!isPasswordCorrect){
             return res.status(400).json({message:"Invalid credentials"});
   
         }
 
-        generateToken(user._id,res)
+        generateToken(user._id,res)// Generate JWT token for authentication
 
-        res.status(200).json({
+        res.status(200).json({ // Return user data without password
             _id:user._id,
             fullName:user.fullName,
            email:user.email,
@@ -87,7 +94,7 @@ export const login = async (req,res)=>{
 export const logout = (req,res)=>{
 
 try{
-    res.cookie("jwt","",{maxAge:0})
+    res.cookie("jwt","",{maxAge:0})//Setting a cookie named "jwt" (which previously contained your authentication token),Setting maxAge:0, which makes the cookie expire immediately
     res.status(200).json({message:"Logged out successfully"});
 
 }catch(error){
@@ -103,12 +110,12 @@ export const updateProfile = async (req, res) => {
       const { profilePic } = req.body;
       const userId = req.user._id;
   
-      if (!profilePic) {
+      if (!profilePic) { // Validate profile picture exists
         return res.status(400).json({ message: "Profile pic is required" });
       }
   
-      const uploadResponse = await cloudinary.uploader.upload(profilePic);
-      const updatedUser = await User.findByIdAndUpdate(
+      const uploadResponse = await cloudinary.uploader.upload(profilePic); // Upload the image to Cloudinary
+      const updatedUser = await User.findByIdAndUpdate(// Update user's profile picture in the database
         userId,
         { profilePic: uploadResponse.secure_url },
         { new: true }
@@ -122,7 +129,7 @@ export const updateProfile = async (req, res) => {
   };
   
 export const checkAuth = (req, res)=> {
-    try{
+    try{// Return user data from the request object (populated by middleware)
         res.status(200).json(req.user);
 
     }catch(error){
