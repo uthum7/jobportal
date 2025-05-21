@@ -74,7 +74,7 @@ const Navbar = () => {
             <Link to="/about" className={isActive("/about") ? "active" : ""} onClick={handleLinkClick}>
               About Us
             </Link>
-            <Link to="/contact" className={isActive("/contact") ? "active" : ""} onClick={handleLinkClick}>
+            <Link to="/message/login" className={isActive("/message/login") ? "active" : ""} onClick={handleLinkClick}>
               Contact Us
             </Link>
           </nav>
