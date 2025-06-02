@@ -1,48 +1,53 @@
-/* src/pages/JobSeeker/ApplyForAjob/ApplyForAjob.css */
 
+/* Main container that holds the entire job application page */
 .ApplyJobMainContainer {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100vh; /* Ensures the container takes at least the full viewport height */
 }
 
-/* Integrated layout for sidebar, filter, and job cards */
+/* Layout container for sidebar and content sections */
 .integrated-layout {
   display: flex;
   width: 100%;
 }
 
+/* Wrapper for the sidebar component */
 .sidebar-wrapper {
   width: 12rem;
 }
 
+/* Main content area that holds job filters and job listings */
 .main-content {
   flex: 1;
   padding: 20px;
   margin-left: 0;
 }
 
+/* Flex container for filters panel and job cards */
 .job-layout {
   display: flex;
   gap: 20px;
   margin-top: 20px;
 }
 
-/* Filter column */
+/* Styling for the left filter panel */
 .filter-panel {
-  flex-shrink: 0;
+  flex-shrink: 0; /* Prevents the filter panel from shrinking */
   width: 250px;
   padding: 15px;
   border: 1px solid #ccc;
   border-radius: 10px;
   background-color: #f9f9f9;
-  height: fit-content;
+  height: fit-content; /* Ensures the panel only takes as much height as needed */
 }
 
+/* Filter panel heading style */
 .filter-panel h3 {
   margin-bottom: 10px;
 }
 
+/* Styling for the search input field */
 .filter-panel input[type="text"] {
   width: 100%;
   padding: 10px;
@@ -52,11 +57,12 @@
   margin-bottom: 20px;
 }
 
-/* Experience filter styles */
+/* Container for experience filter section */
 .experience-filter {
   margin-top: 10px;
 }
 
+/* Styling for the list of experience options */
 .experience-options {
   display: flex;
   flex-direction: column;
@@ -64,16 +70,18 @@
   margin-top: 10px;
 }
 
+/* Individual experience option row */
 .experience-option {
   display: flex;
   align-items: center;
 }
 
-/* Posted date filter styles */
+/* Container for posted date filter section */
 .posted-date-filter {
   margin-top: 10px;
 }
 
+/* Styling for the list of posted date options */
 .posted-date-options {
   display: flex;
   flex-direction: column;
@@ -81,12 +89,13 @@
   margin-top: 10px;
 }
 
+/* Individual posted date option row */
 .posted-date-option {
   display: flex;
   align-items: center;
 }
 
-/* Custom checkbox styling */
+/* Custom styling for checkbox containers to create a consistent look */
 .checkbox-container {
   display: flex;
   align-items: center;
@@ -94,10 +103,11 @@
   padding-left: 30px;
   cursor: pointer;
   font-size: 14px;
-  user-select: none;
+  user-select: none; /* Prevents text selection */
   width: 100%;
 }
 
+/* Hide the default checkbox input */
 .checkbox-container input {
   position: absolute;
   opacity: 0;
@@ -106,6 +116,7 @@
   width: 0;
 }
 
+/* Create custom checkbox appearance */
 .checkmark {
   position: absolute;
   left: 0;
@@ -116,25 +127,30 @@
   border-radius: 3px;
 }
 
+/* Style changes when hovering over checkbox */
 .checkbox-container:hover input~.checkmark {
   background-color: #f0f0f0;
 }
 
+/* Style for checked checkbox */
 .checkbox-container input:checked~.checkmark {
-  background-color: #4CAF50;
+  background-color: #4CAF50; /* Green background when checked */
   border: 1px solid #4CAF50;
 }
 
+/* Style for the checkmark itself (hidden by default) */
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
 
+/* Show the checkmark when the checkbox is checked */
 .checkbox-container input:checked~.checkmark:after {
   display: block;
 }
 
+/* Create the checkmark/indicator (hidden when not checked) */
 .checkbox-container .checkmark:after {
   left: 6px;
   top: 2px;
@@ -142,90 +158,215 @@
   height: 10px;
   border: solid white;
   border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  transform: rotate(45deg); /* Rotates to create checkmark shape */
 }
 
+/* Style for the option label text */
 .option-label {
   margin-left: 5px;
 }
 
-/* Job cards area */
+/* Grid layout for job cards area */
 .job-cards-container {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
   gap: 20px;
 }
 
+/* Footer positioning to always stay at the bottom */
 .footer1 {
-  margin-top: auto;
+  margin-top: auto; /* Pushes footer to bottom */
   width: 100%;
 }
 
-/* Header styling */
+/* Header section styling */
 .header {
   margin-bottom: 20px;
   text-align: left;
 }
 
+/* Page title styling */
 .page-title {
   font-size: 24px;
   margin-bottom: 10px;
   text-align: left;
 }
 
+/* Breadcrumb navigation styling */
 .breadcrumb {
   display: flex;
   align-items: center;
 }
 
+/* Style for breadcrumb links */
 .breadcrumb-link {
-  color: #4CAF50;
+  color: #4CAF50; /* Green color for links */
   text-decoration: none;
 }
 
+/* Style for breadcrumb separator */
 .breadcrumb-separator {
   margin: 0 8px;
-  color: #6b7280;
+  color: #6b7280; /* Gray color for separator */
 }
 
-/* Responsive design */
+/* Styling for "No jobs found" message */
+.no-jobs-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  background-color: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  text-align: center;
+  margin: 20px 0;
+  min-height: 400px;
+  width: 100%;
+  grid-column: 1 / -1; /* Spans across all grid columns to center in content area */
+}
+
+.no-jobs-found-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+  color: #9ca3af;
+}
+
+.no-jobs-found-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.no-jobs-found-message {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 20px;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.no-jobs-found-suggestions {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 25px;
+}
+
+.no-jobs-found-suggestions ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.no-jobs-found-suggestions li {
+  margin: 5px 0;
+  position: relative;
+  padding-left: 20px;
+}
+
+.no-jobs-found-suggestions li::before {
+  content: "•";
+  color: #4CAF50;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+.refresh-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+.refresh-button:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.refresh-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .no-jobs-found {
+    padding: 40px 20px;
+    min-height: 300px;
+  }
+  
+  .no-jobs-found-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .no-jobs-found-title {
+    font-size: 20px;
+  }
+  
+  .no-jobs-found-message {
+    font-size: 14px;
+  }
+}
+
+/* Responsive design for different screen sizes */
 @media (max-width: 1200px) {
+  /* Adjust job cards to show 2 per row on medium screens */
   .job-cards-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 992px) {
+  /* Change layout to column for smaller screens */
   .integrated-layout {
     flex-direction: column;
   }
-  
+ 
+  /* Make sidebar full width on smaller screens */
   .sidebar-wrapper {
     width: 100%;
   }
-  
+ 
+  /* Adjust sidebar styling for mobile layout */
   .sidebar {
     width: 100% !important;
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
   }
-  
+ 
+  /* Stack filter panel and job cards vertically */
   .job-layout {
     flex-direction: column;
   }
-  
+ 
+  /* Expand filter panel to full width */
   .filter-panel {
     width: 100%;
     max-width: 100%;
   }
-  
+ 
+  /* Keep 2 job cards per row on medium screens */
   .job-cards-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
+  /* Show only 1 job card per row on small screens */
   .job-cards-container {
     grid-template-columns: 1fr;
   }

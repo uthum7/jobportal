@@ -6,19 +6,22 @@ import Footer from "../../../components/Footer/Footer.jsx";
 import "./JobDetails.css";
 import "../Dashboard/Dashboard.css";
 
+//Displays detailed information about a specific job listing with save functionality
 const JobDetails = () => {
-  const { jobId } = useParams();
-  const [job, setJob] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("description");
+  const { jobId } = useParams(); // Extract jobId from URL parameters
+  const [job, setJob] = useState(null); // Store job details
+  const [loading, setLoading] = useState(true); // Loading state flag
+  const [error, setError] = useState(null); // Error handling state
+  const [activeTab, setActiveTab] = useState("description"); // Track active tab (description/requirements)
 
-  const [userId, setUserId] = useState("Usr1");
-  const [isJobSaved, setIsJobSaved] = useState(false);
-  const [animating, setAnimating] = useState(false);
-  const [savedJobId, setSavedJobId] = useState(null); // Store the saved job document ID
+  // User-related states
+  const [userId, setUserId] = useState("Usr1"); // Hardcoded user ID for demonstration
+  const [isJobSaved, setIsJobSaved] = useState(false); // Track if job is saved by user
+  const [animating, setAnimating] = useState(false); // Animation state for save button
+  const [savedJobId, setSavedJobId] = useState(null); // ID of the saved job document in database
 
   useEffect(() => {
+    // Fetch job details from API based on URL parameter
     const fetchJobDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:5001/api/jobs/${jobId}`);
@@ -32,13 +35,13 @@ const JobDetails = () => {
     };
 
     fetchJobDetails();
-    
+
     // Check if job is already saved
     const checkSavedStatus = async () => {
       try {
-        // Fixed the endpoint for checking saved status
+        // API call to check if job is saved
         const response = await axios.get(`http://localhost:5001/api/saved-jobs/check/${userId}/${jobId}`);
-        
+
         if (response.data && response.data.isSaved) {
           setIsJobSaved(true);
           // Store the saved job document ID for deletion
@@ -54,10 +57,11 @@ const JobDetails = () => {
         setIsJobSaved(false);
       }
     };
-    
-    checkSavedStatus();
-  }, [jobId, userId]);
 
+    checkSavedStatus();
+  }, [jobId, userId]); // Re-run when jobId or userId changes
+
+  //  function to format relative time
   const formatRelativeTime = (dateString) => {
     if (!dateString) return "Not specified";
 
@@ -87,6 +91,7 @@ const JobDetails = () => {
     }
   };
 
+  // function to format date
   const formatDate = (dateString) => {
     if (!dateString) return "Not specified";
     const date = new Date(dateString);
@@ -97,22 +102,24 @@ const JobDetails = () => {
     });
   };
 
+  // Function to handle saving or removing a job
   const handleSaveJob = async () => {
     try {
       // Start animation
       setAnimating(true);
-      
+
       if (!isJobSaved) {
         // Save the job
         const response = await axios.post('http://localhost:5001/api/saved-jobs/save', {
           jobId: jobId,
           userId: userId
         });
-        
+
+        // Store returned document ID for later deletion if needed
         if (response.data && response.data._id) {
           setSavedJobId(response.data._id);
         }
-        
+
         setIsJobSaved(true);
       } else {
         // Delete the saved job
@@ -122,11 +129,11 @@ const JobDetails = () => {
             userId: userId
           }
         });
-        
+
         setIsJobSaved(false);
         setSavedJobId(null);
       }
-      
+
       // Reset animation state after animation completes
       setTimeout(() => {
         setAnimating(false);
@@ -137,6 +144,7 @@ const JobDetails = () => {
     }
   };
 
+  // Conditional rendering states
   if (loading) return <div className="loading-container">Loading job details...</div>;
   if (error) return <div className="error-container">{error}</div>;
   if (!job) return <div className="error-container">Job not found</div>;
@@ -145,10 +153,13 @@ const JobDetails = () => {
     <div className="job-details-main-container">
       <div className="dashboard-container">
         <div className="main-content">
+
+          {/* Sidebar navigation */}
           <JobseekerSidebar />
 
           <div className="header">
             <h1 className="page-title">Job Details</h1>
+            {/* Breadcrumb navigation */}
             <div className="breadcrumb">
               <Link to="/" className="breadcrumb-link">Home</Link>
               <span className="breadcrumb-separator">/</span>
@@ -159,7 +170,7 @@ const JobDetails = () => {
           </div>
 
           <div className="job-details-container">
-            {/* Job Header Section */}
+            {/* Job Header Section with title and action buttons */}
             <div className="job-header">
               <div className="job-header-content">
                 <div className="job-header-info">
@@ -167,7 +178,8 @@ const JobDetails = () => {
                 </div>
                 <div className="job-apply-button">
                   <button className="apply-now-btn">Apply Now</button>
-                  <button 
+                  {/* save job button */}
+                  <button
                     className={`save-job-btn ${isJobSaved ? 'saved' : ''} ${animating ? 'animate' : ''}`}
                     onClick={handleSaveJob}
                   >
@@ -215,12 +227,13 @@ const JobDetails = () => {
                   </button>
                 </div>
 
-                {/* Description Tab */}
+                {/* Description Tab content*/}
                 <div className={`tab-content ${activeTab === "description" ? "active" : ""}`}>
                   <div className="job-description">
                     <h3>Job Description</h3>
                     <p>{job.JobDescription || "No description provided."}</p>
 
+                    {/* Conditional rendering of responsibilities section */}
                     {job.Responsibilities && job.Responsibilities.length > 0 && (
                       <>
                         <h3>Responsibilities</h3>
@@ -239,9 +252,10 @@ const JobDetails = () => {
                   </div>
                 </div>
 
-                {/* Requirements & Qualifications Tab */}
+                {/* Requirements & Qualifications Tab content*/}
                 <div className={`tab-content ${activeTab === "requirements" ? "active" : ""}`}>
                   <div className="job-description">
+                    {/* Conditional rendering of requirements section */}
                     {job.Requirements && job.Requirements.length > 0 ? (
                       <>
                         <h3>Requirements</h3>
@@ -254,7 +268,7 @@ const JobDetails = () => {
                     ) : (
                       <p>No specific requirements listed for this position.</p>
                     )}
-
+                    {/* Conditional rendering of qualifications section */}
                     {job.Qualifications && job.Qualifications.length > 0 && (
                       <>
                         <h3>Qualifications</h3>
@@ -272,7 +286,7 @@ const JobDetails = () => {
           </div>
         </div>
       </div>
-
+      {/* Footer component */}
       <div className="footer1">
         <Footer />
       </div>

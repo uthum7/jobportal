@@ -24,7 +24,6 @@ import ChangePassword from "./pages/counselee/change-password.jsx"
 import DeleteAccount from "./pages/counselee/delete-account.jsx"
 import Logout from "./pages/counselee/logout.jsx"
 import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx"
-import MyProfile from "./pages/JobSeeker/MyProfile/MyProfile.jsx"
 import ApplyForAjob from "./pages/JobSeeker/ApplyForAjob/ApplyForAjob";
 import JobDetails from "./pages/JobSeeker/JobDetails/JobDetails.jsx";
 import Cv from './pages/Cv/Cv.jsx';
@@ -91,7 +90,6 @@ function App() {
 
         {/* JobSeeker Routes */}
         <Route path="/JobSeeker/dashboard" element={<JobSeekerDashboard />} />
-        <Route path="/JobSeeker/myprofile" element={<MyProfile />} />
         <Route path="/JobSeeker/apply-for-job" element={<ApplyForAjob />} />
         <Route path="/JobSeeker/job-details/:jobId" element={<JobDetails />} />
 

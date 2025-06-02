@@ -1,4 +1,4 @@
-/* src/components/JobCard.css */
+
 .job-card {
   border: 1px solid #ddd;
   padding: 20px;
@@ -10,6 +10,7 @@
   justify-content: space-between;
   height: 280px; /* Fixed height for consistency */
   box-sizing: border-box;
+  position: relative; /* position relative for absolute positioning of the star */
 }
 
 .job-card h3 {
@@ -37,4 +38,14 @@
 
 .see-more-btn:hover {
   background-color: #168f60;
+}
+
+/* styles for the saved star */
+.saved-star {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #FFD700; 
+  font-size: 24px;
+  text-shadow: 0 0 2px rgba(0,0,0,0.3); /* slight shadow for better visibility */
 }

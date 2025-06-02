@@ -1,153 +1,158 @@
-/* src/pages/JobSeeker/JobDetails/JobDetails.css */
-
+/* Main container layout - sets overall page structure */
 .job-details-main-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #f5f5f5;
-  }
-  
-  .dashboard-container {
-    display: flex;
-    flex-grow: 1;
-  }
-  
-  .main-content {
-    display: flex;
-    width: 100%;
-  }
-  
-  /* Header styling */
-  .header {
-    margin-bottom: 20px;
-    text-align: left;
-  }
-  
-  .page-title {
-    font-size: 24px;
-    margin-bottom: 10px;
-    text-align: left;
-  }
-  
-  .breadcrumb {
-    display: flex;
-    align-items: center;
-  }
-  
-  .breadcrumb-link {
-    color: #4CAF50;
-    text-decoration: none;
-  }
-  
-  .breadcrumb-link:hover {
-    text-decoration: underline;
-  }
-  
-  .breadcrumb-separator {
-    margin: 0 8px;
-    color: #6b7280;
-  }
-  
-  .breadcrumb-current {
-    color: #666;
-  }
-  
-  .loading-container,
-  .error-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-    font-size: 18px;
-    color: #555;
-  }
-  
-  .error-container {
-    color: #d32f2f;
-  }
-  
-  /* Job Details Container */
-  .job-details-container {
-    width: 100%;
-    margin-bottom: 30px;
-  }
-  
-  /* Job Header Section */
-  .job-header {
-    background-color: #f1f8f2;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .job-header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .job-header-info {
-    flex-grow: 1;
-  }
-  
-  .job-header .job-title {
-    font-size: 35px;
-    margin: 0;
-    color: black;
-  }
-  
-  .job-apply-button {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .apply-now-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .apply-now-btn:hover {
-    background-color: #3e8e41;
-  }
-  
-  .save-job-btn {
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #ddd;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .save-job-btn:hover {
-    background-color: #e0e0e0;
-  }
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;  /* Full viewport height */
+  background-color: #f5f5f5;
+}
 
-  /* Yellow color when saved */
+/* Dashboard container for layout management */
+.dashboard-container {
+  display: flex;
+  flex-grow: 1;  /* Take up available space */
+}
+
+.main-content {
+  display: flex;
+  width: 100%;
+}
+
+/* Header styling for the page title and breadcrumb */
+.header {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.page-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+/* Breadcrumb navigation styling - shows path hierarchy */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb-link {
+  color: #4CAF50;  /* Green links */
+  text-decoration: none;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+  color: #6b7280;
+}
+
+.breadcrumb-current {
+  color: #666;  /* Current page in breadcrumb */
+}
+
+/* Loading and error states for better UX */
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 18px;
+  color: #555;
+}
+
+.error-container {
+  color: #d32f2f;  /* Red for errors */
+}
+
+/* Job Details Container - main content wrapper */
+.job-details-container {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+/* Job Header Section - contains job title and action buttons */
+.job-header {
+  background-color: #f1f8f2;  /* Light green background */
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.job-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.job-header-info {
+  flex-grow: 1;
+}
+
+.job-header .job-title {
+  font-size: 35px;
+  margin: 0;
+  color: black;
+}
+
+/* Apply and Save job buttons container */
+.job-apply-button {
+  display: flex;
+  gap: 10px;
+}
+
+/* Apply Now button styling - primary action */
+.apply-now-btn {
+  background-color: #4CAF50;  /* Green button */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.apply-now-btn:hover {
+  background-color: #3e8e41;  /* Darker green on hover */
+}
+
+/* Save Job button styling - secondary action */
+.save-job-btn {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.save-job-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Yellow style for saved job button - visual feedback */
 .save-job-btn.saved,
 .save-job-btn:active {
-  background-color: #FFD700;
+  background-color: #FFD700;  /* Gold/yellow background */
   color: #333;
   border-color: #e6c200;
 }
 
-/* Animation for saved state */
+/* Animation for button press effect */
 @keyframes pulse {
   0% {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.05);  /* Slight enlarge effect */
   }
   100% {
     transform: scale(1);
@@ -159,8 +164,7 @@
   animation: pulse 0.4s ease-in-out;
 }
 
-
-
+/* Creates a radial glow effect on button click */
 .save-job-btn::before {
   content: '';
   position: absolute;
@@ -177,175 +181,185 @@
 .save-job-btn.animate::before {
   animation: sparkle 0.5s ease-out;
 }
-  
-  /* Job Details Content */
-  .job-details-content {
-    background-color: #ffffff;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+/* Job Details Content - main container for job information */
+.job-details-content {
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Job Summary Section - quick overview of key job details */
+.job-details-summary {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.job-summary-item {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px;
+}
+
+.job-summary-item h4 {
+  color: #666;
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.job-summary-item p {
+  color: #333;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Tab Navigation for job description sections */
+.job-tabs {
+  margin-top: 20px;
+}
+
+.tab-navigation {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  color: #666;
+  transition: color 0.3s;
+}
+
+/* Active tab styling with green indicator */
+.tab-btn.active {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+/* Green underline indicator for active tab */
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #4CAF50;  /* Green underline for active tab */
+}
+
+/* Tab content visibility control */
+.tab-content {
+  display: none;
+  padding: 10px 0;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Job Description Content styling */
+.job-description h3 {
+  font-size: 18px;
+  margin: 20px 0 10px 0;
+  color: #333;
+}
+
+.job-description p {
+  line-height: 1.6;
+  color: #555;
+  margin: 0 0 16px 0;
+}
+
+.job-description ul {
+  margin: 0 0 20px 0;
+  padding-left: 20px;
+}
+
+.job-description li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+  color: #555;
+}
+
+/* Application deadline section - separated visually */
+.application-deadline {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* Footer positioning */
+.footer1 {
+  margin-top: auto;  /* Push footer to bottom */
+  width: 100%;
+}
+
+/* Responsive design for different screen sizes */
+@media (max-width: 992px) {
+  /* Stack elements vertically on medium screens */
+  .job-header-content {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  /* Job Summary Section */
-  .job-details-summary {
-    display: flex;
-    flex-wrap: wrap;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .job-summary-item {
-    flex: 1;
-    min-width: 150px;
-    padding: 10px;
-  }
-  
-  .job-summary-item h4 {
-    color: #666;
-    margin: 0 0 8px 0;
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
-  .job-summary-item p {
-    color: #333;
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-  }
-  
-  /* Tab Navigation */
-  .job-tabs {
-    margin-top: 20px;
-  }
-  
-  .tab-navigation {
-    display: flex;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 20px;
-  }
-  
-  .tab-btn {
-    background: none;
-    border: none;
-    padding: 12px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    position: relative;
-    color: #666;
-    transition: color 0.3s;
-  }
-  
-  .tab-btn.active {
-    color: #4CAF50;
-    font-weight: 600;
-  }
-  
-  .tab-btn.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
+
+  .job-apply-button {
+    margin-top: 15px;
     width: 100%;
-    height: 3px;
-    background-color: #4CAF50;
   }
-  
-  .tab-content {
-    display: none;
+
+  .apply-now-btn, .save-job-btn {
+    flex: 1;  /* Make buttons take equal width */
+  }
+}
+
+@media (max-width: 768px) {
+  /* Further adjustments for small screens */
+  .job-details-summary {
+    flex-direction: column;
+  }
+
+  .job-summary-item {
+    width: 100%;
     padding: 10px 0;
   }
-  
-  .tab-content.active {
-    display: block;
+
+  /* Horizontal scrolling for tabs on small screens */
+  .tab-navigation {
+    overflow-x: auto;  /* Allow horizontal scrolling for tabs */
+    white-space: nowrap;
+    padding-bottom: 5px;
   }
-  
-  /* Job Description Content */
-  .job-description h3 {
-    font-size: 18px;
-    margin: 20px 0 10px 0;
-    color: #333;
+
+  .tab-btn {
+    padding: 12px 15px;
   }
-  
-  .job-description p {
-    line-height: 1.6;
-    color: #555;
-    margin: 0 0 16px 0;
+}
+
+@media (max-width: 576px) {
+  /* Adjustments for extra small screens */
+  .job-header-content {
+    padding: 15px;
   }
-  
-  .job-description ul {
-    margin: 0 0 20px 0;
-    padding-left: 20px;
+
+  .job-title {
+    font-size: 20px;
   }
-  
-  .job-description li {
-    margin-bottom: 8px;
-    line-height: 1.5;
-    color: #555;
+
+  /* Smaller buttons on mobile */
+  .apply-now-btn, .save-job-btn {
+    padding: 8px 15px;
+    font-size: 14px;
   }
-  
-  .application-deadline {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-  }
-  
-  .footer1 {
-    margin-top: auto;
-    width: 100%;
-  }
-  
-  /* Responsive design */
-  @media (max-width: 992px) {
-    .job-header-content {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  
-    .job-apply-button {
-      margin-top: 15px;
-      width: 100%;
-    }
-  
-    .apply-now-btn, .save-job-btn {
-      flex: 1;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .job-details-summary {
-      flex-direction: column;
-    }
-  
-    .job-summary-item {
-      width: 100%;
-      padding: 10px 0;
-    }
-  
-    .tab-navigation {
-      overflow-x: auto;
-      white-space: nowrap;
-      padding-bottom: 5px;
-    }
-  
-    .tab-btn {
-      padding: 12px 15px;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .job-header-content {
-      padding: 15px;
-    }
-  
-    .job-title {
-      font-size: 20px;
-    }
-  
-    .apply-now-btn, .save-job-btn {
-      padding: 8px 15px;
-      font-size: 14px;
-    }
-  }
+}

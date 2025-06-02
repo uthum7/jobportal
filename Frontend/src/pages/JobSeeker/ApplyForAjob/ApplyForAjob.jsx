@@ -46,20 +46,20 @@ const jobModeOptions = [
 
 
 const ApplyForAjob = () => {
-  
-  // State variables
-  const [jobs, setJobs] = useState([]);
-  const [displayJobs, setDisplayJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [keyword, setKeyword] = useState("");
-  const [selectedExperience, setSelectedExperience] = useState(null);
-  const [selectedPostedDate, setSelectedPostedDate] = useState(null);
-  const [selectedJobType, setSelectedJobType] = useState(null);
-  const [selectedJobMode, setSelectedJobMode] = useState(null);
+
+  // State variables for managing jobs data and filter selections
+  const [jobs, setJobs] = useState([]);                               // Stores all fetched jobs
+  const [displayJobs, setDisplayJobs] = useState([]);                 // Stores filtered jobs to display
+  const [loading, setLoading] = useState(true);                       // Tracks loading state for API requests
+  const [keyword, setKeyword] = useState("");                         // Stores search keyword input
+  const [selectedExperience, setSelectedExperience] = useState(null); // Stores selected experience filter
+  const [selectedPostedDate, setSelectedPostedDate] = useState(null); // Stores selected posted date filter
+  const [selectedJobType, setSelectedJobType] = useState(null);       // Stores selected job type filter
+  const [selectedJobMode, setSelectedJobMode] = useState(null);       // Stores selected job mode filter
 
 
   useEffect(() => {
-    setLoading(true); 
+    setLoading(true);
 
     // Fetch jobs from backend  
     const params = {};
@@ -67,49 +67,58 @@ const ApplyForAjob = () => {
     if (selectedExperience !== null) params.experience = selectedExperience;
     if (selectedPostedDate !== null) params.postedDate = selectedPostedDate;
     if (selectedJobType !== null) params.jobType = selectedJobType;
-if (selectedJobMode !== null) params.jobMode = selectedJobMode;
+    if (selectedJobMode !== null) params.jobMode = selectedJobMode;
 
-// Make the API request
+    // Make the API request fetch jobs with the filter parameters
     axios
       .get("http://localhost:5001/api/jobs", { params })
       .then((response) => {
-        setJobs(response.data);
-        setDisplayJobs(response.data);
-        setLoading(false);
+        setJobs(response.data);         // Update jobs state with fetched data
+        setDisplayJobs(response.data);  // Initialize displayJobs with all fetched jobs
+        setLoading(false);              // Set loading to false after successful fetch
       })
-      .catch((error) => { 
-        console.error("Error fetching jobs:", error); 
-        setLoading(false);
+      .catch((error) => {
+        console.error("Error fetching jobs:", error);
+        setLoading(false);              // Set loading to false even if there's an error
       });
-  }, [keyword, selectedExperience, selectedPostedDate, selectedJobType, selectedJobMode]); 
+  }, [keyword, selectedExperience, selectedPostedDate, selectedJobType, selectedJobMode]); // Run effect when any filter changes
 
   useEffect(() => {
+
+    // Apply client-side filtering when filter states change
     filterJobs(selectedPostedDate, selectedExperience, selectedJobType, selectedJobMode);
   }, [jobs, selectedPostedDate, selectedExperience, selectedJobType, selectedJobMode]);
 
+  // Handler for experience filter changes - toggles selection
   const handleExperienceChange = (value) => {
     setSelectedExperience(selectedExperience === value ? null : value);
   };
 
+  // Handler for posted date filter changes - toggles selection
   const handlePostedDateChange = (value) => {
     setSelectedPostedDate(selectedPostedDate === value ? null : value);
   };
 
+  // Handler for job type filter changes - toggles selection
   const handleJobTypeChange = (value) => {
     setSelectedJobType(selectedJobType === value ? null : value);
   };
 
+  // Handler for job mode filter changes - toggles selection
   const handleJobModeChange = (value) => {
     setSelectedJobMode(selectedJobMode === value ? null : value);
   };
 
+  // Function to filter jobs based on selected filters (client-side filtering)
   const filterJobs = (postedDateFilter, experienceFilter, jobTypeFilter, jobModeFilter) => {
-    let filtered = [...jobs];
+    let filtered = [...jobs];  // Create a copy of all jobs
 
+    // Filter by experience if selected
     if (experienceFilter !== null) {
       filtered = filtered.filter((job) => job.JobExperienceYears === experienceFilter);
     }
 
+    // Filter by posted date if selected
     if (postedDateFilter !== null) {
       const now = new Date();
       filtered = filtered.filter((job) => {
@@ -126,20 +135,22 @@ if (selectedJobMode !== null) params.jobMode = selectedJobMode;
           case "older":
             return now - postDate > 30 * 24 * 60 * 60 * 1000;
           default:
-            return true;
+            return true;  // Default case: include all jobs
         }
       });
     }
 
+    // Filter by job type if selected
     if (jobTypeFilter !== null) {
       filtered = filtered.filter((job) => job.JobType === jobTypeFilter);
     }
 
+    // Filter by job mode if selected
     if (jobModeFilter !== null) {
       filtered = filtered.filter((job) => job.JobMode === jobModeFilter);
     }
 
-    setDisplayJobs(filtered);
+    setDisplayJobs(filtered);  // Update the displayJobs state with filtered results
   };
 
   return (
@@ -148,7 +159,10 @@ if (selectedJobMode !== null) params.jobMode = selectedJobMode;
 
         <div className="main-content">
 
+          {/* Sidebar navigation for job seeker */}
           <JobseekerSidebar />
+
+          {/* Page header with title and breadcrumb navigation */}
           <div className="header">
             <h1 className="page-title">Apply For A Job</h1>
             <div className="breadcrumb">
@@ -162,6 +176,7 @@ if (selectedJobMode !== null) params.jobMode = selectedJobMode;
             {/* Filter Column */}
             <div className="filter-panel">
               <h3>Search For Jobs</h3>
+              {/* Keyword search */}
               <h5 style={{ color: "#808080" }}>Search by keywords</h5>
               <input
                 type="text"
@@ -224,9 +239,9 @@ if (selectedJobMode !== null) params.jobMode = selectedJobMode;
                 </div>
               </div>
 
-              
-            {/* Job Mode Filter */}
-            <div className="job-mode-filter">
+
+              {/* Job Mode Filter */}
+              <div className="job-mode-filter">
                 <h5 style={{ color: "#808080", marginTop: "20px" }}>Job Mode</h5>
                 <div className="posted-date-options">
                   {jobModeOptions.map((option) => (
@@ -251,7 +266,54 @@ if (selectedJobMode !== null) params.jobMode = selectedJobMode;
               ) : displayJobs.length > 0 ? (
                 displayJobs.map((job) => <JobCard key={job._id} job={job} />)
               ) : (
-                <p>No jobs found.</p>
+                // Enhanced "No jobs found" section
+                <div className="no-jobs-found">
+                  {/* Search icon SVG */}
+                  <svg
+                    className="no-jobs-found-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+
+                  <h3 className="no-jobs-found-title">No jobs found</h3>
+
+                  <p className="no-jobs-found-message">
+                    We couldn't find any jobs matching your search criteria.
+                    Try adjusting your filters or search terms to find more opportunities.
+                  </p>
+
+                  <div className="no-jobs-found-suggestions">
+                    <strong>Try these suggestions:</strong>
+                    <ul>
+                      <li>Remove some filters</li>
+                      <li>Use different keywords</li>
+                      <li>Check spelling and try synonyms</li>
+                      <li>Expand your search criteria</li>
+                    </ul>
+                  </div>
+
+                  <button
+                    className="refresh-button"
+                    onClick={() => {
+                      setKeyword("");
+                      setSelectedExperience(null);
+                      setSelectedPostedDate(null);
+                      setSelectedJobType(null);
+                      setSelectedJobMode(null);
+                    }}
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
               )}
             </div>
           </div>
