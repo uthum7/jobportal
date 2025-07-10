@@ -1,296 +1,760 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f8f9fa;
-  }
-  
-  .resume-builder {
-    display: flex;
-    min-height: 100vh;
-  }
-
-/* nav bar */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    padding: 15px 10%;
-    color: black;
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #f5f7fa;
+  --text-color: #333;
+  --background-color: #ffffff;
+  --border-color: #e0e0e0;
+  --hover-color: #357abd;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --shadow-soft: 0 2px 15px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --form-bg: #ffffff;
+  --preview-bg: #fbfbfb;
+  --PageTitle:#123456;
 }
 
-.logo {
-    font-size: 24px;
-    font-weight: bold;
+/* Page Header */
+.pageHeader {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
-.navLinks button {
-    background: none;
-    border: none;
-    color: black;
-    margin: 0 10px;
-    font-size: 16px;
-    cursor: pointer;
+.pageTitle {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--PageTitle);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
 }
 
-.navLinks button:hover {
-    text-decoration: underline;
-}
-/* side bar */
-.sidebar {
-    width: 250px;
-    background: #ffffff;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    height: 100%;
-    border-radius: 15px;
+.pageTitle span {
+  display: inline-block;
+  transition: transform 0.2s;
 }
 
-.sidebar .profile {
-    text-align: center;
+@keyframes jump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
 }
 
-.profileImg {
-    width: 80px;
-    border-radius: 50%;
-    margin-bottom: 10px;
+.pageTitle:hover span {
+  animation: jump 0.5s forwards;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
+.pageTitle:hover span:nth-child(1) { animation-delay: 0s; }
+.pageTitle:hover span:nth-child(2) { animation-delay: 0.05s; }
+.pageTitle:hover span:nth-child(3) { animation-delay: 0.10s; }
+.pageTitle:hover span:nth-child(4) { animation-delay: 0.15s; }
+.pageTitle:hover span:nth-child(5) { animation-delay: 0.20s; }
+.pageTitle:hover span:nth-child(6) { animation-delay: 0.25s; }
+.pageTitle:hover span:nth-child(7) { animation-delay: 0.30s; }
+.pageTitle:hover span:nth-child(8) { animation-delay: 0.35s; }
+.pageTitle:hover span:nth-child(9) { animation-delay: 0.40s; }
+.pageTitle:hover span:nth-child(10) { animation-delay: 0.45s; }
+.pageTitle:hover span:nth-child(11) { animation-delay: 0.50s; }
+.pageTitle:hover span:nth-child(12) { animation-delay: 0.55s; }
+.pageTitle:hover span:nth-child(13) { animation-delay: 0.60s; }
+.pageTitle:hover span:nth-child(14) { animation-delay: 0.65s; }
+.pageTitle:hover span:nth-child(15) { animation-delay: 0.70s; }
+
+.pageSubtitle {
+  font-size: 22px;
+  font-weight: 400;
+  color: #666;
+  margin-bottom: 0;
+  letter-spacing: 0.5px;
 }
 
-nav ul li {
-    padding: 10px;
-    cursor: pointer;
-    transition: 0.3s;
+/* Main Layout */
+.resumeBuilder {
+  display: flex;
+  background-color: var(--secondary-color);
+  /* padding: 40px; */
+  box-sizing: border-box;
+  margin: 0 auto;
+  min-height: calc(100vh - 40px);
+  gap: 60px;
+  flex-direction: column;
 }
 
-nav ul li:hover, .active {
-    background: #e3e3e3;
-    border-radius: 5px;
-}
 .content {
-    margin-left: 270px;
-    flex-grow: 1;
-    padding: 20px;
-   /* width: calc(100% - 270px); *//* Adjusted width to take more space */
-  
-  }
-
-.navigationButtons {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-    margin-right: 20px;
-    margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  padding: 0;
+  margin: 30px;
+  background-color: transparent;
+  box-shadow: var(--shadow-soft);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  height: auto;
 }
 
-.navButton {
-    background: #007bff;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px;
+.header {
+  margin-top: 40px;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 20px;
+  margin-left: 5px;
 }
 
-.navButton:hover {
-    background: #0056b3;
+/* Form Container */
+.formContainer {
+  flex: 4;
+  background: var(--form-bg);
+  padding: 35px 40px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  position: sticky;
+  top: 15px;
+  height: 1560px;
+  width: 1700px;
 }
 
-.skillForm {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    width: 95%;
-    margin-left: auto;
-    margin-right: 20px;
-}
-.skillForm h2 {
-    margin-bottom: 15px;
-    font-size: 24px;
-    color: #333;
-}
-
-.skillInput {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+.formColumns {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 24px;
+  background: #f7fafc;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(74, 144, 226, 0.08);
+  padding: 32px 28px;
+  align-items: stretch;
+  min-height: 370px;
+  border: 1px solid var(--border-color);
+  transition: box-shadow 0.2s, border-color 0.2s;
+  flex-wrap: wrap;
 }
 
-.skillInput input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.formLeft, .formRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 18px;
+  min-width: 0;
 }
 
-.skillInput select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.formLeft {
+  border-right: 1.5px solid #e3e9f2;
+  padding-right: 24px;
 }
 
-.skillInput button {
-    padding: 8px 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+/* Inputs */
+input, select {
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 16px 40px 16px 20px; 
+  margin-bottom: 20px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: rgba(253, 253, 253, 0.95);
+  font-family: inherit;
+  color: var(--text-color);
 }
 
-.skillInput button:hover {
-    background-color: #0056b3;
+input:focus, select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.13);
+  background-color: #fff;
 }
 
+
+
+/* Buttons */
+.saveBtn {
+  background: var(--success-color);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  margin-right: 0px;
+  width: 80px;
+  height: auto;
+  max-width: 100%;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.18);
+  display: block;
+  margin-left: auto;
+}
+
+.saveBtn:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.24);
+}
+
+.skillButton {
+  background:var(--success-color);   
+  color: white;           
+  padding: 12px 20px; 
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  margin-left: 300px;
+  width: 120px;
+  max-width: 100%;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(4, 170, 109, 0.18);
+}
+
+.skillButton:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.24);
+}
+
+.skillButtonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;   
+  gap: 16px;            
+  margin-top: 10px;
+}
+
+
+
+.editBtn {
+  background: var(--primary-color);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.deleteBtn {
+  background: var(--danger-color);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+/* Skills List */
 .skillsList {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .skillItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s;
 }
 
-.skillItem span {
-    flex: 1;
-    margin-right: 10px;
+.skillItem:hover {
+  transform: translateY(-2px);
 }
 
-.stars {
-    flex: 1;
-    color: #ffd700;
-    font-size: 20px;
-    text-align: center;
+.skillStars {
+  display: flex;
+  gap: 5px;
+}
+
+.star {
+  font-size: 22px;
+  color: #e0e0e0;
+}
+
+.checked {
+  color: #FFD700;
 }
 
 .skillActions {
-    flex: 1;
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
+  display: flex;
+  gap: 10px;
 }
 
-.skillActions button {
-    padding: 5px 10px;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+/* Instruction Section */
+.instractionSection {
+  background: #f8fafc;
+  border: 1px solid #e0e7ef;
+  border-radius: 10px;
+  padding: 24px 32px;
+  margin-top: 150px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(60, 72, 88, 0.07);
+  color: #222;
+  font-size: 20px;
+  width: 100%;
 }
 
-.skillActions button:first-child {
-    background-color: #4CAF50;
+.instractionSection h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a237e;
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
 }
 
-.skillActions button:hover {
-    opacity: 0.8;
+.instractionSection ul {
+  list-style: disc inside;
+  padding-left: 0;
+  margin: 0;
 }
 
+.instractionSection li {
+  margin-bottom: 22px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 16px;
+  line-height: 1.3;
+  position: relative;
+}
+
+.instractionDetail {
+  font-size: 14px;
+  color: #607d8b;
+  font-weight: 400;
+  margin-top: 6px;
+  margin-left: 22px;
+  line-height: 1.5;
+}
+
+/* CV Preview */
 .cvPreview {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    margin-left: 20px;
-    width: 95%; /* Increased width */
-  
-    
-  }
-  
-  .cvHeader {
-    text-align: center;
-    background: rgb(62, 105, 224);
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-  }
-  
-  .cvSection h4 {
-    border-bottom: 2px solid rgb(62,105,224);
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    text-align: center;
-  }
-  .education{
-    margin-bottom: 20px;
-  }
-  .job{
-    margin-bottom: 20px;
-  }
-  .jobHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .job h5 {
-    margin: 0;
-  }
-  .job span {
-    font-size: 14px;
-    color: #666;
-  }
-  .skillsPreview {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  flex: 7;
+  background: var(--preview-bg);
+  padding: 5px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  margin-top: 15px;
+  height: 1560px;
+  min-height: 800px;
+  width: auto;
 }
 
-.skillPreview-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
+.cvContainer {
+  display: flex;
+  gap: 30px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  height: 1550px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cvLeft {
+  width: 32%;
+  background: #f2f7fc;
+  color: var(--text-color);
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cvRight {
+  width: 68%;
+  padding: 35px 30px;
+  background-color: #fff;
+}
+
+.verticalLine {
+  border-left: 1px solid var(--border-color);
+  height: 100%;
+  margin: 0;
+}
+
+/* Profile Section */
+.profileImage {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Contact Info, Education, Experience, etc. */
+
+.profilePara h4,
+.experience h4,
+.skillsColumns h4,
+.summary h4,
+.references h4 {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+
+.contactInfo h4,
+.education h4 {
+  text-align: left;
+  width: 100%;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 600;
+}
+.h4Header {
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.contactInfo p {
+  margin: 8px 0;
+  text-align: left;
+  font-size: 16px;
+}
+
+.education {
+  align-items: flex-start !important;
+  text-align: left !important;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.educationItem,
+.experienceItem {
+  margin-bottom: 20px;
+}
+
+.educationItem h5,
+.experienceItem h5 {
+  margin-bottom: 5px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.educationItem span,
+.experienceItem span {
+  font-size: 18px;
+  color: #555;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.educationItem p,
+.experienceItem p,
+.profilePara p, 
+.summary p, 
+.references p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #444;
+}
+
+--- SKILLS SECTION
+.skillsList {
+  list-style: none;
+  padding: 0;
+  margin: 20px;
+}
+
+.skillRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .skillName {
-    flex: 1;
-    margin-right: 10px;
+  flex: 1;
+  text-align: left;
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
 }
 
-.skillRating {
-    color: #ffd700;
-    font-size: 20px;
+.skillStars {
+  flex: 0 0 auto;
+  text-align: right;
+  min-width: 110px;
 }
-  
-  @media (max-width: 768px) {
-    .resumeBuilder {
-      flex-direction: column;
-    }
-  
-    .sidebar {
-      width: 100%;
-      position: relative;
-      height: auto;
-    }
-  
-    .content {
-      margin-left: 0;
-      width: 100%; /* Full width on small screens */
-    }
-  
-    .formColumns {
-      flex-direction: column; /* Stack columns vertically on small screens */
-    }
+
+.star {
+  font-size: 22px;
+  color: #e0e0e0;
+  margin-left: 3px;
+  transition: color 0.2s;
+}
+
+.checked {
+  color: #FFD700;
+}
+
+.skills ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skills ul li {
+  background: #f0f5fa;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 20px;
+  color: #444;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* --- Corrected Skills Section for CV Preview --- */
+/* This styles the <ul> container for the skills list */
+.skillsDisplayList {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px; /* Adds a little space below the "Skills" header */
+}
+
+/* This is the most important rule. It styles each <li> (each skill row) */
+.skillDisplayItem {
+  display: flex;                 /* Lays out the skill name and stars in a row */
+  justify-content: space-between; /* Pushes the name to the left and stars to the right */
+  align-items: center;           /* Vertically centers the name and stars */
+  padding: 12px 0;               /* Adds vertical spacing */
+  border-bottom: 1px solid #eeeeee; /* Adds the faint line between skills */
+}
+
+/* Optional: Make the last item have no border */
+.skillDisplayItem:last-child {
+  border-bottom: none;
+}
+
+/* Styles the <span> holding the skill name */
+.skillNameDisplay {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Styles the <div> holding the star icons */
+.skillStarsDisplay {
+  display: flex; /* Ensures stars are in a neat row */
+  gap: 4px;      /* Adds a small space between each star */
+}
+
+/* This already exists in your file but is part of the solution. */
+/* It styles each individual star icon. */
+.star {
+  font-size: 20px; /* Slightly adjusted for a cleaner look */
+  color: #d1d5db;  /* A slightly softer grey for empty stars */
+  transition: color 0.2s;
+}
+
+/* This also exists and correctly colors the filled-in stars. */
+.checked {
+  color: #FFC107; /* A nice, bright gold/yellow for filled stars */
+}
+/* --- End of Corrected CSS --- */
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .resumeBuilder {
+    flex-direction: column;
+    padding: 24px;
+    gap: 32px;
   }
+  .content {
+    flex-direction: column;
+    margin: 12px 0;
+    gap: 24px;
+    padding: 0;
+  }
+  .formContainer,
+  .cvPreview {
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    position: static;
+    height: auto;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  .cvContainer {
+    flex-direction: column;
+    gap: 0;
+    height: auto;
+    min-width: 0;
+  }
+  .cvLeft,
+  .cvRight {
+    width: 100%;
+    padding: 24px 12px;
+    min-width: 0;
+  }
+  .verticalLine {
+    display: none;
+  }
+  .formContainer {
+    height: auto;
+    width: 100%;
+    padding: 24px 12px;
+  }
+  .cvPreview {
+    height: auto;
+    min-height: 600px;
+    width: 100%;
+    padding: 2px;
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .resumeBuilder {
+    padding: 8px 2px;
+    gap: 12px;
+  }
+  .pageHeader {
+    margin-top: 18px;
+    padding-top: 0;
+  }
+  .pageTitle {
+    font-size: 24px;
+  }
+  .pageSubtitle {
+    font-size: 13px;
+  }
+  .header {
+    margin-top: 16px;
+  }
+  .formContainer {
+    padding: 8px 2px;
+    border-radius: 8px;
+    min-width: 0;
+    width: 100%;
+    height: auto;
+  }
+  .formColumns {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 4px;
+    min-height: auto;
+  }
+  .formLeft,
+  .formRight {
+    border: none;
+    padding: 0;
+    gap: 10px;
+  }
+  input,
+  select {
+    font-size: 14px;
+    padding: 10px 8px;
+    height: 36px;
+    margin-bottom: 10px;
+  }
+  .saveBtn {
+    width: 100%;
+    font-size: 12px;
+    padding: 8px 0;
+    margin-top: 4px;
+  }
+  .instractionSection {
+    padding: 8px 2px;
+    margin-top: 24px;
+    font-size: 13px;
+    border-radius: 7px;
+  }
+  .instractionSection h3 {
+    font-size: 15px;
+  }
+  .instractionSection li {
+    font-size: 13px;
+  }
+  .instractionDetail {
+    font-size: 11px;
+  }
+  .cvPreview {
+    padding: 2px;
+    border-radius: 7px;
+    margin-top: 8px;
+    min-height: 200px;
+    max-width: 100vw;
+    height: auto;
+  }
+  .cvContainer {
+    border-radius: 7px;
+    box-shadow: var(--shadow-soft);
+    min-width: 0;
+    height: auto;
+    flex-direction: column;
+    gap: 0;
+  }
+  .cvLeft,
+  .cvRight {
+    padding: 8px 2px;
+    width: 100%;
+    min-width: 0;
+  }
+  .profileImage {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 6px;
+  }
+  .cvRight h4,
+  .contactInfo h4,
+  .education h4 {
+    font-size: 13px;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+  }
+  .educationItem h5,
+  .experienceItem h5 {
+    font-size: 13px;
+  }
+  .educationItem span,
+  .experienceItem span {
+    font-size: 11px;
+  }
+  .educationItem p,
+  .experienceItem p,
+  .profilePara p, .summary p, .references p {
+    font-size: 11px;
+  }
+  .skillsList {
+    margin: 6px 0;
+  }
+  .skillName {
+    font-size: 11px;
+  }
+  .star {
+    font-size: 12px;
+  }
+}

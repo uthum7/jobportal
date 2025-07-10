@@ -1,188 +1,348 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import styles from './Cv3.module.css'; // Import CSS Module
+// pages/Cv3/Cv3.jsx
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from './Cv3.module.css'; // Ensure this path is correct and styles are defined
+import { useCVForm } from '../../context/CVFormContext';
+import { isAuthenticated } from '../../utils/auth';
+
+// Re-usable initial state for a single skill item for resetting form
+const initialSkillFormState = {
+  skillName: '',
+  skillRating: 0, // Use number for rating
+};
+
+// Initial state for preview sections (defaults if context data is not yet available)
+const initialPreviewStates = {
+    personalInfo: { fullname: "Your Name", jobTitle: "Your Profession", profilePicture: "/default-profile.png", phone: "Phone", email: "Email", address: "Address", profileParagraph: "Your profile summary." },
+    educationDetails: { universitiyName: "University Name", schoolName: "School Name", uniStartDate: "", uniEndDate: "", uniMoreDetails: "", startDate: "", endDate: "", moreDetails:"" },
+    professionalExperience: [],
+    skill: [], // Added skill here for consistency though preview might use context directly
+    summary: "Your professional summary.",
+    references: [],
+};
 
 const Cv3 = () => {
   const navigate = useNavigate();
-  const [skills, setSkills] = useState([]);
-  const [skillName, setSkillName] = useState('');
-  const [skillRating, setSkillRating] = useState(0);
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [formData, setFormData] = useState({
-    fullName: "Saman Kumara",
-    jobTitle: "Full Stack Developer",
-    phone: "0771200506",
-    email: "samankumara@gmail.com",
-    userInfo: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy.",
-    SchoolName: "Rahula Collage Matara",
-    startDate: "2018.01.5",
-    endDate: "2021.12.1",
-    moreDetails: "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.",
-    universityName: "University of Moratuwa",
-    uniStartDate: "2022.01.5",
-    uniEndDate: "2025.12.1",
-    uniMoreDetails: "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old."
-  });
+  const {
+    resumeData: contextResumeData,
+    fetchResumeData: contextFetchResumeData,
+    addSkill: contextAddSkill,
+    updateSkill: contextUpdateSkill,
+    removeSkill: contextRemoveSkill,
+    saveToDatabase,
+    loading: contextLoading,
+    error: contextError,
+    setError: setContextError,
+  } = useCVForm();
 
-  const handleAddSkill = () => {
-    if (skillName && skillRating > 0) {
-      if (editingIndex !== null) {
-        const updatedSkills = skills.map((skill, index) =>
-          index === editingIndex ? { name: skillName, rating: skillRating } : skill
-        );
-        setSkills(updatedSkills);
-        setEditingIndex(null);
-      } else {
-        setSkills([...skills, { name: skillName, rating: skillRating }]);
-      }
-      setSkillName('');
-      setSkillRating(0);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [pageError, setPageErrorLocal] = useState(null);
+
+  // Local state for the skill input form
+  const [currentSkill, setCurrentSkill] = useState({ ...initialSkillFormState });
+  const [editingIndex, setEditingIndex] = useState(null);
+
+  // Data for CV Preview (synced from context, with fallbacks)
+  const [personalInfoPreview, setPersonalInfoPreview] = useState(initialPreviewStates.personalInfo);
+  const [educationPreview, setEducationPreview] = useState(initialPreviewStates.educationDetails);
+  const [experiencePreview, setExperiencePreview] = useState(initialPreviewStates.professionalExperience);
+  const [summaryPreview, setSummaryPreview] = useState(initialPreviewStates.summary);
+  const [referencesPreview, setReferencesPreview] = useState(initialPreviewStates.references);
+  // Skills for preview will come directly from contextResumeData.skill
+
+  const hasAttemptedFetch = useRef(false);
+
+  // Effect for initial data fetching
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      setPageErrorLocal("User not authenticated. Redirecting to login...");
+      setIsPageLoading(false);
+      navigate("/login", { replace: true });
+      return;
     }
+
+    if (!hasAttemptedFetch.current) {
+      hasAttemptedFetch.current = true;
+      setIsPageLoading(true);
+      setPageErrorLocal(null);
+      if (setContextError) setContextError(null);
+
+      contextFetchResumeData()
+        .then((fetchResult) => {
+          console.log("Cv3.jsx: contextFetchResumeData promise resolved. Result:", fetchResult);
+        })
+        .catch((err) => {
+          console.error("Cv3.jsx: Error from contextFetchResumeData promise:", err);
+        })
+        .finally(() => {
+          setIsPageLoading(false);
+        });
+    } else {
+      setIsPageLoading(false);
+    }
+  }, [contextFetchResumeData, navigate, setContextError]);
+
+  // Effect to synchronize preview data with contextResumeData
+  useEffect(() => {
+    if (contextResumeData) {
+      setPersonalInfoPreview(contextResumeData.personalInfo || initialPreviewStates.personalInfo);
+      setEducationPreview(contextResumeData.educationDetails || initialPreviewStates.educationDetails);
+      setExperiencePreview(contextResumeData.professionalExperience || initialPreviewStates.professionalExperience);
+      setSummaryPreview(contextResumeData.summary !== undefined ? contextResumeData.summary : initialPreviewStates.summary);
+      setReferencesPreview(contextResumeData.references || initialPreviewStates.references);
+    }
+  }, [contextResumeData]);
+
+  const handleSkillInputChange = (e) => {
+    const { name, value } = e.target;
+    setCurrentSkill(prev => ({
+      ...prev,
+      [name]: name === 'skillRating' ? parseInt(value, 10) : value,
+    }));
+  };
+
+  const handleAddOrUpdateSkill = () => {
+    if (!currentSkill.skillName.trim() || currentSkill.skillRating <= 0 || currentSkill.skillRating > 5) {
+      alert("Please enter a skill name and select a valid rating (1-5).");
+      return;
+    }
+    setPageErrorLocal(null);
+
+    const skillToProcess = {
+      skillName: currentSkill.skillName.trim(),
+      skillLevel: currentSkill.skillRating,
+    };
+
+    if (editingIndex !== null) {
+      contextUpdateSkill(editingIndex, skillToProcess);
+      setEditingIndex(null);
+    } else {
+      contextAddSkill(skillToProcess);
+    }
+    setCurrentSkill({ ...initialSkillFormState });
   };
 
   const handleEditSkill = (index) => {
-    const skill = skills[index];
-    setSkillName(skill.name);
-    setSkillRating(skill.rating);
-    setEditingIndex(index);
+    const skillToEdit = (contextResumeData?.skill || [])[index];
+    if (skillToEdit) {
+      setCurrentSkill({
+        skillName: skillToEdit.skillName,
+        skillRating: parseInt(skillToEdit.skillLevel, 10) || 0,
+      });
+      setEditingIndex(index);
+    }
   };
 
   const handleDeleteSkill = (index) => {
-    const updatedSkills = skills.filter((_, i) => i !== index);
-    setSkills(updatedSkills);
+    contextRemoveSkill(index);
+    if (editingIndex === index) {
+      setCurrentSkill({ ...initialSkillFormState });
+      setEditingIndex(null);
+    }
   };
 
+  const handleSubmitSkills = async (e) => {
+    e.preventDefault();
+    if (setContextError) setContextError(null);
+    setPageErrorLocal(null);
+
+    const skillsToSave = (contextResumeData?.skill || []).map(skill => ({
+      skillName: skill.skillName,
+      skillLevel: Number(skill.skillLevel) || 0,
+    }));
+
+    try {
+      await saveToDatabase("skill", skillsToSave);
+      alert("Skills saved successfully!");
+      navigate("/cv-builder/summary");
+    } catch (err) {
+      console.error("Cv3.jsx: Error during handleSubmitSkills (saveToDatabase failed):", err);
+    }
+  };
+
+  const formatDateForDisplay = (dateStr) => {
+    if (!dateStr) return "Present";
+    try {
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return "Invalid Date";
+        return date.toLocaleDateString(undefined, { year: "numeric", month: "short" });
+    } catch {
+        return "Invalid Date";
+    }
+  };
+  
+  const displayedError = pageError || (contextError ? (typeof contextError === 'string' ? contextError : contextError.message) : null);
+
+  if (isPageLoading) {
+    return <div className={styles.loading}>Loading Skills Section...</div>;
+  }
+
+  if (displayedError) {
+    return (
+      <div className={styles.error}>
+        <p>Error: {displayedError}</p>
+        <button onClick={() => { 
+            if (setContextError) setContextError(null);
+            setPageErrorLocal(null);
+            if (displayedError.toLowerCase().includes("auth") || displayedError.toLowerCase().includes("login") || displayedError.toLowerCase().includes("user id") || displayedError.toLowerCase().includes("token")) {
+                navigate("/login", { replace: true });
+            } else {
+                hasAttemptedFetch.current = false;
+                setIsPageLoading(true);
+                contextFetchResumeData().finally(() => setIsPageLoading(false));
+            }
+        }}>
+          {displayedError.toLowerCase().includes("auth") || displayedError.toLowerCase().includes("login") || displayedError.toLowerCase().includes("user id") || displayedError.toLowerCase().includes("token") ? "Go to Login" : "Try Again"}
+        </button>
+      </div>
+    );
+  }
+  
+  const skillsListForDisplayAndPreview = contextResumeData?.skill || [];
+  let profileImageSrcForPreview = personalInfoPreview.profilePicture || "/default-profile.png"; // Path to your actual default image
+
   return (
-    <div>
-      <nav className={styles.navbar}>
-        <h1 className={styles.logo}>JOB PORTAL</h1>
-        <div className={styles.navLinks}>
-          <button>For Candidates</button>
-          <button>For Employers</button>
-          <button>Pages</button>
-          <button>Help</button>
-        </div>
-      </nav>
+    <>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
+        <p className={styles.pageSubtitle}>Highlight your key skills and proficiencies.</p>
+      </header>
 
       <div className={styles.resumeBuilder}>
-        <aside className={styles.sidebar}>
-          <div className={styles.profile}>
-            <img src="profile.jpg" alt="User" className={styles.profileImg} />
-            <h4>Piyumi Hansamali</h4>
-            <span className={styles.rating}>⭐⭐⭐⭐⭐ 4.7</span>
-          </div>
-          <nav>
-            <ul>
-              <li>📋 My Profile</li>
-              <li className={styles.active}>📄 My Resumes</li>
-              <li>✅ Applied Jobs</li>
-            </ul>
-          </nav>
-        </aside>
-
         <main className={styles.content}>
-          <div className={styles.navigationButtons}>
-            <button className={styles.navButton} onClick={() => navigate('/Cv2')}>Previous</button>
-            <button className={styles.navButton} onClick={() => navigate('/Cv4')}>Next</button>
+          <div className={styles.formContainer}>
+            <h3 className={styles.header}>Step 4: Skills</h3>
+            <div className={styles.skillInputForm}>
+                <input
+                    type="text" name="skillName" placeholder="Skill Name (e.g., JavaScript)"
+                    value={currentSkill.skillName} onChange={handleSkillInputChange}
+                    className={styles.inputField}
+                />
+                <select
+                    name="skillRating" value={currentSkill.skillRating}
+                    onChange={handleSkillInputChange} className={styles.selectField}
+                >
+                    <option value={0} disabled>Rate proficiency (1-5)</option>
+                    {[1, 2, 3, 4, 5].map((val) => (
+                        <option key={val} value={val}>{val} Star{val > 1 ? "s" : ""}</option>
+                    ))}
+                </select>
+                <button
+                    type="button" className={styles.addButton}
+                    onClick={handleAddOrUpdateSkill} disabled={contextLoading}
+                >
+                    {editingIndex !== null ? "Update Skill" : "Add Skill"}
+                </button>
+                {editingIndex !== null && (
+                    <button type="button" className={styles.cancelButton}
+                        onClick={() => { setCurrentSkill({ ...initialSkillFormState }); setEditingIndex(null); }}
+                    >
+                        Cancel
+                    </button>
+                )}
+            </div>
+
+            <div className={styles.skillsListContainer}>
+                <h4>Your Skills:</h4>
+                {skillsListForDisplayAndPreview.length === 0 ? (
+                    <p className={styles.noSkillsMessage}>No skills added yet. Use the form above.</p>
+                ) : (
+                    <ul className={styles.skillsDisplayList}>
+                        {skillsListForDisplayAndPreview.map((skill, index) =>
+                        skill && typeof skill.skillName === 'string' ? (
+                            <li key={index} className={styles.skillDisplayItem}>
+                                <span className={styles.skillNameDisplay}>{skill.skillName}</span>
+                                <div className={styles.skillStarsDisplay}>
+                                    {[...Array(5)].map((_, i) => (
+                                    <span key={i} className={`${styles.star} ${i < (Number(skill.skillLevel) || 0) ? styles.checked : ""}`}>★</span>
+                                    ))}
+                                </div>
+                                <div className={styles.skillActions}>
+                                    <button type="button" className={`${styles.actionButton} ${styles.editBtn}`} onClick={() => handleEditSkill(index)} disabled={contextLoading}>Edit</button>
+                                    <button type="button" className={`${styles.actionButton} ${styles.deleteBtn}`} onClick={() => handleDeleteSkill(index)} disabled={contextLoading}>Delete</button>
+                                </div>
+                            </li>
+                        ) : null
+                        )}
+                    </ul>
+                )}
+            </div>
+            
+            <form onSubmit={handleSubmitSkills} className={styles.submitForm}>
+                <button type="submit" className={styles.saveBtn} disabled={contextLoading || skillsListForDisplayAndPreview.length === 0}>
+                    {contextLoading ? "Saving..." : "Save"}
+                </button>
+            </form>
+            <div className={styles.instractionSection}>
+                <h3>Instructions</h3>
+                <ul>
+                    <li>Enter a skill and rate your proficiency from 1 to 5 stars.</li>
+                    <li>Click "Add Skill" to add it to your list. You can edit or delete skills from the list.</li>
+                    <li>Once all skills are added, click "Save" to proceed.</li>
+                </ul>
+            </div>
           </div>
 
-          <div className={styles.skillForm}>
-            <h2>Skills</h2>
-            <div className={styles.skillInput}>
-              <input
-                type="text"
-                placeholder="Skill Name"
-                value={skillName}
-                onChange={(e) => setSkillName(e.target.value)}
-              />
-              <select
-                value={skillRating}
-                onChange={(e) => setSkillRating(parseInt(e.target.value))}
-              >
-                <option value="0">Select Rating</option>
-                <option value="1">1 Star</option>
-                <option value="2">2 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="5">5 Stars</option>
-              </select>
-              <button onClick={handleAddSkill}>
-                {editingIndex !== null ? 'Update Skill' : 'Add Skill'}
-              </button>
-            </div>
-            <div className={styles.skillsList}>
-              {skills.map((skill, index) => (
-                <div key={index} className={styles.skillItem}>
-                  <span>{skill.name}</span>
-                  <div className={styles.stars}>
-                    {'★'.repeat(skill.rating).padEnd(5, '☆')}
-                  </div>
-                  <div className={styles.skillActions}>
-                    <button onClick={() => handleEditSkill(index)}>Edit</button>
-                    <button onClick={() => handleDeleteSkill(index)}>Delete</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
+          {/* CV Preview Section */}    
           <div className={styles.cvPreview}>
-            <div className={styles.cvHeader}>
-              <h2>{formData.fullName}</h2>
-              <h3>{formData.jobTitle}</h3>
+            <div className={styles.cvContainer}>
+              <div className={styles.cvLeft}>
+                <div className={styles.profileSection}>
+                  <img src={profileImageSrcForPreview} alt="Profile" className={styles.profileImage}/>
+                  <h3>{personalInfoPreview.jobTitle || "Your Profession"}</h3>
+                  <h2>{personalInfoPreview.fullname || "Your Name"}</h2>
+                </div>
+                <div className={styles.contactInfo}><h4 className={styles.h4Headers}>Contact</h4><p>{personalInfoPreview.phone || "Phone"}</p><p>{personalInfoPreview.email || "Email"}</p><p>{personalInfoPreview.address || "Address"}</p></div>
+                <div className={styles.education}><h4 className={styles.h4Headers}>Education</h4>
+                  {(educationPreview.universitiyName || educationPreview.schoolName) ? (<div className={styles.educationItem}>
+                    {educationPreview.universitiyName && (<><h5>{educationPreview.universitiyName}</h5><span>{formatDateForDisplay(educationPreview.uniStartDate)} - {formatDateForDisplay(educationPreview.uniEndDate)}</span><p className={styles.uniPara}>{educationPreview.uniMoreDetails || ""}</p></>)}
+                    {educationPreview.schoolName && (<><h5>{educationPreview.schoolName}</h5><span>{formatDateForDisplay(educationPreview.startDate)} - {formatDateForDisplay(educationPreview.endDate)}</span><p>{educationPreview.moreDetails || ""}</p></>)}
+                  </div>) : ( <p>Education details will appear here.</p> )}
+                </div>
+              </div>
+              <div className={styles.verticalLine}></div>
+              <div className={styles.cvRight}>
+                <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{personalInfoPreview.profileParagraph || "Your profile summary."}</p></div>
+                
+                <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>
+                  {(experiencePreview || []).length > 0 ? (
+                    experiencePreview.map((exp, i) => (
+                      <div key={`exp-preview-${i}`} className={styles.experienceItem}>
+                        <h5>{exp.jobTitle || "Job Title"}</h5><p className={styles.companyName}>{exp.companyName}</p>
+                        <span>{exp.jstartDate ? formatDateForDisplay(exp.jstartDate) : "Start"} - {exp.jendDate ? formatDateForDisplay(exp.jendDate) : "Present"}</span>
+                        <p className={styles.jobDescription}>{exp.jobDescription}</p>
+                      </div>))
+                  ) : ( <p>Experience details will appear here.</p> )}
+                </div>
+
+                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4>
+                  <ul className={styles.skillsDisplayList}>
+                    {skillsListForDisplayAndPreview.length > 0 ? (
+                      skillsListForDisplayAndPreview.map((skill, index) => (
+                        <li key={`skill-preview-${index}`} className={styles.skillDisplayItem}>
+                          <span className={styles.skillNameDisplay}>{skill.skillName}</span>
+                          <div className={styles.skillStarsDisplay}>
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className={`${styles.star} ${i < (Number(skill.skillLevel) || 0) ? styles.checked : ""}`}>★</span>
+                            ))}
+                          </div>
+                        </li>
+                      ))
+                    ) : ( <li>Skills will appear here.</li> )}
+                  </ul>
+                </div>
+                <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{typeof summaryPreview === "string" && summaryPreview ? summaryPreview : "Summary will appear here."}</p></div>
+                <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>
+                  {(referencesPreview || []).length > 0 ? (referencesPreview.map((ref, index) => (
+                    <p key={`ref-preview-${index}`}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Contact"}</p>))
+                  ) : ( <p>References will appear here.</p> )}
+                </div>
+              </div>
             </div>
-            <p className={styles.contactInfo}>{formData.phone}</p>
-            <p>{formData.email}</p>
-            <p className={styles.userInfo}>{formData.userInfo}</p>
-            <section className={styles.cvSection}>
-              <h4>Education Details</h4>
-              <div className={styles.education}>
-                <div className={styles.school}>
-                  <h5>{formData.SchoolName}</h5>
-                  <span>{formData.startDate}</span> to <span>{formData.endDate}</span>
-                  <p>{formData.moreDetails}</p>
-                </div>
-                <div className={styles.uni}>
-                  <h5>{formData.universityName}</h5>
-                  <span>{formData.uniStartDate}</span> to <span>{formData.uniEndDate}</span>
-                  <p>{formData.uniMoreDetails}</p>
-                </div>
-              </div>
-            </section>
-            <section className={styles.cvSection}>
-              <h4>Professional Experience</h4>
-              <div className={styles.job}>
-                <div className={styles.jobHeader}>
-                  <h5>Full Stack Developer</h5>
-                  <span>26 December 2024</span>
-                </div>
-                <p>Lorem Ipsum is simply dummy text of the printing industry...</p>
-              </div>
-              <div className={styles.job}>
-                <div className={styles.jobHeader}>
-                  <h5>Software Engineer</h5>
-                  <span>26 December 2024</span>
-                </div>
-                <p>Lorem Ipsum is simply dummy text of the printing industry...</p>
-              </div>
-            </section>
-            <section className={styles.cvSection}>
-              <h4>Professional Skills</h4>
-              <div className={styles.skillsPreview}>
-                {skills.map((skill, index) => (
-                  <div key={index} className={styles.skillPreviewItem}>
-                    <span className={styles.skillName}>{skill.name}</span>
-                    <div className={styles.skillRating}>
-                      {'★'.repeat(skill.rating).padEnd(5, '☆')}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
           </div>
         </main>
       </div>
-    </div>
+    </>
   );
 };
 
