@@ -1,233 +1,334 @@
-/* Navbar Container */
+/* === MODERNIZED NAVBAR CSS (Corrected - No 'composes') === */
+
+/* --- Ensure these variables are globally defined or define them here if not --- */
+/*
+:root {
+  --primary-color: #00b894;
+  --primary-color-darker: #019875;
+  --text-color-dark: #2c3e50;
+  --text-color-medium: #555e68;
+  --text-color-light: #f8f9fa;
+  --bg-light: #f8f9fa;
+  --bg-white: #ffffff;
+  --border-color: #e0e0e0;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.1);
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --font-primary: 'Poppins', 'Arial', sans-serif;
+  --font-secondary: 'Roboto', 'Arial', sans-serif;
+  --transition-speed: 0.3s;
+  --navbar-height: 70px;
+}
+*/
+
+/* --- Navbar Base --- */
 .navbar {
-  background: linear-gradient(to right, #001f3f, #002855);
-  padding: 15px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: var(--bg-white, #ffffff); /* Added fallback */
+  box-shadow: var(--shadow-soft, 0 4px 15px rgba(0, 0, 0, 0.08));
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   width: 100%;
-  height: 64px; /* Fixed height for calculations */
-  z-index: 100; /* Ensure navbar stays on top */
-  box-sizing: border-box;
+  height: var(--navbar-height, 70px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 0 5%;
+  transition: transform var(--transition-speed, 0.3s) ease-in-out, background-color var(--transition-speed, 0.3s) ease;
 }
 
-/* Navbar Content */
-.container {
-  width: 95%;
+.navbar.hidden {
+  transform: translateY(-100%);
+}
+
+/* Optional: Add a subtle background when scrolled */
+/* .navbar.scrolled {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px);
+  box-shadow: var(--shadow-medium, 0 8px 25px rgba(0, 0, 0, 0.1));
+} */
+
+.navbar-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
-}
-
-/* Logo Container */
-.logo-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  height: 100%;
 }
 
-/* Logo */
-.logo {
+/* --- Logo --- */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navbar-logo img {
+  height: 35px;
+  width: auto;
+  display: block;
+}
+
+/* --- Navigation Links --- */
+.navbar-links {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: auto; /* Changed from fixed 200px width */
+  margin: 0 20px;
 }
 
-.logo img {
-  height: 120px; /* Set a fixed height */
-  width: auto; /* Let width adjust proportionally */
-  max-width: 350px; /* Prevent it from getting too wide */
-  object-fit: contain; /* Ensure the image maintains its aspect ratio */
+.navbar-links a {
+  color: var(--text-color-medium, #555e68);
+  text-decoration: none;
+  font-family: var(--font-secondary, 'Roboto', 'Arial', sans-serif);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 10px 15px;
+  border-radius: var(--border-radius-sm, 6px);
+  transition: color var(--transition-speed, 0.3s) ease, background-color var(--transition-speed, 0.3s) ease;
+  position: relative;
+  white-space: nowrap;
 }
 
-/* Mobile Nav Overlay */
-.mobile-nav-overlay {
+.navbar-links a:hover {
+  color: var(--primary-color, #00b894);
+  background-color: rgba(0, 184, 148, 0.05);
+}
+
+.navbar-links a.active {
+  color: var(--primary-color, #00b894);
+  font-weight: 600;
+}
+
+.navbar-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 15px;
+  right: 15px;
+  height: 2px;
+  background-color: var(--primary-color, #00b894);
+  border-radius: 1px;
+}
+
+
+/* --- Auth Section (Buttons are styled by .btn-base, .btn-primary, .btn-secondary) --- */
+.navbar-auth {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Distribute space between nav links and buttons */
-  flex: 1; /* Take up remaining space */
+  gap: 10px;
+  margin-left: auto;
 }
 
-/* Navigation Links */
-.nav-links {
+.auth-buttons {
   display: flex;
-  margin-left: 20px; /* Move items to the left */
-  flex: 1; /* Take up available space */
+  gap: 10px;
 }
 
-.nav-links a {
+/* General Button Styles - Applied via multiple classes in JSX */
+.btn-base {
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--border-radius-sm, 6px);
+  font-weight: 600;
+  font-size: 0.9rem;
   text-decoration: none;
-  color: white;
-  font-size: 16px;
-  transition: color 0.3s ease;
-  padding: 5px 15px;
-  border-radius: 4px;
-  margin-right: 10px; /* Consistent spacing between items */
-  white-space: nowrap; /* Prevent wrapping */
+  cursor: pointer;
+  transition: background-color var(--transition-speed, 0.3s) ease, color var(--transition-speed, 0.3s) ease, transform var(--transition-speed, 0.3s) ease;
+  display: inline-block;
+  text-align: center;
+  line-height: normal; /* Ensure consistent line height */
 }
 
-.nav-links a:hover {
-  color: #50fa7b; /* Highlight color */
+.btn-primary {
+  background-color: var(--primary-color, #00b894);
+  color: var(--text-color-light, #f8f9fa);
+}
+.btn-primary:hover {
+  background-color: var(--primary-color-darker, #019875);
+  transform: translateY(-1px);
 }
 
-.nav-links a.active {
-  color: #50fa7b; /* Highlight color */
-  background-color: rgba(255, 255, 255, 0.1);
-  font-weight: bold;
+.btn-secondary {
+  background-color: transparent;
+  color: var(--primary-color, #00b894);
+  border: 1.5px solid var(--primary-color, #00b894);
+}
+.btn-secondary:hover {
+  background-color: rgba(0, 184, 148, 0.08);
+  color: var(--primary-color-darker, #019875);
 }
 
-/* Hamburger Menu */
-.hamburger-menu {
+/* User Menu */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-menu .user-role {
+  font-size: 0.9rem;
+  color: var(--text-color-medium, #555e68);
+  font-weight: 500;
+  padding: 6px 10px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: var(--border-radius-sm, 6px);
+  text-transform: capitalize;
+}
+
+/*
+  Styles for .btn-logout class, applied alongside .btn-base in JSX.
+  e.g., <button className="btn-base btn-logout">...</button>
+*/
+.user-menu .btn-logout {
+  /* .btn-base handles most styling. These are specific overrides/additions */
+  background-color: transparent;
+  color: var(--text-color-medium, #555e68);
+  padding: 9px 12px; /* Specific padding for logout button */
+  /* Add any other specific styles for btn-logout that differ from btn-base */
+}
+.user-menu .btn-logout:hover {
+  color: #e74c3c; /* Danger color on hover */
+  background-color: rgba(231, 76, 60, 0.05);
+  /* transform: translateY(0); /* Optionally reset transform if btn-base has one */
+}
+
+/* --- Mobile Menu Icon (Hamburger) --- */
+.mobile-menu-icon {
   display: none;
   flex-direction: column;
-  justify-content: space-between;
-  width: 30px;
-  height: 21px;
+  justify-content: space-around;
+  width: 28px;
+  height: 22px;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  z-index: 110;
+  padding: 0;
+  z-index: 1050;
+  margin-left: 15px;
 }
 
-.bar {
-  height: 3px;
+.mobile-menu-icon span {
+  display: block;
   width: 100%;
-  background-color: white;
-  border-radius: 10px;
-  transition: all 0.3s ease-in-out;
+  height: 3px;
+  background-color: var(--text-color-dark, #2c3e50);
+  border-radius: 3px;
+  transition: all var(--transition-speed, 0.3s) ease-in-out;
 }
 
-/* Hamburger animation when active */
-.hamburger-menu .bar.active:nth-child(1) {
-  transform: translateY(9px) rotate(45deg);
+.mobile-menu-icon.open span:nth-child(1) {
+  transform: translateY(9.5px) rotate(45deg);
 }
-
-.hamburger-menu .bar.active:nth-child(2) {
+.mobile-menu-icon.open span:nth-child(2) {
   opacity: 0;
 }
-
-.hamburger-menu .bar.active:nth-child(3) {
-  transform: translateY(-9px) rotate(-45deg);
+.mobile-menu-icon.open span:nth-child(3) {
+  transform: translateY(-9.5px) rotate(-45deg);
 }
 
-/* Buttons */
-.nav-buttons {
-  display: flex;
-  gap: 10px;
-  margin-left: auto; /* Push to the right */
-}
 
-.btn {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: 0.3s ease;
-  white-space: nowrap; /* Prevent wrapping */
-}
-
-.btn:hover {
-  background-color: #218838;
-}
-
-.sign-out {
-  background-color: #28a745;
-}
-
-.sign-out:hover {
-  background-color: #155d27;
-}
-
-/* Responsive Design */
+/* --- Responsive Design --- */
 @media (max-width: 992px) {
-  .hamburger-menu {
-    display: flex;
+  .navbar {
+    height: var(--navbar-height, 65px);
+    padding: 0 4%;
   }
-
-  .mobile-nav-overlay {
+  .navbar-links {
     position: fixed;
-    top: 64px;
+    top: var(--navbar-height, 65px);
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 31, 63, 0.95);
+    width: 100%;
+    height: calc(100vh - var(--navbar-height, 65px));
+    background-color: var(--bg-white, #ffffff);
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 20px;
+    padding-top: 30px;
+    gap: 15px;
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: transform var(--transition-speed, 0.3s) ease-in-out;
     overflow-y: auto;
+    box-shadow: -5px 0px 15px rgba(0,0,0,0.1);
   }
 
-  .mobile-nav-overlay.active {
+  .navbar-links.active {
     transform: translateX(0);
   }
 
-  .nav-links {
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 20px 0;
-    gap: 15px;
-    margin-left: 0; /* Reset margin for mobile */
-  }
-
-  .nav-links a {
-    font-size: 18px;
+  .navbar-links a {
+    font-size: 1.1rem;
+    padding: 12px 20px;
     width: 80%;
     text-align: center;
-    padding: 10px;
-    margin-right: 0; /* Reset margin for mobile */
+  }
+  .navbar-links a.active::after {
+    left: 20%;
+    right: 20%;
+    bottom: 5px;
   }
 
-  .nav-buttons {
-    flex-direction: column;
-    width: 80%;
-    gap: 15px;
-    margin-top: 20px;
-    margin-left: 0; /* Reset margin for mobile */
-  }
-
-  .nav-buttons .btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-  }
-
-  /* Logo adjustment for mobile */
-  .logo {
-    width: auto;
-  }
-  
-  .logo img {
-    width: 150px;
+  .mobile-menu-icon {
+    display: flex;
   }
 }
 
-/* Further adjustments for very small screens */
+@media (max-width: 768px) {
+  .navbar-logo img {
+    height: 30px;
+  }
+  .btn-base { /* Smaller buttons on smaller screens if applied directly */
+    padding: 8px 14px;
+    font-size: 0.85rem;
+  }
+  .user-menu .user-role {
+    font-size: 0.85rem;
+    padding: 5px 8px;
+  }
+  /* Ensure logout button padding is also adjusted if needed */
+  .user-menu .btn-logout {
+    padding: 8px 10px; /* Example adjustment */
+  }
+}
+
 @media (max-width: 480px) {
   .navbar {
-    padding: 10px;
-    height: 60px;
+    padding: 0 3%;
+    height: var(--navbar-height, 60px);
   }
+  .navbar-links {
+    top: var(--navbar-height, 60px);
+    height: calc(100vh - var(--navbar-height, 60px));
+  }
+  .navbar-auth {
+    gap: 8px;
+  }
+  .btn-base { /* Even smaller buttons */
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+   /* Ensure logout button padding is also adjusted if needed */
+  .user-menu .btn-logout {
+    padding: 7px 8px; /* Example adjustment */
+  }
+  .navbar-links a {
+    font-size: 1rem;
+  }
+}
 
-  .mobile-nav-overlay {
-    top: 60px;
-  }
-
-  .logo img {
-    width: 120px;
-  }
-  
-  .nav-links a {
-    font-size: 16px;
-  }
+/* --- Focus States for Accessibility --- */
+.navbar-links a:focus-visible,
+.btn-base:focus-visible, /* This will cover .btn-primary, .btn-secondary, .btn-logout when .btn-base is used */
+.mobile-menu-icon:focus-visible {
+  outline: 2px solid var(--primary-color, #00b894);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.3);
+}
+/* Remove default outline if using custom box-shadow for focus */
+:focus {
+    outline: none;
 }

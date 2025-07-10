@@ -1,0 +1,244 @@
+/* SignUpPage.module.css */
+
+/* Assume global CSS variables are available */
+
+.signupPageWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--bg-light, #f0f2f5);
+  padding: 20px;
+  font-family: var(--font-secondary, 'Roboto', sans-serif);
+}
+
+.signupFormCard {
+  background-color: var(--bg-white, #ffffff);
+  padding: 30px 35px;
+  border-radius: var(--border-radius-md, 12px);
+  box-shadow: var(--shadow-medium, 0 10px 30px rgba(0, 0, 0, 0.1));
+  width: 100%;
+  max-width: 450px; /* Slightly wider for more fields potentially */
+  text-align: center;
+  margin-top: 65px;
+}
+
+.logoContainer {
+  margin-bottom: 1.5rem;
+}
+
+.logoImg {
+  max-width: 140px;
+  height: auto;
+  margin-left: 100px;
+  align-items: center;
+}
+
+.formTitle {
+  font-family: var(--font-primary, 'Poppins', sans-serif);
+  font-size: clamp(1.7rem, 5vw, 2.1rem);
+  color: var(--text-color-dark, #2c3e50);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.formSubtitle {
+  color: var(--text-color-medium, #555e68);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.formGroup {
+  margin-bottom: 1.25rem; /* Consistent spacing */
+  text-align: left; /* Align labels and inputs to the left */
+  position: relative; /* For icon positioning if needed, and error text */
+}
+
+.formGroup label {
+  display: flex; /* To align icon and text */
+  align-items: center;
+  font-weight: 500;
+  color: var(--text-color-dark, #333);
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.inputIcon {
+  margin-right: 8px; /* Space between icon and label text */
+  color: var(--text-color-medium, #6b7280); /* Icon color */
+  font-size: 0.9em; /* Slightly smaller icon relative to label */
+}
+
+.inputField,
+.selectField {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: var(--border-radius-sm, 6px);
+  font-size: 0.95rem;
+  color: var(--text-color-dark, #333);
+  background-color: var(--bg-white, #ffffff);
+  transition: border-color var(--transition-speed, 0.3s) ease, box-shadow var(--transition-speed, 0.3s) ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+/* If you want icons inside the input fields, you'd need to adjust padding-left on inputField
+   and position the icon absolutely within the form-group */
+
+.inputField::placeholder {
+  color: var(--text-color-medium, #9ca3af);
+  opacity: 1;
+}
+
+.inputField:focus,
+.selectField:focus {
+  outline: none;
+  border-color: var(--primary-color, #00b894);
+  box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+}
+
+.selectField {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 1.2em;
+  padding-right: 2.8rem;
+}
+
+/* Error text for individual fields */
+.errorText {
+  display: block; /* Ensure it takes its own line */
+  color: #c82333; /* Error color from login page */
+  font-size: 0.8rem;
+  margin-top: 4px; /* Space above error text */
+}
+
+
+/* Button Styling */
+/* Base button style if needed for other buttons in this module */
+.btnBase { 
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--border-radius-sm, 6px);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color var(--transition-speed, 0.3s) ease, transform var(--transition-speed, 0.3s) ease;
+  text-align: center;
+  width: 100%;
+  line-height: 1.5;
+}
+
+.btnPrimary {
+  /* composes: btnBase; /* Uncomment if btnBase is fully defined and you want to inherit */
+  /* Or define all properties: */
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--border-radius-sm, 6px);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color var(--transition-speed, 0.3s) ease, transform var(--transition-speed, 0.3s) ease;
+  text-align: center;
+  width: 100%;
+  line-height: 1.5;
+  /* Primary specific */
+  background-color: var(--primary-color, #00b894);
+  color: var(--text-color-light, #ffffff);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btnPrimary:hover {
+  background-color: var(--primary-color-darker, #019875);
+  transform: translateY(-1px);
+}
+
+.submitButton {
+  /* This class is combined with btnPrimary in JSX, so btnPrimary styles apply. */
+  /* Add any specific overrides for the signup submit button here. */
+  margin-top: 1rem; /* Space above the button */
+}
+
+.submitButton:disabled {
+  background-color: var(--text-color-medium, #9ca3af);
+  color: var(--bg-light, #e5e7eb);
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+}
+
+.alternativeAction {
+  text-align: center;
+  margin-top: 1.75rem;
+  color: var(--text-color-medium, #555e68);
+  font-size: 0.9rem;
+}
+
+.linkStyled {
+  color: var(--primary-color, #00b894);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.linkStyled:hover,
+.linkStyled:focus {
+  color: var(--primary-color-darker, #019875);
+  text-decoration: underline;
+  outline: none;
+}
+
+/* General error message below title (for submit errors) */
+.errorMessage {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: rgba(185, 28, 28, 1);
+  padding: 10px 15px;
+  border-radius: var(--border-radius-sm, 6px);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .signupFormCard {
+    padding: 25px 20px;
+    margin: 10px;
+  }
+
+  .formTitle {
+    font-size: 1.5rem;
+  }
+
+  .formSubtitle {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .inputField,
+  .selectField {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  .selectField {
+    padding-right: 2.5rem; /* Ensure arrow space on mobile */
+  }
+
+  .btnPrimary, .submitButton {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+  }
+}
+
+/* Styles for the old .signup-left, .signup-right if any were used for global elements.
+   Since they are removed from JSX, their direct styles are no longer needed unless
+   some child element was depending on a style from them (unlikely here).
+*/
+/*
+.signup-left { display: none; } -> No longer needed as element is removed
+*/
