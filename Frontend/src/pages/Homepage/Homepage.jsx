@@ -1,42 +1,42 @@
 import React from "react";
-import Navbar from "../../components/Navbar/Navbar.jsx"; 
-import "../../pages/Homepage/Homepage.css";             
-import Footer from "../../components/Footer/Footer.jsx"; 
+import "../../pages/Homepage/Homepage.css";
+import { Link, useNavigate } from "react-router-dom";
+
 
 
 
 
 const JobPortal = () => {
+  const navigate = useNavigate();
   return (
     <div className="job-portal">
-     
+
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-overlay"></div>
         <div className="hero-content">
-         
+
           <h1>
-          Find a Job & Hire <br />
+            Find a Job & Hire <br />
             <span>Top Experts on JobPortal</span>
           </h1>
           <p>
             Getting a new job is never easy. Check what new jobs we have in
             store for you on JobPortal.
           </p>
-          <div className="stats">
+          <section className="stats-banner">
             <div className="stat">
               <h2>20</h2>
               <h6>Active Jobs</h6>
             </div>
-            
-          </div>
+          </section>
         </div>
 
         {/* Job Search Form */}
-       
+
       </section>
 
-        {/* Features & Process Section */}
+      {/* Features & Process Section */}
       <section className="features">
         <h2 className="features-title">Features & Process</h2>
         <p className="features-description">
@@ -48,7 +48,7 @@ const JobPortal = () => {
             <i className="icon">📄</i>
             <h3>AI-Powered CV Builder</h3>
             <p>Effortlessly create professional resumes using AI. Update, download, and share your CVs anytime.</p>
-            <button className="feature-btn">Create Your Resume</button>
+            <button className="feature-btn" onClick={() => to = "/cv"}>Create Your Resume</button>
           </div>
 
           <div className="feature-item">
@@ -80,9 +80,9 @@ const JobPortal = () => {
       </section>
 
 
-     
 
-    
+
+
     </div>
   );
 };
