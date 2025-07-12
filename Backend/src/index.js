@@ -20,12 +20,12 @@ const PORT = process.env.PORT;
 app.use(express.json({ limit: "10mb" }));// Parse JSON request bodies with 10mb size limit for file uploads
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:5174","http://localhost:5175","http://localhost:5177"],
+    origin: ["http://localhost:5173", "http://localhost:5174","http://localhost:5175","http://localhost:5177","http://localhost:5176",],
         credentials:true,//n your CORS configuration to allow cookies in cross-origin requests
     }))
 
 app.use("/api/auth", authRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/api/job", jobPostRoutes);
 
 
