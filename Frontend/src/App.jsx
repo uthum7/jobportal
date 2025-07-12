@@ -26,6 +26,7 @@ import Logout from "./pages/counselee/logout.jsx"
 import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx"
 import ApplyForAjob from "./pages/JobSeeker/ApplyForAjob/ApplyForAjob";
 import JobDetails from "./pages/JobSeeker/JobDetails/JobDetails.jsx";
+import SavedJobs from "./pages/JobSeeker/SavedJobs/SavedJobs.jsx";
 import Cv from './pages/Cv/Cv.jsx';
 import Cv2 from './pages/Cv2/Cv2.jsx';
 import Cv3 from './pages/Cv3/Cv3.jsx';
@@ -92,6 +93,7 @@ function App() {
         <Route path="/JobSeeker/dashboard" element={<JobSeekerDashboard />} />
         <Route path="/JobSeeker/apply-for-job" element={<ApplyForAjob />} />
         <Route path="/JobSeeker/job-details/:jobId" element={<JobDetails />} />
+        <Route path="/JobSeeker/saved-jobs" element={<SavedJobs />} />
 
         {/* Counselee Routes */}
         <Route path="/counselee/dashboard" element={<CounseleeDashboard />} />

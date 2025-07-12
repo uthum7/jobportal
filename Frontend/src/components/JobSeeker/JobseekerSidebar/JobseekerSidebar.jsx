@@ -53,7 +53,7 @@ const JobseekerSidebar = () => {
           <span>Applied Jobs</span>
         </NavLink>
 
-        <NavLink to="/saved-jobs" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <NavLink to="/JobSeeker/saved-jobs" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
           <FiBookmark className="nav-icon" />
           <span>Saved Jobs</span>
         </NavLink>

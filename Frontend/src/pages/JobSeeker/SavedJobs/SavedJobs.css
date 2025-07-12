@@ -1,0 +1,274 @@
+/* SavedJobs.css */
+
+.SavedJobsMainContainer {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .saved-jobs-layout {
+    flex: 1;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
+  .saved-jobs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+  }
+  
+  .saved-jobs-info h3 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  .saved-jobs-count {
+    margin: 0;
+    color: #6c757d;
+    font-size: 16px;
+  }
+  
+  .refresh-saved-jobs-btn {
+    background: #1CA774;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .refresh-saved-jobs-btn:hover {
+    background: #168f60;
+    transform: translateY(-1px);
+  }
+  
+  .refresh-saved-jobs-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .saved-job-cards-container {
+    width: 100%;
+  }
+  
+  .job-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Changed to show exactly 4 cards per row */
+    gap: 20px;
+    padding: 0;
+  }
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border: 2px dashed #dee2e6;
+  }
+  
+  .loading-container p {
+    color: #6c757d;
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  /* No saved jobs found styles */
+  .no-saved-jobs-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 15px;
+    border: 2px dashed #dee2e6;
+    margin: 20px 0;
+  }
+  
+  .no-saved-jobs-icon {
+    width: 80px;
+    height: 80px;
+    color: #6c757d;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+  
+  .no-saved-jobs-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 16px 0;
+  }
+  
+  .no-saved-jobs-message {
+    font-size: 16px;
+    color: #6c757d;
+    line-height: 1.6;
+    margin: 0 0 24px 0;
+    max-width: 500px;
+  }
+  
+  .no-saved-jobs-suggestions {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 30px;
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .no-saved-jobs-suggestions strong {
+    display: block;
+    color: #2c3e50;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .no-saved-jobs-suggestions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+  }
+  
+  .no-saved-jobs-suggestions li {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+  }
+  
+  .no-saved-jobs-suggestions li:before {
+    content: "•";
+    color: #1CA774; /* Updated bullet color to match theme */
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+  }
+  
+  .browse-jobs-button {
+    display: inline-block;
+    background: #1CA774; /* Updated button color */
+    color: white;
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(28, 167, 116, 0.2); /* Updated shadow color */
+  }
+  
+  .browse-jobs-button:hover {
+    background: #168f60; /* Updated hover color */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(28, 167, 116, 0.3); /* Updated shadow color */
+    text-decoration: none;
+    color: white;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .job-cards-grid {
+      grid-template-columns: repeat(3, 1fr); /* 3 cards on medium screens */
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .job-cards-grid {
+      grid-template-columns: repeat(2, 1fr); /* 2 cards on smaller screens */
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .saved-jobs-layout {
+      padding: 15px;
+    }
+    
+    .saved-jobs-header {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+    
+    .saved-jobs-info h3 {
+      font-size: 20px;
+    }
+    
+    .job-cards-grid {
+      grid-template-columns: 1fr; /* Single column on mobile */
+      gap: 15px;
+    }
+    
+    .no-saved-jobs-found {
+      padding: 40px 20px;
+    }
+    
+    .no-saved-jobs-icon {
+      width: 60px;
+      height: 60px;
+    }
+    
+    .no-saved-jobs-title {
+      font-size: 24px;
+    }
+    
+    .no-saved-jobs-message {
+      font-size: 14px;
+    }
+    
+    .no-saved-jobs-suggestions {
+      max-width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .saved-jobs-header {
+      padding: 15px;
+    }
+    
+    .saved-jobs-info h3 {
+      font-size: 18px;
+    }
+    
+    .saved-jobs-count {
+      font-size: 14px;
+    }
+    
+    .refresh-saved-jobs-btn {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+    
+    .no-saved-jobs-found {
+      padding: 30px 15px;
+    }
+    
+    .no-saved-jobs-title {
+      font-size: 20px;
+    }
+    
+    .browse-jobs-button {
+      padding: 12px 24px;
+      font-size: 14px;
+    }
+  }

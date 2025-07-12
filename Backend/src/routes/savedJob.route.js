@@ -1,4 +1,4 @@
-// routes/savedJob.routes.js
+// routes/savedJob.route.js
 import express from 'express';
 // Import controller functions related to saving jobs
 import { saveJob, getSavedJobsByUser, deleteSavedJob, checkSavedJob } from '../controllers/savedJob.controller.js';
