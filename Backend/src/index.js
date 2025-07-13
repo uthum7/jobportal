@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.route.js";
 import jobRoutes from "./routes/job.route.js";
 import messageRoutes from "./routes/message.route.js";
 import savedJobRoutes from './routes/savedJob.route.js';
+import applicationRoutes from "./routes/application.route.js";
 
 // Load environment variables
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use('/api/saved-jobs', savedJobRoutes);
+app.use('/api/applications', applicationRoutes);
 
 // Start the server
 app.listen(PORT, () => {

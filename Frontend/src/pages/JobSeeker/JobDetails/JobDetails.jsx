@@ -5,6 +5,7 @@ import JobseekerSidebar from "../../../components/JobSeeker/JobseekerSidebar/Job
 import Footer from "../../../components/Footer/Footer.jsx";
 import "./JobDetails.css";
 import "../Dashboard/Dashboard.css";
+import ApplyNow from "../ApplyNow/ApplyNow.jsx";
 
 //Displays detailed information about a specific job listing with save functionality
 const JobDetails = () => {
@@ -19,6 +20,22 @@ const JobDetails = () => {
   const [isJobSaved, setIsJobSaved] = useState(false); // Track if job is saved by user
   const [animating, setAnimating] = useState(false); // Animation state for save button
   const [savedJobId, setSavedJobId] = useState(null); // ID of the saved job document in database
+
+  const [showApplyForm, setShowApplyForm] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
+  const [applicationData, setApplicationData] = useState({
+    fullName: '',
+    nic: '',
+    email: '',
+    phoneNumber: '',
+    address: '',
+    skills: [],
+    education: [],
+    summary: '',
+    workExperience: [],
+    certifications: [],
+    coverLetter: ''
+  });
 
   useEffect(() => {
     // Fetch job details from API based on URL parameter
@@ -35,6 +52,18 @@ const JobDetails = () => {
     };
 
     fetchJobDetails();
+
+    // Check if user has already applied
+    const checkApplicationStatus = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/api/applications/status/${userId}/${jobId}`);
+        setHasApplied(response.data.hasApplied);
+      } catch (err) {
+        console.error("Error checking application status:", err);
+      }
+    };
+
+    checkApplicationStatus();
 
     // Check if job is already saved
     const checkSavedStatus = async () => {
@@ -177,7 +206,13 @@ const JobDetails = () => {
                   <h2 className="job-title">{job.JobTitle}</h2>
                 </div>
                 <div className="job-apply-button">
-                  <button className="apply-now-btn">Apply Now</button>
+                  <button
+                    className={`apply-now-btn ${hasApplied ? 'applied' : ''}`}
+                    onClick={() => setShowApplyForm(true)}
+                    disabled={hasApplied}
+                  >
+                    {hasApplied ? 'Already Applied' : 'Apply Now'}
+                  </button>
                   {/* save job button */}
                   <button
                     className={`save-job-btn ${isJobSaved ? 'saved' : ''} ${animating ? 'animate' : ''}`}
@@ -290,8 +325,20 @@ const JobDetails = () => {
       <div className="footer1">
         <Footer />
       </div>
+      {showApplyForm && (
+        <ApplyNow
+          jobId={jobId}
+          userId={userId}
+          onClose={() => setShowApplyForm(false)}
+          onSuccess={() => {
+            setHasApplied(true);
+            setShowApplyForm(false);
+          }}
+        />
+      )}
     </div>
   );
 };
 
 export default JobDetails;
+
