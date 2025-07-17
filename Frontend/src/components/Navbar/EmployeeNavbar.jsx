@@ -39,43 +39,6 @@ const EmployeeNavbar = ({ onLogout }) => {
         </div>
 
         {/* Core Navigation Links - This block will be centered on desktop */}
-        <div className="employee-nav-links-group">
-          <Link 
-            to="/employee" 
-            className={`employee-nav-link ${location.pathname === '/employee' ? 'active' : ''}`}
-            onClick={handleLinkClick}
-          >
-            Dashboard
-          </Link>
-          <Link 
-            to="/employee/profile" 
-            className={`employee-nav-link ${location.pathname.startsWith('/employee/profile') ? 'active' : ''}`}
-            onClick={handleLinkClick}
-          >
-            Profile
-          </Link>
-          <Link 
-            to="/employee/jobs" 
-            className={`employee-nav-link ${location.pathname.startsWith('/employee/jobs') ? 'active' : ''}`}
-            onClick={handleLinkClick}
-          >
-            Posted Jobs
-          </Link>
-          <Link 
-            to="/employee/candidates" 
-            className={`employee-nav-link ${location.pathname.startsWith('/employee/candidates') ? 'active' : ''}`}
-            onClick={handleLinkClick}
-          >
-            Candidates
-          </Link>
-          <Link 
-            to="/employee/analytics" 
-            className={`employee-nav-link ${location.pathname.startsWith('/employee/analytics') ? 'active' : ''}`}
-            onClick={handleLinkClick}
-          >
-            Analytics
-          </Link>
-        </div>
 
         {/* Actions - Logout button (for desktop) */}
         <div className="employee-navbar-actions">

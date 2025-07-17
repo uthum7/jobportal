@@ -1,5 +1,4 @@
 import JobFormComponent from "./JobFormComponent/JobFormComponent"
-import "./postjob.css"
 
 const PostJobComponent = () => {
     return (

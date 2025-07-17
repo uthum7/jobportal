@@ -1,7 +1,74 @@
 import axios from "axios";
 import "./formstyle.css";
 import { useRef, useState } from "react";
-import { toast } from 'sonner';
+
+// Custom Alert System
+const showAlert = (type, title, message, duration = 4000) => {
+  // Remove existing alerts
+  const existingAlerts = document.querySelectorAll('.custom-alert');
+  existingAlerts.forEach(alert => alert.remove());
+
+  // Create alert element
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `custom-alert custom-alert-${type}`;
+  
+  const alertContent = `
+    <div class="alert-icon">
+      ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}
+    </div>
+    <div class="alert-content">
+      <div class="alert-title">${title}</div>
+      <div class="alert-message">${message}</div>
+    </div>
+    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+  `;
+  
+  alertDiv.innerHTML = alertContent;
+  
+  // Add to document
+  document.body.appendChild(alertDiv);
+  
+  // Animate in
+  setTimeout(() => alertDiv.classList.add('show'), 100);
+  
+  // Auto remove
+  setTimeout(() => {
+    alertDiv.classList.remove('show');
+    setTimeout(() => alertDiv.remove(), 300);
+  }, duration);
+};
+
+// Fallback toast function
+const customToast = {
+  success: (title, options = {}) => {
+    if (typeof toast !== 'undefined' && toast.success) {
+      toast.success(title, options);
+    } else {
+      showAlert('success', 'Success', title, options.duration || 4000);
+    }
+  },
+  error: (title, options = {}) => {
+    if (typeof toast !== 'undefined' && toast.error) {
+      toast.error(title, options);
+    } else {
+      showAlert('error', 'Error', title, options.duration || 4000);
+    }
+  },
+  warning: (title, options = {}) => {
+    if (typeof toast !== 'undefined' && toast.warning) {
+      toast.warning(title, options);
+    } else {
+      showAlert('warning', 'Warning', title, options.duration || 4000);
+    }
+  },
+  info: (title, options = {}) => {
+    if (typeof toast !== 'undefined' && toast.info) {
+      toast.info(title, options);
+    } else {
+      showAlert('info', 'Info', title, options.duration || 4000);
+    }
+  }
+};
 
 const JobFormComponent = () => {
   const [requirements, setRequirements] = useState([]);
@@ -9,8 +76,6 @@ const JobFormComponent = () => {
   const [responsibilities, setResponsibilities] = useState([]);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [formData, setFormData] = useState(null);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   
@@ -26,25 +91,25 @@ const JobFormComponent = () => {
   const tag = useRef("");
 
   // Validation functions
-  const validateField = (name, value) => {
+  const validateField = (fieldName, value) => {
     const newErrors = { ...errors };
     
-    switch (name) {
+    switch (fieldName) {
       case 'title':
-        if (!value.trim()) {
-          newErrors.title = 'Job title is required';
+        if (!value?.trim()) {
+          newErrors.title = "Job title is required";
         } else if (value.trim().length < 3) {
-          newErrors.title = 'Job title must be at least 3 characters';
+          newErrors.title = "Job title must be at least 3 characters long";
         } else if (value.trim().length > 100) {
-          newErrors.title = 'Job title must be less than 100 characters';
+          newErrors.title = "Job title must not exceed 100 characters";
         } else {
           delete newErrors.title;
         }
         break;
         
       case 'exp':
-        if (value && (value < 0 || value > 50)) {
-          newErrors.exp = 'Experience must be between 0 and 50 years';
+        if (value && (isNaN(value) || value < 0 || value > 50)) {
+          newErrors.exp = "Experience must be between 0 and 50 years";
         } else {
           delete newErrors.exp;
         }
@@ -52,17 +117,23 @@ const JobFormComponent = () => {
         
       case 'deadline':
         if (!value) {
-          newErrors.deadline = 'Application deadline is required';
-        } else if (new Date(value) <= new Date()) {
-          newErrors.deadline = 'Deadline must be in the future';
+          newErrors.deadline = "Application deadline is required";
         } else {
-          delete newErrors.deadline;
+          const selectedDate = new Date(value);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          if (selectedDate < today) {
+            newErrors.deadline = "Deadline cannot be in the past";
+          } else {
+            delete newErrors.deadline;
+          }
         }
         break;
         
       case 'jobDescription':
         if (value && value.length > 2000) {
-          newErrors.jobDescription = 'Description must be less than 2000 characters';
+          newErrors.jobDescription = "Job description must not exceed 2000 characters";
         } else {
           delete newErrors.jobDescription;
         }
@@ -76,16 +147,39 @@ const JobFormComponent = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFieldBlur = (name, value) => {
-    setTouched({ ...touched, [name]: true });
-    validateField(name, value);
+  const handleFieldChange = (fieldName, value) => {
+    setTouched({ ...touched, [fieldName]: true });
+    validateField(fieldName, value);
+  };
+
+  const validateForm = () => {
+    const titleValue = title.current.value;
+    const expValue = exp.current.value;
+    const deadlineValue = deadline.current.value;
+    const jobDescValue = jobDescription.current.value;
+
+    let isValid = true;
+    isValid = validateField('title', titleValue) && isValid;
+    isValid = validateField('exp', expValue) && isValid;
+    isValid = validateField('deadline', deadlineValue) && isValid;
+    isValid = validateField('jobDescription', jobDescValue) && isValid;
+
+    // Mark all fields as touched for error display
+    setTouched({
+      title: true,
+      exp: true,
+      deadline: true,
+      jobDescription: true
+    });
+
+    return isValid;
   };
 
   const clearAll = () => {
     title.current.value = "";
     exp.current.value = "";
-    mode.current.value = "onsite";
-    jobType.current.value = "full time";
+    mode.current.value = "";
+    jobType.current.value = "";
     deadline.current.value = "";
     jobDescription.current.value = "";
     requirement.current.value = "";
@@ -98,48 +192,22 @@ const JobFormComponent = () => {
     setTags([]);
     setErrors({});
     setTouched({});
-    
-    toast.success("🧹 Form cleared successfully!", {
-      description: "All fields have been reset",
-    });
   }
 
-  const validateForm = () => {
-    const titleValue = title.current.value;
-    const expValue = exp.current.value;
-    const deadlineValue = deadline.current.value;
-    const descriptionValue = jobDescription.current.value;
-    
-    const isValid = (
-      validateField('title', titleValue) &&
-      validateField('exp', expValue) &&
-      validateField('deadline', deadlineValue) &&
-      validateField('jobDescription', descriptionValue)
-    );
-    
-    // Mark all fields as touched to show validation errors
-    setTouched({
-      title: true,
-      exp: true,
-      deadline: true,
-      jobDescription: true
-    });
-    
-    return isValid;
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) {
-      toast.error("❌ Please fix the validation errors", {
-        description: "Check the highlighted fields and try again",
-        duration: 4000,
+      customToast.error("Validation Failed", {
+        description: "Please fix all validation errors before submitting the form",
+        duration: 5000
       });
       return;
     }
 
-    const jobData = {
+    setLoading(true);
+
+    const job = {
       JobTitle: title.current.value,
       JobExperienceYears: exp.current.value || 0,
       JobMode: mode.current.value,
@@ -150,54 +218,86 @@ const JobFormComponent = () => {
       Qualifications: qualifications,
       Responsibilities: responsibilities,
       Tags: tags,
-    };
-
-    setFormData(jobData);
-    setShowConfirmModal(true);
-  };
-
-  const confirmSubmit = async () => {
-    setLoading(true);
-    setShowConfirmModal(false);
+    }
 
     try {
-      const response = await axios.post("http://localhost:5001/api/job/create", formData);
+      const response = await axios.post("http://localhost:5001/api/job/create", job);
       
       if (response.status === 200 || response.status === 201) {
-        toast.success("🎉 Job posted successfully!", {
-          description: "Your job posting is now live and visible to candidates",
-          duration: 5000,
+        customToast.success("🎉 Job Posted Successfully!", {
+          description: "Your job posting is now live and visible to potential candidates. You can manage it from your dashboard.",
+          duration: 6000
         });
+        
+        // Additional success feedback
+        setTimeout(() => {
+          showAlert('success', 
+            'Job Posted Successfully!', 
+            `Job "${title.current.value}" has been published and is now accepting applications.`, 
+            8000
+          );
+        }, 1000);
+        
         clearAll();
       }
     } catch (error) {
       console.error(error);
-      toast.error("❌ Error posting job", {
-        description: "Please check your connection and try again",
-        duration: 4000,
+      const errorMessage = error.response?.data?.message || "Failed to post job. Please check your connection and try again.";
+      
+      customToast.error("❌ Job Posting Failed", {
+        description: errorMessage,
+        duration: 8000
       });
+      
+      // Additional error feedback
+      setTimeout(() => {
+        showAlert('error', 
+          'Job Posting Failed', 
+          `Error: ${errorMessage}. Please verify all information and try again.`, 
+          10000
+        );
+      }, 1000);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleAddRequirement = (e) => {
     e.preventDefault();
     const value = requirement.current.value.trim();
     if (!value) {
-      toast.error("Please enter a requirement");
+      customToast.error("Empty Requirement", {
+        description: "Please enter a valid requirement before adding",
+        duration: 3000
+      });
       return;
     }
-    if (value.length < 5) {
-      toast.error("Requirement must be at least 5 characters long");
+    if (value.length < 3) {
+      customToast.warning("Requirement Too Short", {
+        description: "Requirements should be at least 3 characters long",
+        duration: 3000
+      });
       return;
     }
     if (requirements.includes(value)) {
-      toast.error("This requirement already exists");
+      customToast.warning("Duplicate Entry", {
+        description: "This requirement has already been added",
+        duration: 3000
+      });
+      return;
+    }
+    if (requirements.length >= 10) {
+      customToast.warning("Limit Reached", {
+        description: "You can add up to 10 requirements only",
+        duration: 4000
+      });
       return;
     }
     setRequirements([...requirements, value]);
-    toast.success("✅ Requirement added successfully");
+    customToast.success("✅ Requirement Added", {
+      description: `"${value.substring(0, 50)}${value.length > 50 ? '...' : ''}" has been added successfully`,
+      duration: 2500
+    });
     requirement.current.value = "";
   }
 
@@ -205,19 +305,38 @@ const JobFormComponent = () => {
     e.preventDefault();
     const value = qualification.current.value.trim();
     if (!value) {
-      toast.error("Please enter a qualification");
+      customToast.error("Empty Qualification", {
+        description: "Please enter a valid qualification before adding",
+        duration: 3000
+      });
       return;
     }
-    if (value.length < 5) {
-      toast.error("Qualification must be at least 5 characters long");
+    if (value.length < 3) {
+      customToast.warning("Qualification Too Short", {
+        description: "Qualifications should be at least 3 characters long",
+        duration: 3000
+      });
       return;
     }
     if (qualifications.includes(value)) {
-      toast.error("This qualification already exists");
+      customToast.warning("Duplicate Entry", {
+        description: "This qualification has already been added",
+        duration: 3000
+      });
+      return;
+    }
+    if (qualifications.length >= 10) {
+      customToast.warning("Limit Reached", {
+        description: "You can add up to 10 qualifications only",
+        duration: 4000
+      });
       return;
     }
     setQualifications([...qualifications, value]);
-    toast.success("✅ Qualification added successfully");
+    customToast.success("✅ Qualification Added", {
+      description: `"${value.substring(0, 50)}${value.length > 50 ? '...' : ''}" has been added successfully`,
+      duration: 2500
+    });
     qualification.current.value = "";
   }
 
@@ -225,64 +344,114 @@ const JobFormComponent = () => {
     e.preventDefault();
     const value = responsibility.current.value.trim();
     if (!value) {
-      toast.error("Please enter a responsibility");
+      customToast.error("Empty Responsibility", {
+        description: "Please enter a valid responsibility before adding",
+        duration: 3000
+      });
       return;
     }
-    if (value.length < 5) {
-      toast.error("Responsibility must be at least 5 characters long");
+    if (value.length < 3) {
+      customToast.warning("Responsibility Too Short", {
+        description: "Responsibilities should be at least 3 characters long",
+        duration: 3000
+      });
       return;
     }
     if (responsibilities.includes(value)) {
-      toast.error("This responsibility already exists");
+      customToast.warning("Duplicate Entry", {
+        description: "This responsibility has already been added",
+        duration: 3000
+      });
+      return;
+    }
+    if (responsibilities.length >= 15) {
+      customToast.warning("Limit Reached", {
+        description: "You can add up to 15 responsibilities only",
+        duration: 4000
+      });
       return;
     }
     setResponsibilities([...responsibilities, value]);
-    toast.success("✅ Responsibility added successfully");
+    customToast.success("✅ Responsibility Added", {
+      description: `"${value.substring(0, 50)}${value.length > 50 ? '...' : ''}" has been added successfully`,
+      duration: 2500
+    });
     responsibility.current.value = "";
   }
 
   const handleAddTag = (e) => {
     e.preventDefault();
-    const value = tag.current.value.trim();
+    const value = tag.current.value.trim().toLowerCase();
     if (!value) {
-      toast.error("Please enter a tag");
+      customToast.error("Empty Tag", {
+        description: "Please enter a valid tag before adding",
+        duration: 3000
+      });
       return;
     }
     if (value.length < 2) {
-      toast.error("Tag must be at least 2 characters long");
+      customToast.warning("Tag Too Short", {
+        description: "Tags should be at least 2 characters long",
+        duration: 3000
+      });
       return;
     }
-    if (tags.includes(value)) {
-      toast.error("This tag already exists");
+    if (tags.map(t => t.toLowerCase()).includes(value)) {
+      customToast.warning("Duplicate Entry", {
+        description: "This tag has already been added",
+        duration: 3000
+      });
       return;
     }
-    if (tags.length >= 10) {
-      toast.error("Maximum 10 tags allowed");
+    if (tags.length >= 20) {
+      customToast.warning("Limit Reached", {
+        description: "You can add up to 20 tags only",
+        duration: 4000
+      });
       return;
     }
-    setTags([...tags, value]);
-    toast.success("✅ Tag added successfully");
+    setTags([...tags, tag.current.value.trim()]);
+    customToast.success("✅ Tag Added", {
+      description: `"${tag.current.value.trim()}" has been added successfully`,
+      duration: 2500
+    });
     tag.current.value = "";
   }
 
   const handleDeleteRequirement = (index) => {
+    const deletedItem = requirements[index];
     setRequirements(requirements.filter((_, i) => i !== index));
-    toast.success("🗑️ Requirement removed");
+    customToast.success("🗑️ Requirement Removed", {
+      description: `"${deletedItem.substring(0, 40)}${deletedItem.length > 40 ? '...' : ''}" has been removed`,
+      duration: 2500
+    });
   }
 
   const handleDeleteQualification = (index) => {
+    const deletedItem = qualifications[index];
     setQualifications(qualifications.filter((_, i) => i !== index));
-    toast.success("🗑️ Qualification removed");
+    customToast.success("🗑️ Qualification Removed", {
+      description: `"${deletedItem.substring(0, 40)}${deletedItem.length > 40 ? '...' : ''}" has been removed`,
+      duration: 2500
+    });
   }
 
   const handleDeleteResponsibility = (index) => {
+    const deletedItem = responsibilities[index];
     setResponsibilities(responsibilities.filter((_, i) => i !== index));
-    toast.success("🗑️ Responsibility removed");
+    customToast.success("🗑️ Responsibility Removed", {
+      description: `"${deletedItem.substring(0, 40)}${deletedItem.length > 40 ? '...' : ''}" has been removed`,
+      duration: 2500
+    });
   }
 
   const handleDeleteTag = (index) => {
+    const deletedItem = tags[index];
     setTags(tags.filter((_, i) => i !== index));
-    toast.success("🗑️ Tag removed");
+    customToast.success("🗑️ Tag Removed", {
+      description: `"${deletedItem}" has been removed`,
+      duration: 2500
+    });
   }
 
   const handleKeyPress = (e, handler) => {
@@ -291,91 +460,23 @@ const JobFormComponent = () => {
     }
   }
 
-  const ConfirmationModal = () => {
-    if (!showConfirmModal) return null;
-
-    return (
-      <div className="modal-overlay">
-        <div className="confirmation-modal">
-          <div className="modal-header">
-            <div className="modal-icon">🚀</div>
-            <h3>Confirm Job Posting</h3>
-            <p>Are you sure you want to post this job? Once posted, it will be visible to all candidates.</p>
-          </div>
-          
-          <div className="modal-content">
-            <div className="job-preview">
-              <h4>📋 Job Preview</h4>
-              <div className="preview-item">
-                <strong>Title:</strong> {formData?.JobTitle}
-              </div>
-              <div className="preview-item">
-                <strong>Type:</strong> {formData?.JobType}
-              </div>
-              <div className="preview-item">
-                <strong>Mode:</strong> {formData?.JobMode}
-              </div>
-              <div className="preview-item">
-                <strong>Experience:</strong> {formData?.JobExperienceYears} years
-              </div>
-              <div className="preview-item">
-                <strong>Deadline:</strong> {formData?.JobDeadline ? new Date(formData.JobDeadline).toLocaleDateString() : 'Not set'}
-              </div>
-              <div className="preview-item">
-                <strong>Requirements:</strong> {requirements.length} items
-              </div>
-              <div className="preview-item">
-                <strong>Qualifications:</strong> {qualifications.length} items
-              </div>
-              <div className="preview-item">
-                <strong>Responsibilities:</strong> {responsibilities.length} items
-              </div>
-              <div className="preview-item">
-                <strong>Tags:</strong> {tags.length} items
-              </div>
-            </div>
-          </div>
-          
-          <div className="modal-actions">
-            <button 
-              type="button" 
-              className="btn-cancel" 
-              onClick={() => setShowConfirmModal(false)}
-            >
-              ❌ Cancel
-            </button>
-            <button 
-              type="button" 
-              className="btn-confirm" 
-              onClick={confirmSubmit}
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <div className="loading-spinner"></div>
-                  Posting...
-                </>
-              ) : (
-                <>
-                  ✅ Confirm & Post
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+  const getFieldClassName = (fieldName) => {
+    let className = "form-input";
+    if (touched[fieldName] && errors[fieldName]) {
+      className += " error";
+    }
+    return className;
   };
 
   return (
     <div className="job-form-wrapper">
       <div className="job-form-header">
         <h1 className="form-title">Create New Job Posting</h1>
-        <p className="form-subtitle">Fill in the details below to post a new job opportunity</p>
+        <p className="form-subtitle">Build a comprehensive job posting to attract the right talent</p>
       </div>
 
       <div className="job-form-component">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           {/* Basic Information */}
           <div className="form-section">
             <div className="section-header">
@@ -388,16 +489,19 @@ const JobFormComponent = () => {
             
             <div className="form-grid">
               <div className="form-group">
-                <label className="form-label">Job Title <span className="required">*</span></label>
+                <label className="form-label">
+                  Job Title <span className="required">*</span>
+                </label>
                 <input 
                   type="text" 
                   ref={title} 
-                  className={`form-input ${errors.title && touched.title ? 'error' : ''}`}
+                  className={getFieldClassName('title')}
                   placeholder="e.g. Senior Software Engineer"
-                  onBlur={(e) => handleFieldBlur('title', e.target.value)}
-                  onChange={(e) => touched.title && validateField('title', e.target.value)}
+                  maxLength="100"
+                  onChange={(e) => handleFieldChange('title', e.target.value)}
+                  required
                 />
-                {errors.title && touched.title && (
+                {touched.title && errors.title && (
                   <div className="error-message">
                     <span className="error-icon">⚠️</span>
                     {errors.title}
@@ -410,14 +514,13 @@ const JobFormComponent = () => {
                 <input 
                   type="number" 
                   ref={exp} 
-                  className={`form-input ${errors.exp && touched.exp ? 'error' : ''}`}
+                  className={getFieldClassName('exp')}
                   placeholder="e.g. 3"
                   min="0"
                   max="50"
-                  onBlur={(e) => handleFieldBlur('exp', e.target.value)}
-                  onChange={(e) => touched.exp && validateField('exp', e.target.value)}
+                  onChange={(e) => handleFieldChange('exp', e.target.value)}
                 />
-                {errors.exp && touched.exp && (
+                {touched.exp && errors.exp && (
                   <div className="error-message">
                     <span className="error-icon">⚠️</span>
                     {errors.exp}
@@ -435,16 +538,18 @@ const JobFormComponent = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">Application Deadline <span className="required">*</span></label>
+                <label className="form-label">
+                  Application Deadline <span className="required">*</span>
+                </label>
                 <input 
                   type="date" 
                   ref={deadline} 
-                  className={`form-input ${errors.deadline && touched.deadline ? 'error' : ''}`}
+                  className={getFieldClassName('deadline')}
                   min={new Date().toISOString().split('T')[0]}
-                  onBlur={(e) => handleFieldBlur('deadline', e.target.value)}
-                  onChange={(e) => touched.deadline && validateField('deadline', e.target.value)}
+                  onChange={(e) => handleFieldChange('deadline', e.target.value)}
+                  required
                 />
-                {errors.deadline && touched.deadline && (
+                {touched.deadline && errors.deadline && (
                   <div className="error-message">
                     <span className="error-icon">⚠️</span>
                     {errors.deadline}
@@ -467,21 +572,21 @@ const JobFormComponent = () => {
               <label className="form-label">Job Description</label>
               <textarea 
                 ref={jobDescription} 
-                className={`form-textarea ${errors.jobDescription && touched.jobDescription ? 'error' : ''}`}
+                className={getFieldClassName('jobDescription')}
                 placeholder="Describe the role, company culture, and what makes this opportunity exciting..."
                 rows="8"
-                onBlur={(e) => handleFieldBlur('jobDescription', e.target.value)}
-                onChange={(e) => touched.jobDescription && validateField('jobDescription', e.target.value)}
+                maxLength="2000"
+                onChange={(e) => handleFieldChange('jobDescription', e.target.value)}
               />
-              {errors.jobDescription && touched.jobDescription && (
+              <div className="character-count">
+                {jobDescription.current?.value?.length || 0}/2000 characters
+              </div>
+              {touched.jobDescription && errors.jobDescription && (
                 <div className="error-message">
                   <span className="error-icon">⚠️</span>
                   {errors.jobDescription}
                 </div>
               )}
-              <div className="character-count">
-                {jobDescription.current?.value?.length || 0} / 2000 characters
-              </div>
             </div>
           </div>
 
@@ -491,7 +596,7 @@ const JobFormComponent = () => {
               <div className="section-icon">✅</div>
               <div>
                 <h3 className="section-title">Requirements</h3>
-                <p className="section-description">Technical skills and qualifications needed ({requirements.length} added)</p>
+                <p className="section-description">Technical skills and qualifications needed ({requirements.length}/10)</p>
               </div>
             </div>
             
@@ -501,14 +606,26 @@ const JobFormComponent = () => {
                 ref={requirement} 
                 className="add-item-input" 
                 placeholder="e.g. 3+ years experience with React.js"
+                maxLength="200"
                 onKeyPress={(e) => handleKeyPress(e, handleAddRequirement)}
               />
-              <button type="button" className="add-item-btn" onClick={handleAddRequirement}>
+              <button 
+                type="button" 
+                className="add-item-btn" 
+                onClick={handleAddRequirement}
+                disabled={requirements.length >= 10}
+              >
                 ➕ Add Requirement
               </button>
             </div>
             
             <div className="items-container">
+              {requirements.length === 0 && (
+                <div className="empty-state">
+                  <span className="empty-icon">📝</span>
+                  <p>No requirements added yet. Add technical skills and experience needed for this role.</p>
+                </div>
+              )}
               {requirements.map((req, index) => (
                 <div key={index} className="item-card requirement-item">
                   <span className="item-text">{req}</span>
@@ -522,12 +639,6 @@ const JobFormComponent = () => {
                   </button>
                 </div>
               ))}
-              {requirements.length === 0 && (
-                <div className="empty-state">
-                  <span className="empty-icon">📝</span>
-                  <p>No requirements added yet. Add some technical skills or qualifications.</p>
-                </div>
-              )}
             </div>
           </div>
 
@@ -537,7 +648,7 @@ const JobFormComponent = () => {
               <div className="section-icon">🎓</div>
               <div>
                 <h3 className="section-title">Qualifications</h3>
-                <p className="section-description">Educational background and certifications ({qualifications.length} added)</p>
+                <p className="section-description">Educational background and certifications ({qualifications.length}/10)</p>
               </div>
             </div>
             
@@ -547,14 +658,26 @@ const JobFormComponent = () => {
                 ref={qualification} 
                 className="add-item-input" 
                 placeholder="e.g. Bachelor's degree in Computer Science"
+                maxLength="200"
                 onKeyPress={(e) => handleKeyPress(e, handleAddQualification)}
               />
-              <button type="button" className="add-item-btn" onClick={handleAddQualification}>
+              <button 
+                type="button" 
+                className="add-item-btn" 
+                onClick={handleAddQualification}
+                disabled={qualifications.length >= 10}
+              >
                 ➕ Add Qualification
               </button>
             </div>
             
             <div className="items-container">
+              {qualifications.length === 0 && (
+                <div className="empty-state">
+                  <span className="empty-icon">🎓</span>
+                  <p>No qualifications added yet. Add educational requirements and certifications.</p>
+                </div>
+              )}
               {qualifications.map((qual, index) => (
                 <div key={index} className="item-card qualification-item">
                   <span className="item-text">{qual}</span>
@@ -568,12 +691,6 @@ const JobFormComponent = () => {
                   </button>
                 </div>
               ))}
-              {qualifications.length === 0 && (
-                <div className="empty-state">
-                  <span className="empty-icon">🎓</span>
-                  <p>No qualifications added yet. Add educational requirements or certifications.</p>
-                </div>
-              )}
             </div>
           </div>
 
@@ -583,7 +700,7 @@ const JobFormComponent = () => {
               <div className="section-icon">🎯</div>
               <div>
                 <h3 className="section-title">Responsibilities</h3>
-                <p className="section-description">Key duties and expectations for this role ({responsibilities.length} added)</p>
+                <p className="section-description">Key duties and expectations for this role ({responsibilities.length}/15)</p>
               </div>
             </div>
             
@@ -593,14 +710,26 @@ const JobFormComponent = () => {
                 ref={responsibility} 
                 className="add-item-input" 
                 placeholder="e.g. Design and develop scalable web applications"
+                maxLength="200"
                 onKeyPress={(e) => handleKeyPress(e, handleAddResponsibility)}
               />
-              <button type="button" className="add-item-btn" onClick={handleAddResponsibility}>
+              <button 
+                type="button" 
+                className="add-item-btn" 
+                onClick={handleAddResponsibility}
+                disabled={responsibilities.length >= 15}
+              >
                 ➕ Add Responsibility
               </button>
             </div>
             
             <div className="items-container">
+              {responsibilities.length === 0 && (
+                <div className="empty-state">
+                  <span className="empty-icon">🎯</span>
+                  <p>No responsibilities added yet. Add key duties and daily tasks for this position.</p>
+                </div>
+              )}
               {responsibilities.map((resp, index) => (
                 <div key={index} className="item-card responsibility-item">
                   <span className="item-text">{resp}</span>
@@ -614,12 +743,6 @@ const JobFormComponent = () => {
                   </button>
                 </div>
               ))}
-              {responsibilities.length === 0 && (
-                <div className="empty-state">
-                  <span className="empty-icon">🎯</span>
-                  <p>No responsibilities added yet. Add key duties and expectations.</p>
-                </div>
-              )}
             </div>
           </div>
 
@@ -629,7 +752,7 @@ const JobFormComponent = () => {
               <div className="section-icon">🏷️</div>
               <div>
                 <h3 className="section-title">Tags</h3>
-                <p className="section-description">Keywords to help candidates find this job ({tags.length}/10 added)</p>
+                <p className="section-description">Keywords to help candidates find this job ({tags.length}/20)</p>
               </div>
             </div>
             
@@ -639,20 +762,26 @@ const JobFormComponent = () => {
                 ref={tag} 
                 className="add-item-input" 
                 placeholder="e.g. JavaScript, Frontend, React"
+                maxLength="50"
                 onKeyPress={(e) => handleKeyPress(e, handleAddTag)}
-                disabled={tags.length >= 10}
               />
               <button 
                 type="button" 
                 className="add-item-btn" 
                 onClick={handleAddTag}
-                disabled={tags.length >= 10}
+                disabled={tags.length >= 20}
               >
                 ➕ Add Tag
               </button>
             </div>
             
             <div className="items-container tags-container">
+              {tags.length === 0 && (
+                <div className="empty-state">
+                  <span className="empty-icon">🏷️</span>
+                  <p>No tags added yet. Add relevant keywords and technologies.</p>
+                </div>
+              )}
               {tags.map((t, index) => (
                 <div key={index} className="item-card tag-item">
                   <span className="item-text">{t}</span>
@@ -666,28 +795,29 @@ const JobFormComponent = () => {
                   </button>
                 </div>
               ))}
-              {tags.length === 0 && (
-                <div className="empty-state">
-                  <span className="empty-icon">🏷️</span>
-                  <p>No tags added yet. Add keywords to help candidates find this job.</p>
-                </div>
-              )}
             </div>
           </div>
 
           {/* Submit Section */}
           <div className="form-actions">
-            <button type="button" className="btn-secondary" onClick={clearAll}>
+            <button type="button" className="btn-secondary" onClick={clearAll} disabled={loading}>
               🗑️ Clear All
             </button>
             <button type="submit" className="btn-primary" disabled={loading}>
-              🚀 Post Job
+              {loading ? (
+                <>
+                  <div className="loading-spinner"></div>
+                  Publishing Job...
+                </>
+              ) : (
+                <>
+                  🚀 Publish Job
+                </>
+              )}
             </button>
           </div>
         </form>
       </div>
-      
-      <ConfirmationModal />
     </div>
   );
 }
