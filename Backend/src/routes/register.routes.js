@@ -37,7 +37,7 @@ router.post(
       });
     }
 
-    const validRoles = ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN"];
+    const validRoles = ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"];
     const invalidRoles = roles.filter(role => !validRoles.includes(String(role).toUpperCase())); // Ensure roles are checked case-insensitively
     
     if (invalidRoles.length > 0) {

@@ -5,94 +5,95 @@ import hansi from "../../../assets/img/hansi.jpg";
 
 const EmployeeSidebar = ({ activeTab, setActiveTab }) => {
     const handleTabClick = (tabName, e) => {
-        e.preventDefault(); // Prevent default link behavior
+        e.preventDefault();
         setActiveTab(tabName);
     };
 
+    const navigationItems = [
+        {
+            name: "Dashboard",
+            label: "Dashboard",
+            icon: "📊"
+        },
+        {
+            name: "Profile",
+            label: "My Profile",
+            icon: "👤"
+        },
+        {
+            name: "PostedJob",
+            label: "Posted Jobs",
+            icon: "💼"
+        },
+        {
+            name: "PostJobSpecs",
+            label: "Post New Job",
+            icon: "📝"
+        },
+        {
+            name: "Candidates",
+            label: "Candidates",
+            icon: "👥"
+        },
+        {
+            name: "Messages",
+            label: "Messages",
+            icon: "💬"
+        }
+    ];
+
+    const accountItems = [
+        {
+            name: "Password",
+            label: "Security",
+            icon: "🔒"
+        },
+    ];
+
     return (
         <div className="employee-sidebar">
+
+            {/* Profile Section */}
             <div className="profile-section">
-                <img
-                    src={hansi}
-                    alt="User Profile"
-                    className="profile-image"
-                />
-                <h3>Hansamali Awarjana</h3>
+                <div className="profile-image-container">
+                    <img
+                        src={hansi}
+                        alt="User Profile"
+                        className="profile-image"
+                    />
+                    <div className="online-indicator"></div>
+                </div>
+                <div className="profile-info">
+                    <h3 className="profile-name">Hansamali Awarjana</h3>
+                    <p className="profile-role">Employee</p>
+                </div>
             </div>
 
+            {/* Navigation Section */}
             <nav className="sidebar-nav">
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("Dashboard", e)} 
-                    className={`nav-item ${activeTab === "Dashboard" ? "active" : ""}`}
-                >
-                    <span>User Dashboard</span>
-                </Link>
+                <div className="nav-section">
+                    <h4 className="nav-section-title">Main Menu</h4>
+                    <div className="nav-items">
+                        {navigationItems.map((item) => (
+                            <Link
+                                key={item.name}
+                                to="#"
+                                onClick={(e) => handleTabClick(item.name, e)}
+                                className={`nav-item ${activeTab === item.name ? "active" : ""}`}
+                            >
+                                <span className="nav-icon">{item.icon}</span>
+                                <span className="nav-label">{item.label}</span>
+                                {item.name === "Messages" && (
+                                    <span className="nav-badge">3</span>
+                                )}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
 
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("Profile", e)} 
-                    className={`nav-item ${activeTab === "Profile" ? "active" : ""}`}
-                >
-                    <span>My Profile</span>
-                </Link>
-
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("PostedJob", e)} 
-                    className={`nav-item ${activeTab === "PostedJob" ? "active" : ""}`}
-                >
-                    <span>Posted Jobs</span>
-                </Link>
-
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("PostJobSpecs", e)} 
-                    className={`nav-item ${activeTab === "PostJobSpecs" ? "active" : ""}`}
-                >
-                    <span>Post Job Specifications</span>
-                </Link>
-
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("Candidates", e)} 
-                    className={`nav-item ${activeTab === "Candidates" ? "active" : ""}`}
-                >
-                    <span>Shortlisted Candidates</span>
-                </Link>
-
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("Messages", e)} 
-                    className={`nav-item ${activeTab === "Messages" ? "active" : ""}`}
-                >
-                    <span>Messages</span>
-                </Link>
-
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("Password", e)} 
-                    className={`nav-item ${activeTab === "Password" ? "active" : ""}`}
-                >
-                    <span>Change Password</span>
-                </Link>
-
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("DeleteAccount", e)} 
-                    className={`nav-item ${activeTab === "DeleteAccount" ? "active" : ""}`}
-                >
-                    <span>Delete Account</span>
-                </Link>
-
-                <Link 
-                    to="#" 
-                    onClick={(e) => handleTabClick("Logout", e)} 
-                    className="nav-item"
-                >
-                    <span>Logout</span>
-                </Link>
             </nav>
+
+            
         </div>
     );
 };
