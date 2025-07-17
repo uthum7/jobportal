@@ -7,12 +7,12 @@ import mongoose from "mongoose";
 
 // Import Routes - Ensure these paths are correct relative to your index.js
 import authRoutes from "./routes/auth.route.js";
-// import { connectDB } from "./lib/db.js";
+import { connectDB } from "./lib/db.js";
 import dashboardRoutes from './routes/dashboard.route.js';
 import messageRoutes from "./routes/message.route.js";
 import registerUserRoutes from "./routes/register.routes.js";
 import cvRoutes from "./routes/cv.routes.js";
-import jobPostRoutes from "./routes/JobPost.route.js";
+import jobPostRoutes from "./routes/Job.route.js";
 
 // --- FIX 1: Correctly import the AI routes ---
 import aiRoutes from "./routes/gemini.route.js"; // Renamed variable to camelCase `aiRoutes` for consistency
@@ -42,15 +42,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // --- Database Connection ---
-const connectDB = async () => {
-    try {
-        await mongoose.connect(MONGO_URL);
-        console.log('✅ MongoDB connected successfully');
-    } catch (error) {
-        console.error('❌ MongoDB connection error:', error.message);
-        process.exit(1);
-    }
-};
+// const connectDB = async () => {
+//     try {
+//         await mongoose.connect(MONGO_URL);
+//         console.log('✅ MongoDB connected successfully');
+//     } catch (error) {
+//         console.error('❌ MongoDB connection error:', error.message);
+//         process.exit(1);
+//     }
+// };
 
 // --- API Routes Registration ---
 console.log("Registering API routes...");

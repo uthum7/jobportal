@@ -27,7 +27,7 @@ const RegisteruserSchema = new Schema({
     roles: {
         type: [String],
         required: [true, "At least one role is required"],
-        enum: ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN"],
+        enum: ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
         validate: {
             validator: function(roles) {
                 return roles && roles.length > 0;
