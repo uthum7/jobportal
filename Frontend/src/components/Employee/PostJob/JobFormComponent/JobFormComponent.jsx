@@ -49,7 +49,7 @@ const JobFormComponent = () => {
     e.preventDefault();
     const job = {
       JobTitle: title.current.value,
-      JobYearsExperience: exp.current.value,
+      JobExperienceYears: exp.current.value,
       JobMode: mode.current.value,
       JobType: jobType.current.value,
       JobDeadline: deadline.current.value ? new Date(deadline.current.value) : null,
