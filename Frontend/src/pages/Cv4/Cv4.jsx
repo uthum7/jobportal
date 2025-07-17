@@ -1,165 +1,274 @@
-import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom'; 
+// pages/Cv4/Cv4.jsx
+
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import styles from "./Cv4.module.css"; // Import CSS Module
+import styles from "./Cv4.module.css";
+import { isAuthenticated } from "../../utils/auth";
+import { useCVForm } from "../../context/CVFormContext";
+
+const initialPreviewStates = {
+    personalInfo: { fullname: "Your Name", jobTitle: "Your Profession", profilePicture: "/default-profile.png", phone: "Phone", email: "Email", address: "Address", profileParagraph: "Your profile summary..." },
+    educationDetails: { universitiyName: "University Name", schoolName: "School Name", uniStartDate: "", uniEndDate: "", uniMoreDetails: "Degree details", startDate: "", endDate: "", moreDetails: "School details" },
+    professionalExperience: [],
+    skill: [],
+    references: [],
+};
 
 const Cv4 = () => {
   const navigate = useNavigate();
-  const [summary, setSummary] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: "John Doe",
-    jobTitle: "Software Engineer",
-    phone: "123-456-7890",
-    email: "john.doe@example.com",
-    userInfo: "Experienced software engineer with a passion for developing innovative programs.",
-    SchoolName: "High School",
-    startDate: "2010",
-    endDate: "2014",
-    moreDetails: "Graduated with honors.",
-    universityName: "State University",
-    uniStartDate: "2014",
-    uniEndDate: "2018",
-    uniMoreDetails: "Bachelor of Science in Computer Science."
-  });
-  const [skills, setSkills] = useState([
-    { name: "JavaScript", rating: 4 },
-    { name: "React", rating: 5 },
-    { name: "Node.js", rating: 4 }
-  ]);
+  const {
+    resumeData: contextResumeData,
+    fetchResumeData: contextFetchResumeData,
+    saveToDatabase,
+    loading: contextLoading,
+    error: contextErrorGlobal,
+    setError: setContextErrorGlobal,
+  } = useCVForm();
 
-  const enhanceSummary = async () => {
-    if (!summary.trim()) return;
-    setLoading(true);
-    try {
-      const response = await axios.post("/api/generate-summary", { text: summary });
-      setSummary(response.data.enhancedSummary);
-    } catch (error) {
-      console.error("Error enhancing summary:", error);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [pageError, setPageErrorLocal] = useState(null);
+  const [summary, setSummary] = useState("");
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
+  const hasFetchedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      setPageErrorLocal("User not authenticated. Redirecting to login...");
+      setIsPageLoading(false);
+      navigate("/login", { replace: true });
+      return;
     }
-    setLoading(false);
+
+    if (!hasFetchedRef.current) {
+      hasFetchedRef.current = true;
+      setIsPageLoading(true);
+      setPageErrorLocal(null);
+      if (setContextErrorGlobal) setContextErrorGlobal(null);
+
+      contextFetchResumeData()
+        .catch((err) => {
+          console.error("Cv4.jsx: Uncaught error from contextFetchResumeData:", err);
+          setPageErrorLocal(err.message || "Failed to load CV data.");
+        })
+        .finally(() => {
+          setIsPageLoading(false);
+        });
+    } else {
+      setIsPageLoading(false);
+    }
+  }, [contextFetchResumeData, navigate, setContextErrorGlobal]);
+
+  useEffect(() => {
+    if (contextResumeData && contextResumeData.summary !== undefined) {
+      setSummary(contextResumeData.summary);
+    } else if (contextResumeData && contextResumeData.summary === undefined) {
+      setSummary("");
+    }
+  }, [contextResumeData]);
+
+  const handleSummaryChange = (e) => {
+    setSummary(e.target.value);
   };
 
+  const validateForm = () => {
+    if (!summary || summary.trim() === "") {
+      const msg = "Summary cannot be empty.";
+      setPageErrorLocal(msg);
+      alert(msg);
+      return false;
+    }
+    setPageErrorLocal(null);
+    return true;
+  };
+  
+  const enhanceSummaryWithAI = async () => {
+    if (!summary.trim()) {
+        alert("Please write some summary text before using AI enhancement.");
+        return;
+    }
+    setIsAiLoading(true);
+    setPageErrorLocal(null);
+    if (setContextErrorGlobal) setContextErrorGlobal(null);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5001/api/ai/enhance-summary",
+        { summary: summary }
+      );
+
+      if (response.data && response.data.enhancedSummary) {
+        setSummary(response.data.enhancedSummary);
+      } else {
+        throw new Error("AI enhancement response was not in the expected format.");
+      }
+    } catch (error) {
+      const errMsg = error.response?.data?.error || error.message || "AI summary enhancement failed.";
+      console.error("Error enhancing summary with AI:", errMsg, error);
+      setPageErrorLocal(errMsg);
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
+  const handleSubmitSummary = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setPageErrorLocal(null);
+    if (setContextErrorGlobal) setContextErrorGlobal(null);
+
+    try {
+      await saveToDatabase("summary", summary.trim());
+      alert("Summary saved successfully!");
+      navigate("/cv-builder/references");
+    } catch (err) {
+      console.error("Cv4.jsx: Error during handleSubmitSummary:", err);
+    }
+  };
+  
+  const formatDateForDisplay = useCallback((dateStr) => {
+    if (!dateStr) return "Present";
+    try {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return "Invalid Date";
+        return d.toLocaleDateString(undefined, { year: "numeric", month: "short" });
+    } catch {
+        return "Invalid Date";
+    }
+  }, []);
+
+  const displayedError = pageError || (contextErrorGlobal ? (typeof contextErrorGlobal === 'string' ? contextErrorGlobal : contextErrorGlobal.message) : null);
+
+  const {
+    personalInfo: pi = initialPreviewStates.personalInfo,
+    educationDetails: ed = initialPreviewStates.educationDetails,
+    professionalExperience: pe = initialPreviewStates.professionalExperience,
+    skill: sk = initialPreviewStates.skill,
+    references: refs = initialPreviewStates.references,
+  } = contextResumeData || initialPreviewStates;
+
+  let profileImageSrcForPreview = typeof pi.profilePicture === 'string'
+    ? pi.profilePicture
+    : (pi.profilePicture instanceof File ? URL.createObjectURL(pi.profilePicture) : initialPreviewStates.personalInfo.profilePicture);
+
+  if (isPageLoading) {
+    return <div className={styles.loading}>Loading Summary Section...</div>;
+  }
+
   return (
-    <div>
-      <nav className={styles.navbar}>
-        <h1 className={styles.logo}>JOB PORTAL</h1>
-        <div className={styles.navLinks}>
-          <button>For Candidates</button>
-          <button>For Employers</button>
-          <button>Pages</button>
-          <button>Help</button>
-        </div>
-      </nav>
-
+    <>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
+        <p className={styles.pageSubtitle}>Step 5: Craft Your Professional Summary</p>
+      </header>
+      
       <div className={styles.resumeBuilder}>
-        <aside className={styles.sidebar}>
-          <div className={styles.profile}>
-            <img src="profile.jpg" alt="User" className={styles.profileImg} />
-            <h4>Piyumi Hansamali</h4>
-            <span className={styles.rating}>⭐⭐⭐⭐⭐ 4.7</span>
-          </div>
-          <nav>
-            <ul>
-              <li>📋 My Profile</li>
-              <li className={styles.active}>📄 My Resumes</li>
-              <li>✅ Applied Jobs</li>
-            </ul>
-          </nav>
-        </aside>
-
         <main className={styles.content}>
-          <div className={styles.navigationButtons}>
-            <button className={styles.navButton} onClick={() => navigate('/Cv3')}>Previous</button>
-            <button className={styles.navButton} onClick={() => navigate('/Cv5')}>Next</button>
-          </div>
-
-          <div className={styles.summaryContainer}>
-            <h3>Summary</h3>
-            <div className={styles.labelButtonContainer}>
-              <label>Add Summary Your Job Title</label>
-              <button
-                onClick={enhanceSummary}
-                disabled={loading}
-              >
-                {loading ? "Generating..." : "Generate From AI"}
+          <div className={styles.formContainer}>
+            <h3 className={styles.header}>Professional Summary</h3>
+            {displayedError && <div className={styles.errorMessageActive}>{displayedError}</div>}
+            
+            <form onSubmit={handleSubmitSummary}>
+              <div className={styles.formGroup}>
+                <label htmlFor="summary" className={styles.label}>Your Summary:</label>
+                <div className={styles.textareaContainer}>
+                  <textarea
+                    id="summary"
+                    name="summary"
+                    value={summary}
+                    onChange={handleSummaryChange}
+                    placeholder="Write a brief overview of your career, highlighting key skills, experiences, and goals..."
+                    rows={10}
+                    className={styles.textareaField}
+                  ></textarea>
+                  <button
+                    type="button"
+                    onClick={enhanceSummaryWithAI}
+                    disabled={isAiLoading || contextLoading}
+                    className={styles.aiButton}
+                  >
+                    {isAiLoading ? "Enhancing..." : "Enhance with AI"}
+                  </button>
+                </div>
+              </div>
+              <button type="submit" className={styles.saveBtn} disabled={contextLoading || isAiLoading}>
+                {contextLoading ? "Saving..." : "Save"}
               </button>
+            </form>
+
+            <div className={styles.instractionSection}>
+              <h3>Instructions</h3>
+              <ul>
+                <li>Write a compelling summary (2-4 sentences) that captures your professional essence.</li>
+                <li>Highlight your most relevant skills, years of experience, and career achievements or goals.</li>
+                <li>Tailor this summary to the types of roles you are targeting.</li>
+                <li>Use the "Enhance with AI" button for suggestions, but always review and personalize the output.</li>
+              </ul>
             </div>
-            <textarea
-              value={summary}
-              onChange={(e) => setSummary(e.target.value)}
-              placeholder="Add your summary"
-            ></textarea>
-            <button
-              className={styles.saveButton}
-              onClick={() => alert("Summary Saved!")}
-            >
-              Save
-            </button>
           </div>
 
+          {/* CV Preview Section */}
           <div className={styles.cvPreview}>
-            <div className={styles.cvHeader}>
-              <h2>{formData.fullName}</h2>
-              <h3>{formData.jobTitle}</h3>
+            <div className={styles.cvContainer}>
+              <div className={styles.cvLeft}>
+                <div className={styles.profileSection}>
+                  <img 
+                    src={profileImageSrcForPreview} 
+                    alt="Profile" 
+                    className={styles.profileImage} 
+                    onError={(e) => { e.target.onerror = null; e.target.src = initialPreviewStates.personalInfo.profilePicture; }}
+                  />
+                  <h3>{pi.jobTitle || initialPreviewStates.personalInfo.jobTitle}</h3>
+                  <h2>{pi.fullname || initialPreviewStates.personalInfo.fullname}</h2>
+                </div>
+                <div className={styles.contactInfo}><h4 className={styles.h4Headers}>Contact</h4><p>{pi.phone || "Phone"}</p><p>{pi.email || "Email"}</p><p>{pi.address || "Address"}</p></div>
+                <div className={styles.education}><h4 className={styles.h4Headers}>Education</h4>
+                  {/* --- FIX: Corrected a typo from className. to className={} --- */}
+                  {(ed.universitiyName || ed.schoolName) ? (<div className={styles.educationItem}>
+                    {ed.universitiyName && (<><h5>{ed.universitiyName}</h5><span>{formatDateForDisplay(ed.uniStartDate)} - {formatDateForDisplay(ed.uniEndDate)}</span><p className={styles.uniPara}>{ed.uniMoreDetails}</p></>)}
+                    {ed.schoolName && (<><h5>{ed.schoolName}</h5><span>{formatDateForDisplay(ed.startDate)} - {formatDateForDisplay(ed.endDate)}</span><p>{ed.moreDetails}</p></>)}
+                  </div>) : ( <p>Education details.</p> )}
+                </div>
+              </div>
+              <div className={styles.verticalLine}></div>
+              <div className={styles.cvRight}>
+                <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{pi.profileParagraph || initialPreviewStates.personalInfo.profileParagraph}</p></div>
+                <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>
+                  {(pe || []).length > 0 ? (pe.map((exp, i) => (
+                    <div key={`exp-preview-${i}`} className={styles.experienceItem}>
+                      <h5>{exp.jobTitle}</h5><p className={styles.companyName}>{exp.companyName}</p>
+                      <span>{formatDateForDisplay(exp.jstartDate)} - {formatDateForDisplay(exp.jendDate)}</span>
+                      <p className={styles.jobDescription}>{exp.jobDescription}</p>
+                    </div>))
+                  ) : ( <p>Experience details.</p> )}
+                </div>
+                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4>
+                  <ul className={styles.skillsDisplayList}>
+                    {(sk || []).length > 0 ? (sk.map((s, index) => (
+                      <li key={`skill-preview-${index}`} className={styles.skillDisplayItem}>
+                        <span className={styles.skillNameDisplay}>{s.skillName}</span>
+                        <div className={styles.skillStarsDisplay}>
+                          {[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (Number(s.skillLevel) || 0) ? styles.checked : ""}`}>★</span>))}
+                        </div>
+                      </li>))) : ( <li>Skills list.</li> )}
+                  </ul>
+                </div>
+                <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4>
+                  <p>{summary || "Your professional summary will appear here as you type."}</p>
+                </div>
+                <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>
+                  {(refs || []).length > 0 ? (refs.map((ref, index) => (
+                    <p key={`ref-preview-${index}`}>{ref.referenceName} - {ref.position} at {ref.company} - {ref.contact}</p>))
+                  ) : ( <p>References list.</p> )}
+                </div>
+              </div>
             </div>
-            <p className={styles.contactInfo}>{formData.phone}</p>
-            <p>{formData.email}</p>
-            <p className={styles.userInfo}>{formData.userInfo}</p>
-
-            <section className={styles.cvSection}>
-              <h4>Education Details</h4>
-              <div className={styles.education}>
-                <div className={styles.school}>
-                  <h5>{formData.SchoolName}</h5>
-                  <span>{formData.startDate}</span> to <span>{formData.endDate}</span>
-                  <p>{formData.moreDetails}</p>
-                </div>
-                <div className={styles.uni}>
-                  <h5>{formData.universityName}</h5>
-                  <span>{formData.uniStartDate}</span> to <span>{formData.uniEndDate}</span>
-                  <p>{formData.uniMoreDetails}</p>
-                </div>
-              </div>
-            </section>
-            <section className={styles.cvSection}>
-              <h4>Professional Experience</h4>
-              <div className={styles.job}>
-                <div className={styles.jobHeader}>
-                  <h5>Full Stack Developer</h5>
-                  <span>26 December 2024</span>
-                </div>
-                <p>Lorem Ipsum is simply dummy text of the printing industry...</p>
-              </div>
-              <div className={styles.job}>
-                <div className={styles.jobHeader}>
-                  <h5>Software Engineer</h5>
-                  <span>26 December 2024</span>
-                </div>
-                <p>Lorem Ipsum is simply dummy text of the printing industry...</p>
-              </div>
-            </section>
-            <section className={styles.cvSection}>
-              <h4>Professional Skills</h4>
-              <div className={styles.skillsPreview}>
-                {skills.map((skill, index) => (
-                  <div key={index} className={styles.skillPreviewItem}>
-                    <span className={styles.skillName}>{skill.name}</span>
-                    <div className={styles.skillRating}>
-                      {'★'.repeat(skill.rating).padEnd(5, '☆')}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-            <section className={styles.cvSection}>
-              <h4>Summary</h4>
-              <p>{summary}</p>
-            </section>
           </div>
         </main>
       </div>
-    </div>
+    </>
   );
 };
 
