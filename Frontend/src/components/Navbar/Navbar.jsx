@@ -1,93 +1,169 @@
-// Navbar.jsx
-"use client"
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getRole } from "../../utils/auth";
+import logo from "../../assets/img/logo.png";
+import "./Navbar.css"; // Assuming this still points to your modernized Navbar.css
 
-import { useState, useEffect } from "react"
-import "./Navbar.css" // Import the CSS file
-import logo from "../../assets/img/logo.png"
-import { Link, useLocation } from "react-router-dom"
+const Navbar = ({ onLogout }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [hideNavbar, setHideNavbar] = useState(false);
+  // Optional: For scrolled navbar effect
+  // const [scrolled, setScrolled] = useState(false); 
+  const lastScrollY = useRef(window.scrollY);
+  const userRole = getRole();
 
-const Navbar = () => {
-  const location = useLocation()
-  const [currentPath, setCurrentPath] = useState("")
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
+  // Scroll event handler
   useEffect(() => {
-    setCurrentPath(location.pathname)
-  }, [location])
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      // Hide navbar logic
+      setHideNavbar(currentScrollY > lastScrollY.current && currentScrollY > 70);
+      lastScrollY.current = currentScrollY;
 
-  // Function to check if a link should be active
-  const isActive = (path) => {
-    if (path === "/") {
-      return currentPath === "/"
-    }
-    return currentPath.startsWith(path)
-  }
+      // Optional: Scrolled navbar effect logic
+      // setScrolled(currentScrollY > 50); 
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  // Toggle mobile menu
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen)
-  }
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location]);
 
-  // Close mobile menu when clicking a link
-  const handleLinkClick = () => {
-    if (mobileMenuOpen) {
-      setMobileMenuOpen(false)
-    }
-  }
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all local storage
+    if (onLogout) onLogout(); // Ensure onLogout is a function before calling
+    navigate("/");
+  };
+
+  // Define role-based navigation links
+  const navLinks = {
+    ADMIN: [
+      { path: '/admin/dashboard', label: 'Dashboard' },
+      { path: '/admin/manage-users', label: 'Manage Users' },
+      { path: '/admin/manage-jobs', label: 'Manage Jobs' }
+    ],
+    MENTOR: [
+      { path: '/mentor/dashboard', label: 'Dashboard' },
+      { path: '/mentor/profile', label: 'Profile' },
+      { path: '/mentor/sessions', label: 'Sessions' }
+    ],
+    MENTEE: [
+      { path: '/mentee/dashboard', label: 'Dashboard' },
+      { path: '/mentee/cv-dashboard', label: 'CV Builder' },
+      { path: '/mentee/profile', label: 'Profile' }
+    ],
+    JOBSEEKER: [
+      { path: '/jobseeker/dashboard', label: 'Dashboard' },
+      { path: '/jobseeker/cv-dashboard', label: 'CV Builder' },
+      { path: '/jobseeker/jobs', label: 'Find Jobs' }
+    ]
+    // Add other roles if necessary
+  };
+
+  // Optional: className for scrolled navbar
+  // const navbarClasses = `navbar ${hideNavbar ? 'hidden' : ''} ${scrolled ? 'scrolled' : ''}`;
+  const navbarClasses = `navbar ${hideNavbar ? 'hidden' : ''}`;
+
 
   return (
-    <header className="navbar fixed-navbar">
-      <div className="container">
+    <nav className={navbarClasses}>
+      <div className="navbar-container">
         {/* Logo */}
-        <div className="logo-container">
-          <div className="logo">
-            <img src={logo || "/placeholder.svg"} alt="Job Portal" />
-          </div>
-
-          {/* Hamburger Menu Icon */}
-          <div className="hamburger-menu" onClick={toggleMobileMenu}>
-            <span className={`bar ${mobileMenuOpen ? 'active' : ''}`}></span>
-            <span className={`bar ${mobileMenuOpen ? 'active' : ''}`}></span>
-            <span className={`bar ${mobileMenuOpen ? 'active' : ''}`}></span>
-          </div>
+        <div className="navbar-logo">
+          <Link to="/">
+            <img src={logo} alt="JobPortal Logo" />
+          </Link>
         </div>
 
-        {/* Mobile Menu Overlay */}
-        <div className={`mobile-nav-overlay ${mobileMenuOpen ? 'active' : ''}`}>
-          {/* Navigation Links */}
-          <nav className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
-            <Link to="/" className={isActive("/") ? "active" : ""} onClick={handleLinkClick}>
-              Home
-            </Link>
-            <Link to="/jobseeker" className={isActive("/jobseeker") ? "active" : ""} onClick={handleLinkClick}>
-              Jobseeker
-            </Link>
-            <Link to="/employee" className={isActive("/employee") ? "active" : ""} onClick={handleLinkClick}>
-              Employee
-            </Link>
-            <Link to="/counselor/dashboard" className={isActive("/counselor") ? "active" : ""} onClick={handleLinkClick}>
-              Counselor
-            </Link>
-            <Link to="/counselee/dashboard" className={isActive("/counselee") ? "active" : ""} onClick={handleLinkClick}>
-              Counselee
-            </Link>
-            <Link to="/about" className={isActive("/about") ? "active" : ""} onClick={handleLinkClick}>
-              About Us
-            </Link>
-            <Link to="/contact" className={isActive("/contact") ? "active" : ""} onClick={handleLinkClick}>
-              Contact Us
-            </Link>
-          </nav>
-
-          {/* Buttons */}
-          <div className={`nav-buttons ${mobileMenuOpen ? 'active' : ''}`}>
-            <button className="btn sign-in">Sign In</button>
-            <button className="btn sign-out">Sign Out</button>
-          </div>
+        {/* Navigation Links (Desktop) - CSS will hide/show as needed */}
+        <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>
+          {!userRole ? (
+            // Public Navigation
+            <>
+              <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
+                Home
+              </Link>
+              <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>
+                About
+              </Link>
+              <Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''}>
+                Contact
+              </Link>
+            </>
+          ) : (
+            // Role-based Navigation
+            navLinks[userRole]?.map(({ path, label }) => (
+              <Link
+                key={path}
+                to={path}
+                className={location.pathname === path ? 'active' : ''}
+              >
+                {label}
+              </Link>
+            ))
+          )}
+           {/* 
+            If you want auth buttons inside the mobile menu, you might duplicate them here,
+            conditionally rendered for mobile, or restructure.
+            For simplicity, we are keeping them in navbar-auth for now.
+            Example for mobile menu auth buttons:
+            {menuOpen && (
+              <div className="auth-buttons-mobile"> 
+                {!userRole ? (
+                  <>
+                    <Link to="/login" className="btn-base btn-secondary">Sign In</Link>
+                    <Link to="/signup" className="btn-base btn-primary">Sign Up</Link>
+                  </>
+                ) : (
+                  <button onClick={handleLogout} className="btn-base btn-logout-mobile">
+                    Sign Out
+                  </button>
+                )}
+              </div>
+            )}
+           */}
         </div>
+
+        {/* Auth Buttons & User Menu */}
+        <div className="navbar-auth">
+          {!userRole ? (
+            // Login/Signup Buttons
+            <div className="auth-buttons">
+              <Link to="/login" className="btn-base btn-secondary">Sign In</Link>
+              <Link to="/register" className="btn-base btn-primary">Sign Up</Link>
+            </div>
+          ) : (
+            // User Menu
+            <div className="user-menu">
+              <span className="user-role">{userRole}</span>
+              <button onClick={handleLogout} className="btn-base btn-logout"> {/* Changed class */}
+                Sign Out
+              </button>
+            </div>
+          )}
+        </div>
+
+         {/* Mobile Menu Button - Placed after navbar-auth for typical mobile layout (logo, links(hidden), auth, burger) */}
+         {/* Or place it before navbar-links if you prefer burger on the far right next to auth buttons */}
+        <button
+          className={`mobile-menu-icon ${menuOpen ? 'open' : ''}`} // Apply 'open' class for X animation
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+          aria-expanded={menuOpen} // For accessibility
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
-    </header>
-  )
-}
+    </nav>
+  );
+};
 
-export default Navbar
+export default Navbar;

@@ -1,0 +1,214 @@
+/* MenteeNavbar.css */
+
+/* Assume global CSS variables are available */
+
+.mentee-navbar {
+  background-color: var(--bg-white, #ffffff);
+  height: var(--navbar-height, 70px);
+  padding: 0 5%; 
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  box-shadow: var(--shadow-soft, 0 2px 10px rgba(0, 0, 0, 0.08));
+  position: sticky;
+  top: 0;
+  z-index: 997; /* Adjust z-index as needed */
+}
+
+.mentee-navbar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1300px;
+  height: 100%;
+  position: relative; 
+}
+
+.mentee-navbar-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; 
+}
+
+.mentee-navbar-brand a {
+  display: flex; 
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-color-dark, #2c3e50);
+}
+
+.mentee-navbar-logo-img {
+  height: 35px;
+  width: auto;
+  margin-right: 10px; 
+}
+
+/* Core Navigation Links Group - Centered on desktop */
+.mentee-nav-links-group {
+  display: flex;
+  align-items: center;
+  gap: 15px; 
+  margin-left: auto;  
+  margin-right: auto; 
+}
+
+/* Individual Navigation Link Styling */
+.mentee-nav-link {
+  color: var(--text-color-medium, #555e68);
+  text-decoration: none;
+  font-family: var(--font-secondary, 'Roboto', sans-serif);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 10px 15px;
+  border-radius: var(--border-radius-sm, 6px);
+  transition: color var(--transition-speed, 0.3s) ease, 
+              background-color var(--transition-speed, 0.3s) ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.mentee-nav-link:hover {
+  color: var(--primary-color, #00b894);
+  background-color: rgba(0, 184, 148, 0.05);
+}
+
+.mentee-nav-link.active {
+  color: var(--primary-color, #00b894);
+  font-weight: 600;
+}
+
+/* Desktop active link indicator */
+.mentee-nav-links-group .mentee-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 15px;
+  right: 15px;
+  height: 2.5px;
+  background-color: var(--primary-color, #00b894);
+  border-radius: 1px;
+}
+
+/* Actions (Desktop Logout Button) */
+.mentee-navbar-actions {
+  display: flex; 
+  align-items: center;
+  margin-left: 1rem; 
+  flex-shrink: 0; 
+}
+
+/* Logout Button Styling */
+.btn-logout-mentee {
+  /* Assuming .btn-base provides most styles */
+  background-color: transparent;
+  color: var(--text-color-medium, #555e68);
+  border: 1.5px solid var(--border-color, #e0e0e0);
+  padding: 7px 14px; 
+  font-size: 0.85rem; 
+  /* Add base styles if .btn-base is not used/available */
+  border-radius: var(--border-radius-sm, 6px);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-speed, 0.3s) ease;
+  line-height: normal;
+}
+
+.btn-logout-mentee:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-color: var(--text-color-medium, #555e68);
+  color: var(--text-color-dark, #2c3e50);
+}
+
+
+/* Hamburger Menu Button */
+.mentee-mobile-menu-button {
+  display: none; 
+  background: none;
+  border: none;
+  color: var(--text-color-dark, #2c3e50);
+  font-size: 1.5rem; 
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1001; 
+  margin-left: 1rem; 
+}
+
+/* Mobile Dropdown Menu */
+.mentee-mobile-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; 
+  position: absolute;
+  top: var(--navbar-height, 70px); 
+  left: 0;
+  width: 100%;
+  background-color: var(--bg-white, #ffffff);
+  box-shadow: var(--shadow-soft, 0 5px 15px rgba(0,0,0,0.1));
+  padding: 15px 0; 
+  transform: translateY(-150%); 
+  transition: transform var(--transition-speed, 0.3s) ease-in-out, 
+              opacity var(--transition-speed, 0.3s) ease-in-out;
+  opacity: 0;
+  pointer-events: none; 
+  z-index: 1000; 
+}
+
+.mentee-mobile-menu.active {
+  transform: translateY(0); 
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Styling for links within the mobile menu */
+.mentee-mobile-menu .mentee-nav-link {
+  padding: 12px 20px; 
+  text-align: left; 
+  border-radius: 0; 
+  border-bottom: 1px solid var(--border-color, #f0f0f0); 
+  width: 100%; 
+}
+.mentee-mobile-menu .mentee-nav-link:last-child { 
+  border-bottom: none; 
+}
+
+.mentee-mobile-menu .mentee-nav-link.active {
+  background-color: rgba(0, 184, 148, 0.05); 
+}
+.mentee-mobile-menu .mentee-nav-link.active::after {
+  display: none;
+}
+
+/* Logout button within the mobile menu */
+.mentee-mobile-menu .mentee-nav-link-logout { 
+  display: block; 
+  width: auto; 
+  margin: 10px 20px 0 20px; 
+  padding: 12px 0px; 
+  text-align: left;
+  color: var(--text-color-medium, #555e68);
+  background-color: transparent;
+  border: none; 
+  font-size: 0.95rem; 
+  font-weight: 500; 
+  text-transform: none; 
+  letter-spacing: normal; 
+  border-radius: 0; 
+}
+.mentee-mobile-menu .mentee-nav-link-logout:hover {
+  color: var(--primary-color, #00b894);
+  background-color: rgba(0, 184, 148, 0.05);
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .mentee-nav-links-group {
+    display: none; 
+  }
+  .mentee-navbar-actions {
+    display: none; 
+  }
+  .mentee-mobile-menu-button {
+    display: block; 
+  }
+}
