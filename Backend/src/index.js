@@ -4,7 +4,7 @@ import cors from "cors";
 
 import authRoutes from "./routes/auth.route.js";
 import { connectDB } from "./lib/db.js";
-
+import dashboardRoutes from './routes/dashboard.route.js';
 import messageRoutes from "./routes/message.route.js";
 import JobRoutes from "./routes/Job.route.js";
 import cookieParser from "cookie-parser";
@@ -13,6 +13,11 @@ import{app,server} from "./lib/socket.js";
 dotenv.config(); // <-- Load environment variables
 
 const PORT = process.env.PORT;
+
+
+ // Adjust path as needed
+
+// Add this line with your other routes
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
@@ -24,7 +29,7 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/job", JobRoutes);
-
+app.use('/api/dashboard', dashboardRoutes);
 
 server.listen(PORT, () => {
     console.log(`Server is running on PORT: ${PORT}`);
