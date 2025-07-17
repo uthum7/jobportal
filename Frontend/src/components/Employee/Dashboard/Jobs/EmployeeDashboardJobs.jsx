@@ -350,33 +350,6 @@ const EmployeeDashboardJobs = () => {
 
     return (
         <div className="jobs-container">
-            <div className="jobs-header">
-                <div className="jobs-title-section">
-                    <h2>Posted Jobs</h2>
-                    <p>Manage and track your job postings</p>
-                </div>
-                <div className="jobs-actions">
-                    <div className="search-container">
-                        <input
-                            type="text"
-                            placeholder="Search jobs..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="search-input"
-                        />
-                    </div>
-                    <select
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                        className="filter-select"
-                    >
-                        <option value="all">All Jobs</option>
-                        <option value="active">Active</option>
-                        <option value="urgent">Urgent</option>
-                        <option value="expired">Expired</option>
-                    </select>
-                </div>
-            </div>
 
             <div className="jobs-stats">
                 <div className="stat-item">

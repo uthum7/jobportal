@@ -102,6 +102,8 @@ export const createJobPost = async (req, res) => {
 export const getAllJobs = async (req, res) => {
     try {
         const jobs = await Job.find().sort({ postedDate: -1 });
+        console.log("Job API Called");
+        console.log(jobs);
         res.status(200).json({
             "Message": "Success",
             "Jobs": jobs
