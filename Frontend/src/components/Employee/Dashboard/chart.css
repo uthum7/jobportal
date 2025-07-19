@@ -1,0 +1,271 @@
+/* Chart Container Base Styles */
+.chart-container {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.chart-container:hover {
+  box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container.small-chart {
+  height: 400px;
+}
+
+/* Chart Header */
+.chart-header {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.chart-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+}
+
+.chart-title-section {
+  flex: 1;
+}
+
+.chart-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.25rem 0;
+}
+
+.chart-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.25rem 0;
+}
+
+.chart-header p {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.chart-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.chart-filter {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: white;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+}
+
+.chart-filter:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.chart-export-btn {
+  padding: 0.5rem 1rem;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chart-export-btn:hover {
+  background: #3730a3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+}
+
+/* Chart Wrapper */
+.chart-wrapper {
+  padding: 2rem;
+  height: 400px;
+  position: relative;
+}
+
+.small-chart-wrapper {
+  height: 280px;
+  padding: 1.5rem;
+}
+
+.chart-line {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Loading States */
+.chart-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  gap: 1rem;
+}
+
+.chart-loading p {
+  color: #64748b;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f4f6;
+  border-top: 3px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error States */
+.chart-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  text-align: center;
+  color: #ef4444;
+}
+
+.chart-error p {
+  font-weight: 500;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.chart-error button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chart-error button:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+/* Custom Chart Styles */
+.chart-container canvas {
+  border-radius: 8px;
+}
+
+/* Chart Legend Customization */
+.chart-container .recharts-legend-wrapper {
+  padding-top: 1rem;
+}
+
+.chart-container .recharts-legend-item {
+  margin-right: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .chart-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .chart-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  
+  .chart-wrapper {
+    padding: 1.5rem;
+    height: 300px;
+  }
+  
+  .small-chart-wrapper {
+    height: 220px;
+    padding: 1rem;
+  }
+  
+  .chart-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .chart-header h3 {
+    font-size: 1rem;
+  }
+  
+  .chart-loading {
+    height: 220px;
+  }
+  
+  .chart-error {
+    height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-header {
+    padding: 1rem;
+  }
+  
+  .chart-wrapper {
+    padding: 1rem;
+    height: 250px;
+  }
+  
+  .small-chart-wrapper {
+    height: 180px;
+    padding: 0.75rem;
+  }
+  
+  .chart-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .chart-filter {
+    width: 100%;
+  }
+  
+  .chart-export-btn {
+    width: 100%;
+  }
+}
