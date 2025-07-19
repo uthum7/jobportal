@@ -214,10 +214,10 @@ const JobFormComponent = () => {
       JobType: jobType.current.value,
       JobDeadline: deadline.current.value ? new Date(deadline.current.value) : null,
       JobDescription: jobDescription.current.value,
-      Requirements: requirements,
-      Qualifications: qualifications,
-      Responsibilities: responsibilities,
-      Tags: tags,
+      JobRequirements: requirements,
+      JobQualifications: qualifications,
+      JobResponsibilities: responsibilities,
+      JobTags: tags,
     }
 
     try {
