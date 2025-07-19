@@ -1,11 +1,11 @@
 // App.jsx
 import React, { useState, useEffect } from "react";
 import {
-    Route,
-    Routes,
-    useNavigate,
-    Navigate,
-    useLocation
+  Route,
+  Routes,
+  useNavigate,
+  Navigate,
+  useLocation
 } from "react-router-dom";
 
 import { CVFormProvider } from './context/CVFormContext'; // Adjust this path to where your CVFormContext.jsx file is located.
@@ -18,6 +18,7 @@ import AdminNavbar from './components/Navbar/AdminNavbar';
 import MentorNavbar from './components/Navbar/MentorNavbar';
 import MenteeNavbar from './components/Navbar/MenteeNavbar';
 import JobSeekerNavbar from './components/Navbar/JobSeekerNavbar';
+import EmployeeNavbar from './components/Navbar/EmployeeNavbar';
 import Footer from "./components/Footer/Footer.jsx";
 
 //login and  registration
@@ -84,7 +85,8 @@ const dashboardByRole = {
   ADMIN: '/admin',
   MENTOR: '/counselor/dashboard',
   MENTEE: '/counselee/dashboard',
-  JOBSEEKER: '/jobseeker/dashboard' // Assuming you have or will have this
+  JOBSEEKER: '/jobseeker/dashboard',
+  EMPLOYEE:"/employee" // Assuming you have or will have this
 };
 
 const RoleBasedRoute = ({ element, allowedRoles, userRole }) => {
@@ -152,20 +154,20 @@ function App() {
     };
 
     if (!standardizedUserData.role || !standardizedUserData.userId) {
-        console.error("Login handled, but role or userId is missing in standardizedUserData:", standardizedUserData);
-        // Potentially clear auth and redirect to login if essential data is missing
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('user');
-        setUser(null);
-        navigate("/login", {replace: true});
-        return;
+      console.error("Login handled, but role or userId is missing in standardizedUserData:", standardizedUserData);
+      // Potentially clear auth and redirect to login if essential data is missing
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('user');
+      setUser(null);
+      navigate("/login", { replace: true });
+      return;
     }
 
     // Store the comprehensive user object. This will be used by `getUserId` and `getUserRole` from `auth.js`
     localStorage.setItem('user', JSON.stringify(standardizedUserData));
-    
+
     // Set the user state in App
     setUser(standardizedUserData);
     // The useEffect above will handle navigation to the dashboard.
@@ -190,16 +192,17 @@ function App() {
       case 'MENTOR': return <MentorNavbar onLogout={handleLogout} user={user} />;
       case 'MENTEE': return <MenteeNavbar onLogout={handleLogout} user={user} />;
       case 'JOBSEEKER': return <JobSeekerNavbar onLogout={handleLogout} user={user} />;
+      case 'EMPLOYEE': return <EmployeeNavbar onLogout={handleLogout} user={user} />;
       default:
         console.warn("Rendering default Navbar for unknown user role:", user.role);
         return <Navbar user={user} onLogout={handleLogout} />;
     }
   };
 
-   const cvCreatorRoles = ['ADMIN', 'MENTEE', 'JOBSEEKER', 'MENTOR'];
+  const cvCreatorRoles = ['ADMIN', 'MENTEE', 'JOBSEEKER', 'MENTOR',"EMPLOYEE"];
 
 
-   
+
   // Check if the current path starts with "/message"
   const isMessagePage = location.pathname.startsWith("/message");
 
@@ -224,7 +227,7 @@ function App() {
   return (
     <CVFormProvider>
       {/* React.Fragment shorthand */}
-      <> 
+      <>
         {renderNavbar()}
         <Routes>
           {/* Public routes */}
@@ -235,50 +238,50 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* Admin Routes */}
-          <Route path="/admin" element={ <RoleBasedRoute element={<Admin />} allowedRoles={['ADMIN']} userRole={user?.role}/>}/>
-          <Route path="/admin/managecounselor" element={<RoleBasedRoute element={<Managecounselor />} allowedRoles={['ADMIN']} userRole={user?.role} /> }/>
-          <Route path="/admin/MessageHomePage" element={<RoleBasedRoute element={<MessageHomePage />} allowedRoles={['ADMIN']} userRole={user?.role} /> }/>
+          <Route path="/admin" element={<RoleBasedRoute element={<Admin />} allowedRoles={['ADMIN']} userRole={user?.role} />} />
+          <Route path="/admin/managecounselor" element={<RoleBasedRoute element={<Managecounselor />} allowedRoles={['ADMIN']} userRole={user?.role} />} />
+          <Route path="/admin/MessageHomePage" element={<RoleBasedRoute element={<MessageHomePage />} allowedRoles={['ADMIN']} userRole={user?.role} />} />
 
           {/* Counselor (Mentor) Dashboard */}
-          <Route path="/counselor/dashboard" element={<RoleBasedRoute element={<CounselorDashboard />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role}/> }/>
-          <Route path="/counselor/profile" element={<RoleBasedRoute element={<CounselorProfile />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role}/> }/>
-          <Route path="/counselor/bookings" element={<RoleBasedRoute element={<CounselorBookings />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role}/> }/>
-          <Route path="/counselor/schedule" element={<RoleBasedRoute element={<CounselorSchedule />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role}/> }/>
-          <Route path="/counselor/counselees" element={<RoleBasedRoute element={<CounselorCounselees />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role}/> }/>
-          <Route path="/counselor/messages" element={<RoleBasedRoute element={<CounselorMessages />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role}/> }/>
-          <Route path="/counselor/change-password" element={<RoleBasedRoute element={<CounselorChangePassword />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role}/> }/>
-          <Route path="/counselor/delete-account" element={<RoleBasedRoute element={<CounselorDeleteAccount />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role}/> }/>
+          <Route path="/counselor/dashboard" element={<RoleBasedRoute element={<CounselorDashboard />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role} />} />
+          <Route path="/counselor/profile" element={<RoleBasedRoute element={<CounselorProfile />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role} />} />
+          <Route path="/counselor/bookings" element={<RoleBasedRoute element={<CounselorBookings />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role} />} />
+          <Route path="/counselor/schedule" element={<RoleBasedRoute element={<CounselorSchedule />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role} />} />
+          <Route path="/counselor/counselees" element={<RoleBasedRoute element={<CounselorCounselees />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role} />} />
+          <Route path="/counselor/messages" element={<RoleBasedRoute element={<CounselorMessages />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role} />} />
+          <Route path="/counselor/change-password" element={<RoleBasedRoute element={<CounselorChangePassword />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role} />} />
+          <Route path="/counselor/delete-account" element={<RoleBasedRoute element={<CounselorDeleteAccount />} allowedRoles={['ADMIN', 'MENTOR']} userRole={user?.role} />} />
 
 
-
+          <Route path="/employee" element={<EmployeePage />} />
           {/* Counselee (Mentee) Dashboard */}
-          <Route path="/counselee/dashboard" element={<RoleBasedRoute element={<CounseleeDashboard />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} /> } />
-          <Route path="/counselee/profile" element={<RoleBasedRoute element={<CounseleeProfile />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} /> } />
-          <Route path="/counselee/bookings" element={<RoleBasedRoute element={<CounseleeBookings/>} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} /> } />
-          <Route path="/counselee/find-counselor" element={<RoleBasedRoute element={<FindCounselor />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} /> } />
-          <Route path="/counselee/messages" element={<RoleBasedRoute element={<Messages />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} /> } />
-          <Route path="/counselee/change-password" element={<RoleBasedRoute element={<ChangePassword />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} /> } />
-          <Route path="/counselee/delete-account" element={<RoleBasedRoute element={<DeleteAccount/>} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} /> } />
-          <Route path="/logout" element={<RoleBasedRoute element={< Logout />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} /> } />
+          <Route path="/counselee/dashboard" element={<RoleBasedRoute element={<CounseleeDashboard />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} />} />
+          <Route path="/counselee/profile" element={<RoleBasedRoute element={<CounseleeProfile />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} />} />
+          <Route path="/counselee/bookings" element={<RoleBasedRoute element={<CounseleeBookings />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} />} />
+          <Route path="/counselee/find-counselor" element={<RoleBasedRoute element={<FindCounselor />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} />} />
+          <Route path="/counselee/messages" element={<RoleBasedRoute element={<Messages />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} />} />
+          <Route path="/counselee/change-password" element={<RoleBasedRoute element={<ChangePassword />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} />} />
+          <Route path="/counselee/delete-account" element={<RoleBasedRoute element={<DeleteAccount />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} />} />
+          <Route path="/logout" element={<RoleBasedRoute element={< Logout />} allowedRoles={['ADMIN', 'MENTEE']} userRole={user?.role} />} />
 
 
           {/* Job Seeker Dashboard */}
-          <Route path="/jobseeker/dashboard" element={<RoleBasedRoute element={<div>Jobseeker Dashboard Coming Soon</div>} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} /> }/>
-          
+          <Route path="/jobseeker/dashboard" element={<RoleBasedRoute element={<div>Jobseeker Dashboard Coming Soon</div>} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
+
           {/* CV Dashboard */}
-          <Route path="/cv" element={<RoleBasedRoute element={<CVDashboard />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
+          <Route path="/cv" element={<RoleBasedRoute element={<CVDashboard />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
 
           {/* CV Creation Steps */}
-          <Route path="/cv-builder/personal-info" element={<RoleBasedRoute element={<Cv />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-          <Route path="/cv-builder/education" element={<RoleBasedRoute element={<Cv2 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> } />
-          <Route path="/cv-builder/experience" element={<RoleBasedRoute element={<Cv6 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-          <Route path="/cv-builder/skills" element={<RoleBasedRoute element={<Cv3 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-          <Route path="/cv-builder/summary" element={<RoleBasedRoute element={<Cv4 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-          <Route path="/cv-builder/references" element={<RoleBasedRoute element={<Cv7 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-          <Route path="/cv-builder/preview" element={<RoleBasedRoute element={<Cv5 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-          
+          <Route path="/cv-builder/personal-info" element={<RoleBasedRoute element={<Cv />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
+          <Route path="/cv-builder/education" element={<RoleBasedRoute element={<Cv2 />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
+          <Route path="/cv-builder/experience" element={<RoleBasedRoute element={<Cv6 />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
+          <Route path="/cv-builder/skills" element={<RoleBasedRoute element={<Cv3 />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
+          <Route path="/cv-builder/summary" element={<RoleBasedRoute element={<Cv4 />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
+          <Route path="/cv-builder/references" element={<RoleBasedRoute element={<Cv7 />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
+          <Route path="/cv-builder/preview" element={<RoleBasedRoute element={<Cv5 />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
+
           {/* Protected Home route */}
-          <Route path="/home" element={<RoleBasedRoute element={<Homepage />} allowedRoles={['ADMIN', 'MENTOR', 'MENTEE', 'JOBSEEKER']} userRole={user?.role} /> }/>
+          <Route path="/home" element={<RoleBasedRoute element={<Homepage />} allowedRoles={['ADMIN', 'MENTOR', 'MENTEE', 'JOBSEEKER']} userRole={user?.role} />} />
 
           {/* Fallback route */}
           <Route path="*" element={<Navigate to={user?.role && user?.userId ? (dashboardByRole[user.role] || "/") : "/"} replace />} />
