@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 
 const Schema = mongoose.Schema;
 
-// Registeruser Schema
 const RegisteruserSchema = new Schema({
     username: {
         type: String,
@@ -29,27 +28,25 @@ const RegisteruserSchema = new Schema({
         required: [true, "At least one role is required"],
         enum: ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
         validate: {
-            validator: function(roles) {
+            validator: function (roles) {
                 return roles && roles.length > 0;
             },
             message: "At least one role must be selected"
         }
     },
-    // --- ADD THESE TWO NEW FIELDS HERE ---
     resetPasswordToken: {
         type: String,
-        default: undefined // It will not exist in the document unless set
+        default: undefined
     },
     resetPasswordExpires: {
         type: Date,
-        default: undefined // It will not exist in the document unless set
-    },
-    // ------------------------------------
+        default: undefined
+    }
 }, { timestamps: true });
 
-// Hash password before saving
+// ✅ Hash password before saving
 RegisteruserSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+    if (!this.isModified("password")) return next(); // only hash if modified
 
     try {
         const salt = await bcrypt.genSalt(10);
@@ -60,7 +57,7 @@ RegisteruserSchema.pre("save", async function (next) {
     }
 });
 
-// Method to compare passwords
+// ✅ Compare password method
 RegisteruserSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };

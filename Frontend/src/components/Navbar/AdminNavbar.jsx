@@ -21,38 +21,32 @@ const AdminNavbar = ({ onLogout }) => {
     <nav className="admin-navbar"> {/* Main navbar class */}
       <div className="admin-navbar-container"> {/* Inner container for max-width and centering */}
         <div className="admin-navbar-brand">
-          <Link to="/admin">
+          <Link to="/">
             <img src={logoPath} alt="Admin Dashboard Logo" className="admin-navbar-logo-img" />
             {/* Optional: <span className="admin-brand-text">Admin Panel</span> */}
           </Link>
         </div>
         <div className="admin-nav-links">
           <Link 
-            to="/admin" 
-            className={`admin-nav-link ${location.pathname === '/admin' || location.pathname.startsWith('/admin/dashboard') ? 'active' : ''}`}
+            to="/" 
+            className={`admin-nav-link ${location.pathname === '/' || location.pathname.startsWith('/') }`}
           >
-            Admin
+            Home
           </Link>
           
           <Link 
-            to="/jobseeker/dashboard" 
+            to="/aboutus" 
             className={`admin-nav-link ${location.pathname.startsWith('/jobseeker/dashboard') ? 'active' : ''}`}
           >
-            Manage Jobseker {/* Or "Manage Counselors" as you had */}
+            About {/* Or "Manage Counselors" as you had */}
           </Link>
           <Link 
             to="/admin/managecounselor" 
             className={`admin-nav-link ${location.pathname.startsWith('/admin/managecounselor') ? 'active' : ''}`}
           >
-            Manage Counselor {/* Or "Manage Counselors" as you had */}
+            Contact Us {/* Or "Manage Counselors" as you had */}
           </Link>
-          <Link 
-            to="/counselee/dashboard" 
-            className={`admin-nav-link ${location.pathname.startsWith('/counselee/dashboard') ? 'active' : ''}`}
-          >
-            Manage Counselee {/* Or "Manage Counselors" as you had */}
-          </Link>
-          {/* Add more admin links here as needed */}
+         
         </div>
         <div className="admin-navbar-actions">
           <button 

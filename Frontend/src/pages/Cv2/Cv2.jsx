@@ -1,7 +1,7 @@
 // pages/Cv2/Cv2.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
- // Assuming this path is correct
+import styles from "./Cv2.module.css"; // Assuming this path is correct
 import { isAuthenticated, getUserId } from "../../utils/auth";
 import { useCVForm } from "../../context/CVFormContext";
 
