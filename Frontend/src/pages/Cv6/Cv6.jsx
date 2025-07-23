@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Cv6.module.css";
 import { isAuthenticated } from "../../utils/auth";
 import { useCVForm } from "../../context/CVFormContext";
-import axios from "axios"; // Make sure axios is imported for the AI call
+import axios from "axios";
+import { toast } from 'sonner';
 
 // Helper to format date for <input type="date"> (YYYY-MM-DD)
 const formatDateForInput = (dateStr) => {
@@ -12,7 +13,7 @@ const formatDateForInput = (dateStr) => {
   try {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return "";
-    return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
+    return date.toISOString().split('T')[0];
   } catch {
     return "";
   }
@@ -25,6 +26,9 @@ const initialExperienceItemState = {
   jendDate: "",
   jobDescription: "",
 };
+
+// Define the maximum number of forms to show at once
+const MAX_VISIBLE_FORMS = 2;
 
 const Cv6 = () => {
   const navigate = useNavigate();
@@ -40,8 +44,6 @@ const Cv6 = () => {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [pageError, setPageErrorLocal] = useState(null);
   const [localProfessionalExperience, setLocalProfessionalExperience] = useState([{ ...initialExperienceItemState }]);
-  
-  // --- NEW: State to track AI loading for each description individually ---
   const [aiLoadingState, setAiLoadingState] = useState({});
 
   // Preview states
@@ -58,7 +60,6 @@ const Cv6 = () => {
       navigate("/login", { replace: true });
       return;
     }
-
     if (!hasAttemptedFetch.current) {
       hasAttemptedFetch.current = true;
       setIsPageLoading(true);
@@ -102,15 +103,13 @@ const Cv6 = () => {
       setLocalProfessionalExperience(updatedExperiences);
     }
   };
-  
-  // --- NEW: Function to handle AI enhancement for job descriptions ---
   const handleEnhanceDescription = async (index) => {
     const currentExperience = localProfessionalExperience[index];
     const currentDescription = currentExperience?.jobDescription;
     const currentJobTitle = currentExperience?.jobTitle || "this role";
 
     if (!currentDescription || !currentDescription.trim()) {
-      alert("Please write a job description before using AI enhancement.");
+      toast.warning("Please write a job description before using AI enhancement.");
       return;
     }
 
@@ -118,43 +117,45 @@ const Cv6 = () => {
     setPageErrorLocal(null);
 
     try {
-      // Provide more context to the AI by including the job title.
-      // The backend route expects a field named 'summary', so we send the description under that key.
       const promptText = `For a resume, enhance the following job description for a role as a ${currentJobTitle}: "${currentDescription}"`;
-      
-      const response = await axios.post(
-        "http://localhost:5001/api/ai/enhance-summary",
-        { summary: promptText }
-      );
+      const response = await axios.post("http://localhost:5001/api/ai/enhance-summary", { summary: promptText });
 
       if (response.data && response.data.enhancedSummary) {
         const updatedExperiences = [...localProfessionalExperience];
         updatedExperiences[index].jobDescription = response.data.enhancedSummary;
         setLocalProfessionalExperience(updatedExperiences);
+        toast.success("Description enhanced!");
       } else {
         throw new Error("AI response was not in the expected format.");
       }
     } catch (error) {
       const errMsg = error.response?.data?.error || error.message || "AI enhancement failed.";
+      toast.error(errMsg);
       console.error(`Error enhancing description for index ${index}:`, errMsg);
-      setPageErrorLocal(errMsg);
     } finally {
       setAiLoadingState(prev => ({ ...prev, [index]: false }));
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const experiencesToSave = localProfessionalExperience.filter(exp => 
       exp.jobTitle?.trim() || exp.companyName?.trim()
     );
-    try {
-      await saveToDatabase("professionalExperience", experiencesToSave);
-      alert("Professional experience saved successfully!");
-      navigate("/cv-builder/skills");
-    } catch (err) {
-      console.error("Cv6.jsx: Error during handleSubmit:", err);
-    }
+
+    const promise = saveToDatabase("professionalExperience", experiencesToSave);
+
+    toast.promise(promise, {
+        loading: 'Saving professional experience...',
+        success: () => {
+            setTimeout(() => navigate("/cv-builder/skills"), 1000);
+            return "Professional experience saved successfully!";
+        },
+        error: (err) => {
+            console.error("Cv6.jsx: Error during handleSubmit:", err);
+            return err.message || "Failed to save experience.";
+        }
+    });
   };
 
   const formatDateForDisplay = (dateStr) => {
@@ -168,6 +169,15 @@ const Cv6 = () => {
     }
   };
 
+  // --- NEW LOGIC: Determine which forms to display ---
+  const totalExperiences = localProfessionalExperience.length;
+  const startIndex = totalExperiences > MAX_VISIBLE_FORMS 
+    ? totalExperiences - MAX_VISIBLE_FORMS 
+    : 0;
+  // Create a version of the array to render in the form
+  const experiencesToDisplay = localProfessionalExperience.slice(startIndex);
+  // --- END OF NEW LOGIC ---
+
   let profileImageSrcForPreview = personalInfoPreview.profilePicture || "/default-profile.png";
   const displayedError = pageError || (contextError ? (typeof contextError === 'string' ? contextError : contextError.message) : null);
 
@@ -178,8 +188,7 @@ const Cv6 = () => {
         <button onClick={() => {
           if (setContextError) setContextError(null);
           setPageErrorLocal(null);
-          // Add your full error handling/retry logic here
-          navigate(0); // Simple refresh as a fallback
+          navigate(0);
         }}>
           Try Again
         </button>
@@ -188,81 +197,82 @@ const Cv6 = () => {
 
   return (
     <>
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
-        <p className={styles.pageSubtitle}>Detail your work history and responsibilities.</p>
-      </header>
-
       <div className={styles.resumeBuilder}>
         <main className={styles.content}>
           <div className={styles.formContainer}>
             <h3 className={styles.header}>Step 3: Professional Experience</h3>
             <form onSubmit={handleSubmit}>
-              {localProfessionalExperience.map((exp, index) => (
-                <div key={index} className={styles.experienceForm}>
-                  <h4 className={styles.sectionSubTitle}>Experience #{index + 1}</h4>
-                  <input
-                    type="text" name="jobTitle" placeholder="Job Title (e.g., Software Engineer)"
-                    value={exp.jobTitle || ""} onChange={(e) => handleExperienceChange(index, e)}
-                    className={styles.inputField}
-                  />
-                  <input
-                    type="text" name="companyName" placeholder="Company Name (e.g., Google)"
-                    value={exp.companyName || ""} onChange={(e) => handleExperienceChange(index, e)}
-                    className={styles.inputField}
-                  />
-                  <div className={styles.formColumns}>
-                    <div className={styles.formLeft}>
-                        <label htmlFor={`jstartDate-${index}`} className={styles.label}>Start Date</label>
-                        <input
-                            type="date" id={`jstartDate-${index}`} name="jstartDate"
-                            value={formatDateForInput(exp.jstartDate)} onChange={(e) => handleExperienceChange(index, e)}
-                            className={styles.inputField}
-                        />
-                    </div>
-                    <div className={styles.formRight}>
-                        <label htmlFor={`jendDate-${index}`} className={styles.label}>End Date (Leave blank if current)</label>
-                        <input
-                            type="date" id={`jendDate-${index}`} name="jendDate"
-                            value={formatDateForInput(exp.jendDate)} onChange={(e) => handleExperienceChange(index, e)}
-                            className={styles.inputField}
-                        />
-                    </div>
-                  </div>
-                  
-                  {/* --- CORRECTED JSX STRUCTURE FOR TEXTAREA WITH AI BUTTON --- */}
-                  <div className={styles.textareaContainer}>
-                    <textarea
-                      name="jobDescription" placeholder="Describe your responsibilities and achievements..."
-                      value={exp.jobDescription || ""} onChange={(e) => handleExperienceChange(index, e)}
-                      rows={6} className={styles.textareaField}
+              
+              {/* --- MODIFIED MAPPING LOGIC --- */}
+              {experiencesToDisplay.map((exp, relativeIndex) => {
+                const originalIndex = startIndex + relativeIndex;
+                return (
+                  <div key={originalIndex} className={styles.experienceForm}>
+                    <h4 className={styles.sectionSubTitle}>Experience #{originalIndex + 1}</h4>
+                    <input
+                      type="text" name="jobTitle" placeholder="Job Title (e.g., Software Engineer)"
+                      value={exp.jobTitle || ""} onChange={(e) => handleExperienceChange(originalIndex, e)}
+                      className={styles.inputField}
                     />
-                    <button
-                      type="button"
-                      className={styles.aiButton}
-                      onClick={() => handleEnhanceDescription(index)}
-                      disabled={aiLoadingState[index] || contextLoading}
-                    >
-                      {aiLoadingState[index] ? 'Enhancing...' : 'Enhance with AI'}
-                    </button>
-                  </div>
+                    <input
+                      type="text" name="companyName" placeholder="Company Name (e.g., Google)"
+                      value={exp.companyName || ""} onChange={(e) => handleExperienceChange(originalIndex, e)}
+                      className={styles.inputField}
+                    />
+                    <div className={styles.formColumns}>
+                      <div className={styles.formLeft}>
+                          <label htmlFor={`jstartDate-${originalIndex}`} className={styles.label}>Start Date</label>
+                          <input
+                              type="date" id={`jstartDate-${originalIndex}`} name="jstartDate"
+                              value={formatDateForInput(exp.jstartDate)} onChange={(e) => handleExperienceChange(originalIndex, e)}
+                              className={styles.inputField}
+                          />
+                      </div>
+                      <div className={styles.formRight}>
+                          <label htmlFor={`jendDate-${originalIndex}`} className={styles.label}>End Date (Leave blank if current)</label>
+                          <input
+                              type="date" id={`jendDate-${originalIndex}`} name="jendDate"
+                              value={formatDateForInput(exp.jendDate)} onChange={(e) => handleExperienceChange(originalIndex, e)}
+                              className={styles.inputField}
+                          />
+                      </div>
+                    </div>
+                    
+                    <div className={styles.textareaContainer}>
+                      <textarea
+                        name="jobDescription" placeholder="Describe your responsibilities and achievements..."
+                        value={exp.jobDescription || ""} onChange={(e) => handleExperienceChange(originalIndex, e)}
+                        rows={6} className={styles.textareaField}
+                      />
+                      <button
+                        type="button"
+                        className={styles.aiButton}
+                        onClick={() => handleEnhanceDescription(originalIndex)}
+                        disabled={aiLoadingState[originalIndex] || contextLoading}
+                      >
+                        {aiLoadingState[originalIndex] ? 'Enhancing...' : 'Enhance with AI'}
+                      </button>
+                    </div>
 
-                  {localProfessionalExperience.length > 1 && (
-                    <button
-                      type="button" className={styles.removeButton}
-                      onClick={() => handleRemoveExperience(index)}
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-              ))}
+                    {localProfessionalExperience.length > 1 && (
+                      <button
+                        type="button" className={styles.removeButton}
+                        onClick={() => handleRemoveExperience(originalIndex)}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
+              {/* --- END OF MODIFIED MAPPING LOGIC --- */}
+              
               <div className={styles.buttonsContainer}>
-                <button className={styles.addButton} type="button" onClick={handleAddExperience}>
-                  Add 
-                </button>
                 <button className={styles.saveBtn} type="submit" disabled={contextLoading}>
                   {contextLoading ? "Saving..." : "Save"}
+                </button>
+                <button className={styles.addButton} type="button" onClick={handleAddExperience}>
+                  Add Another Experience
                 </button>
               </div>
             </form>

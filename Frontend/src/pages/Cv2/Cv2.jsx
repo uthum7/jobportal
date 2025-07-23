@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Cv2.module.css"; // Assuming this path is correct
 import { isAuthenticated, getUserId } from "../../utils/auth";
 import { useCVForm } from "../../context/CVFormContext";
+import { toast } from 'sonner';
 
 // Re-usable initial state for education (if needed for reset or default)
 const initialEducationState = {
@@ -152,7 +153,7 @@ const Cv2 = () => {
       console.log("Cv2.jsx: Submitting educationDetails:", educationForm);
       // Use saveToDatabase from context
       await saveToDatabase("educationDetails", educationForm);
-      alert("Education details saved successfully!");
+      // alert("Education details saved successfully!");
       navigate("/cv-builder/experience"); // Navigate to the next step
     } catch (err) {
       console.error("Cv2.jsx: Error during handleSubmit (saveToDatabase failed):", err);
@@ -204,10 +205,10 @@ const Cv2 = () => {
 
   return (
     <>
-      <header className={styles.pageHeader}>
+      {/* <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
         <p className={styles.pageSubtitle}>Showcase your academic achievements.</p>
-      </header>
+      </header> */}
 
       <div className={styles.resumeBuilder}>
         <main className={styles.content}> {/* Removed isSidebarVisible logic unless needed */}

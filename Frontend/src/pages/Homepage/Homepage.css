@@ -96,14 +96,12 @@ body {
   display: flex;
   justify-content: space-around; /* Distributes items evenly */
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--text-color-dark, #2c3e50); /* A dark background for contrast */
   color: var(--text-color-light);
-  padding: 20px 20px;
+  padding: 40px 20px;
   width: 100%;
   flex-wrap: wrap; /* Allows stats to stack on smaller screens */
   gap: 20px;
-  border-radius: 10px; /* Subtle border radius for a modern look */
-  box-shadow: var(--shadow-soft);
 }
 
 .stats-banner .stat {
@@ -136,7 +134,7 @@ body {
 
 .stat h6 {
   font-size: 0.9rem;
-  font-weight: 200;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
   letter-spacing: 0.5px;

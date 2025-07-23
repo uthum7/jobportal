@@ -153,7 +153,7 @@ const Cv3 = () => {
 
     try {
       await saveToDatabase("skill", skillsToSave);
-      alert("Skills saved successfully!");
+      // alert("Skills saved successfully!");
       navigate("/cv-builder/summary");
     } catch (err) {
       console.error("Cv3.jsx: Error during handleSubmitSkills (saveToDatabase failed):", err);
@@ -203,10 +203,10 @@ const Cv3 = () => {
 
   return (
     <>
-      <header className={styles.pageHeader}>
+      {/* <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
         <p className={styles.pageSubtitle}>Highlight your key skills and proficiencies.</p>
-      </header>
+      </header> */}
 
       <div className={styles.resumeBuilder}>
         <main className={styles.content}>

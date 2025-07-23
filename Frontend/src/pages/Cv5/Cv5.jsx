@@ -230,10 +230,10 @@ const Cv5 = () => {
 
   return (
     <>
-      <header className={styles.pageHeader}>
+       <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Final Preview & Download</h1>
         <p className={styles.pageSubtitle}>Review your completed CV and download it as a PDF.</p>
-      </header>
+      </header> 
       <div className={styles.resumeBuilder}>
         <main className={styles.content}>
           <div className={styles.formContainer}>

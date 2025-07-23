@@ -6,6 +6,7 @@ import styles from "./Cv.module.css";
 import { isAuthenticated } from "../../utils/auth";
 import { useCVForm } from "../../context/CVFormContext";
 import axios from 'axios'; // Import axios for the AI call
+import { toast } from 'sonner';
 
 const initialFormStateValues = {
     personalInfo: {
@@ -155,7 +156,7 @@ const Cv = () => {
     setPageErrorLocal(null);
     try {
       await saveToDatabase("personalInfo", personalInfo);
-      alert("Personal details saved successfully!");
+      // alert("Personal details saved successfully!");
       navigate("/cv-builder/education");
     } catch (err) {
       console.error("Cv.jsx: Error during handleSubmit:", err);
@@ -201,10 +202,10 @@ const Cv = () => {
 
   return (
     <>
-      <header className={styles.pageHeader}>
+      {/* <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
         <p className={styles.pageSubtitle}>Create your professional CV in minutes with AI integrations</p>
-      </header>
+      </header> */}
       <div className={styles.resumeBuilder}>
         <main className={styles.content}>
           <div className={styles.formContainer}>
