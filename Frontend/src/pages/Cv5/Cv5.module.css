@@ -1,130 +1,314 @@
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
-  padding: 15px 10%;
-  color: black;
+/* Cv5.module.css - Fully Merged & Corrected */
+
+/* --- Variable Definitions --- */
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #f3f4f6;
+  --text-color: #1f2937;
+  --text-light: #6b7280;
+  --background-color: #ffffff;
+  --border-color: #e5e7eb;
+  --hover-color: #2563eb;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --purple-color: #8b5cf6;
+  --PageTitle: #123456;
+  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.navLinks button {
-  background: none;
-  border: none;
-  color: black;
-  margin: 0 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.navLinks button:hover {
-  text-decoration: underline;
-}
-.resumeDashboard {
-  max-width: 900px;
-  margin: auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.sectionTitle {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.resumeCards {
-  display: flex;
-  gap: 15px;
-  justify-content: space-between;
-}
-
-.resumeCard {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #eef7ee;
-  padding: 15px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
-  transition: 0.3s;
-  flex: 1;
-}
-
-.resumeCard:hover {
-  background: #d6e9d6;
-}
-
-.resumeIcon {
-  font-size: 1.5rem;
-  color: #4caf50;
-}
-
-/* CV Preview Section */
-.cvPreview {
-  margin-top: 30px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.cvHeader {
+/* --- General Page Layout --- */
+.pageHeader {
   text-align: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-  padding: 10px;
-  background: rgb(3, 38, 151);
-  color: white;
-  border-radius: 8px;
+  padding: 40px 20px;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+.pageTitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--PageTitle);
+  margin: 0 0 8px 0;
+}
+.pageSubtitle {
+  font-size: 18px;
+  color: var(--text-light);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.cvContact {
+.resumeBuilder {
   display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  font-weight: bold;
+  justify-content: center;
+  padding: 30px 20px;
+  background-color: var(--secondary-color);
 }
 
-.cvSummary {
-  text-align: justify;
-  font-size: 0.95rem;
-  padding: 10px;
+.content {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  max-width: 1400px;
+  align-items: flex-start;
 }
 
-.cvSubtitle {
-  color: rgb(38, 0, 255);
-  font-weight: bold;
-  margin-top: 20px;
+/* --- Left Column: Actions / Form Panel --- */
+.formContainer {
+  flex: 1;
+  max-width: 400px;
+  position: sticky;
+  top: 30px;
+  padding: 24px;
+  background-color: var(--background-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+}
+.formContainer h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+.formContainer p {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+  line-height: 1.6;
 }
 
-.cvExperience {
-  background: #f7f7f7;
-  padding: 15px;
+/* --- Right Column: The CV Preview --- */
+.cvPreview {
+  flex: 2.5;
+  min-width: 0;
+  background-color: var(--background-color);
   border-radius: 8px;
-  margin-top: 10px;
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
+}
+.cvContainer {
+  display: flex;
+}
+.cvLeft {
+  width: 35%;
+  background: #f9fafb;
+  padding: 35px 25px;
+  color: var(--text-color);
+  
+  /* --- ADD THESE LINES TO CENTER EVERYTHING --- */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* This is the key property that centers the content horizontally */
+}
+.cvRight {
+  width: 65%;
+  padding: 35px 30px;
+  background-color: var(--background-color);
+}
+.verticalLine {
+  border-left: 1px solid var(--border-color);
 }
 
-.cvExperience h4 {
-  color: rgb(38, 0, 255);
-  font-weight: bold;
+/* --- All Button Styles --- */
+.downloadBtn, .editBtn, .saveBtn, .removeButton, .addButton, .aiButton {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 12px;
+}
+.downloadBtn {
+  background-color: var(--purple-color);
+  color: white;
+}
+.downloadBtn:hover:not(:disabled) {
+  background-color: #a78bfa;
+}
+.downloadBtn:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+.editBtn {
+  background-color: var(--primary-color);
+  color: white;
+}
+.editBtn:hover {
+  background-color: var(--hover-color);
+}
+.saveBtn {
+    background-color: var(--success-color);
+    color: white;
+}
+.saveBtn:hover {
+    background-color: #15803d;
+}
+.addButton {
+    background-color: #0d9488;
+    color: white;
+}
+.removeButton {
+    background-color: var(--danger-color);
+    color: white;
+    margin-top: 10px;
 }
 
-.cvExperience span {
-  float: right;
-  font-size: 0.9rem;
-  color: #555;
+/* --- AI Button Specifics --- */
+.aiButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: auto; /* Override block width */
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: var(--primary-color);
+  color: white;
+  z-index: 2;
+}
+.aiButton:disabled {
+  background-color: #b0bec5;
+  cursor: not-allowed;
 }
 
-.cvExperience p {
-  margin-top: 5px;
-  font-size: 0.95rem;
-  text-align: justify;
+/* --- NEW STYLES for Share Buttons --- */
+
+/* Main "Share CV" button */
+.shareBtn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 12px;
+  background-color: #f39c12; /* A nice orange color */
+  color: white;
 }
+.shareBtn:hover {
+  background-color: #e67e22;
+}
+
+/* Container for the share options that appear */
+.shareOptionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: -5px; /* Pull it slightly closer to the main share button */
+  margin-bottom: 15px;
+  padding: 15px;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+}
+
+/* Individual share buttons (WhatsApp, Facebook, etc.) */
+.shareOptionBtn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.shareOptionBtn:hover {
+  opacity: 0.9;
+}
+
+/* Platform-specific colors */
+.whatsapp {
+  background-color: #25D366;
+}
+.facebook {
+  background-color: #1877F2;
+}
+.linkedin {
+  background-color: #0A66C2;
+}
+
+/* --- Form Element Styles (for other pages) --- */
+.textareaContainer {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.textareaField, .profileParagraph {
+  width: 100%;
+  padding: 16px;
+  padding-right: 150px; /* Make space for the button */
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 120px;
+  resize: vertical;
+  margin-bottom: 0;
+}
+.formColumns {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+.formLeft, .formRight {
+    flex: 1;
+}
+
+/* --- CV Content Styles (Shared across all previews) --- */
+.profileSection { text-align: center; }
+.profileImage { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-color); margin-bottom: 10px; margin-left: 25px; }
+.profileSection h2 { font-size: 22px; margin-bottom: 4px; }
+.profileSection h3 { font-size: 15px; color: var(--text-light); font-weight: 500; margin-top: 0; }
+.h4Headers { border-bottom: 1.5px solid var(--primary-color); padding-bottom: 8px; margin-top: 24px; margin-bottom: 15px; font-size: 18px; font-weight: 600; color: #111827; }
+.contactInfo, .education, .experienceItem, .profilePara, .summary, .references { margin-bottom: 20px; }
+.contactInfo p { margin: 4px 0; font-size: 14px; }
+.educationItem h5, .experienceItem h5 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+.experienceItem .companyName { font-size: 14px; font-weight: 500; color: var(--text-light); margin-bottom: 4px; }
+.educationItem span, .experienceItem span { font-size: 13px; color: var(--text-light); display: block; margin-bottom: 6px; }
+.educationItem p, .experienceItem p, .profilePara p, .summary p, .references p { font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap; }
+.skillsList, .skillsDisplayList { list-style: none; padding: 0; margin: 0; }
+.skillRow, .skillDisplayItem { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
+.skillRow:last-child, .skillDisplayItem:last-child { border-bottom: none; }
+.skillName, .skillNameDisplay { font-size: 14px; }
+.star { font-size: 16px; color: #d1d5db; margin-left: 2px; }
+.checked { color: #facc15; }
+
+
+/* --- Responsive Design --- */
+@media (max-width: 992px) {
+  .content {
+    flex-direction: column;
+  }
+  .formContainer {
+    position: static;
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .resumeBuilder {
+    padding: 15px 10px;
+  }
+  .content {
+    gap: 20px;
+  }
+  .cvContainer {
+    flex-direction: column;
+  }
+  .cvLeft, .cvRight {
+    width: 100%;
+    padding: 20px 15px;
+  }
+  .verticalLine {
+    display: none;
+  }
+} 
