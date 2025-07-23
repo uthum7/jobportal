@@ -143,6 +143,7 @@ const LoginPage = ({ onLogin, onClose }) => {
               <option value="MENTOR">Mentor</option>
               <option value="JOBSEEKER">Job Seeker</option>
               <option value="ADMIN">Admin</option>
+              <option value="EMPLOYEE">Employee</option>
             </select>
           </div>
 
