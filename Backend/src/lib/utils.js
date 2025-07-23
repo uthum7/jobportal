@@ -30,8 +30,10 @@ export const generateToken = (userId, res) => {
     return token;
 };
 
+// PASTE THIS NEW VERSION INTO YOUR utils.js FILE
+
 /**
- * Sends an email using Nodemailer with Ethereal for development.
+ * Sends an email using Nodemailer and credentials from the .env file.
  * 
  * @param {object} options - Email options
  * @param {string} options.email - The recipient's email address
@@ -39,32 +41,30 @@ export const generateToken = (userId, res) => {
  * @param {string} options.message - The plain text message body
  */
 export const sendEmail = async (options) => {
-    // For development, using a temporary Ethereal email account
-    // In production, you would replace these transport options with your actual email provider (SendGrid, etc.)
+    // This now correctly uses your .env file
     const transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: false, // `false` for port 587
         auth: {
-            user: 'maddison53@ethereal.email', // Public test account from Nodemailer docs
-            pass: 'jn7jnAPss4f63QBp6D'      // Public test account password
-        }
+            user: process.env.EMAIL_USER, // Reads the user from .env
+            pass: process.env.EMAIL_PASS, // Reads the password from .env
+        },
     });
 
     const mailOptions = {
-        from: '"JobPortal Support" <no-reply@jobportal.com>',
+        from: process.env.EMAIL_FROM, // Reads the "from" address from .env
         to: options.email,
         subject: options.subject,
         text: options.message,
     };
 
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: %s', info.messageId);
-        // The Preview URL lets you see the email in your browser without a real inbox
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        await transporter.sendMail(mailOptions);
+        console.log(`Email successfully sent to ${options.email} via Brevo`);
     } catch (error) {
         console.error("Email could not be sent:", error);
-        // Throw an error so the calling function (forgotPassword) knows it failed
+        // This makes sure that if Brevo fails, your controller knows about it.
         throw new Error("Email service failed to send the token."); 
     }
 };

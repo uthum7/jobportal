@@ -6,6 +6,7 @@ import axios from "axios";
 import styles from "./Cv4.module.css";
 import { isAuthenticated } from "../../utils/auth";
 import { useCVForm } from "../../context/CVFormContext";
+import { toast } from 'sonner';
 
 const initialPreviewStates = {
     personalInfo: { fullname: "Your Name", jobTitle: "Your Profession", profilePicture: "/default-profile.png", phone: "Phone", email: "Email", address: "Address", profileParagraph: "Your profile summary..." },
@@ -121,7 +122,7 @@ const Cv4 = () => {
 
     try {
       await saveToDatabase("summary", summary.trim());
-      alert("Summary saved successfully!");
+      // alert("Summary saved successfully!");
       navigate("/cv-builder/references");
     } catch (err) {
       console.error("Cv4.jsx: Error during handleSubmitSummary:", err);
@@ -159,10 +160,10 @@ const Cv4 = () => {
 
   return (
     <>
-      <header className={styles.pageHeader}>
+      {/* <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
         <p className={styles.pageSubtitle}>Step 5: Craft Your Professional Summary</p>
-      </header>
+      </header> */}
       
       <div className={styles.resumeBuilder}>
         <main className={styles.content}>

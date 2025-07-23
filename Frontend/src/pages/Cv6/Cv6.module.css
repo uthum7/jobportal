@@ -19,14 +19,14 @@
    text-align: center;
   padding: 40px 20px;
   background-color: var(--background-color);
-  border-bottom: 1px solid var(--border-color);
+  border-block-end: 1px solid var(--border-color);
 }
 
 .pageTitle {
   font-size: 42px;
   font-weight: 700;
   color: var(--PageTitle);
-  margin-bottom: 8px;
+  margin-block-end: 8px;
   letter-spacing: 1px;
 }
 
@@ -64,7 +64,7 @@
   font-size: 22px;
   font-weight: 400;
   color: #666;
-  margin-bottom: 0;
+  margin-block-end: 0;
   letter-spacing: 0.5px;
 }
 
@@ -75,7 +75,7 @@ body {
   background-color: var(--secondary-color);
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  min-block-size: 100vh;
 } 
 
 .resumeBuilder {
@@ -84,7 +84,7 @@ body {
   /* padding: 40px; */
   box-sizing: border-box;
   margin: 0 auto;
-  min-height: calc(100vh - 40px);
+  min-block-size: calc(100vh - 40px);
   gap: 60px;
 }
 
@@ -100,14 +100,14 @@ body {
   overflow: hidden;
   position: relative;
   z-index: 1;
-  height: auto;
+  block-size: auto;
 }
 
 /* Form Container */
 
 .formContainer,
 .cvPreview {
-  min-width: 0;
+  min-inline-size: 0;
 }
 
 
@@ -118,9 +118,9 @@ body {
   border-radius: 12px;
   box-shadow: var(--shadow-medium);
   position: sticky;
-  top: 15px;
-  height: 1560px;
-  width: auto;
+  inset-block-start: 15px;
+  block-size: 1560px;
+  inline-size: auto;
   box-sizing: border-box; 
 }
 
@@ -128,8 +128,8 @@ body {
   font-size: 24px;
   font-weight: 600;
   color: var(--text-color);
-  margin-bottom: 20px;
-  margin-left: 5px;
+  margin-block-end: 20px;
+  margin-inline-start: 5px;
 }
 
 /* Experience Form */
@@ -138,7 +138,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(74, 144, 226, 0.08);
   padding: 32px 28px;
-  margin-bottom: 24px;
+  margin-block-end: 24px;
   border: 1px solid var(--border-color);
   transition: box-shadow 0.2s, border-color 0.2s;
 }
@@ -151,11 +151,11 @@ body {
 /* Inputs & Textarea */
 input,
 textarea {
-  width: 100%;
-  height: 56px;
+  inline-size: 100%;
+  block-size: 56px;
   box-sizing: border-box;
   padding: 16px 20px;
-  margin-bottom: 20px;
+  margin-block-end: 20px;
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
   font-size: 16px;
@@ -174,8 +174,8 @@ textarea:focus {
 }
 
 textarea {
-  min-height: 120px;
-  height: auto;
+  min-block-size: 120px;
+  block-size: auto;
   resize: vertical;
 }
 
@@ -190,13 +190,10 @@ textarea {
   font-size: 17px;
   font-weight: 600;
   transition: all 0.3s ease;
-  margin-top: 10px;
-  width: 100px;
-  max-width: 100%;
+  max-inline-size: 100%;
   letter-spacing: 0.5px;
   box-shadow: 0 2px 6px rgba(40, 167, 69, 0.18);
-  display: block;
-  margin-left: auto;
+  /* REMOVED: margin-inline-start, display: block */
 }
 
 .saveBtn:hover {
@@ -219,12 +216,10 @@ textarea {
   font-size: 17px;
   font-weight: 600;
   transition: all 0.3s ease;
-  margin-top: 10px;
-  margin-left: 800px;
-  width: 120px;
-  max-width: 100%;
+  max-inline-size: 100%;
   letter-spacing: 0.5px;
   box-shadow: 0 2px 6px rgba(74, 144, 226, 0.18);
+  /* REMOVED: margin-inline-start: 800px; */
 }
 
 .addButton:hover {
@@ -232,7 +227,6 @@ textarea {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.24);
 }
-
 .removeButton {
   background: var(--danger-color);
   color: white;
@@ -243,9 +237,9 @@ textarea {
   font-size: 17px;
   font-weight: 600;
   transition: all 0.3s ease;
-  margin-top: 10px;
-  width: 120px;
-  max-width: 100%;
+  margin-block-start: 10px;
+  inline-size: 120px;
+  max-inline-size: 100%;
   letter-spacing: 0.5px;
   box-shadow: 0 2px 6px rgba(220, 53, 69, 0.18);
 }
@@ -259,9 +253,10 @@ textarea {
 .buttonsContainer {
   display: flex;
   gap: 20px;
-  justify-content: flex-start;
-  margin-top: 20px;
+  justify-content: flex-start; /* This correctly aligns items to the left */
+  margin-block-start: 20px;
 }
+
 
 /* Instructions Section */
 .instractionSection {
@@ -269,30 +264,30 @@ textarea {
   border: 1px solid #e0e7ef;
   border-radius: 10px;
   padding: 24px 32px;
-  margin-top: 40px;
-  margin-bottom: 18px;
+  margin-block-start: 40px;
+  margin-block-end: 18px;
   box-shadow: 0 2px 8px rgba(60, 72, 88, 0.07);
   color: #222;
   font-size: 20px;
-  width: 100%;
+  inline-size: 100%;
 }
 
 .instractionSection h3 {
   font-size: 24px;
   font-weight: 600;
   color: #1a237e;
-  margin-bottom: 18px;
+  margin-block-end: 18px;
   letter-spacing: 0.5px;
 }
 
 .instractionSection ul {
   list-style: disc inside;
-  padding-left: 0;
+  padding-inline-start: 0;
   margin: 0;
 }
 
 .instractionSection li {
-  margin-bottom: 22px;
+  margin-block-end: 22px;
   font-weight: 500;
   color: #2c3e50;
   font-size: 20px;
@@ -304,8 +299,8 @@ textarea {
   font-size: 16px;
   color: #607d8b;
   font-weight: 400;
-  margin-top: 6px;
-  margin-left: 22px;
+  margin-block-start: 6px;
+  margin-inline-start: 22px;
   line-height: 1.5;
 }
 
@@ -316,10 +311,10 @@ textarea {
   padding: 5px; 
   border-radius: 12px;
   box-shadow: var(--shadow-medium);
-  margin-top: 15px;
-  height: 1560px;
-  min-height: 800px;
-  width: auto;
+  margin-block-start: 15px;
+  block-size: 1560px;
+  min-block-size: 800px;
+  inline-size: auto;
   box-sizing: border-box; 
 }
 
@@ -330,12 +325,12 @@ textarea {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-soft);
-  height: 1550px;
+  block-size: 1550px;
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .cvLeft {
-  width: 32%;
+  inline-size: 32%;
   background: #f2f7fc;
   color: var(--text-color);
   padding: 35px 25px;
@@ -346,14 +341,14 @@ textarea {
 }
 
 .cvRight {
-  width: 68%;
+  inline-size: 68%;
   padding: 35px 30px;
   background-color: #fff;
 }
 
 .verticalLine {
-  border-left: 1px solid var(--border-color);
-  height: 100%;
+  border-inline-start: 1px solid var(--border-color);
+  block-size: 100%;
   margin: 0;
 }
 
@@ -364,23 +359,23 @@ textarea {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  margin-bottom: 25px;
+  margin-block-end: 25px;
 }
 
 .profileImage {
-  width: 140px;
-  height: 140px;
+  inline-size: 140px;
+  block-size: 140px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--primary-color);
-  margin-bottom: 15px;
+  margin-block-end: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .uploadIcon {
   position: absolute;
-  bottom: 10px;
-  right: 20px;
+  inset-block-end: 10px;
+  inset-inline-end: 20px;
   background: var(--primary-color);
   color: white;
   padding: 10px;
@@ -397,9 +392,9 @@ textarea {
 
 /* CV Content Styles */
 .cvRight h4 {
-  border-bottom: 2px solid var(--primary-color);
-  padding-bottom: 10px;
-  margin-bottom: 20px;
+  border-block-end: 2px solid var(--primary-color);
+  padding-block-end: 10px;
+  margin-block-end: 20px;
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
@@ -413,12 +408,12 @@ textarea {
 .summary,
 .references,
 .profilePara {
-  margin-bottom: 25px;
+  margin-block-end: 25px;
 }
 
 .profileSection h2 {
-  margin-top: 15px;
-  margin-bottom: 5px;
+  margin-block-start: 15px;
+  margin-block-end: 5px;
   font-size: 20px;
   font-weight: 600;
 }
@@ -427,21 +422,21 @@ textarea {
   color: #556677;
   font-size: 16px;
   font-weight: 500;
-  margin-top: 5px;
+  margin-block-start: 5px;
 }
 
 .contactInfo h4,
 .education h4 {
-  text-align: left;
-  width: 100%;
-  border-bottom: 2px solid var(--primary-color);
-  padding-bottom: 8px;
-  margin-bottom: 15px;
+  text-align: start;
+  inline-size: 100%;
+  border-block-end: 2px solid var(--primary-color);
+  padding-block-end: 8px;
+  margin-block-end: 15px;
   font-size: 20px;
   font-weight: 600;
 }
 .h4Header {
-  margin-bottom: 10px;
+  margin-block-end: 10px;
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
@@ -449,26 +444,26 @@ textarea {
 
 .contactInfo p {
   margin: 8px 0;
-  text-align: left;
+  text-align: start;
   font-size: 16px;
 }
 
 .education {
   align-items: flex-start !important;
-  text-align: left !important;
-  width: 100%;
+  text-align: start !important;
+  inline-size: 100%;
   display: flex;
   flex-direction: column;
 }
 
 .educationItem,
 .experienceItem {
-  margin-bottom: 20px;
+  margin-block-end: 20px;
 }
 
 .educationItem h5,
 .experienceItem h5 {
-  margin-bottom: 5px;
+  margin-block-end: 5px;
   font-size: 20px;
   font-weight: 600;
   color: #2c3e50;
@@ -479,7 +474,7 @@ textarea {
   font-size: 18px;
   color: #555;
   display: block;
-  margin-bottom: 8px;
+  margin-block-end: 8px;
 }
 
 .educationItem p,
@@ -507,12 +502,12 @@ textarea {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-block-end: 1px solid #f0f0f0;
 }
 
 .skillName {
   flex: 1;
-  text-align: left;
+  text-align: start;
   font-size: 18px;
   color: #333;
   font-weight: 500;
@@ -520,14 +515,14 @@ textarea {
 
 .skillStars {
   flex: 0 0 auto;
-  text-align: right;
-  min-width: 110px;
+  text-align: end;
+  min-inline-size: 110px;
 }
 
 .star {
   font-size: 22px;
   color: #e0e0e0;
-  margin-left: 3px;
+  margin-inline-start: 3px;
   transition: color 0.2s;
 }
 
@@ -556,28 +551,28 @@ textarea {
 
 .textareaContainer {
   position: relative; /* This is crucial for positioning the button inside */
-  width: 100%;
-  margin-bottom: 20px; /* Replaces the margin from the textarea */
+  inline-size: 100%;
+  margin-block-end: 20px; /* Replaces the margin from the textarea */
 }
 
 /* You might need to adjust or create this class */
 .textareaField {
-  width: 100%;
+  inline-size: 100%;
   padding: 16px;
-  padding-right: 150px; /* Add padding on the right to make space for the button */
+  padding-inline-end: 150px; /* Add padding on the right to make space for the button */
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
   font-size: 16px;
   line-height: 1.6;
-  min-height: 120px;
+  min-block-size: 120px;
   resize: vertical;
-  margin-bottom: 0; /* The container will handle the bottom margin */
+  margin-block-end: 0; /* The container will handle the bottom margin */
 }
 
 .aiButton {
   position: absolute;   /* Position the button relative to the container */
-  top: 12px;            /* Position it from the top */
-  right: 12px;          /* Position it from the right */
+  inset-block-start: 12px;            /* Position it from the top */
+  inset-inline-end: 12px;          /* Position it from the right */
   background-color: var(--primary-color);
   color: white;
   padding: 8px 16px;
@@ -614,11 +609,11 @@ textarea {
   }
   .formContainer,
   .cvPreview {
-    max-width: 100%;
-    width: 100%;
-    min-width: 0;
+    max-inline-size: 100%;
+    inline-size: 100%;
+    min-inline-size: 0;
     position: static;
-    height: auto;
+    block-size: auto;
     margin: 0 auto;
     box-sizing: border-box;
     padding: 24px 12px;
@@ -626,27 +621,27 @@ textarea {
   .cvContainer {
     flex-direction: column;
     gap: 0;
-    height: auto;
-    min-width: 0;
+    block-size: auto;
+    min-inline-size: 0;
   }
   .cvLeft,
   .cvRight {
-    width: 100%;
+    inline-size: 100%;
     padding: 24px 12px;
-    min-width: 0;
+    min-inline-size: 0;
   }
   .verticalLine {
     display: none;
   }
   .formContainer {
-    height: auto;
-    width: 100%;
+    block-size: auto;
+    inline-size: 100%;
     padding: 24px 12px;
   }
   .cvPreview {
-    min-height: 600px;
+    min-block-size: 600px;
     padding: 24px 12px;
-    margin-top: 18px;
+    margin-block-start: 18px;
   }
 }
 
@@ -656,8 +651,8 @@ textarea {
     gap: 12px;
   }
   .pageHeader {
-    margin-top: 18px;
-    padding-top: 0;
+    margin-block-start: 18px;
+    padding-block-start: 0;
   }
   .pageTitle {
     font-size: 24px;
@@ -668,9 +663,9 @@ textarea {
   .formContainer {
     padding: 8px 2px;
     border-radius: 8px;
-    min-width: 0;
-    width: 100%;
-    height: auto;
+    min-inline-size: 0;
+    inline-size: 100%;
+    block-size: auto;
   }
   .experienceForm {
     padding: 12px 4px;
@@ -679,21 +674,21 @@ textarea {
   textarea {
     font-size: 14px;
     padding: 10px 8px;
-    height: 36px;
-    margin-bottom: 10px;
+    block-size: 36px;
+    margin-block-end: 10px;
   }
   textarea {
-    min-height: 50px;
+    min-block-size: 50px;
   }
   .saveBtn, .addButton, .removeButton {
-    width: 100%;
+    inline-size: 100%;
     font-size: 12px;
     padding: 8px 0;
-    margin-top: 4px;
+    margin-block-start: 4px;
   }
   .instractionSection {
     padding: 8px 2px;
-    margin-top: 24px;
+    margin-block-start: 24px;
     font-size: 13px;
     border-radius: 7px;
   }
@@ -709,36 +704,36 @@ textarea {
   .cvPreview {
     padding: 2px;
     border-radius: 7px;
-    margin-top: 8px;
-    min-height: 200px;
-    max-width: 100vw;
-    height: auto;
+    margin-block-start: 8px;
+    min-block-size: 200px;
+    max-inline-size: 100vw;
+    block-size: auto;
   }
   .cvContainer {
     border-radius: 7px;
     box-shadow: var(--shadow-soft);
-    min-width: 0;
-    height: auto;
+    min-inline-size: 0;
+    block-size: auto;
     flex-direction: column;
     gap: 0;
   }
   .cvLeft,
   .cvRight {
     padding: 8px 2px;
-    width: 100%;
-    min-width: 0;
+    inline-size: 100%;
+    min-inline-size: 0;
   }
   .profileImage {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 6px;
+    inline-size: 60px;
+    block-size: 60px;
+    margin-block-end: 6px;
   }
   .cvRight h4,
   .contactInfo h4,
   .education h4 {
     font-size: 13px;
-    padding-bottom: 4px;
-    margin-bottom: 8px;
+    padding-block-end: 4px;
+    margin-block-end: 8px;
   }
   .educationItem h5,
   .experienceItem h5 {
@@ -775,7 +770,7 @@ textarea {
     padding: 2px 1px;
   }
   .profileImage {
-    width: 36px;
-    height: 36px;
+    inline-size: 36px;
+    block-size: 36px;
   }
 }

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Cv7.module.css";
 import { useCVForm } from "../../context/CVFormContext";
 import { getUserId, isAuthenticated } from "../../utils/auth";
+import { toast } from 'sonner';
 
 // Default structure for an empty reference, matching context if possible
 const initialReferenceState = { referenceName: "", position: "", company: "", contact: "" };
@@ -151,7 +152,7 @@ const Cv7 = () => {
     try {
       console.log("Cv7.jsx: Submitting references:", referencesToSave);
       await saveToDatabase("references", referencesToSave);
-      alert("References saved successfully!");
+      // alert("References saved successfully!");
       navigate("/cv-builder/preview"); // Navigate to the final preview page (Cv5.jsx)
     } catch (error) {
       console.error("Error saving references in Cv7.jsx handleSubmit:", error);
@@ -228,10 +229,10 @@ const Cv7 = () => {
 
   return (
     <>
-      <header className={styles.pageHeader}>
+      {/* <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
         <p className={styles.pageSubtitle}>Step 6: Add Your Professional References (Optional)</p>
-      </header>
+      </header> */}
 
       <div className={styles.resumeBuilder}>
         <main className={styles.content}>

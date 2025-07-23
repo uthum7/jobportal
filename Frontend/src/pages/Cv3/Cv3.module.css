@@ -200,7 +200,7 @@ input:focus, select:focus {
   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.24);
 }
 
-.skillButton {
+.addButton {
   background:var(--success-color);   
   color: white;           
   padding: 12px 20px; 
@@ -210,8 +210,9 @@ input:focus, select:focus {
   font-size: 17px;
   font-weight: 600;
   transition: all 0.3s ease;
-  margin-top: 10px;
-  margin-left: 300px;
+  margin-top: 2px;
+  margin-left: 2px;
+  margin-bottom: 10px;
   width: 120px;
   max-width: 100%;
   letter-spacing: 0.5px;
