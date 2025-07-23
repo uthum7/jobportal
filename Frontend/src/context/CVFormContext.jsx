@@ -206,7 +206,6 @@ export const CVFormProvider = ({ children }) => {
     const defaultExp = { jobTitle: "", companyName: "", jstartDate: "", jendDate: "", jobDescription:"" };
     setResumeData(prev => ({ ...prev, professionalExperience: [...(prev.professionalExperience || []), {...defaultExp, ...newExperience}] }));
   }, []);
-
   const updateProfessionalExperience = useCallback((index, updatedExperience) => {
     setResumeData(prev => {
       const experiences = [...(prev.professionalExperience || [])];
@@ -233,7 +232,6 @@ export const CVFormProvider = ({ children }) => {
       return { ...prev, skill: skills };
     });
   }, []);
-
   const removeSkill = useCallback((index) => {
     setResumeData(prev => ({ ...prev, skill: (prev.skill || []).filter((_, i) => i !== index) }));
   }, []);
@@ -242,7 +240,6 @@ export const CVFormProvider = ({ children }) => {
     const defaultRef = { referenceName: "", position: "", company: "", contact: "" };
     setResumeData(prev => ({ ...prev, references: [...(prev.references || []), {...defaultRef, ...newReference}] }));
   }, []);
-
   const updateReference = useCallback((index, updatedReference) => {
     setResumeData(prev => {
       const references = [...(prev.references || [])];
@@ -251,7 +248,6 @@ export const CVFormProvider = ({ children }) => {
       return { ...prev, references: references };
     });
   }, []);
-
   const removeReference = useCallback((index) => {
     setResumeData(prev => ({ ...prev, references: (prev.references || []).filter((_, i) => i !== index) }));
   }, []);

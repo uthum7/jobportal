@@ -103,7 +103,6 @@ const Cv6 = () => {
       setLocalProfessionalExperience(updatedExperiences);
     }
   };
-
   const handleEnhanceDescription = async (index) => {
     const currentExperience = localProfessionalExperience[index];
     const currentDescription = currentExperience?.jobDescription;
