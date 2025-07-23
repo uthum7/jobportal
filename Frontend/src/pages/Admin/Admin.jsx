@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { FaBriefcase, FaEye, FaBookmark, FaUsers, FaCalendarCheck } from "react-icons/fa";
 import "../../pages/Admin/Admin.css";
@@ -73,15 +74,13 @@ const Admin = () => {
             </li>
             {submenuOpen && (
               <ul className="submenu">
-                <li>Mentor</li>
-                <li>Mentee</li>
-                <li>Employee</li>
-                <li>Jobseeker</li>
+                <li><Link to="/admin/managecounselor">Mentor</Link></li>
+                <li><Link >Mentee</Link></li>
+                <li><Link >Employee</Link></li>
+                <li><Link >Jobseeker</Link></li>
               </ul>
             )}
-            <li>
-              Messages <span className="message-count">4</span>
-            </li>
+            <li><Link to="/admin/MessageHomePage">  Messages <span className="message-count">4</span></Link></li>
             <li>Change Password</li>
             <li>Log Out</li>
           </ul>

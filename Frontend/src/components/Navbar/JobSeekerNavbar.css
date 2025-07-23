@@ -1,0 +1,20 @@
+@import './shared-navbar.css';
+
+.jobseeker-navbar {
+  background: #2ecc71;
+}
+
+.jobseeker-nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.jobseeker-logout-btn:hover {
+  background: white;
+  color: #2ecc71;
+}
+
+@media (max-width: 768px) {
+  .jobseeker-navbar .nav-links-common {
+    background: #2ecc71;
+  }
+}
