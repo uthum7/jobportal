@@ -12,7 +12,7 @@ import dashboardRoutes from './routes/dashboard.route.js';
 import messageRoutes from "./routes/message.route.js";
 import registerUserRoutes from "./routes/register.routes.js";
 import cvRoutes from "./routes/cv.routes.js";
-import jobPostRoutes from "./routes/JobPost.route.js";
+import jobPostRoutes from "./routes/Job.route.js";
 import adminRoutes from './routes/admin.routes.js';
 // --- FIX 1: Correctly import the AI routes ---
 import aiRoutes from "./routes/gemini.route.js"; // Renamed variable to camelCase `aiRoutes` for consistency
