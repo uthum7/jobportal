@@ -155,7 +155,19 @@ router.post(
   })
 );
 
-
+router.get("/users/:id", asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await Registeruser.findById(id).select("username email profilePic");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user by id:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}));
 
 // Test password endpoint can be removed if not needed for debugging
 // router.post("/test-password", ...);
