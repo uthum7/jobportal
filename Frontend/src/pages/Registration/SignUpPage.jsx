@@ -19,7 +19,11 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
 
-  const ROLES = ["MENTEE", "JOBSEEKER"];
+
+  
+
+  const ROLES = ["MENTOR", "MENTEE", "JOBSEEKER", "EMPLOYEE"]; // Ensure ADMIN is a selectable role if needed
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

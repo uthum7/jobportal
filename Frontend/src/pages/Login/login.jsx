@@ -1,15 +1,14 @@
 // LoginPage.jsx
-
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { saveAuthData } from '../../utils/auth'; // Keep your auth utility
+import { saveAuthData } from '../../utils/auth'; // <<<< CORRECT: Import saveAuthData
 import styles from "./login.module.css";
 import logoPath from "../../assets/img/logo.png";
 import AuthSplash from "../../components/AuthSplash/AuthSplash";
 
 const LoginPage = ({ onLogin, onClose }) => {
   const [formData, setFormData] = useState({
-    username: '', // This is the email field
+    username: '', // Assuming this is email
     password: ''
   });
   const [role, setRole] = useState('');
@@ -22,12 +21,6 @@ const LoginPage = ({ onLogin, onClose }) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-
-    if (!role) {
-      setError("Please select a role to log in.");
-      setIsLoading(false);
-      return;
-    }
 
     try {
       const loginData = {
@@ -42,51 +35,38 @@ const LoginPage = ({ onLogin, onClose }) => {
         body: JSON.stringify(loginData)
       });
 
-      const data = await response.json();
+      const data = await response.json(); // Expects { token, role, userId (or _id), email, name etc. }
 
       if (!response.ok) {
         throw new Error(data.message || 'Login failed. Please check your credentials and role.');
       }
 
-      // --- START OF NEW AND UPDATED LOGIC ---
+      // --- IMPORTANT AUTHENTICATION DATA HANDLING ---
+      if (data.token && data.role && (data.userId || data._id)) {
+        const currentUserId = data.userId || data._id; // Prefer userId, fallback to _id
 
-      // SCENARIO 1: The user must reset their password.
-      if (data.passwordResetRequired === true) {
-        if (data.tempToken) {
-          // Immediately navigate to the force reset page and pass the temporary token.
-          // Do NOT save auth data or call onLogin.
-          navigate('/force-reset-password', { 
-            state: { tempToken: data.tempToken } 
-          });
-        } else {
-          // This would be a backend error if the tempToken is missing.
-          throw new Error("Password reset is required, but no temporary token was provided.");
-        }
-
-      // SCENARIO 2: A normal, successful login.
-      } else if (data.token && data.role && (data.userId || data._id)) {
-        const currentUserId = data.userId || data._id;
-
+        // Create the user object to be saved and passed to App's context
         const userObjectToSave = {
           token: data.token,
-          role: data.role.toUpperCase(),
+          role: data.role.toUpperCase(), // Standardize role to uppercase
           userId: currentUserId,
-          email: data.email,
-          name: data.name,
+          email: data.email, // Assuming backend sends email
+          name: data.name,   // Assuming backend sends name
+          // Add any other relevant user details your app needs from `data`
         };
 
-        saveAuthData(userObjectToSave); // Save to localStorage or context
-        onLogin(userObjectToSave);     // Update the parent component's state (e.g., App.jsx)
-        
-        // Navigation is likely handled by the parent component after onLogin is called.
+        saveAuthData(userObjectToSave); // <<<< CORRECT: Use saveAuthData from auth.js
+
+        onLogin(userObjectToSave); // This calls App.jsx's handleLogin, passing the same complete object
+        // App.jsx's useEffect will handle navigation to the correct dashboard.
 
       } else {
-        // This error means the backend's NORMAL login response is missing key fields.
+        // This error means your backend login response is not sending all required fields.
+        // Check your backend to ensure it returns: token, role, and (userId or _id).
+        // Also, make sure it sends other details like email and name if you need them.
         console.error("Login API response missing essential data:", data);
-        throw new Error("Login response from server is incomplete.");
+        throw new Error("Login response missing essential data (token, role, or user identifier). Please contact support.");
       }
-
-      // --- END OF NEW AND UPDATED LOGIC ---
 
     } catch (err) {
       console.error('Login error:', err);
@@ -163,7 +143,6 @@ const LoginPage = ({ onLogin, onClose }) => {
               <option value="MENTOR">Mentor</option>
               <option value="JOBSEEKER">Job Seeker</option>
               <option value="ADMIN">Admin</option>
-              {/* Note: In a real app, you might have a separate login for Employees */}
               <option value="EMPLOYEE">Employee</option>
             </select>
           </div>
