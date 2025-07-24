@@ -185,6 +185,7 @@
 /* Jobs Container */
 .jobs-container {
   min-height: 400px;
+  padding:10px;
 }
 
 .jobs-grid {
@@ -283,22 +284,22 @@
 }
 
 .status-active {
-  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  background: linear-gradient(135deg, #4eeaa1, #54ea9d);
   color: #047857;
 }
 
 .status-warning {
-  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  background: linear-gradient(135deg, #f15953, #f84e3c);
   color: #92400e;
 }
 
 .status-urgent {
-  background: linear-gradient(135deg, #fef2f2, #fecaca);
+  background: linear-gradient(135deg, #ffdf76, #f2c959);
   color: #b91c1c;
 }
 
 .status-expired {
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  background: linear-gradient(135deg, #a4a4a1, #969696);
   color: #6b7280;
 }
 

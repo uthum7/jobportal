@@ -23,7 +23,7 @@ const EmployeeDashboardJobs = () => {
             try {
                 setLoading(true);
                 const response = await axios.get("http://localhost:5001/api/job/all");
-                setJobs(response.data.Jobs || []);
+                setJobs(response.data.Jobs.filter(job => job.PostedBy === JSON.parse(localStorage.getItem("user")).userId) || []);
             } catch (error) {
                 console.error("Error fetching jobs:", error);
                 setError("Failed to load jobs");

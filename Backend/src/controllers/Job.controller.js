@@ -1,6 +1,7 @@
 import Job from "../models/Job.model.js";
-
+import { Application } from "../models/application.model.js";
 import mongoose from 'mongoose';
+
 export const getJobCount = async (req, res) => {
     try {
         const jobCount = await Job.countDocuments();
@@ -19,7 +20,6 @@ export const deleteJobPost = async (req, res) => {
     try {
         const jobId = req.params.id;
 
-        // Validate if jobId is a valid ObjectId
         if (!mongoose.Types.ObjectId.isValid(jobId)) {
             return res.status(400).json({
                 success: false,
@@ -27,11 +27,7 @@ export const deleteJobPost = async (req, res) => {
             });
         }
 
-        // Option 1: Using mongoose (recommended)
         const deletedJob = await Job.findByIdAndDelete(jobId);
-
-        // Option 2: If you prefer ObjectId (but not necessary with mongoose)
-        // const deletedJob = await Job.findByIdAndDelete(new ObjectId(jobId));
 
         console.log(jobId + " Deleted");
 
@@ -56,6 +52,7 @@ export const deleteJobPost = async (req, res) => {
         });
     }
 }
+
 export const createJobPost = async (req, res) => {
     try {
         const {
@@ -68,9 +65,9 @@ export const createJobPost = async (req, res) => {
             JobRequirements,
             JobQualifications,
             JobResponsibilities,
-            JobTags
+            JobTags,
+            PostedBy
         } = req.body;
-
 
         const job = new Job({
             "JobTitle": JobTitle,
@@ -82,7 +79,8 @@ export const createJobPost = async (req, res) => {
             "Requirements": JobRequirements,
             "Qualifications": JobQualifications,
             "Responsibilities": JobResponsibilities,
-            "Tags": JobTags
+            "Tags": JobTags,
+            "PostedBy": new mongoose.Types.ObjectId(PostedBy)
         })
 
         await job.save()
@@ -90,12 +88,11 @@ export const createJobPost = async (req, res) => {
         res.status(200).json({
             "Message": "Success",
             "JobID": job._id,
-
         })
     } catch (err) {
-        res.json({
-            "Error": err
-        }).status(500)
+        res.status(500).json({
+            "Error": err.message
+        })
     }
 }
 
@@ -115,3 +112,128 @@ export const getAllJobs = async (req, res) => {
     }
 }
 
+// NEW: Get jobs with application counts
+export const getJobsWithApplications = async (req, res) => {
+    try {
+        const jobsWithApplications = await Job.aggregate([
+            {
+                $lookup: {
+                    from: "applications",
+                    localField: "_id",
+                    foreignField: "jobId",
+                    as: "applications"
+                }
+            },
+            {
+                $addFields: {
+                    applicationCount: { $size: "$applications" },
+                    pendingCount: {
+                        $size: {
+                            $filter: {
+                                input: "$applications",
+                                cond: { $eq: ["$$this.status", "pending"] }
+                            }
+                        }
+                    },
+                    acceptedCount: {
+                        $size: {
+                            $filter: {
+                                input: "$applications",
+                                cond: { $eq: ["$$this.status", "accepted"] }
+                            }
+                        }
+                    },
+                    rejectedCount: {
+                        $size: {
+                            $filter: {
+                                input: "$applications",
+                                cond: { $eq: ["$$this.status", "rejected"] }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    applications: 0 // Remove the full applications array from response
+                }
+            },
+            {
+                $sort: { postedDate: -1 }
+            }
+        ]);
+
+        res.status(200).json({
+            "Message": "Success",
+            "Jobs": jobsWithApplications
+        });
+    } catch (err) {
+        res.status(500).json({
+            "Error": err.message
+        });
+    }
+}
+
+// NEW: Get applications for a specific job
+export const getJobApplications = async (req, res) => {
+    try {
+        const jobId = req.params.jobId;
+
+        if (!mongoose.Types.ObjectId.isValid(jobId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid job ID format"
+            });
+        }
+
+        const applications = await Application.find({ jobId: jobId })
+            .sort({ appliedDate: -1 });
+
+        const job = await Job.findById(jobId);
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: "Job not found"
+            });
+        }
+
+        res.status(200).json({
+            "Message": "Success",
+            "Job": job,
+            "Applications": applications
+        });
+    } catch (err) {
+        res.status(500).json({
+            "Error": err.message
+        });
+    }
+}
+
+export const getAllJobApplications = async (req, res) => {
+    try {
+        const applications = await Application.aggregate([
+            {
+                $group: {
+                    _id: "$jobId",
+                    applications: { $push: "$$ROOT" }
+                }
+            },
+            {
+                $sort: {
+                    appliedDate: -1
+                }
+            }
+        ]);
+        console.log("Job Applications API Called");
+        console.log(applications);
+        res.status(200).json({
+            "Message": "Success",
+            "Applications": applications
+        })
+    } catch (err) {
+        res.json({
+            "Error": err.message
+        }).status(500)
+    }
+}

@@ -435,8 +435,10 @@
 }
 
 .tag-item {
-  border-left: 6px solid #f59e0b;
-  background: linear-gradient(135deg, #fffbeb, #fefce8);
+  /* The above CSS code is setting a left border with a thickness of 6 pixels and a color of #f59e0b (a
+  shade of orange). */
+  /* border-left: 6px solid #f59e0b; */
+  background: linear-gradient(135deg, #cc8201, #cc8201);
   flex: none;
   width: auto;
   min-width: fit-content;

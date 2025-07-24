@@ -4,6 +4,8 @@ import EmployeeSidebar from '../../components/Employee/Sidebar/EmployeeSidebar';
 import EmployeeDashboard from '../../components/Employee/Dashboard/EmployeeDashboard';
 import PostJobComponent from '../../components/Employee/PostJob/PostJobComponent';
 import PostedJobComponent from '../Employee/ShowJobs/PostedJobsComponent';
+import AllCandidates from './Candidates/AllCandidates';
+import AllJobs from '../../components/Employee/Jobs/AllJobs';
 
 const EmployeePage = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
@@ -18,6 +20,7 @@ const EmployeePage = () => {
         {activeTab === "PostJobSpecs" && <PostJobComponent />}
         {activeTab === "PostedJob" && <PostedJobComponent />}
         {activeTab === "Profile" && <div>Profile Component</div>}
+        {activeTab === "Candidates" && <AllJobs />}
         {/* Add more tabs as needed */}
       </main>
     </div>

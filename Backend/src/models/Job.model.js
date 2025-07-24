@@ -35,7 +35,13 @@ const JobsSchema = new mongoose.Schema({
     postedDate:{
         type:Date,
         default:Date.now
+    },
+    PostedBy:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     }
+
 }
 
 );

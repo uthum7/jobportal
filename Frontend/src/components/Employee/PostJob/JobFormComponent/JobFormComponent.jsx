@@ -218,6 +218,7 @@ const JobFormComponent = () => {
       JobQualifications: qualifications,
       JobResponsibilities: responsibilities,
       JobTags: tags,
+      PostedBy: JSON.parse(localStorage.getItem("user")).userId
     }
 
     try {
