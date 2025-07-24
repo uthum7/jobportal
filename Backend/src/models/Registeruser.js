@@ -5,65 +5,78 @@ import bcrypt from "bcryptjs";
 
 const Schema = mongoose.Schema;
 
-// Registeruser Schema
-const RegisteruserSchema = new Schema({
+const RegisteruserSchema = new Schema(
+  {
     username: {
-        type: String,
-        required: [true, "Username is required"],
-        trim: true,
+      type: String,
+      required: [true, "Username is required"],
+      trim: true,
+    },
+    fullName: {
+      type: String,
+      required: [true, "Full name is required"],
+      trim: true,
     },
     email: {
-        type: String,
-        required: [true, "Email is required"],
-        unique: true,
-        trim: true,
-        lowercase: true,
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      trim: true,
+      lowercase: true,
     },
     password: {
-        type: String,
-        required: [true, "Password is required"],
-        minlength: [5, "Password must be at least 5 characters"],
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [6, "Password must be at least 6 characters"], // Match previous user model
+    },
+    profilePic: {
+      type: String,
+      default: "", // Optional, frontend can fall back to placeholder
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
     },
     roles: {
-        type: [String],
-        required: [true, "At least one role is required"],
-        enum: ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
-        validate: {
-            validator: function(roles) {
-                return roles && roles.length > 0;
-            },
-            message: "At least one role must be selected"
-        }
+      type: [String],
+      required: [true, "At least one role is required"],
+      enum: ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
+      validate: {
+        validator: function (roles) {
+          return roles && roles.length > 0;
+        },
+        message: "At least one role must be selected",
+      },
     },
-    // --- ADD THESE TWO NEW FIELDS HERE ---
     resetPasswordToken: {
-        type: String,
-        default: undefined // It will not exist in the document unless set
+      type: String,
+      default: undefined,
     },
     resetPasswordExpires: {
-        type: Date,
-        default: undefined // It will not exist in the document unless set
+      type: Date,
+      default: undefined,
     },
-    // ------------------------------------
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
-// Hash password before saving
+// ✅ Hash password before saving
 RegisteruserSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+  if (!this.isModified("password")) return next();
 
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (err) {
-        next(err);
-    }
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
-// Method to compare passwords
+// ✅ Compare password method
 RegisteruserSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const Registeruser = mongoose.model('Registeruser', RegisteruserSchema);
+const Registeruser = mongoose.model("Registeruser", RegisteruserSchema);
 export default Registeruser;
