@@ -13,6 +13,9 @@ import messageRoutes from "./routes/message.route.js";
 import registerUserRoutes from "./routes/register.routes.js";
 import cvRoutes from "./routes/cv.routes.js";
 import jobPostRoutes from "./routes/Job.route.js";
+import savedJobRoutes from "./routes/savedJob.route.js";
+import appliedJobRoutes from "./routes/appliedJobs.route.js";
+import applicationRoutes from "./routes/application.route.js";
 
 // --- FIX 1: Correctly import the AI routes ---
 import aiRoutes from "./routes/gemini.route.js"; // Renamed variable to camelCase `aiRoutes` for consistency
@@ -59,6 +62,10 @@ app.use("/api/message", messageRoutes);
 app.use("/api/register", registerUserRoutes);
 app.use("/api/cv", cvRoutes);
 app.use("/api/job", jobPostRoutes);
+app.use('/api/saved-jobs', savedJobRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/applied-jobs', appliedJobRoutes);
+
 // --- FIX 2: Connect the AI routes to your app ---
 app.use("/api/ai", aiRoutes); // This will make your route available at /api/ai/...
 console.log("API routes registered.");
