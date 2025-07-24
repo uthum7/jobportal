@@ -31,7 +31,6 @@ const EmployeeDashboardJobs = () => {
                 setLoading(false);
             }
         };
-
         fetchJobs();
     }, []);
 
