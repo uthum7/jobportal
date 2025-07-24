@@ -41,6 +41,14 @@ import AdminChangePassword from "./pages/Admin/AdminChangePassword.jsx";
 import EnhancedEmployeeInfo from "./pages/Admin/Manage/EmployeeManage.jsx";
 
 
+//jobseeker
+import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx";
+import ApplyForAjob from "./pages/JobSeeker/ApplyForAjob/ApplyForAjob.jsx";
+import JobDetails from "./pages/JobSeeker/JobDetails/JobDetails.jsx";
+import AppliedJobsPage from "./pages/JobSeeker/AppliedJobs/AppliedJobs.jsx";
+import SavedJobs from "./pages/JobSeeker/SavedJobs/SavedJobs.jsx";
+
+
 
 
 
@@ -79,6 +87,7 @@ import Cv4 from "./pages/Cv4/Cv4.jsx";
 import Cv5 from "./pages/Cv5/Cv5.jsx";
 import Cv6 from "./pages/Cv6/Cv6.jsx";
 import Cv7 from "./pages/Cv7/Cv7.jsx";
+import CVBuilderLayout from "./pages/CVBuilderLayout.jsx";
 
 // Job Posting
 import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
