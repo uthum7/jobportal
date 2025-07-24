@@ -11,10 +11,13 @@ import AdminChangePasswordRoutes from "./routes/AdminChangePassword.js";
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+
+
 import registerUserRoutes from "./routes/register.routes.js";
 import cvRoutes from "./routes/cv.routes.js";
 import jobPostRoutes from "./routes/Job.route.js";
 import aiRoutes from "./routes/gemini.route.js";
+import dashboardRoutes from "./routes/dashboard.route.js";
 
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
@@ -84,6 +87,8 @@ app.use("/api/register", registerUserRoutes);
 app.use("/api/cv", cvRoutes);
 app.use("/api/job", jobPostRoutes);
 app.use("/api/ai", aiRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
 
 console.log("✅ API routes registered.");
 

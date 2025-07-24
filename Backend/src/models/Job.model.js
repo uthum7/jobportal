@@ -40,6 +40,6 @@ const JobsSchema = new mongoose.Schema({
 
 );
 
-const Job = mongoose.model("jobs",JobsSchema);
+const Job = mongoose.model("jobs",JobsSchema);  //jobs is the collection name
 
 export default Job

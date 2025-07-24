@@ -21,6 +21,7 @@ import JobSeekerNavbar from './components/Navbar/JobSeekerNavbar';
 import EmployeeNavbar from './components/Navbar/EmployeeNavbar';
 import Footer from "./components/Footer/Footer.jsx";
 
+import EmployeePage from "./pages/Employee/EmployeePage.jsx";
 // Message navbars
 import MessageNavbar from "./components/Navbar/MessageNavbar.jsx";
 import NavbarSimple from "./components/Navbar/NavbarSimple.jsx"; // Ensure this exists
@@ -40,6 +41,7 @@ import ManageCounselee from "./pages/Admin/ManageCounselee.jsx";
 import ManageEmployee from "./pages/Admin/ManageEmployee.jsx";
 import ManageJobseeker from "./pages/Admin/ManageJobseeker.jsx";
 import AdminChangePassword from "./pages/Admin/AdminChangePassword.jsx";
+import EnhancedEmployeeInfo from "./pages/Admin/Manage/EmployeeManage.jsx";
 
 
 
@@ -225,6 +227,8 @@ function App() {
           <Route path="/admin/managejobseeker" element={<RoleBasedRoute element={<ManageJobseeker/>} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
           <Route path="/admin/changepassword" element={<RoleBasedRoute element={<AdminChangePassword />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
 
+          <Route path="/admin/enhancedemployeeinfo" element={<RoleBasedRoute element={<EnhancedEmployeeInfo />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+
           
           
 
@@ -247,6 +251,8 @@ function App() {
           <Route path="/counselee/change-password" element={<RoleBasedRoute element={<ChangePassword />} allowedRoles={["ADMIN", "MENTEE"]} userRole={user?.role} />} />
           <Route path="/counselee/delete-account" element={<RoleBasedRoute element={<DeleteAccount />} allowedRoles={["ADMIN", "MENTEE"]} userRole={user?.role} />} />
           <Route path="/logout" element={<RoleBasedRoute element={<Logout />} allowedRoles={["ADMIN", "MENTEE"]} userRole={user?.role} />} />
+
+          <Route path="/employee" element={<EmployeePage />} />
 
           {/* Job Seeker Dashboard */}
           <Route path="/jobseeker/dashboard" element={<RoleBasedRoute element={<div>Jobseeker Dashboard Coming Soon</div>} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
