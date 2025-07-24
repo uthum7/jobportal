@@ -1,3 +1,5 @@
+// src/components/Navbar/EmployeeNavbar.jsx
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
