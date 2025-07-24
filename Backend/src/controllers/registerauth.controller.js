@@ -56,7 +56,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await Registeruser.findOne({ email });
+        const user = await Registeruser.findOne({ email }).select('+password');
         if (!user) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
@@ -64,11 +64,14 @@ export const login = async (req, res) => {
         if (!isPasswordCorrect) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-        generateToken(user._id, res);
+         const token = generateToken(user._id);
         res.status(200).json({
+            message: "Login successful",
+            token, // Send token to frontend
             _id: user._id,
             username: user.username,
             email: user.email,
+            roles: user.roles,
         });
     } catch (error) {
         console.error("Login error:", error.message);

@@ -5,7 +5,8 @@ import {
     getJobTypeDistribution,
     getJobModeDistribution,
     getExperienceLevelDistribution,
-    getRecentActivity
+    getRecentActivity,
+    getMonthlyUserAnalytics
 } from '../controllers/dashboard.controller.js';
 import { protectRoute } from "../middleware/auth.middleware.js";
 import { getDashboardData } from "../controllers/dashboardSeeker.controller.js";
@@ -19,6 +20,7 @@ router.get('/analytics/job-types', getJobTypeDistribution);
 router.get('/analytics/job-modes', getJobModeDistribution);
 router.get('/analytics/experience-levels', getExperienceLevelDistribution);
 router.get('/recent-activity', getRecentActivity);
+router.get('/analytics/users-monthly', getMonthlyUserAnalytics);
 router.get("/dashboard", protectRoute, getDashboardData);
 
 export default router;
