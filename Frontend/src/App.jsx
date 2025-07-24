@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import {
-    Route,
-    Routes,
-    useNavigate,
-    Navigate,
-    useLocation
+  Route,
+  Routes,
+  useNavigate,
+  Navigate,
+  useLocation
 } from "react-router-dom";
 
 // --- Context and Notifications ---
@@ -171,6 +171,9 @@ function App() {
     <CVFormProvider>
       <> 
         <Toaster position="top-right" richColors /> 
+
+    
+
         {renderNavbar()}
         <Routes>
           {/* ================================================================= */}
