@@ -64,7 +64,11 @@ import CounselorMessages from "./pages/counselor/messages.jsx"
 import CounselorChangePassword from "./pages/counselor/change-password.jsx"
 import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx"
 
-
+import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx";
+import ApplyForAjob from "./pages/JobSeeker/ApplyForAjob/ApplyForAjob";
+import JobDetails from "./pages/JobSeeker/JobDetails/JobDetails.jsx";
+import SavedJobs from "./pages/JobSeeker/SavedJobs/SavedJobs.jsx";
+import AppliedJobsPage from "./pages/JobSeeker/AppliedJobs/AppliedJobs.jsx";
 
 //Cv Pages
 import CVDashboard from './pages/CVDashboard/CVDashboard';
@@ -82,13 +86,14 @@ import EmployeePage from "./pages/Employee/EmployeePage.jsx";
 import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
 
 import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
+import Job from "../../Backend/src/models/Job.model.js";
 
 const dashboardByRole = {
   ADMIN: '/admin',
   MENTOR: '/counselor/dashboard',
   MENTEE: '/counselee/dashboard',
   JOBSEEKER: '/jobseeker/dashboard',
-  EMPLOYEE:"/employee" // Assuming you have or will have this
+  EMPLOYEE: "/employee" // Assuming you have or will have this
 };
 
 const RoleBasedRoute = ({ element, allowedRoles, userRole }) => {
@@ -201,7 +206,7 @@ function App() {
     }
   };
 
-  const cvCreatorRoles = ['ADMIN', 'MENTEE', 'JOBSEEKER', 'MENTOR',"EMPLOYEE"];
+  const cvCreatorRoles = ['ADMIN', 'MENTEE', 'JOBSEEKER', 'MENTOR', "EMPLOYEE"];
 
 
 
@@ -273,8 +278,11 @@ function App() {
 
 
           {/* Job Seeker Dashboard */}
-          <Route path="/jobseeker/dashboard" element={<RoleBasedRoute element={<div>Jobseeker Dashboard Coming Soon</div>} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
-
+          <Route path="/jobseeker/dashboard" element={<RoleBasedRoute element={<JobSeekerDashboard />} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
+          <Route path="/jobseeker/apply-for-job" element={<ApplyForAjob />} />
+          <Route path="/jobseeker/job-details/:jobId" element={<JobDetails />} />
+          <Route path="/JobSeeker/applied-jobs" element={<AppliedJobsPage />} />
+          <Route path="/JobSeeker/saved-jobs" element={<SavedJobs />} />
           {/* CV Dashboard */}
           <Route path="/cv" element={<RoleBasedRoute element={<CVDashboard />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
 
