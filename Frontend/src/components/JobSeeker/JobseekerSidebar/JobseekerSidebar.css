@@ -39,6 +39,8 @@ body, html {
   flex-shrink: 0; /* Prevent shrinking */
   /* Ensure profile section doesn't get cut */
   min-height: auto;
+  margin-top: 30px;
+  margin-bottom: 20px;
 }
 
 /* Circular profile image */
