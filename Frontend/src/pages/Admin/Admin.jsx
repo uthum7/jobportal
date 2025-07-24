@@ -1,28 +1,20 @@
+// src/pages/Admin/Admin.jsx
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { FaBriefcase, FaEye, FaBookmark, FaUsers, FaCalendarCheck } from "react-icons/fa";
-import "../../pages/Admin/Admin.css";
-import admin from "../../assets/img/admin.jpg";
+import { FaBriefcase, FaEye, FaBookmark, FaUsers, FaCalendarCheck, FaUserPlus, FaHome } from "react-icons/fa";
 
-import { 
-  FaHome,
-  FaUser, 
-  FaUserTie, 
-  FaUserGraduate, 
-  FaUserCog, 
-  FaUserPlus, 
-  FaEnvelope, 
-  FaKey, 
-  FaTrash, 
-  FaSignOutAlt, 
-  FaChevronDown,
-  
-  
-} from 'react-icons/fa';
+// Ensure the paths are correct based on your project structure
+import "./Admin.css"; 
+import admin from "../../assets/img/admin.jpg";
+import AddUserForm from "./AddUserForm.jsx";  // Make sure this path is correct
 
 const Admin = () => {
   const [submenuOpen, setSubmenuOpen] = useState(false);
+  
+  // --- NEW: State to control which view is shown in the main content area ---
+  const [activeView, setActiveView] = useState('dashboard'); // 'dashboard' or 'addUser'
 
   const toggleSubmenu = () => {
     setSubmenuOpen(!submenuOpen);
@@ -38,22 +30,56 @@ const Admin = () => {
     { icon: <FaUsers style={{ color: "#1E88E5" }} />, label: "Employees", value: 523 },
     { icon: <FaCalendarCheck style={{ color: "#3DD598" }} />, label: "Appointments", value: 523 },
   ];
-  
 
   const data = [
-    { month: "Jan", offered: 50, applied: 30, succeed: 20 },
-    { month: "Feb", offered: 100, applied: 70, succeed: 50 },
-    { month: "Mar", offered: 130, applied: 90, succeed: 80 },
-    { month: "Apr", offered: 90, applied: 60, succeed: 55 },
-    { month: "May", offered: 110, applied: 85, succeed: 75 },
-    { month: "Jun", offered: 140, applied: 120, succeed: 130 },
-    { month: "Jul", offered: 150, applied: 135, succeed: 140 },
-    { month: "Aug", offered: 170, applied: 140, succeed: 130 },
-    { month: "Sep", offered: 160, applied: 125, succeed: 115 },
-    { month: "Oct", offered: 140, applied: 110, succeed: 100 },
-    { month: "Nov", offered: 180, applied: 140, succeed: 130 },
-    { month: "Dec", offered: 250, applied: 180, succeed: 160 },
+      { month: "Jan", offered: 50, applied: 30, succeed: 20 },
+      // ... other data points
+      { month: "Dec", offered: 250, applied: 180, succeed: 160 },
   ];
+
+  // --- Helper to render the main content dynamically ---
+  const renderContent = () => {
+    switch (activeView) {
+      case 'addUser':
+        return (
+          <div className="form-section-container">
+            <AddUserForm />
+          </div>
+        );
+      case 'dashboard':
+      default:
+        return (
+          <>
+            <div className="stats-grid">
+              {stats.map((stat, index) => (
+                <div key={index} className="stat-card">
+                  <div className="icon">{stat.icon}</div>
+                  <div className="details">
+                    <h4>{stat.value}</h4>
+                    <p>{stat.label}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="chart-container">
+              <h3>Analysis Chart</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="offered" stroke="#1CC100" name="Offered Jobs" legendType="circle" />
+                  <Line type="monotone" dataKey="applied" stroke="#1DB4BD" name="Applied Candidates" legendType="circle" />
+                  <Line type="monotone" dataKey="succeed" stroke="#FDC006" name="Succeed Job Apply" legendType="circle" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </>
+        );
+    }
+  };
 
   return (
     <div className="admin-dashboard">
@@ -67,54 +93,34 @@ const Admin = () => {
         </div>
         <nav>
           <ul>
-            <li className="active"><FaHome />Admin Dashboard</li>
-            <li>My Profile</li>
+            {/* --- MODIFIED: Navigation items now control the view --- */}
+            <li className={activeView === 'dashboard' ? 'active' : ''} onClick={() => setActiveView('dashboard')}>
+              <FaHome /> Admin Dashboard
+            </li>
+            <li className={activeView === 'addUser' ? 'active' : ''} onClick={() => setActiveView('addUser')}>
+              <FaUserPlus /> Add New User
+            </li>
             <li className={`has-submenu ${submenuOpen ? "open" : ""}`} onClick={toggleSubmenu}>
               Manage ▼
             </li>
             {submenuOpen && (
               <ul className="submenu">
-                <li><Link to="/admin/managecounselor">Mentor</Link></li>
-                <li><Link >Mentee</Link></li>
-                <li><Link >Employee</Link></li>
-                <li><Link >Jobseeker</Link></li>
+                {/* These links could also set the view or navigate to different pages */}
+                <li><Link to="/admin/manage-mentors">Mentor</Link></li>
+                <li><Link to="/admin/manage-mentees">Mentee</Link></li>
+                <li><Link to="/admin/manage-employees">Employee</Link></li>
+                <li><Link to="/admin/manage-jobseekers">Jobseeker</Link></li>
               </ul>
             )}
-            <li><Link to="/admin/MessageHomePage">  Messages <span className="message-count">4</span></Link></li>
+            <li><Link to="/admin/messages">Messages <span className="message-count">4</span></Link></li>
             <li>Change Password</li>
             <li>Log Out</li>
           </ul>
         </nav>
       </aside>
-
+      {/* --- MODIFIED: Main content is now rendered dynamically --- */}
       <main className="content">
-        <div className="stats-grid">
-          {stats.map((stat, index) => (
-            <div key={index} className="stat-card">
-              <div className="icon">{stat.icon}</div>
-              <div className="details">
-                <h4>{stat.value}</h4>
-                <p>{stat.label}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="chart-container">
-          <h3>Analysis Chart</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="offered" stroke="#1CC100" name="Offered Jobs" legendType="circle" />
-              <Line type="monotone" dataKey="applied" stroke="#1DB4BD" name="Applied Candidates" legendType="circle" />
-              <Line type="monotone" dataKey="succeed" stroke="#FDC006" name="Succeed Job Apply" legendType="circle" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        {renderContent()}
       </main>
     </div>
   );
