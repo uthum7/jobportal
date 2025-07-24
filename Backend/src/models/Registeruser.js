@@ -27,7 +27,6 @@ const RegisteruserSchema = new Schema({
     roles: {
         type: [String],
         required: [true, "At least one role is required"],
-        // --- UPDATED: Added 'EMPLOYEE' to the list of valid roles ---
         enum: ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
         validate: {
             validator: function(roles) {
@@ -36,15 +35,7 @@ const RegisteruserSchema = new Schema({
             message: "At least one role must be selected"
         }
     },
-    
-    // --- NEW FIELD ADDED HERE ---
-    passwordResetRequired: {
-        type: Boolean,
-        default: false // Default to false for self-registered users
-    },
-    // ------------------------------------
-
-    // Fields for the "Forgot Password" flow
+    // --- ADD THESE TWO NEW FIELDS HERE ---
     resetPasswordToken: {
         type: String,
         default: undefined // It will not exist in the document unless set
@@ -53,9 +44,10 @@ const RegisteruserSchema = new Schema({
         type: Date,
         default: undefined // It will not exist in the document unless set
     },
+    // ------------------------------------
 }, { timestamps: true });
 
-// Hash password before saving (No changes needed here)
+// Hash password before saving
 RegisteruserSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
 
@@ -68,7 +60,7 @@ RegisteruserSchema.pre("save", async function (next) {
     }
 });
 
-// Method to compare passwords (No changes needed here)
+// Method to compare passwords
 RegisteruserSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
