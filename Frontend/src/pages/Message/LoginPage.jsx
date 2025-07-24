@@ -13,7 +13,8 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    login(formData);
+    console.log("Login form data:", formData);
+   login(formData);
   };
 
   return (
@@ -94,14 +95,7 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <div className="text-center">
-            <p className="text-base-content/60">
-              Don&apos;t have an account?{" "}
-              <Link to="/message/signup" className="link link-primary">
-                Create account
-              </Link>
-            </p>
-          </div>
+          
         
       </div>
 

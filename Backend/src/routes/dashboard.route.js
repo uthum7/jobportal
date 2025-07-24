@@ -5,7 +5,8 @@ import {
     getJobTypeDistribution,
     getJobModeDistribution,
     getExperienceLevelDistribution,
-    getRecentActivity
+    getRecentActivity,
+    getMonthlyUserAnalytics
 } from '../controllers/dashboard.controller.js';
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.get('/analytics/job-types', getJobTypeDistribution);
 router.get('/analytics/job-modes', getJobModeDistribution);
 router.get('/analytics/experience-levels', getExperienceLevelDistribution);
 router.get('/recent-activity', getRecentActivity);
+router.get('/analytics/users-monthly', getMonthlyUserAnalytics);
 
 export default router;

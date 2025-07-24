@@ -147,6 +147,7 @@ const ManageCounselee = () => {
                 </div>
                 <div className="flex items-center gap-3 text-gray-600">
                   <Eye className="cursor-pointer hover:text-emerald-600" onClick={() => console.log('View', c._id)} />
+                    
                   <Edit className="cursor-pointer hover:text-emerald-600" onClick={() => console.log('Edit', c._id)} />
                   <Trash2 className="cursor-pointer hover:text-red-600" onClick={() => console.log('Delete', c._id)} />
                 </div>
