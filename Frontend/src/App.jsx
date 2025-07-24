@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import {
   Route,
@@ -8,10 +6,8 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
-
 import { CVFormProvider } from './context/CVFormContext'; // Adjust this path to where your CVFormContext.jsx file is located.
 import { Toaster } from 'sonner';
-
 
 // Component Imports navbar and footer
 import Navbar from "./components/Navbar/Navbar.jsx";

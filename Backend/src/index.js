@@ -30,8 +30,6 @@ dotenv.config();
 const PORT = process.env.PORT || 5001;
 const MONGO_URL = process.env.MONGO_URL;
 
-console.log("--- The MongoDB connection string my app is using is:", MONGO_URL);
-
 if (!MONGO_URL) {
   console.error("❌ FATAL ERROR: MONGO_URL is not defined in your .env file.");
   process.exit(1);
