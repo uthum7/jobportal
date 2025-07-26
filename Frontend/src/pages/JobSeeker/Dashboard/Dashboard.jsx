@@ -5,13 +5,7 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import { Calendar, CheckCircle, Clock, X, FileText, User, TrendingUp, Target } from 'lucide-react';
 import JobseekerSidebar from '../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar';
 import { getUserId, isAuthenticated, isJobSeeker, getToken } from '../../../utils/auth';
-
-// Keep hardcoded data for CV completion and skill gap analysis
-const cvCompletionData = {
-  percentage: 75,
-  completedSections: ['Personal Info', 'Education', 'Experience'],
-  missingSections: ['Skills', 'Certifications', 'Projects']
-};
+import { useCVForm } from '../../../context/CVFormContext';
 
 const skillMatchData = [
   { skill: 'React', userLevel: 8, requiredLevel: 9 },
@@ -25,7 +19,18 @@ const skillMatchData = [
 const JobSeekerDashboard = () => {
   // State for animations
   const [animationComplete, setAnimationComplete] = useState(false);
-  const [cvProgress, setCvProgress] = useState(0);
+  const { completionStatus, loading: cvLoading, fetchResumeData } = useCVForm();
+
+  // Calculate CV completion percentage
+  const getCVCompletionPercentage = () => {
+    if (!completionStatus) return 0;
+    const totalSections = 6; // personalinfo, education, experience, skills, summary, references (excluding preview)
+    const completed = Object.values(completionStatus || {}).filter(Boolean).length;
+    return Math.round((completed / totalSections) * 100);
+  };
+  const cvProgress = getCVCompletionPercentage();
+  const completedSections = Object.keys(completionStatus || {}).filter(key => completionStatus[key] && key !== 'preview');
+  const missingSections = Object.keys(completionStatus || {}).filter(key => !completionStatus[key] && key !== 'preview');
   
   // State for real user data
   const [dashboardData, setDashboardData] = useState({
@@ -58,20 +63,22 @@ const JobSeekerDashboard = () => {
     setTimeout(() => setAnimationComplete(true), 100);
     
     // Animate CV progress
-    const timer = setInterval(() => {
-      setCvProgress(prev => {
-        if (prev >= cvCompletionData.percentage) {
-          clearInterval(timer);
-          return cvCompletionData.percentage;
-        }
-        return prev + 1;
-      });
-    }, 20);
+    // const timer = setInterval(() => {
+    //   setCvProgress(prev => {
+    //     if (prev >= cvCompletionData.percentage) {
+    //       clearInterval(timer);
+    //       return cvCompletionData.percentage;
+    //     }
+    //     return prev + 1;
+    //   });
+    // }, 20);
 
     // Fetch real dashboard data
     fetchDashboardData();
 
-    return () => clearInterval(timer);
+    return () => {
+      // clearInterval(timer); // This line was removed as per the new_code
+    };
   }, [userId, navigate]);
 
   const fetchDashboardData = async () => {
@@ -480,14 +487,13 @@ try {
                 <CircularProgress percentage={cvProgress} />
                 <div className="cv-progress-info">
                   <p>
-                    {cvCompletionData.completedSections.length} of{' '}
-                    {cvCompletionData.completedSections.length + cvCompletionData.missingSections.length} sections completed
+                    {completedSections.length} of 6 sections completed
                   </p>
                   <p style={{ fontSize: '0.75rem' }}>
-                    Missing: {cvCompletionData.missingSections.join(', ')}
+                    Missing: {missingSections.map(section => section.charAt(0).toUpperCase() + section.slice(1)).join(', ')}
                   </p>
-                  <button className="complete-cv-btn">
-                    Complete My CV
+                  <button className="complete-cv-btn" onClick={fetchResumeData}>
+                    Refresh CV Data
                   </button>
                 </div>
               </div>
