@@ -24,13 +24,13 @@ const JobSeekerDashboard = () => {
   // Calculate CV completion percentage
   const getCVCompletionPercentage = () => {
     if (!completionStatus) return 0;
-    const totalSections = 6; // personalinfo, education, experience, skills, summary, references
+    const totalSections = 6; // personalinfo, education, experience, skills, summary, references (excluding preview)
     const completed = Object.values(completionStatus || {}).filter(Boolean).length;
     return Math.round((completed / totalSections) * 100);
   };
   const cvProgress = getCVCompletionPercentage();
-  const completedSections = Object.keys(completionStatus || {}).filter(key => completionStatus[key]);
-  const missingSections = Object.keys(completionStatus || {}).filter(key => !completionStatus[key]);
+  const completedSections = Object.keys(completionStatus || {}).filter(key => completionStatus[key] && key !== 'preview');
+  const missingSections = Object.keys(completionStatus || {}).filter(key => !completionStatus[key] && key !== 'preview');
   
   // State for real user data
   const [dashboardData, setDashboardData] = useState({
@@ -487,10 +487,10 @@ try {
                 <CircularProgress percentage={cvProgress} />
                 <div className="cv-progress-info">
                   <p>
-                    {completedSections.length} of {completedSections.length + missingSections.length} sections completed
+                    {completedSections.length} of 6 sections completed
                   </p>
                   <p style={{ fontSize: '0.75rem' }}>
-                    Missing: {missingSections.join(', ')}
+                    Missing: {missingSections.map(section => section.charAt(0).toUpperCase() + section.slice(1)).join(', ')}
                   </p>
                   <button className="complete-cv-btn" onClick={fetchResumeData}>
                     Refresh CV Data

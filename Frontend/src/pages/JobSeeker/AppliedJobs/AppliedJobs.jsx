@@ -12,6 +12,7 @@ const AppliedJobsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const navigate = useNavigate();
   
   const userId = getUserId();
@@ -74,14 +75,22 @@ const AppliedJobsPage = () => {
   };
 
   const filteredJobs = appliedJobs.filter(job => {
-    return filter === "all" || job.status === filter;
+    // First filter by status
+    const statusMatch = filter === "all" || job.status === filter;
+    
+    // Then filter by search keyword
+    const keywordMatch = !searchKeyword || 
+      job.job.JobTitle.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      job.job.JobType.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      job.job.JobMode.toLowerCase().includes(searchKeyword.toLowerCase());
+    
+    return statusMatch && keywordMatch;
   });
 
   const getStatusColor = (status) => {
     switch (status) {
       case "pending": return "pending";
-      case "reviewed": return "reviewed";
-      case "shortlisted": return "shortlisted";
+      case "accepted": return "accepted";
       case "rejected": return "rejected";
       default: return "pending";
     }
@@ -162,8 +171,28 @@ const AppliedJobsPage = () => {
             )}
           </div>
           {/* Filter Bar */}
+          {/* Search Bar */}
+          <div className="search-bar">
+            <div className="search-input-container">
+              <input
+                type="text"
+                placeholder="Search by job title, type, or mode..."
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="search-input"
+              />
+              <button 
+                className="clear-search-btn"
+                onClick={() => setSearchKeyword("")}
+                style={{ display: searchKeyword ? 'block' : 'none' }}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+          
           <div className="filter-bar">
-            {["all", "pending", "reviewed", "shortlisted", "rejected"].map(status => (
+            {["all", "pending", "accepted", "rejected"].map(status => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
@@ -285,20 +314,34 @@ const AppliedJobsPage = () => {
 
                 <h3 className="no-applied-jobs-title">
                   {filter === "all" 
-                    ? "No job applications yet" 
-                    : `No ${filter} applications`}
+                    ? (searchKeyword ? "No applications found" : "No job applications yet")
+                    : `No ${filter} applications${searchKeyword ? ' found' : ''}`}
                 </h3>
 
                 <p className="no-applied-jobs-message">
                   {filter === "all" 
-                    ? "You haven't applied to any jobs yet. Start exploring job opportunities and apply to positions that match your skills and interests."
-                    : `You don't have any applications with ${filter} status at the moment.`}
+                    ? (searchKeyword 
+                        ? "No applications match your search criteria. Try adjusting your search terms or filters."
+                        : "You haven't applied to any jobs yet. Start exploring job opportunities and apply to positions that match your skills and interests.")
+                    : `You don't have any applications with ${filter} status${searchKeyword ? ' matching your search' : ''} at the moment.`}
                 </p>
 
-                {filter === "all" && (
+                {(filter === "all" && !searchKeyword) && (
                   <Link to="/JobSeeker/apply-for-job" className="browse-jobs-button">
                     Browse & Apply for Jobs
                   </Link>
+                )}
+                
+                {(searchKeyword || filter !== "all") && (
+                  <button 
+                    className="clear-filters-btn"
+                    onClick={() => {
+                      setSearchKeyword("");
+                      setFilter("all");
+                    }}
+                  >
+                    Clear All Filters
+                  </button>
                 )}
               </div>
             )}
