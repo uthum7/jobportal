@@ -38,7 +38,8 @@ import ManageCounselee from "./pages/Admin/ManageCounselee.jsx";
 import ManageEmployee from "./pages/Admin/ManageEmployee.jsx";
 import ManageJobseeker from "./pages/Admin/ManageJobseeker.jsx";
 import AdminChangePassword from "./pages/Admin/AdminChangePassword.jsx";
-import EnhancedEmployeeInfo from "./pages/Admin/Manage/EmployeeManage.jsx";
+import EnhancedEmployeeInfo from "./pages/Admin/Manage/ViewEmployee.jsx";
+import ViewAllJobs from "./pages/Admin/Manage/ViewAllJobs.jsx";
 
 
 //jobseeker
@@ -91,7 +92,7 @@ import CVBuilderLayout from "./pages/CVBuilderLayout.jsx";
 
 // Job Posting
 import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
-import Job from "../../Backend/src/models/Job.model.js";
+//import Job from "../../Backend/src/models/Job.model.js";
 
 // Dashboard redirects
 const dashboardByRole = {
@@ -227,7 +228,8 @@ function App() {
           <Route path="/admin/managejobseeker" element={<RoleBasedRoute element={<ManageJobseeker/>} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
           <Route path="/admin/changepassword" element={<RoleBasedRoute element={<AdminChangePassword />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
 
-          <Route path="/admin/enhancedemployeeinfo" element={<RoleBasedRoute element={<EnhancedEmployeeInfo />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/viewemployee/:id" element={<RoleBasedRoute element={< EnhancedEmployeeInfo />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/viewalljobs/:id" element={<RoleBasedRoute element={<ViewAllJobs />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
 
           
           
