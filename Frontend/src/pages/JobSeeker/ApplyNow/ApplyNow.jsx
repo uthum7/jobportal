@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import './ApplyNow.css';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt } from 'react-icons/fa';
 
 const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
     const [formData, setFormData] = useState({
@@ -14,24 +11,40 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
         address: '',
         birthday: '', 
         gender: '',
-        skills: [''],
+        technicalSkills: [{ name: '', proficiency: 1 }],
+        socialLinks: { linkedIn: '', github: '', portfolio: '' },
         education: [{
             institute: '',
-            degree: '',
+            educationLevel: '',
+            fieldOfStudy: '',
+            gpaOrGrade: '',
+            results: [{ subject: '', grade: '' }],
             startDate: '',
             endDate: '',
-            currentlyStudying: false
+            currentlyStudying: false,
+            alYear: '', // For A/L year
+            alSubjects: [{ subject: '', grade: '' }] // For A/L subjects
         }],
-        summary: '',
         workExperience: [{
             jobTitle: '',
             company: '',
+            industry: '',
             startDate: '',
             endDate: '',
-            description: '',
-            currentlyWorking: false
+            currentlyWorking: false,
+            description: ''
         }],
-        certifications: [''],
+        projects: [{
+            title: '',
+            description: '',
+            technologies: [],
+            link: ''
+        }],
+        certifications: [{
+            name: '',
+            issuer: '',
+            year: ''
+        }],
         coverLetter: ''
     });
 
@@ -42,13 +55,133 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [submitSuccess, setSubmitSuccess] = useState(false);
 
+    // Field validation helpers
+    const validateYear = (value) => {
+        if (!value) return true; // Allow empty for now
+        
+        // Check if contains non-digits
+        if (!/^\d+$/.test(value)) {
+            return false;
+        }
+        
+        // Check length
+        if (value.length > 4) {
+            return false;
+        }
+        
+        // Check if future year
+        const currentYear = new Date().getFullYear();
+        const inputYear = parseInt(value);
+        if (value.length === 4 && inputYear > currentYear) {
+            return false;
+        }
+        
+        return true;
+    };
+
+    const validateURL = (url) => {
+        if (!url) return true; // Allow empty
+        try {
+            new URL(url);
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
+    const validateTextOnly = (value) => {
+        if (!value) return true; // Allow empty for now
+        // Allow letters, spaces, and common punctuation, but no numbers
+        return /^[a-zA-Z\s\.',-/&()]+$/.test(value);
+    };
+
+    // Date validation helper
+    const getTodayString = () => {
+        return new Date().toISOString().split('T')[0];
+    };
+
+    // Validation functions for Add buttons
+    const canAddEducation = () => {
+        if (formData.education.length === 0) return true;
+        const lastEdu = formData.education[formData.education.length - 1];
+        
+        // Basic required fields
+        if (!lastEdu.institute?.trim() || !lastEdu.educationLevel?.trim()) {
+            return false;
+        }
+        
+        // A/L specific validation
+        if (lastEdu.educationLevel === 'A/L') {
+            if (!lastEdu.fieldOfStudy?.trim() || !lastEdu.alYear?.trim()) {
+                return false;
+            }
+            // Check if at least one A/L subject is properly filled
+            const validSubjects = (lastEdu.alSubjects || []).filter(sub => 
+                sub.subject?.trim() && sub.grade?.trim()
+            );
+            return validSubjects.length > 0;
+        }
+        
+        // Non-A/L validation - all fields required
+        if (['Diploma', 'Bachelor’s', 'Master’s', 'PhD'].includes(lastEdu.educationLevel)) {
+            const hasRequiredFields = lastEdu.fieldOfStudy?.trim() && 
+                                    lastEdu.gpaOrGrade?.trim() && 
+                                    lastEdu.startDate?.trim();
+            
+            // If currently studying, end date is not required
+            if (lastEdu.currentlyStudying) {
+                return hasRequiredFields;
+            }
+            
+            // If not currently studying, end date is required
+            return hasRequiredFields && lastEdu.endDate?.trim();
+        }
+        
+        return true;
+    };
+
+    const canAddExperience = () => {
+        if (formData.workExperience.length === 0) return true;
+        const lastExp = formData.workExperience[formData.workExperience.length - 1];
+        
+        // All fields except description are required
+        const hasRequiredFields = lastExp.jobTitle?.trim() && 
+                                 lastExp.company?.trim() && 
+                                 lastExp.startDate?.trim();
+        
+        // If currently working, end date is not required
+        if (lastExp.currentlyWorking) {
+            return hasRequiredFields;
+        }
+        
+        // If not currently working, end date is required
+        return hasRequiredFields && lastExp.endDate?.trim();
+    };
+
+    const canAddProject = () => {
+        if (formData.projects.length === 0) return true;
+        const lastProject = formData.projects[formData.projects.length - 1];
+        
+        // All fields except description are required
+        return lastProject.title?.trim() && 
+               lastProject.technologies?.length > 0 && 
+               lastProject.link?.trim();
+    };
+
+    const canAddCertification = () => {
+        if (formData.certifications.length === 0) return true;
+        const lastCert = formData.certifications[formData.certifications.length - 1];
+        
+        // All fields are required
+        return lastCert.name?.trim() && lastCert.issuer?.trim() && lastCert.year?.trim();
+    };
+
     // Validation functions
     const validateField = (name, value) => {
         const newErrors = { ...errors };
 
         switch (name) {
             case 'fullName':
-                // Only allow letters, spaces, and common name characters
                 const nameRegex = /^[a-zA-Z\s\.',-]*$/;
                 if (!value.trim()) {
                     newErrors[name] = 'Full name is required';
@@ -64,7 +197,6 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
                 break;
 
             case 'nic':
-                // Sri Lankan NIC format: 9 digits + V/X or 12 digits
                 const nicRegex = /^(\d{12}|\d{9}[VXvx])$/;
                 if (!value.trim()) {
                     newErrors[name] = 'NIC is required';
@@ -87,7 +219,6 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
                 break;
 
             case 'phoneNumber':
-                // Sri Lankan phone number format: 0771234567 or +94771234567
                 const phoneRegex = /^(0[1-9]\d{8}|\+94[1-9]\d{8})$/;
                 if (!value.trim()) {
                     newErrors[name] = 'Phone number is required';
@@ -141,95 +272,110 @@ case 'gender':
     };
 
     const validateSkills = () => {
-        const validSkills = formData.skills.filter(skill => skill.trim());
+        const validSkills = formData.technicalSkills.filter(skill => skill.name.trim());
         if (validSkills.length === 0) {
-            setErrors(prev => ({ ...prev, skills: 'At least one skill is required' }));
+            setErrors(prev => ({ ...prev, technicalSkills: 'At least one technical skill is required' }));
             return false;
         } else {
             setErrors(prev => {
                 const newErrors = { ...prev };
-                delete newErrors.skills;
+                delete newErrors.technicalSkills;
                 return newErrors;
             });
             return true;
         }
     };
 
-    const validateEducation = () => {
-        const validEducation = formData.education.filter(edu =>
-            edu.institute.trim() && edu.degree.trim()
+    const validateCertifications = () => {
+        const validCertifications = formData.certifications.filter(cert =>
+            cert.name.trim() && cert.issuer.trim() && cert.year.trim()
         );
-        if (validEducation.length === 0) {
-            setErrors(prev => ({ ...prev, education: 'At least one education entry is required' }));
+        if (validCertifications.length === 0) {
+            setErrors(prev => ({ ...prev, certifications: 'At least one certification is required' }));
             return false;
         } else {
             setErrors(prev => {
                 const newErrors = { ...prev };
-                delete newErrors.education;
+                delete newErrors.certifications;
                 return newErrors;
             });
             return true;
         }
     };
 
+    const validateProjects = () => {
+        const validProjects = formData.projects.filter(project => project.title?.trim());
+        if (validProjects.length === 0) {
+            setErrors(prev => ({ ...prev, projects: 'At least one project is required' }));
+            return false;
+        } else {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors.projects;
+                return newErrors;
+            });
+            return true;
+        }
+    };
+
+    // Mock data loading for demonstration
     useEffect(() => {
-        const loadData = async () => {
-            try {
-                const jobRes = await axios.get(`http://localhost:5001/api/job/${jobId}`);
-                setJobTitle(jobRes.data.title);
-
-                const profileRes = await axios.get(`http://localhost:5001/api/users/profile/${userId}`);
-                const profile = profileRes.data;
-
-                setFormData({
-                    fullName: profile.fullName || '',
-                    nic: profile.nic || '',
-                    email: profile.email || '',
-                    phoneNumber: profile.phoneNumber || '',
-                    address: profile.address || '',
-                    birthday: profile.birthday || '',
-                    gender: profile.gender || '',
-                    skills: profile.skills.length ? profile.skills : [''],
-                    education: profile.education.length ? profile.education : [{
+        // Simulate loading user profile data
+        const mockProfile = {
+            fullName: '',
+            nic: '',
+            email: '',
+            phoneNumber: '',
+            address: '',
+            birthday: '',
+            gender: '',
+            technicalSkills: [{ name: '', proficiency: 1 }],
+            socialLinks: { linkedIn: '', github: '', portfolio: '' },
+            education: [{
                         institute: '',
-                        degree: '',
+                educationLevel: '',
+                fieldOfStudy: '',
+                gpaOrGrade: '',
+                results: [{ subject: '', grade: '' }],
                         startDate: '',
                         endDate: '',
-                        currentlyStudying: false
+                currentlyStudying: false,
+                alYear: '',
+                alSubjects: [{ subject: '', grade: '' }]
                     }],
-                    summary: profile.summary || '',
-                    workExperience: profile.workExperience.length ? profile.workExperience : [{
+            workExperience: [{
                         jobTitle: '',
                         company: '',
+                industry: '',
                         startDate: '',
                         endDate: '',
+                currentlyWorking: false,
+                description: ''
+            }],
+            projects: [{
+                title: '',
                         description: '',
-                        currentlyWorking: false
+                technologies: [],
+                link: ''
                     }],
-                    certifications: profile.certifications.length ? profile.certifications : [''],
-                    coverLetter: ''
-                });
-            } catch (err) {
-                console.error('Error loading data', err);
-            }
+            certifications: [{
+                name: '',
+                issuer: '',
+                year: ''
+            }]
         };
 
-        loadData();
-    }, [jobId, userId]);
+        setFormData({ ...formData, ...mockProfile });
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        // Handle special input restrictions
         let processedValue = value;
 
         if (name === 'fullName') {
-            // Remove numbers and special characters except allowed ones
             processedValue = value.replace(/[^a-zA-Z\s\.',-]/g, '');
         } else if (name === 'nic') {
-            // Only allow numbers and V/X at the end
             processedValue = value.replace(/[^0-9VXvx]/g, '');
-            // Ensure V/X only at the end for 10-character NIC
             if (processedValue.length === 10) {
                 const lastChar = processedValue.slice(-1);
                 if (['V', 'X', 'v', 'x'].includes(lastChar)) {
@@ -237,51 +383,170 @@ case 'gender':
                 }
             }
         } else if (name === 'phoneNumber') {
-            // Only allow numbers, +, and limit length
             processedValue = value.replace(/[^0-9+]/g, '');
             if (processedValue.startsWith('+94')) {
-                processedValue = processedValue.slice(0, 12); // +94 + 9 digits
+                processedValue = processedValue.slice(0, 12);
             } else if (processedValue.startsWith('0')) {
-                processedValue = processedValue.slice(0, 10); // 0 + 9 digits
+                processedValue = processedValue.slice(0, 10);
             }
         }
 
         setFormData({ ...formData, [name]: processedValue });
         setIsFormDirty(true);
-
-        // Real-time validation
         validateField(name, processedValue);
     };
 
     const handleArrayChange = (field, index, value) => {
+        if (field === 'technicalSkills') {
+            const updated = [...formData.technicalSkills];
+        updated[index] = value;
+            setFormData({ ...formData, technicalSkills: updated });
+        setIsFormDirty(true);
+            setTimeout(() => validateSkills(), 100);
+            return;
+        }
         const updated = [...formData[field]];
         updated[index] = value;
         setFormData({ ...formData, [field]: updated });
         setIsFormDirty(true);
-
-        // Validate skills when they change
-        if (field === 'skills') {
-            setTimeout(() => validateSkills(), 100);
-        }
     };
 
     const handleNestedChange = (field, index, key, value) => {
         const updated = [...formData[field]];
+        
+        // Year field validation
+        if (key === 'year' || key === 'alYear') {
+            // Only allow digits and max 4 characters
+            const cleanValue = value.replace(/[^\d]/g, '').slice(0, 4);
+            
+            if (!validateYear(cleanValue)) {
+                // Set error for invalid year
+                setErrors(prev => ({
+                    ...prev,
+                    [`${field}_${index}_${key}`]: 'Enter a valid year'
+                }));
+                return;
+            } else {
+                // Clear error if valid
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors[`${field}_${index}_${key}`];
+                    return newErrors;
+                });
+            }
+            value = cleanValue;
+        }
+        
+        // Text-only field validation (no numbers allowed)
+        if (key === 'jobTitle' || key === 'fieldOfStudy' || key === 'subject') {
+            if (value && !validateTextOnly(value)) {
+                setErrors(prev => ({
+                    ...prev,
+                    [`${field}_${index}_${key}`]: 'This field cannot contain numbers'
+                }));
+                return;
+            } else {
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors[`${field}_${index}_${key}`];
+                    return newErrors;
+                });
+            }
+        }
+        
+        // Link validation
+        if (key === 'link') {
+            if (value && !validateURL(value)) {
+                setErrors(prev => ({
+                    ...prev,
+                    [`${field}_${index}_${key}`]: 'Please enter a valid URL'
+                }));
+            } else {
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors[`${field}_${index}_${key}`];
+                    return newErrors;
+                });
+            }
+        }
+        
+        // Date validation for start and end dates
+        if (key === 'startDate' || key === 'endDate') {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Prevent future dates
+            if (value > today) {
+                return; // Don't update if trying to set future date
+            }
+            
+            // For end date, ensure it's not before start date
+            if (key === 'endDate' && updated[index].startDate && value < updated[index].startDate) {
+                return; // Don't update if end date is before start date
+            }
+            
+            // For start date, clear end date if it becomes before the new start date
+            if (key === 'startDate' && updated[index].endDate && value > updated[index].endDate) {
+                updated[index].endDate = '';
+            }
+        }
+        
         updated[index][key] = value;
 
-// Clear end date when "currently studying" or "currently working" is checked
     if (key === 'currentlyStudying' || key === 'currentlyWorking') {
         if (value === true) {
-            updated[index]['endDate'] = ''; // Clear the end date
+                updated[index]['endDate'] = '';
         }
     }
 
         setFormData({ ...formData, [field]: updated });
         setIsFormDirty(true);
+    };
 
-        // Validate education when it changes
-        if (field === 'education') {
-            setTimeout(() => validateEducation(), 100);
+    // Handle A/L subjects - Updated to work like skills
+    const handleALSubjectChange = (eduIndex, subjectIndex, field, value) => {
+        const updated = [...formData.education];
+        if (!updated[eduIndex].alSubjects) {
+            updated[eduIndex].alSubjects = [{ subject: '', grade: '' }];
+        }
+        
+        // Validate subject field (no numbers allowed)
+        if (field === 'subject') {
+            if (value && !validateTextOnly(value)) {
+                setErrors(prev => ({
+                    ...prev,
+                    [`education_${eduIndex}_subject_${subjectIndex}`]: 'Subject cannot contain numbers'
+                }));
+                return;
+            } else {
+                setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors[`education_${eduIndex}_subject_${subjectIndex}`];
+                    return newErrors;
+                });
+            }
+        }
+        
+        updated[eduIndex].alSubjects[subjectIndex][field] = value;
+        setFormData({ ...formData, education: updated });
+        setIsFormDirty(true);
+    };
+
+    const addALSubject = (eduIndex) => {
+        const updated = [...formData.education];
+        if (!updated[eduIndex].alSubjects) {
+            updated[eduIndex].alSubjects = [];
+        }
+        updated[eduIndex].alSubjects.push({ subject: '', grade: '' });
+        setFormData({ ...formData, education: updated });
+        setIsFormDirty(true);
+    };
+
+    const removeALSubject = (eduIndex, subjectIndex) => {
+        const updated = [...formData.education];
+        if (updated[eduIndex].alSubjects && updated[eduIndex].alSubjects.length > 1) {
+            updated[eduIndex].alSubjects.splice(subjectIndex, 1);
+            setFormData({ ...formData, education: updated });
+            setIsFormDirty(true);
         }
     };
 
@@ -300,18 +565,17 @@ case 'gender':
 
     const validateForm = () => {
         let isValid = true;
-
-        // Validate all required fields
         const requiredFields = ['fullName', 'nic', 'email', 'phoneNumber', 'address', 'birthday', 'gender'];
+        
         requiredFields.forEach(field => {
             if (!validateField(field, formData[field])) {
                 isValid = false;
             }
         });
 
-        // Validate skills and education
         if (!validateSkills()) isValid = false;
-        if (!validateEducation()) isValid = false;
+        if (!validateCertifications()) isValid = false;
+        if (!validateProjects()) isValid = false;
 
         return isValid;
     };
@@ -326,28 +590,31 @@ case 'gender':
         setLoading(true);
 
         try {
-            const payload = {
-                jobId,
-                userId,
-                applicationData: {
-                    ...formData,
-                    skills: formData.skills.filter(s => s.trim()),
-                    certifications: formData.certifications.filter(c => c.trim()),
-                    education: formData.education.filter(e => e.institute.trim() || e.degree.trim()),
-                    workExperience: formData.workExperience.filter(w => w.jobTitle.trim() || w.company.trim())
-                }
-            };
-
-            await axios.post('http://localhost:5001/api/applications/submit', payload);
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
             setSubmitSuccess(true);
             setShowSuccess(true);
             setIsFormDirty(false);
-            setTimeout(() => onSuccess ? onSuccess() : onClose(), 3000);
+            if (onSuccess) {
+                setTimeout(() => onSuccess(), 3000);
+            }
         } catch (err) {
-            alert(err.response?.data?.error || 'Submission failed');
+            alert('Submission failed');
         } finally {
             setLoading(false);
         }
+    };
+
+    const calculateAge = (birthday) => {
+        if (!birthday) return '';
+        const birthDate = new Date(birthday);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
     };
 
     if (showSuccess) {
@@ -373,7 +640,7 @@ case 'gender':
         <div className="apply-form-overlay">
             <div className="apply-form-container">
                 <div className="apply-form-header">
-                 <strong>  <h2>Apply for: {JobTitle}</h2></strong> 
+                    <strong><h2>Apply for: {JobTitle}</h2></strong>
                     <button
                         onClick={() => isFormDirty && !submitSuccess ? setShowWarning(true) : onClose()}
                         className="close-btn"
@@ -391,7 +658,7 @@ case 'gender':
                             <label>Full Name *</label>
                             <input
                                 name="fullName"
-                                value={formData.fullName}
+                                value={formData.fullName || ''}
                                 onChange={handleChange}
                                 className={errors.fullName ? 'error' : ''}
                                 placeholder="Enter your full name"
@@ -403,7 +670,7 @@ case 'gender':
                             <label>NIC *</label>
                             <input
                                 name="nic"
-                                value={formData.nic}
+                                value={formData.nic || ''}
                                 onChange={handleChange}
                                 className={errors.nic ? 'error' : ''}
                                 placeholder="123456789V or 123456789012"
@@ -417,7 +684,7 @@ case 'gender':
                             <input
                                 name="email"
                                 type="email"
-                                value={formData.email}
+                                value={formData.email || ''}
                                 onChange={handleChange}
                                 className={errors.email ? 'error' : ''}
                                 placeholder="your.email@example.com"
@@ -429,7 +696,7 @@ case 'gender':
                             <label>Phone Number *</label>
                             <input
                                 name="phoneNumber"
-                                value={formData.phoneNumber}
+                                value={formData.phoneNumber || ''}
                                 onChange={handleChange}
                                 className={errors.phoneNumber ? 'error' : ''}
                                 placeholder="0771234567 or +94771234567"
@@ -441,7 +708,7 @@ case 'gender':
                             <label>Address *</label>
                             <textarea
                                 name="address"
-                                value={formData.address}
+                                value={formData.address || ''}
                                 onChange={handleChange}
                                 className={errors.address ? 'error' : ''}
                                 placeholder="Enter your complete address"
@@ -451,312 +718,447 @@ case 'gender':
 
                         <div className="form-group">
     <label>Birthday *</label>
-    <DatePicker
-        selected={formData.birthday ? new Date(formData.birthday) : null}
-        onChange={(date) => {
-            const dateString = date ? date.toISOString().split('T')[0] : '';
-            setFormData({ ...formData, birthday: dateString });
-            setIsFormDirty(true);
-            validateField('birthday', dateString);
-        }}
-        dateFormat="yyyy-MM-dd"
-        placeholderText="Select your birthday"
-        maxDate={new Date()} // No future dates
-        showYearDropdown
-        showMonthDropdown
-        dropdownMode="select"
-        customInput={
-            <div className="date-picker-input">
+                            <div className="simple-date-picker">
                 <input 
-                    value={formData.birthday} 
-                    readOnly 
-                    placeholder="Select your birthday"
+                                    type="date"
+                                    name="birthday"
+                                    value={formData.birthday || ''}
+                                    onChange={handleChange}
                     className={errors.birthday ? 'error' : ''}
+                                    max={new Date().toISOString().split('T')[0]}
                 />
-                <FaCalendarAlt className="calendar-icon" />
+                                <FaCalendarAlt className="calendar-icon-simple" />
             </div>
-        }
-    />
     {errors.birthday && <span className="error-message">{errors.birthday}</span>}
+                            <div className="age-display">
+                                <label>Age: </label>
+                                <input value={calculateAge(formData.birthday)} readOnly className="age-input" />
+                            </div>
 </div>
 
 <div className="form-group">
     <label>Gender *</label>
     <select
         name="gender"
-        value={formData.gender}
+                                value={formData.gender || ''}
         onChange={handleChange}
         className={errors.gender ? 'error' : ''}
     >
         <option value="" disabled hidden>Select Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-        <option value="prefer-not-to-say">Prefer not to say</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Prefer not to say">Prefer not to say</option>
     </select>
     {errors.gender && <span className="error-message">{errors.gender}</span>}
 </div>
                     </div>
 
-                    {/* Skills & Certifications */}
+                    {/* Skills & Social Links */}
                     <div className="form-section">
-                        <h3>Skills & Certifications</h3>
+                        <h3>Skills & Social Links</h3>
 
+                        {/* Technical Skills */}
                         <div className="form-group">
-                            <label>Skills *</label>
+                            <label>Technical Skills *</label>
+                            {errors.technicalSkills && <span className="error-message">{errors.technicalSkills}</span>}
 
-                            {/* New input field always at the top */}
-                            <div className="input-with-add">
+                            {/* Add new skill input row (always on top) */}
+                            <div className="skill-input-container">
+                                <div className="skill-input-row">
                                 <input
-                                    value={formData.skills[formData.skills.length - 1]}
-                                    onChange={e => handleArrayChange('skills', formData.skills.length - 1, e.target.value)}
-                                    placeholder="Enter a skill"
+                                        value={formData.technicalSkills[formData.technicalSkills.length - 1].name || ''}
+                                        onChange={e => handleArrayChange('technicalSkills', formData.technicalSkills.length - 1, { ...formData.technicalSkills[formData.technicalSkills.length - 1], name: e.target.value })}
+                                        placeholder="Enter a technical skill"
+                                        className="skill-name-input"
                                 />
+                                    <div className="proficiency-container">
+                                        <label className="proficiency-label">Proficiency (1-5):</label>
+                                        <select
+                                            value={formData.technicalSkills[formData.technicalSkills.length - 1].proficiency || 1}
+                                            onChange={e => handleArrayChange('technicalSkills', formData.technicalSkills.length - 1, { ...formData.technicalSkills[formData.technicalSkills.length - 1], proficiency: Number(e.target.value) })}
+                                            className="proficiency-select"
+                                        >
+                                            {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="skill-actions">
                                 <button
                                     type="button"
-                                    onClick={() => addItem('skills', '')}
-                                    disabled={!formData.skills[formData.skills.length - 1].trim()}
+                                            className="add-skill-btn"
+                                            onClick={() => addItem('technicalSkills', { name: '', proficiency: 1 })}
+                                            disabled={!formData.technicalSkills[formData.technicalSkills.length - 1].name.trim()}
+                                            title="Add new skill"
                                 >
                                     +
                                 </button>
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* Added skills displayed below */}
-                            {formData.skills.slice(0, -1).map((skill, i) => (
-                                <div className="input-with-add" key={i}>
+                            {/* List of added skills (read-only, with remove) */}
+                            {formData.technicalSkills.slice(0, -1).map((skill, i) => (
+                                <div key={i} className="skill-input-container">
+                                    <div className="skill-input-row">
                                     <input
-                                        value={skill}
-                                        onChange={e => handleArrayChange('skills', i, e.target.value)}
-                                        placeholder="Enter a skill"
+                                            value={skill.name}
                                         readOnly
+                                            className="skill-name-input"
                                     />
-                                    <button className="remove-btn" type="button" onClick={() => removeItem('skills', i)}>×</button>
+                                        <div className="proficiency-container">
+                                            <label className="proficiency-label">Proficiency (1-5):</label>
+                                            <select value={skill.proficiency} className="proficiency-select" disabled>
+                                                {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="skill-actions">
+                                            <button
+                                                type="button"
+                                                className="remove-skill-btn"
+                                                onClick={() => removeItem('technicalSkills', i)}
+                                                title="Remove skill"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
-
-                            {errors.skills && <span className="error-message">{errors.skills}</span>}
                         </div>
 
+                        {/* Social Links */}
                         <div className="form-group">
-                            <label>Certifications</label>
-
-                            {/* New input field always at the top */}
-                            <div className="input-with-add">
+                            <label>Social Links</label>
                                 <input
-                                    value={formData.certifications[formData.certifications.length - 1]}
-                                    onChange={e => handleArrayChange('certifications', formData.certifications.length - 1, e.target.value)}
-                                    placeholder="Enter a certification"
+                                name="linkedIn"
+                                value={formData.socialLinks?.linkedIn || ''}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    socialLinks: { ...formData.socialLinks, linkedIn: e.target.value }
+                                })}
+                                placeholder="LinkedIn URL"
+                                className="social-link-input"
                                 />
-                                <button
-                                    type="button"
-                                    onClick={() => addItem('certifications', '')}
-                                    disabled={!formData.certifications[formData.certifications.length - 1].trim()}
-                                >
-                                    +
-                                </button>
+                            <input
+                                name="github"
+                                value={formData.socialLinks?.github || ''}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    socialLinks: { ...formData.socialLinks, github: e.target.value }
+                                })}
+                                placeholder="GitHub URL"
+                                className="social-link-input"
+                            />
+                            <input
+                                name="portfolio"
+                                value={formData.socialLinks?.portfolio || ''}
+                                onChange={(e) => setFormData({
+                                    ...formData,
+                                    socialLinks: { ...formData.socialLinks, portfolio: e.target.value }
+                                })}
+                                placeholder="Portfolio URL"
+                                className="social-link-input"
+                            />
+                        </div>
                             </div>
 
-                            {/* Added certifications displayed below */}
-                            {formData.certifications.slice(0, -1).map((cert, i) => (
-                                <div className="input-with-add" key={i}>
+                    {/* Education Section */}
+                    <div className="form-section">
+                        <h3>Education</h3>
+                        {formData.education.map((edu, i) => (
+                            <div key={i} className="education-entry">
+                                <div className="form-group">
                                     <input
-                                        value={cert}
-                                        onChange={e => handleArrayChange('certifications', i, e.target.value)}
-                                        placeholder="Enter a certification"
-                                        readOnly
+                                        placeholder="Institute Name"
+                                        value={edu.institute || ''}
+                                        onChange={e => handleNestedChange('education', i, 'institute', e.target.value)}
+                                        required
                                     />
-                                    <button className="remove-btn" type="button" onClick={() => removeItem('certifications', i)}>×</button>
                                 </div>
-                            ))}
-                        </div>
+                                <div className="form-group">
+                                    <select
+                                        value={edu.educationLevel || ''}
+                                        onChange={e => handleNestedChange('education', i, 'educationLevel', e.target.value)}
+                                        required
+                                    >
+                                        <option value="" disabled>Select Level</option>
+                                        <option value="A/L">A/L</option>
+                                        <option value="Diploma">Diploma</option>
+                                        <option value="Bachelor's">Bachelor's</option>
+                                        <option value="Master's">Master's</option>
+                                        <option value="PhD">PhD</option>
+                                    </select>
                     </div>
 
-                    {/* Education */}
-                    <div className="form-section">
-                        <h3>Education </h3>
-
-                        {/* New education entry always at the top */}
-                        <div className="education-entry">
-                            <div className="education-row">
+                                {/* A/L specific fields */}
+                                {edu.educationLevel === 'A/L' && (
+                                    <>
+                                        <div className="form-group">
                                 <input
-                                    placeholder="Institute"
-                                    value={formData.education[formData.education.length - 1].institute}
-                                    onChange={e => handleNestedChange('education', formData.education.length - 1, 'institute', e.target.value)}
-                                />
+                                                placeholder="Subject Stream"
+                                                value={edu.fieldOfStudy || ''}
+                                                onChange={e => handleNestedChange('education', i, 'fieldOfStudy', e.target.value)}
+                                                className={errors[`education_${i}_fieldOfStudy`] ? 'error' : ''}
+                                                required
+                                            />
+                                            {errors[`education_${i}_fieldOfStudy`] && (
+                                                <span className="error-message">{errors[`education_${i}_fieldOfStudy`]}</span>
+                                            )}
+                                        </div>
+                                        <div className="form-group">
                                 <input
-                                    placeholder="Degree"
-                                    value={formData.education[formData.education.length - 1].degree}
-                                    onChange={e => handleNestedChange('education', formData.education.length - 1, 'degree', e.target.value)}
-                                />
+                                                placeholder="Year (e.g., 2020)"
+                                                value={edu.alYear || ''}
+                                                onChange={e => handleNestedChange('education', i, 'alYear', e.target.value)}
+                                                className={errors[`education_${i}_alYear`] ? 'error' : ''}
+                                                required
+                                            />
+                                            {errors[`education_${i}_alYear`] && (
+                                                <span className="error-message">{errors[`education_${i}_alYear`]}</span>
+                                            )}
+                                        </div>
+                                        <div className="form-group">
+                                            <label>A/L Subjects and Grades</label>
+                                            
+                                            {/* Add new subject input row (always on top) */}
+                                            <div className="skill-input-container">
+                                                <div className="skill-input-row">
+                                                    <div style={{ flex: 1 }}>
+                                                        <input
+                                                            placeholder="Subject"
+                                                            value={(edu.alSubjects && edu.alSubjects[edu.alSubjects.length - 1]?.subject) || ''}
+                                                            onChange={e => handleALSubjectChange(i, (edu.alSubjects?.length || 1) - 1, 'subject', e.target.value)}
+                                                            className={`skill-name-input ${errors[`education_${i}_subject_${(edu.alSubjects?.length || 1) - 1}`] ? 'error' : ''}`}
+                                                        />
+                                                        {errors[`education_${i}_subject_${(edu.alSubjects?.length || 1) - 1}`] && (
+                                                            <span className="error-message" style={{ fontSize: '12px' }}>
+                                                                {errors[`education_${i}_subject_${(edu.alSubjects?.length || 1) - 1}`]}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="proficiency-container">
+                                                        <label className="proficiency-label">Grade:</label>
+                                                        <select
+                                                            value={(edu.alSubjects && edu.alSubjects[edu.alSubjects.length - 1]?.grade) || ''}
+                                                            onChange={e => handleALSubjectChange(i, (edu.alSubjects?.length || 1) - 1, 'grade', e.target.value)}
+                                                            className="proficiency-select"
+                                                        >
+                                                            <option value="" disabled>Select Grade</option>
+                                                            <option value="A">A</option>
+                                                            <option value="B">B</option>
+                                                            <option value="C">C</option>
+                                                            <option value="S">S</option>
+                                                            <option value="F">F</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="skill-actions">
                                 <button
                                     type="button"
-                                    onClick={() => addItem('education', {
-                                        institute: '',
-                                        degree: '',
-                                        startDate: '',
-                                        endDate: '',
-                                        currentlyStudying: false
-                                    })}
-                                    disabled={!formData.education[formData.education.length - 1].institute.trim() || !formData.education[formData.education.length - 1].degree.trim()}
+                                                            className="add-skill-btn"
+                                                            onClick={() => addALSubject(i)}
+                                                            disabled={
+                                                                !edu.alSubjects ||
+                                                                !edu.alSubjects[edu.alSubjects.length - 1]?.subject?.trim() ||
+                                                                !edu.alSubjects[edu.alSubjects.length - 1]?.grade?.trim()
+                                                            }
+                                                            title="Add new subject"
                                 >
                                     +
                                 </button>
                             </div>
-
-                            <div className="education-dates">
-                                <DatePicker
-                                    selected={formData.education[formData.education.length - 1].startDate ? new Date(formData.education[formData.education.length - 1].startDate) : null}
-                                    onChange={(date) => handleNestedChange('education', formData.education.length - 1, 'startDate', date ? date.toISOString().split('T')[0] : '')}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="Start Date"
-                                    maxDate={new Date()}
-                                    customInput={
-                                        <div className="date-picker-input">
-                                            <input value={formData.education[formData.education.length - 1].startDate} readOnly placeholder="Start Date" />
-                                            <FaCalendarAlt className="calendar-icon" />
                                         </div>
-                                    }
-                                />
-
-                                <DatePicker
-                                    selected={formData.education[formData.education.length - 1].endDate ? new Date(formData.education[formData.education.length - 1].endDate) : null}
-                                    onChange={(date) => handleNestedChange('education', formData.education.length - 1, 'endDate', date ? date.toISOString().split('T')[0] : '')}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="End Date"
-                                    maxDate={new Date()} // Prevent future dates
-                                    disabled={formData.education[formData.education.length - 1].currentlyStudying}
-                                    customInput={
-                                        <div className="date-picker-input">
-                                            <input value={formData.education[formData.education.length - 1].endDate} readOnly placeholder="End Date" />
-                                            <FaCalendarAlt className="calendar-icon" />
                                         </div>
-                                    }
-                                />
 
-                                <label className="checkbox-label">
+                                            {/* List of added subjects (read-only, with remove) */}
+                                            {(edu.alSubjects || []).slice(0, -1).map((subjectGrade, subIndex) => (
+                                                <div key={subIndex} className="skill-input-container">
+                                                    <div className="skill-input-row">
                                     <input
-                                        type="checkbox"
-                                        checked={formData.education[formData.education.length - 1].currentlyStudying}
-                                        onChange={e => handleNestedChange('education', formData.education.length - 1, 'currentlyStudying', e.target.checked)}
-                                    />
-                                    Currently Studying
-                                </label>
+                                                            value={subjectGrade.subject || ''}
+                                                            readOnly
+                                                            className="skill-name-input"
+                                                        />
+                                                        <div className="proficiency-container">
+                                                            <label className="proficiency-label">Grade:</label>
+                                                            <select value={subjectGrade.grade || ''} className="proficiency-select" disabled>
+                                                                <option value="">Select Grade</option>
+                                                                <option value="A">A</option>
+                                                                <option value="B">B</option>
+                                                                <option value="C">C</option>
+                                                                <option value="S">S</option>
+                                                                <option value="F">F</option>
+                                                            </select>
                             </div>
+                                                        <div className="skill-actions">
+                                                            <button
+                                                                type="button"
+                                                                className="remove-skill-btn"
+                                                                onClick={() => removeALSubject(i, subIndex)}
+                                                                title="Remove subject"
+                                                            >
+                                                                ×
+                                                            </button>
                         </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
 
-                        {/* Added education entries displayed below */}
-                        {formData.education.slice(0, -1).map((edu, i) => (
-                            <div key={i} className="education-entry">
-                                <div className="education-row">
+                                {/* Non-A/L fields */}
+                                {edu.educationLevel !== 'A/L' && edu.educationLevel !== '' && (
+                                    <>
+                                        <div className="form-group">
                                     <input
-                                        placeholder="Institute"
-                                        value={edu.institute}
-                                        readOnly
-                                    />
+                                                placeholder="Field of Study"
+                                                value={edu.fieldOfStudy || ''}
+                                                onChange={e => handleNestedChange('education', i, 'fieldOfStudy', e.target.value)}
+                                                className={errors[`education_${i}_fieldOfStudy`] ? 'error' : ''}
+                                                required={['Diploma', 'Bachelor’s', 'Master’s', 'PhD'].includes(edu.educationLevel)}
+                                            />
+                                            {errors[`education_${i}_fieldOfStudy`] && (
+                                                <span className="error-message">{errors[`education_${i}_fieldOfStudy`]}</span>
+                                            )}
+                                        </div>
+
+                                        <div className="form-group">
                                     <input
-                                        placeholder="Degree"
-                                        value={edu.degree}
-                                        readOnly
-                                    />
-                                    <button className="remove-btn" type="button" onClick={() => removeItem('education', i)}>×</button>
+                                                placeholder="GPA / Grade"
+                                                value={edu.gpaOrGrade || ''}
+                                                onChange={e => handleNestedChange('education', i, 'gpaOrGrade', e.target.value)}
+                                                required
+                                            />
                                 </div>
 
-                                <div className="education-dates">
-                                    <div className="date-picker-input">
-                                        <input value={edu.startDate} readOnly placeholder="Start Date" />
-                                        <FaCalendarAlt className="calendar-icon" />
+                                        <div className="education-dates-simple">
+                                            <div className="date-input-group">
+                                                <label>Start Date</label>
+                                                <div className="simple-date-picker">
+                                                    <input
+                                                        type="date"
+                                                        value={edu.startDate || ''}
+                                                        onChange={e => handleNestedChange('education', i, 'startDate', e.target.value)}
+                                                        max={getTodayString()}
+                                                        required
+                                                    />
+                                                    <FaCalendarAlt className="calendar-icon-simple" />
                                     </div>
-
-                                    <div className="date-picker-input">
-                                        <input value={edu.endDate} readOnly placeholder="End Date" />
-                                        <FaCalendarAlt className="calendar-icon" />
                                     </div>
-
+                                            <div className="date-input-group">
+                                                <label>End Date</label>
+                                                <div className="simple-date-picker">
+                                                    <input
+                                                        type="date"
+                                                        value={edu.endDate || ''}
+                                                        onChange={e => handleNestedChange('education', i, 'endDate', e.target.value)}
+                                                        disabled={edu.currentlyStudying}
+                                                        min={edu.startDate || ''}
+                                                        max={getTodayString()}
+                                                        required={!edu.currentlyStudying}
+                                                    />
+                                                    <FaCalendarAlt className="calendar-icon-simple" />
+                                                </div>
+                                            </div>
                                     <label className="checkbox-label">
                                         <input
                                             type="checkbox"
-                                            checked={edu.currentlyStudying}
-                                            readOnly
+                                                    checked={!!edu.currentlyStudying}
+                                                    onChange={e => handleNestedChange('education', i, 'currentlyStudying', e.target.checked)}
                                         />
                                         Currently Studying
                                     </label>
                                 </div>
-                            </div>
-                        ))}
+                                    </>
+                                )}
 
-                        {errors.education && <span className="error-message">{errors.education}</span>}
+                                {formData.education.length > 1 && (
+                                    <button className="remove-btn" type="button" onClick={() => removeItem('education', i)}>
+                                        Remove Education
+                                    </button>
+                                )}
                     </div>
-
-                    {/* work Experience */}
-                    <div className="form-section">
-                        <h3>Work Experience & Cover Letter</h3>
-
-
-                        {/* New work experience entry always at the top */}
-                        <div className="work-experience-entry">
-                            <div className="work-experience-row">
-                                <input
-                                    placeholder="Job Title"
-                                    value={formData.workExperience[formData.workExperience.length - 1].jobTitle}
-                                    onChange={e => handleNestedChange('workExperience', formData.workExperience.length - 1, 'jobTitle', e.target.value)}
-                                />
-                                <input
-                                    placeholder="Company"
-                                    value={formData.workExperience[formData.workExperience.length - 1].company}
-                                    onChange={e => handleNestedChange('workExperience', formData.workExperience.length - 1, 'company', e.target.value)}
-                                />
+                        ))}
                                 <button
                                     type="button"
-                                    onClick={() => addItem('workExperience', {
-                                        jobTitle: '',
-                                        company: '',
+                            className="add-btn" 
+                            onClick={() => addItem('education', { 
+                                institute: '', 
+                                educationLevel: '', 
+                                fieldOfStudy: '', 
+                                gpaOrGrade: '', 
+                                results: [{ subject: '', grade: '' }], 
                                         startDate: '',
                                         endDate: '',
-                                        description: '',
-                                        currentlyWorking: false
+                                currentlyStudying: false,
+                                alYear: '',
+                                alSubjects: [{ subject: '', grade: '' }]
                                     })}
-                                    disabled={!formData.workExperience[formData.workExperience.length - 1].jobTitle.trim() || !formData.workExperience[formData.workExperience.length - 1].company.trim()}
+                            disabled={!canAddEducation()}
                                 >
-                                    +
+                            + Add Education
                                 </button>
                             </div>
 
-                            <div className="work-experience-dates">
-                                <DatePicker
-                                    selected={formData.workExperience[formData.workExperience.length - 1].startDate ? new Date(formData.workExperience[formData.workExperience.length - 1].startDate) : null}
-                                    onChange={(date) => handleNestedChange('workExperience', formData.workExperience.length - 1, 'startDate', date ? date.toISOString().split('T')[0] : '')}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="Start Date"
-                                    maxDate={new Date()}
-                                    customInput={
-                                        <div className="date-picker-input">
-                                            <input value={formData.workExperience[formData.workExperience.length - 1].startDate} readOnly placeholder="Start Date" />
-                                            <FaCalendarAlt className="calendar-icon" />
+                    {/* Work Experience Section */}
+                    <div className="form-section">
+                        <h3>Work Experience</h3>
+                        {formData.workExperience.map((exp, i) => (
+                            <div key={i} className="work-experience-entry">
+                                <div className="work-experience-row">
+                                    <div style={{ flex: 1 }}>
+                                        <input
+                                            placeholder="Job Title"
+                                            value={exp.jobTitle || ''}
+                                            onChange={e => handleNestedChange('workExperience', i, 'jobTitle', e.target.value)}
+                                            className={errors[`workExperience_${i}_jobTitle`] ? 'error' : ''}
+                                            required
+                                        />
+                                        {errors[`workExperience_${i}_jobTitle`] && (
+                                            <span className="error-message">{errors[`workExperience_${i}_jobTitle`]}</span>
+                                        )}
                                         </div>
-                                    }
-                                />
+                                    <input
+                                        placeholder="Company Name"
+                                        value={exp.company || ''}
+                                        onChange={e => handleNestedChange('workExperience', i, 'company', e.target.value)}
+                                        required
+                                    />
+                                </div>
 
-                                <DatePicker
-                                    selected={formData.workExperience[formData.workExperience.length - 1].endDate ? new Date(formData.workExperience[formData.workExperience.length - 1].endDate) : null}
-                                    onChange={(date) => handleNestedChange('workExperience', formData.workExperience.length - 1, 'endDate', date ? date.toISOString().split('T')[0] : '')}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="End Date"
-                                    maxDate={new Date()} // Prevent future dates
-                                    disabled={formData.workExperience[formData.workExperience.length - 1].currentlyWorking}
-
-                                    customInput={
-                                        <div className="date-picker-input">
-                                            <input value={formData.workExperience[formData.workExperience.length - 1].endDate} readOnly placeholder="End Date" />
-                                            <FaCalendarAlt className="calendar-icon" />
+                                <div className="work-experience-dates-simple">
+                                    <div className="date-input-group">
+                                        <label>Start Date</label>
+                                        <div className="simple-date-picker">
+                                            <input
+                                                type="date"
+                                                value={exp.startDate || ''}
+                                                onChange={e => handleNestedChange('workExperience', i, 'startDate', e.target.value)}
+                                                max={getTodayString()}
+                                                required
+                                            />
+                                            <FaCalendarAlt className="calendar-icon-simple" />
                                         </div>
-                                    }
+                                    </div>
+                                    <div className="date-input-group">
+                                        <label>End Date</label>
+                                        <div className="simple-date-picker">
+                                            <input
+                                                type="date"
+                                                value={exp.endDate || ''}
+                                                onChange={e => handleNestedChange('workExperience', i, 'endDate', e.target.value)}
+                                                disabled={exp.currentlyWorking}
+                                                min={exp.startDate || ''}
+                                                max={getTodayString()}
+                                                required={!exp.currentlyWorking}
                                 />
-
+                                            <FaCalendarAlt className="calendar-icon-simple" />
+                                        </div>
+                                    </div>
                                 <label className="checkbox-label">
                                     <input
                                         type="checkbox"
-                                        checked={formData.workExperience[formData.workExperience.length - 1].currentlyWorking}
-                                        onChange={e => handleNestedChange('workExperience', formData.workExperience.length - 1, 'currentlyWorking', e.target.checked)}
+                                            checked={!!exp.currentlyWorking}
+                                            onChange={e => handleNestedChange('workExperience', i, 'currentlyWorking', e.target.checked)}
                                     />
                                     Currently Working
                                 </label>
@@ -764,65 +1166,132 @@ case 'gender':
 
                             <textarea
                                 placeholder="Job Description"
-                                value={formData.workExperience[formData.workExperience.length - 1].description}
-                                onChange={e => handleNestedChange('workExperience', formData.workExperience.length - 1, 'description', e.target.value)}
-                            />
-                        </div>
-
-                        {/* Added work experience entries displayed below */}
-                        {formData.workExperience.slice(0, -1).map((exp, i) => (
-                            <div key={i} className="work-experience-entry">
-                                <div className="work-experience-row">
-                                    <input
-                                        placeholder="Job Title"
-                                        value={exp.jobTitle}
-                                        readOnly
-                                    />
-                                    <input
-                                        placeholder="Company"
-                                        value={exp.company}
-                                        readOnly
-                                    />
-                                    <button className="remove-btn" type="button" onClick={() => removeItem('workExperience', i)}>×</button>
-                                </div>
-
-                                <div className="work-experience-dates">
-                                    <div className="date-picker-input">
-                                        <input value={exp.startDate} readOnly placeholder="Start Date" />
-                                        <FaCalendarAlt className="calendar-icon" />
-                                    </div>
-
-                                    <div className="date-picker-input">
-                                        <input value={exp.endDate} readOnly placeholder="End Date" />
-                                        <FaCalendarAlt className="calendar-icon" />
-                                    </div>
-
-                                    <label className="checkbox-label">
-                                        <input
-                                            type="checkbox"
-                                            checked={exp.currentlyWorking}
-                                            readOnly
-                                        />
-                                        Currently Working
-                                    </label>
-                                </div>
-
-                                <textarea
-                                    placeholder="Job Description"
-                                    value={exp.description}
-                                    readOnly
+                                    value={exp.description || ''}
+                                    onChange={e => handleNestedChange('workExperience', i, 'description', e.target.value)}
                                 />
+
+                                {formData.workExperience.length > 1 && (
+                                    <button className="remove-btn" type="button" onClick={() => removeItem('workExperience', i)}>
+                                        Remove Experience
+                                    </button>
+                                )}
                             </div>
                         ))}
+                        <button 
+                            type="button" 
+                            className="add-btn" 
+                            onClick={() => addItem('workExperience', { 
+                                jobTitle: '', 
+                                company: '', 
+                                startDate: '', 
+                                endDate: '', 
+                                currentlyWorking: false, 
+                                description: '' 
+                            })}
+                            disabled={!canAddExperience()}
+                        >
+                            + Add Experience
+                        </button>
+                        </div>
 
-                        <textarea
-                            name="coverLetter"
-                            value={formData.coverLetter}
-                            onChange={handleChange}
-                            placeholder="Cover Letter"
-                        />
+                    {/* Projects Section */}
+                    <div className="form-section">
+                        <h3>Projects</h3>
+                        {errors.projects && <span className="error-message">{errors.projects}</span>}
+                        {formData.projects.map((proj, i) => (
+                            <div key={i} className="project-entry">
+                                    <input
+                                    placeholder="Project Title"
+                                    value={proj.title || ''}
+                                    onChange={e => handleNestedChange('projects', i, 'title', e.target.value)}
+                                    required
+                                />
+                                <textarea
+                                    placeholder="Description (optional)"
+                                    value={proj.description || ''}
+                                    onChange={e => handleNestedChange('projects', i, 'description', e.target.value)}
+                                    />
+                                    <input
+                                    placeholder="Technologies (comma separated)"
+                                    value={proj.technologies ? proj.technologies.join(', ') : ''}
+                                    onChange={e => handleNestedChange('projects', i, 'technologies', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
+                                    required
+                                    />
+                                <div>
+                                    <input
+                                        placeholder="Project Link (GitHub or Live URL)"
+                                        value={proj.link || ''}
+                                        onChange={e => handleNestedChange('projects', i, 'link', e.target.value)}
+                                        className={errors[`projects_${i}_link`] ? 'error' : ''}
+                                        required
+                                    />
+                                    {errors[`projects_${i}_link`] && (
+                                        <span className="error-message">{errors[`projects_${i}_link`]}</span>
+                                    )}
+                                </div>
+                                {formData.projects.length > 1 && (
+                                    <button className="remove-btn" type="button" onClick={() => removeItem('projects', i)}>
+                                        Remove Project
+                                    </button>
+                                )}
+                                    </div>
+                        ))}
+                        <button 
+                            type="button" 
+                            className="add-btn" 
+                            onClick={() => addItem('projects', { title: '', description: '', technologies: [], link: '' })}
+                            disabled={!canAddProject()}
+                        >
+                            + Add Project
+                        </button>
+                                    </div>
+
+                    {/* Certifications Section */}
+                    <div className="form-section">
+                        <h3>Certifications</h3>
+                        {errors.certifications && <span className="error-message">{errors.certifications}</span>}
+                        {formData.certifications.map((cert, i) => (
+                            <div key={i} className="certification-entry">
+                                        <input
+                                    placeholder="Certification Name"
+                                    value={cert.name || ''}
+                                    onChange={e => handleNestedChange('certifications', i, 'name', e.target.value)}
+                                    required
+                                />
+                                <input
+                                    placeholder="Issuer"
+                                    value={cert.issuer || ''}
+                                    onChange={e => handleNestedChange('certifications', i, 'issuer', e.target.value)}
+                                    required
+                                />
+                                <div>
+                                    <input
+                                        placeholder="Year"
+                                        value={cert.year || ''}
+                                        onChange={e => handleNestedChange('certifications', i, 'year', e.target.value)}
+                                        className={errors[`certifications_${i}_year`] ? 'error' : ''}
+                                        required
+                                    />
+                                    {errors[`certifications_${i}_year`] && (
+                                        <span className="error-message">{errors[`certifications_${i}_year`]}</span>
+                                    )}
+                                </div>
+                                {formData.certifications.length > 1 && (
+                                    <button className="remove-btn" type="button" onClick={() => removeItem('certifications', i)}>
+                                        Remove Certification
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                        <button 
+                            type="button" 
+                            className="add-btn" 
+                            onClick={() => addItem('certifications', { name: '', issuer: '', year: '' })}
+                            disabled={!canAddCertification()}
+                        >
+                            + Add Certification
+                        </button>
                     </div>
-
 
                     <div className="form-actions">
                         <button

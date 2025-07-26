@@ -47,9 +47,7 @@ import ApplyForAjob from "./pages/JobSeeker/ApplyForAjob/ApplyForAjob.jsx";
 import JobDetails from "./pages/JobSeeker/JobDetails/JobDetails.jsx";
 import AppliedJobsPage from "./pages/JobSeeker/AppliedJobs/AppliedJobs.jsx";
 import SavedJobs from "./pages/JobSeeker/SavedJobs/SavedJobs.jsx";
-
-
-
+import FeedbackInsights from './pages/JobSeeker/feedbackInsights/FeedbackInsights.jsx';
 
 
 // Message routes
@@ -260,6 +258,7 @@ function App() {
           <Route path="/jobseeker/job-details/:jobId" element={<JobDetails />} />
           <Route path="/JobSeeker/applied-jobs" element={<AppliedJobsPage />} />
           <Route path="/JobSeeker/saved-jobs" element={<SavedJobs />} />
+          <Route path="/JobSeeker/application/:applicationId/feedback" element={<FeedbackInsights />} />
           {/* CV Dashboard */}
           <Route path="/cv" element={<RoleBasedRoute element={<CVDashboard />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
 
