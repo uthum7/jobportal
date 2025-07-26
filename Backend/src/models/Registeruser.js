@@ -56,6 +56,13 @@ const RegisteruserSchema = new Schema(
       type: Date,
       default: undefined,
     },
+
+   
+    phone: {
+      type: String,
+      default: "", // Optional, validate if needed
+    },
+    
   },
   { timestamps: true }
 );
