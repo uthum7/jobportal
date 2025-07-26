@@ -3,7 +3,11 @@ import mongoose from "mongoose";
 
 const applicationSchema = new mongoose.Schema({
   jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'jobs', required: true },
-  userId: { type: String, required: true },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId, // It’s better if userId is also ObjectId
+    ref: "RegisterUser",                   // Reference to user model
+    required: true
+  },
   applicationData: {
     fullName: { type: String, required: true },
     nic: { type: String, required: true },

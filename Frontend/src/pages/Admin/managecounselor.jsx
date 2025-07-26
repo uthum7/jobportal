@@ -10,7 +10,9 @@ import {
   Edit,
   Trash2,
   Menu,
-  X
+  X,
+  User,
+  Briefcase
 } from 'lucide-react';
 
 const ManageCounselor = () => {
@@ -21,7 +23,7 @@ const ManageCounselor = () => {
   const [selectedCounselor, setSelectedCounselor] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Fetch counselors from backend
+  // Fetch counselors
   useEffect(() => {
     const fetchCounselors = async () => {
       try {
@@ -33,7 +35,6 @@ const ManageCounselor = () => {
         console.error('Error fetching counselors:', err);
       }
     };
-
     fetchCounselors();
   }, []);
 
@@ -43,30 +44,15 @@ const ManageCounselor = () => {
     c._id?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
+  const handleNavigation = (path) => navigate(path);
 
-  const handleView = async (id) => {
-    try {
-      const res = await fetch(`http://localhost:5001/api/users/counselors/${id}`);
-      const data = await res.json();
-      alert(`Name: ${data.name}\nEmail: ${data.email}\nRoles: ${data.roles}`);
-    } catch (err) {
-      console.error('Error viewing counselor:', err);
-    }
-  };
+  const handleView = (id) => navigate(`/admin/enhancedcounselorinfo?id=${id}`);
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this counselor?");
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this counselor?")) return;
     try {
-      const res = await fetch(`http://localhost:5001/api/users/counselors/${id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        setCounselors(counselors.filter(c => c._id !== id));
-      }
+      const res = await fetch(`http://localhost:5001/api/users/counselors/${id}`, { method: 'DELETE' });
+      if (res.ok) setCounselors(counselors.filter(c => c._id !== id));
     } catch (err) {
       console.error('Error deleting counselor:', err);
     }
@@ -109,11 +95,7 @@ const ManageCounselor = () => {
   return (
     <div className="min-h-screen flex bg-gray-50">
       {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 lg:static lg:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
@@ -125,24 +107,21 @@ const ManageCounselor = () => {
             </div>
           </div>
         </div>
-
         <div className="px-4 py-6">
           <h4 className="text-sm font-medium text-gray-500 mb-4">Main Navigation</h4>
           <div className="space-y-2">
             <SidebarItem icon={Calendar} label="Dashboard" onClick={() => handleNavigation('/admin')} />
             <SidebarItem icon={Users} label="My Profile" onClick={() => handleNavigation('/admin/myprofile')} />
           </div>
-
           <div className="pt-6">
             <h5 className="text-sm font-medium text-gray-500 mb-2">Manage</h5>
             <div className="space-y-1">
-              <SidebarItem icon={Users} label="Counselor" active={true} onClick={() => handleNavigation('/admin/managecounselor')} />
+              <SidebarItem icon={Users} label="Counselor" active onClick={() => handleNavigation('/admin/managecounselor')} />
               <SidebarItem icon={Users} label="Counselee" onClick={() => handleNavigation('/admin/managecounselee')} />
               <SidebarItem icon={Users} label="Employee" onClick={() => handleNavigation('/admin/manageemployee')} />
               <SidebarItem icon={Users} label="Jobseeker" onClick={() => handleNavigation('/admin/managejobseeker')} />
             </div>
           </div>
-
           <div className="pt-6">
             <SidebarItem icon={MessageSquare} label="Messages" onClick={() => handleNavigation('/message/login')} />
             <SidebarItem icon={Settings} label="Change Password" onClick={() => handleNavigation('/admin/changepassword')} />
@@ -155,16 +134,12 @@ const ManageCounselor = () => {
       <div className="flex-1 lg:ml-0">
         <div className="p-6">
           <div className="lg:hidden mb-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 text-gray-700 bg-white rounded-lg shadow-sm"
-            >
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-gray-700 bg-white rounded-lg shadow-sm">
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
 
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Manage Counselors</h2>
-
           <div className="flex items-center mb-6 gap-4">
             <input
               type="text"
@@ -173,41 +148,47 @@ const ManageCounselor = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
-            <button
-              onClick={() => console.log('Search:', searchTerm)}
-              className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-            >
-              Search
-            </button>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredCounselors.map((c) => (
-              <div
-                key={c._id}
-                className="flex items-center justify-between bg-white px-4 py-4 rounded-lg shadow-sm border border-gray-200"
-              >
-                <div className="flex items-center gap-4">
-                  <img
-                    src={c.profilePhoto || "/api/placeholder/50/50"}
-                    alt={c.name}
-                    className="w-12 h-12 rounded-full"
-                  />
+              <div key={c._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                {/* Card Header */}
+                <div className="px-6 py-5 border-b border-gray-200 flex items-center space-x-4">
+                  <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-semibold text-xl">
+                    {c.name?.charAt(0).toUpperCase() || "C"}
+                  </div>
                   <div>
-                    <div className="font-semibold text-gray-800">{c.name || 'No name'}</div>
-                    <div className="text-sm text-gray-500">{c.email || 'No email'}</div>
-                    <div className="text-xs text-gray-400">ID: {c._id}</div>
+                    <h3 className="text-lg font-semibold text-gray-900">{c.name}</h3>
+                    <p className="text-sm text-gray-600">{c.email}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 text-gray-600">
-                  <Eye className="cursor-pointer hover:text-emerald-600" onClick={() => handleView(c._id)} />
-                  <Edit className="cursor-pointer hover:text-emerald-600" onClick={() => handleEdit(c)} />
-                  <Trash2 className="cursor-pointer hover:text-red-600" onClick={() => handleDelete(c._id)} />
+                {/* Details */}
+                <div className="p-6 space-y-3">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <User className="w-4 h-4 text-purple-600" /> <span>ID: {c._id}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <Briefcase className="w-4 h-4 text-blue-600" /> <span>Role: {c.roles?.join(', ') || 'N/A'}</span>
+                  </div>
+                </div>
+                {/* Actions */}
+                <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
+                  <button onClick={() => handleView(c._id)} className="text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
+                    <Eye className="w-4 h-4" /> <span>View</span>
+                  </button>
+                  <button onClick={() => handleEdit(c)} className="text-blue-600 hover:text-blue-700 flex items-center space-x-1">
+                    <Edit className="w-4 h-4" /> <span>Edit</span>
+                  </button>
+                  <button onClick={() => handleDelete(c._id)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
+                    <Trash2 className="w-4 h-4" /> <span>Delete</span>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
 
+          {/* Edit Modal */}
           {isEditMode && selectedCounselor && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40 z-50">
               <div className="bg-white p-6 rounded shadow-md w-[90%] max-w-md">
@@ -237,12 +218,8 @@ const ManageCounselor = () => {
                   placeholder="Roles (comma separated)"
                 />
                 <div className="flex justify-end gap-2">
-                  <button onClick={() => setIsEditMode(false)} className="px-4 py-2 bg-gray-300 rounded">
-                    Cancel
-                  </button>
-                  <button onClick={handleUpdate} className="px-4 py-2 bg-emerald-600 text-white rounded">
-                    Update
-                  </button>
+                  <button onClick={() => setIsEditMode(false)} className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+                  <button onClick={handleUpdate} className="px-4 py-2 bg-emerald-600 text-white rounded">Update</button>
                 </div>
               </div>
             </div>
@@ -250,11 +227,9 @@ const ManageCounselor = () => {
         </div>
       </div>
 
+      {/* Mobile Overlay */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
     </div>
   );
