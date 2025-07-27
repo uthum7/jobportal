@@ -1,0 +1,243 @@
+.remove-btn {
+  background-color: #ef4444 !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  min-width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+.remove-btn:hover {
+  background-color: #b91c1c !important;
+}
+.remove-btn:disabled {
+  background-color: #bdc3c7 !important;
+  color: #fff !important;
+  cursor: not-allowed;
+}
+.input-with-add .remove-btn {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border: none !important;
+}
+.add-icon-btn, .remove-btn {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border: none !important;
+}
+.datepicker-popper {
+  z-index: 9999 !important;
+}
+
+/* Additional DatePicker popup styles to ensure it's always on top */
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+.react-datepicker-wrapper {
+  z-index: 1;
+}
+
+.react-datepicker__input-container {
+  z-index: 1;
+}
+
+/* Ensure the popup is above everything */
+.react-datepicker-popper[data-placement^="bottom"] {
+  z-index: 9999 !important;
+}
+
+.react-datepicker-popper[data-placement^="top"] {
+  z-index: 9999 !important;
+}
+
+/* Override any parent container z-index issues */
+.apply-form-container .react-datepicker-popper {
+  z-index: 9999 !important;
+  position: fixed !important;
+}
+.apply-form-container, .form-section {
+  overflow: visible !important;
+} 
+
+/* Ensure DatePicker popup is completely isolated and above everything */
+.react-datepicker-popper {
+  z-index: 99999 !important;
+  position: fixed !important;
+  pointer-events: auto !important;
+}
+
+.react-datepicker {
+  z-index: 99999 !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+/* When DatePicker is open, disable pointer events on form sections below */
+.react-datepicker-popper[data-placement^="bottom"] ~ .form-section,
+.react-datepicker-popper[data-placement^="top"] ~ .form-section {
+  pointer-events: none;
+}
+
+/* Ensure the popup container is completely independent */
+.react-datepicker__triangle {
+  z-index: 99999 !important;
+}
+
+.react-datepicker__header {
+  z-index: 99999 !important;
+}
+
+.react-datepicker__month-container {
+  z-index: 99999 !important;
+}
+
+/* Override any potential conflicts */
+.apply-form-container .react-datepicker-popper,
+.form-section .react-datepicker-popper {
+  z-index: 99999 !important;
+  position: fixed !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+/* Ensure the popup is rendered outside any stacking context */
+.react-datepicker-popper[style*="position: absolute"] {
+  position: fixed !important;
+} 
+
+/* Fix for datepicker dropdown overflow */
+.apply-form-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative; /* Add this */
+  z-index: 1000; /* Add this */
+}
+
+/* Ensure form sections don't clip the datepicker */
+.form-section {
+  margin-bottom: 2rem;
+  position: relative; /* Add this */
+  overflow: visible; /* Add this - very important */
+}
+
+/* Fix for education and work experience entries */
+.education-entry,
+.work-experience-entry {
+  border: 1px solid #e1e5e9;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #f8f9fa;
+  position: relative;
+  overflow: visible; /* Add this - very important */
+}
+
+/* Datepicker specific fixes */
+.react-datepicker-wrapper {
+  width: 100%;
+  position: relative;
+  z-index: 1001; /* Higher than form container */
+}
+
+.react-datepicker {
+  z-index: 1002 !important; /* Highest z-index */
+  position: absolute !important;
+}
+
+.react-datepicker-popper {
+  z-index: 1002 !important;
+}
+
+/* Date input containers */
+.education-dates, 
+.work-experience-dates {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  position: relative;
+  z-index: 1001;
+  overflow: visible; /* Add this */
+}
+
+/* Custom date picker input styling */
+.date-picker-input {
+  position: relative;
+  width: 100%;
+  z-index: 1001;
+}
+
+.date-picker-input input {
+  width: 100%;
+  padding: 0.5rem 2.5rem 0.5rem 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+  position: relative;
+  z-index: 1001;
+}
+
+.date-picker-input .calendar-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  pointer-events: none;
+  z-index: 1002;
+}
+
+/* Additional fixes for specific React DatePicker elements */
+.react-datepicker__tab-loop {
+  position: absolute;
+  z-index: 1002 !important;
+}
+
+.react-datepicker__portal {
+  z-index: 1002 !important;
+}
+
+/* Ensure checkbox labels don't interfere */
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: normal;
+  position: relative;
+  z-index: 1000;
+}
+
+/* Make sure the entire form allows overflow for datepickers */
+.apply-form {
+  padding: 1.5rem;
+  position: relative;
+  overflow: visible; /* Add this */
+}
+
+/* Additional responsive fixes */
+@media (max-width: 768px) {
+  .education-dates, 
+  .work-experience-dates {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .react-datepicker {
+    width: 100% !important;
+  }
+} 

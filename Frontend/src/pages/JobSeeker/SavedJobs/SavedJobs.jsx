@@ -15,6 +15,7 @@ const SavedJobs = () => {
   const [savedJobs, setSavedJobs] = useState([]);           // Stores all saved job details
   const [loading, setLoading] = useState(true);             // Tracks loading state for API requests
   const [error, setError] = useState(null);                 // Tracks error state
+  const [searchKeyword, setSearchKeyword] = useState("");   // Search keyword state
   
   const navigate = useNavigate();
   
@@ -115,6 +116,17 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
     fetchSavedJobs();
   };
 
+  // Filter saved jobs based on search keyword
+  const filteredSavedJobs = savedJobs.filter(job => {
+    if (!searchKeyword) return true;
+    
+    return (
+      job.JobTitle.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      job.JobType.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      job.JobMode.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  });
+
   // Don't render if user is not authenticated or not a job seeker
   if (!isAuthenticated() || !isJobSeeker()) {
     return (
@@ -153,7 +165,7 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
             <div className="saved-jobs-info">
               <h3>Your Saved Jobs</h3>
               <p className="saved-jobs-count">
-                {loading ? "Loading..." : `${savedJobs.length} Job${savedJobs.length !== 1 ? 's' : ''} Saved`}
+                {loading ? "Loading..." : `${filteredSavedJobs.length} Job${filteredSavedJobs.length !== 1 ? 's' : ''} Saved`}
               </p>
             </div>
             {savedJobs.length > 0 && (
@@ -166,6 +178,29 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
               </button>
             )}
           </div>
+          
+          {/* Search Bar */}
+          {savedJobs.length > 0 && (
+            <div className="search-bar">
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  placeholder="Search by job title, type, or mode..."
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  className="search-input"
+                />
+                <button 
+                  className="clear-search-btn"
+                  onClick={() => setSearchKeyword("")}
+                  style={{ display: searchKeyword ? 'block' : 'none' }}
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          )}
+          
           {/* Error Message */}
           {error && (
             <div className="error-message">
@@ -181,9 +216,9 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
               <div className="loading-container">
                 <p>Loading your saved jobs...</p>
               </div>
-            ) : savedJobs.length > 0 ? (
+            ) : filteredSavedJobs.length > 0 ? (
               <div className="job-cards-grid">
-                {savedJobs.map((job) => (
+                {filteredSavedJobs.map((job) => (
                   <JobCard 
                     key={job._id} 
                     job={job} 
@@ -209,23 +244,39 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
                     d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
                   />
                 </svg>
-                <h3 className="no-saved-jobs-title">No saved jobs yet</h3>
+                <h3 className="no-saved-jobs-title">
+                  {savedJobs.length === 0 
+                    ? "No saved jobs yet" 
+                    : "No saved jobs found"}
+                </h3>
                 <p className="no-saved-jobs-message">
-                  You haven't saved any jobs yet. Start exploring job opportunities 
-                  and save the ones that match your interests.
+                  {savedJobs.length === 0 
+                    ? "You haven't saved any jobs yet. Start exploring job opportunities and save the ones that match your interests."
+                    : "No saved jobs match your search criteria. Try adjusting your search terms."}
                 </p>
-                <div className="no-saved-jobs-suggestions">
-                  <strong>Get started:</strong>
-                  <ul>
-                    <li>Browse available job listings</li>
-                    <li>Click the "Save Job" button on jobs you're interested in</li>
-                    <li>Come back here to view all your saved jobs</li>
-                    <li>Apply to your saved jobs when you're ready</li>
-                  </ul>
-                </div>
-                <Link to="/JobSeeker/apply-for-job" className="browse-jobs-button">
-                  Browse Jobs
-                </Link>
+                {savedJobs.length === 0 ? (
+                  <>
+                    <div className="no-saved-jobs-suggestions">
+                      <strong>Get started:</strong>
+                      <ul>
+                        <li>Browse available job listings</li>
+                        <li>Click the "Save Job" button on jobs you're interested in</li>
+                        <li>Come back here to view all your saved jobs</li>
+                        <li>Apply to your saved jobs when you're ready</li>
+                      </ul>
+                    </div>
+                    <Link to="/JobSeeker/apply-for-job" className="browse-jobs-button">
+                      Browse Jobs
+                    </Link>
+                  </>
+                ) : (
+                  <button 
+                    className="clear-filters-btn"
+                    onClick={() => setSearchKeyword("")}
+                  >
+                    Clear Search
+                  </button>
+                )}
               </div>
             )}
           </div>
