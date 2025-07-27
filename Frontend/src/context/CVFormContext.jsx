@@ -55,7 +55,7 @@ export const CVFormProvider = ({ children }) => {
       } = resumeData;
 
       // These keys ('personalinfo', 'education', etc.) MUST match the keys in your ProgressBar.jsx
-      setCompletionStatus({
+      const newCompletionStatus = {
         personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.jobTitle),
         education: !!(educationDetails?.schoolName || educationDetails?.universitiyName),
         experience: professionalExperience && professionalExperience.length > 0,
@@ -63,7 +63,9 @@ export const CVFormProvider = ({ children }) => {
         summary: summary && summary.length > 20,
         references: references && references.length > 0,
         preview: false, 
-      });
+      };
+
+      setCompletionStatus(newCompletionStatus);
     }
   }, [resumeData]); // This hook runs every time resumeData changes
 
