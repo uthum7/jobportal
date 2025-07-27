@@ -174,7 +174,7 @@ const ManageCounselee = () => {
                 </div>
                 {/* Actions */}
                 <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
-                  <button onClick={() => handleView(c._id)} className="text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
+                  <button onClick={() => navigate(`/admin/viewemployee/${e._id}`)} className="text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
                     <Eye className="w-4 h-4" /> <span>View</span>
                   </button>
                   <button onClick={() => handleEdit(c)} className="text-blue-600 hover:text-blue-700 flex items-center space-x-1">
