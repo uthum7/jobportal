@@ -14,7 +14,7 @@ const RegisteruserSchema = new Schema(
     },
     fullName: {
       type: String,
-      required: [true, "Full name is required"],
+      
       trim: true,
     },
     email: {
