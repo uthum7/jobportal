@@ -80,11 +80,9 @@ export const checkApplicationStatus = async (req, res) => {
 // Submit job application
 export const submitApplication = async (req, res) => {
   try {
-    console.log('submitApplication called with:', req.body);
     const { jobId, userId, applicationData } = req.body;
     // Validate required fields
     if (!jobId || !userId || !applicationData) {
-      console.log('Missing required fields:', { jobId, userId, hasApplicationData: !!applicationData });
       return res.status(400).json({ error: "Missing required fields" });
     }
     
@@ -97,11 +95,9 @@ export const submitApplication = async (req, res) => {
       console.log("userId is not a valid ObjectId, keeping as string:", userId);
     }
     
-    console.log('Checking for existing application...');
     // Check if user has already applied
     const existingApplication = await Application.findOne({ userId: convertedUserId, jobId });
     if (existingApplication) {
-      console.log('User already applied for this job');
       return res.status(400).json({ error: "You have already applied for this job" });
     }
     // Required fields for personal info
@@ -207,7 +203,6 @@ export const submitApplication = async (req, res) => {
     // Accept technicalSkills, languages, socialLinks, etc. as optional
     // Encrypt sensitive data before storing (if needed)
     // (You may want to encrypt NIC, phone, address as before)
-    console.log('About to create application with data:', { jobId, userId: convertedUserId, applicationData });
     const encryptedApplicationData = applicationData;
     const application = new Application({
       jobId,
@@ -216,16 +211,12 @@ export const submitApplication = async (req, res) => {
       appliedDate: new Date(),
       status: 'pending'
     });
-    console.log('Application object created, about to save...');
     await application.save();
-    console.log('Application saved successfully');
     res.status(201).json({
       message: "Application submitted successfully",
       applicationId: application._id
     });
   } catch (error) {
-    console.error('Error in submitApplication:', error);
-    console.error('Error stack:', error.stack);
     console.error('Error submitting application:', error);
     res.status(500).json({ error: "Error submitting application", details: error.message });
   }

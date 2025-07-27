@@ -149,9 +149,9 @@ function App() {
     localStorage.removeItem('user');
     setUser(null);
     navigate("/login", { replace: true });
-    return;
-  }
-
+        return;
+    }
+    
   // Store the comprehensive user object
   localStorage.setItem('user', JSON.stringify(userData));
 
@@ -199,12 +199,12 @@ function App() {
 
   const showNavbarSimple = showMessageNavbar;
 
- 
+
   return (
     
     <CVFormProvider>
       {/* React.Fragment shorthand */}
-      <>
+      <> 
         {renderNavbar()}
         <Routes>
           {/* Public */}
@@ -274,7 +274,7 @@ function App() {
              <Route path="/cv-builder/summary" element={<RoleBasedRoute element={<Cv4 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
              <Route path="/cv-builder/references" element={<RoleBasedRoute element={<Cv7 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
           </Route>
-             <Route path="/cv-builder/preview" element={<RoleBasedRoute element={<Cv5 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
+          <Route path="/cv-builder/preview" element={<RoleBasedRoute element={<Cv5 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
           
 
           {/* Protected Home route */}
