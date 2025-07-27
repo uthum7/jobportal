@@ -4,8 +4,7 @@ import mongoose from "mongoose";
 const applicationSchema = new mongoose.Schema({
   jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'jobs', required: true },
   userId: {
-    type: mongoose.Schema.Types.ObjectId, // It’s better if userId is also ObjectId
-    ref: "RegisterUser",                   // Reference to user model
+    type: String, // Keep as String to match existing data
     required: true
   },
   applicationData: {
@@ -17,7 +16,10 @@ const applicationSchema = new mongoose.Schema({
     birthday: { type: Date, required: true },
     gender: { type: String, required: true, enum: ['Male', 'Female', 'Prefer not to say'] },
     age: { type: Number }, // auto-calculated, optional
-    technicalSkills: [{ type: String }],
+    technicalSkills: [{
+      name: { type: String, required: true },
+      proficiency: { type: Number, required: true, min: 1, max: 5 }
+    }],
     languages: [{ type: String }],
     socialLinks: {
       linkedIn: { type: String },
@@ -26,13 +28,15 @@ const applicationSchema = new mongoose.Schema({
     },
     education: [{
       institute: { type: String, required: true },
-      educationLevel: { type: String, required: true, enum: ['O/L', 'A/L', 'Diploma', 'Bachelor’s', 'Master’s', 'PhD', 'Other'] },
+      educationLevel: { type: String, required: true, enum: ['A/L', 'Diploma', 'Bachelor\'s', 'Master\'s', 'PhD'] },
       fieldOfStudy: { type: String },
       gpaOrGrade: { type: String },
-      results: [{ subject: String, grade: String }], // for O/L and A/L
-      startDate: { type: Date, required: true },
+      results: [{ subject: String, grade: String }], // for O/L
+      startDate: { type: Date }, // not required for A/L
       endDate: { type: Date },
-      currentlyStudying: { type: Boolean, default: false }
+      currentlyStudying: { type: Boolean, default: false },
+      alYear: { type: String }, // for A/L
+      alSubjects: [{ subject: String, grade: String }] // for A/L
     }],
     workExperience: [{
       jobTitle: { type: String, required: true },

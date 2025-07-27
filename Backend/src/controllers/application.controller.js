@@ -1,6 +1,7 @@
 //backend/src/controllers/application.controller.js
 import { Application } from "../models/application.model.js";
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 
 // Encryption utilities for sensitive data
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'your-32-character-secret-key-here'; // Use environment variable in production
@@ -79,14 +80,28 @@ export const checkApplicationStatus = async (req, res) => {
 // Submit job application
 export const submitApplication = async (req, res) => {
   try {
+    console.log('submitApplication called with:', req.body);
     const { jobId, userId, applicationData } = req.body;
     // Validate required fields
     if (!jobId || !userId || !applicationData) {
+      console.log('Missing required fields:', { jobId, userId, hasApplicationData: !!applicationData });
       return res.status(400).json({ error: "Missing required fields" });
     }
+    
+    // Convert userId to ObjectId if it's a valid ObjectId string
+    let convertedUserId = userId;
+    try {
+      convertedUserId = new mongoose.Types.ObjectId(userId);
+    } catch (error) {
+      // If conversion fails, keep as string (for backward compatibility)
+      console.log("userId is not a valid ObjectId, keeping as string:", userId);
+    }
+    
+    console.log('Checking for existing application...');
     // Check if user has already applied
-    const existingApplication = await Application.findOne({ userId, jobId });
+    const existingApplication = await Application.findOne({ userId: convertedUserId, jobId });
     if (existingApplication) {
+      console.log('User already applied for this job');
       return res.status(400).json({ error: "You have already applied for this job" });
     }
     // Required fields for personal info
@@ -134,16 +149,31 @@ export const submitApplication = async (req, res) => {
     }
     // Validate each education entry
     for (const edu of applicationData.education) {
-      if (!edu.institute || !edu.educationLevel || !edu.startDate) {
+      // Check basic required fields
+      if (!edu.institute || !edu.educationLevel) {
         return res.status(400).json({ error: "Each education entry must have institute, education level, and start date." });
       }
+      
+      // For A/L, check alYear instead of startDate
+      if (edu.educationLevel === 'A/L') {
+        if (!edu.alYear) {
+          return res.status(400).json({ error: "A/L education must have a year." });
+        }
+      } else {
+        // For other education levels, check startDate
+        if (!edu.startDate) {
+          return res.status(400).json({ error: "Each education entry must have a start date." });
+        }
+      }
+      
       if (['Diploma', 'Bachelor’s', 'Master’s', 'PhD', 'Other'].includes(edu.educationLevel) && !edu.fieldOfStudy) {
         return res.status(400).json({ error: "Field of Study is required for diplomas and above." });
       }
-      if ((edu.educationLevel === 'O/L' || edu.educationLevel === 'A/L') && (!edu.results || !Array.isArray(edu.results) || edu.results.length === 0)) {
+      if (edu.educationLevel === 'A/L' && (!edu.alSubjects || !Array.isArray(edu.alSubjects) || edu.alSubjects.length === 0)) {
         return res.status(400).json({ error: "Results are required for O/L and A/L." });
       }
-      if (!edu.currentlyStudying && !edu.endDate) {
+      // Only check end date for non-A/L education levels
+      if (edu.educationLevel !== 'A/L' && !edu.currentlyStudying && !edu.endDate) {
         return res.status(400).json({ error: "End Date is required unless currently studying." });
       }
     }
@@ -177,20 +207,25 @@ export const submitApplication = async (req, res) => {
     // Accept technicalSkills, languages, socialLinks, etc. as optional
     // Encrypt sensitive data before storing (if needed)
     // (You may want to encrypt NIC, phone, address as before)
+    console.log('About to create application with data:', { jobId, userId: convertedUserId, applicationData });
     const encryptedApplicationData = applicationData;
     const application = new Application({
       jobId,
-      userId,
+      userId: convertedUserId,
       applicationData: encryptedApplicationData,
       appliedDate: new Date(),
       status: 'pending'
     });
+    console.log('Application object created, about to save...');
     await application.save();
+    console.log('Application saved successfully');
     res.status(201).json({
       message: "Application submitted successfully",
       applicationId: application._id
     });
   } catch (error) {
+    console.error('Error in submitApplication:', error);
+    console.error('Error stack:', error.stack);
     console.error('Error submitting application:', error);
     res.status(500).json({ error: "Error submitting application", details: error.message });
   }
