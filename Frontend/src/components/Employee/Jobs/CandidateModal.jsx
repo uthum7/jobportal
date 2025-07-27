@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CandidateRankingModal from './CandidateRankingModal';
-import { rankCandidates, getScoreColor, getStatusBadgeColor } from '../../../utils/rankingUtils';
+import { rankCandidates, getScoreColor, getStatusBadgeColor, getScoreLabel, getScoreBreakdownText } from '../../../utils/rankingUtils';
 import '../styles/CandidateModal.css';
 
 const CandidateModal = ({ isOpen, onClose, job }) => {
@@ -27,8 +27,8 @@ const CandidateModal = ({ isOpen, onClose, job }) => {
                 const apps = response.data.Applications || [];
                 setApplications(apps);
                 
-                // Rank candidates
-                const ranked = rankCandidates(apps, job.Requirements);
+                // Rank candidates with job requirements
+                const ranked = rankCandidates(apps, job.Requirements, job.Qualifications);
                 setRankedApplications(ranked);
             }
         } catch (error) {
@@ -81,60 +81,78 @@ const CandidateModal = ({ isOpen, onClose, job }) => {
                                     <p>Ranked by compatibility score</p>
                                 </div>
                                 
-                                {rankedApplications.map((application, index) => (
-                                    <div key={application._id} className="candidate-item">
-                                        <div className="candidate-rank">
-                                            <span className="rank-number">#{application.rank}</span>
-                                            <div 
-                                                className="score-circle"
-                                                style={{ backgroundColor: getScoreColor(application.score) }}
-                                            >
-                                                {application.score}
+                                {rankedApplications.map((application, index) => {
+                                    // Safety check
+                                    if (!application || !application.applicationData) {
+                                        console.warn('Invalid application data at index:', index, application);
+                                        return (
+                                            <div key={index} className="candidate-item">
+                                                <p>Invalid candidate data</p>
                                             </div>
-                                        </div>
+                                        );
+                                    }
 
-                                        <div className="candidate-info">
-                                            <div className="candidate-main-info">
-                                                <h4>{application.applicationData.fullName}</h4>
-                                                <p className="candidate-email">{application.applicationData.email}</p>
-                                                <p className="candidate-location">{application.applicationData.address}</p>
-                                            </div>
-
-                                            <div className="candidate-skills">
-                                                {application.applicationData.skills?.slice(0, 3).map((skill, idx) => (
-                                                    <span key={idx} className="skill-tag">{skill}</span>
-                                                ))}
-                                                {application.applicationData.skills?.length > 3 && (
-                                                    <span className="skill-tag skill-more">
-                                                        +{application.applicationData.skills.length - 3}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <div className="candidate-meta">
-                                                <span className="applied-date">
-                                                    Applied: {formatDate(application.appliedDate)}
-                                                </span>
-                                                <span 
-                                                    className="status-badge"
-                                                    style={{ backgroundColor: getStatusBadgeColor(application.status) }}
+                                    return (
+                                        <div key={application._id || index} className="candidate-item">
+                                            <div className="candidate-rank">
+                                                <span className="rank-number">#{application.rank || index + 1}</span>
+                                                <div 
+                                                    className="score-circle"
+                                                    style={{ backgroundColor: getScoreColor(application.score || 0) }}
                                                 >
-                                                    {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
-                                                </span>
+                                                    {application.score || 0}
+                                                </div>
+                                            </div>
+
+                                            <div className="candidate-info">
+                                                <div className="candidate-main-info">
+                                                    <h4>{application.applicationData?.fullName || 'Unknown'}</h4>
+                                                    <p className="candidate-email">{application.applicationData?.email || 'No email'}</p>
+                                                    <p className="candidate-location">{application.applicationData?.address || 'No address'}</p>
+                                                </div>
+
+                                                <div className="candidate-skills">
+                                                    {application.applicationData?.technicalSkills?.slice(0, 3).map((skill, idx) => {
+                                                        // Handle both string and object skills
+                                                        const skillText = typeof skill === 'string' ? skill : 
+                                                                         (skill?.name || skill?.skill || JSON.stringify(skill));
+                                                        return (
+                                                            <span key={idx} className="skill-tag">{skillText}</span>
+                                                        );
+                                                    }) || []}
+                                                    {(application.applicationData?.technicalSkills?.length || 0) > 3 && (
+                                                        <span className="skill-tag skill-more">
+                                                            +{(application.applicationData?.technicalSkills?.length || 0) - 3}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                <div className="candidate-meta">
+                                                    <span className="applied-date">
+                                                        Applied: {formatDate(application.appliedDate)}
+                                                    </span>
+                                                    <span 
+                                                        className="status-badge"
+                                                        style={{ backgroundColor: getStatusBadgeColor(application.status || 'pending') }}
+                                                    >
+                                                        {String(application.status || 'pending').charAt(0).toUpperCase() + String(application.status || 'pending').slice(1)}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="candidate-actions">
+                                                <button 
+                                                    className="rank-btn"
+                                                    onClick={() => handleRankClick(application)}
+                                                >
+                                                    View Details
+                                                </button>
                                             </div>
                                         </div>
-
-                                        <div className="candidate-actions">
-                                            <button 
-                                                className="rank-btn"
-                                                onClick={() => handleRankClick(application)}
-                                            >
-                                                View Details
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
+
                         )}
                     </div>
                 </div>

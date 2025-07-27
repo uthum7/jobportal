@@ -217,3 +217,15 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* .job-card::before,
+.job-card::after {
+    display: none !important;
+}
+
+.job-card {
+    background: white !important;
+    background-image: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+} */

@@ -1,13 +1,14 @@
 // components/CandidateRankingModal.jsx
 import React from 'react';
-import { calculateCandidateScore, getScoreColor, getStatusBadgeColor } from '../../../utils/rankingUtils';
+import { calculateCandidateScore, getScoreColor, getStatusBadgeColor, getScoreBreakdownText } from '../../../utils/rankingUtils';
 import '../styles/CandidateRankingModal.css';
 
 const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
     if (!isOpen || !candidate) return null;
 
     const { applicationData } = candidate;
-    const score = calculateCandidateScore(candidate, job?.Requirements);
+    const scoreResult = calculateCandidateScore(candidate, job?.Requirements, job?.Qualifications);
+    const score = scoreResult.score;
 
     const formatDate = (date) => {
         if (!date) return 'Not specified';
@@ -93,17 +94,22 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
                             )}
                         </div>
 
-                        {/* Skills */}
+                        {/* Technical Skills */}
                         <div className="detail-section">
-                            <h3>Skills</h3>
-                            {applicationData.skills && applicationData.skills.length > 0 ? (
+                            <h3>Technical Skills</h3>
+                            {applicationData.technicalSkills && applicationData.technicalSkills.length > 0 ? (
                                 <div className="skills-container">
-                                    {applicationData.skills.map((skill, index) => (
-                                        <span key={index} className="skill-badge">{skill}</span>
-                                    ))}
+                                    {applicationData.technicalSkills.map((skill, index) => {
+                                        // Handle both string and object skills
+                                        const skillText = typeof skill === 'string' ? skill : 
+                                                         (skill?.name || skill?.skill || 'Unknown Skill');
+                                        return (
+                                            <span key={index} className="skill-badge">{skillText}</span>
+                                        );
+                                    })}
                                 </div>
                             ) : (
-                                <p className="no-data">No skills listed</p>
+                                <p className="no-data">No technical skills listed</p>
                             )}
                         </div>
 
@@ -114,13 +120,48 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
                                 <div className="education-list">
                                     {applicationData.education.map((edu, index) => (
                                         <div key={index} className="education-item">
-                                            <h4>{edu.degree}</h4>
-                                            <p>{edu.institute}</p>
-                                            {edu.startDate && (
+                                            <h4>{edu.educationLevel || 'Unknown Level'} - {edu.fieldOfStudy || 'Unknown Field'}</h4>
+                                            <p>{edu.institute || 'Unknown Institute'}</p>
+                                            {edu.alYear && (
                                                 <p className="education-dates">
-                                                    {formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : 'Present'}
-                                                    {edu.currentlyStudying && <span className="studying-badge">Currently Studying</span>}
+                                                    A/L Year: {edu.alYear}
                                                 </p>
+                                            )}
+                                            {edu.gpaOrGrade && (
+                                                <p className="education-grade">Grade: {edu.gpaOrGrade}</p>
+                                            )}
+                                            {edu.alSubjects && edu.alSubjects.length > 0 && (
+                                                <div className="al-subjects">
+                                                    <p>A/L Subjects:</p>
+                                                    <div className="subjects-list">
+                                                        {edu.alSubjects.map((subject, idx) => {
+                                                            // Handle both string and object subjects
+                                                            const subjectText = typeof subject === 'string' ? subject : 
+                                                                               (subject?.subject || subject?.name || 'Unknown Subject');
+                                                            return (
+                                                                <span key={idx} className="subject-tag">{subjectText}</span>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {edu.results && edu.results.length > 0 && (
+                                                <div className="education-results">
+                                                    <p>Results:</p>
+                                                    <div className="results-list">
+                                                        {edu.results.map((result, idx) => {
+                                                            const subject = typeof result === 'string' ? result :
+                                                                           (result?.subject || 'Unknown');
+                                                            const grade = typeof result === 'object' && result?.grade ? 
+                                                                         ` - ${result.grade}` : '';
+                                                            return (
+                                                                <span key={idx} className="result-tag">
+                                                                    {subject}{grade}
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
                                             )}
                                         </div>
                                     ))}
@@ -137,10 +178,12 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
                                 <div className="experience-list">
                                     {applicationData.workExperience.map((exp, index) => (
                                         <div key={index} className="experience-item">
-                                            <h4>{exp.position}</h4>
+                                            <h4>{exp.jobTitle}</h4>
                                             <p>{exp.company}</p>
+                                            {exp.industry && <p className="experience-industry">Industry: {exp.industry}</p>}
                                             <p className="experience-dates">
                                                 {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Present'}
+                                                {exp.currentlyWorking && <span className="studying-badge">Currently Working</span>}
                                             </p>
                                             {exp.description && <p className="experience-desc">{exp.description}</p>}
                                         </div>
@@ -151,13 +194,51 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
                             )}
                         </div>
 
+                        {/* Projects */}
+                        <div className="detail-section">
+                            <h3>Projects</h3>
+                            {applicationData.projects && applicationData.projects.length > 0 ? (
+                                <div className="projects-list">
+                                    {applicationData.projects.map((project, index) => (
+                                        <div key={index} className="project-item">
+                                            <h4>{project.title}</h4>
+                                            {project.description && <p className="project-desc">{project.description}</p>}
+                                            {project.technologies && project.technologies.length > 0 && (
+                                                <div className="project-technologies">
+                                                    <p>Technologies:</p>
+                                                    <div className="tech-list">
+                                                        {project.technologies.map((tech, idx) => (
+                                                            <span key={idx} className="tech-tag">{tech}</span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {project.link && (
+                                                <p className="project-link">
+                                                    <a href={project.link} target="_blank" rel="noopener noreferrer">
+                                                        View Project
+                                                    </a>
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="no-data">No projects listed</p>
+                            )}
+                        </div>
+
                         {/* Certifications */}
                         <div className="detail-section">
                             <h3>Certifications</h3>
                             {applicationData.certifications && applicationData.certifications.length > 0 ? (
-                                <div className="certifications-container">
+                                <div className="certifications-list">
                                     {applicationData.certifications.map((cert, index) => (
-                                        <span key={index} className="certification-badge">{cert}</span>
+                                        <div key={index} className="certification-item">
+                                            <h4>{cert.name}</h4>
+                                            <p>Issued by: {cert.issuer}</p>
+                                            <p>Year: {cert.year}</p>
+                                        </div>
                                     ))}
                                 </div>
                             ) : (
@@ -165,11 +246,30 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
                             )}
                         </div>
 
-                        {/* Summary */}
-                        {applicationData.summary && (
-                            <div className="detail-section full-width">
-                                <h3>Summary</h3>
-                                <p className="summary-text">{applicationData.summary}</p>
+                        {/* Social Links */}
+                        {applicationData.socialLinks && Object.keys(applicationData.socialLinks).length > 0 && (
+                            <div className="detail-section">
+                                <h3>Social Links</h3>
+                                <div className="social-links">
+                                    {Object.entries(applicationData.socialLinks).map(([platform, link], index) => (
+                                        <div key={index} className="social-link">
+                                            <span className="platform">{platform}:</span>
+                                            <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Languages */}
+                        {applicationData.languages && applicationData.languages.length > 0 && (
+                            <div className="detail-section">
+                                <h3>Languages</h3>
+                                <div className="languages-container">
+                                    {applicationData.languages.map((language, index) => (
+                                        <span key={index} className="language-badge">{language}</span>
+                                    ))}
+                                </div>
                             </div>
                         )}
 
@@ -180,6 +280,28 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
                                 <p className="cover-letter-text">{applicationData.coverLetter}</p>
                             </div>
                         )}
+
+                        {/* Score Breakdown */}
+                        <div className="detail-section full-width">
+                            <h3>Ranking Score Breakdown</h3>
+                            <div className="score-breakdown-detailed">
+                                {scoreResult.breakdown ? Object.entries(getScoreBreakdownText(scoreResult.breakdown)).map(([category, score], index) => (
+                                    <div key={index} className="score-breakdown-item">
+                                        <span className="category">{String(category)}:</span>
+                                        <span className="score-value">{String(score)}</span>
+                                    </div>
+                                )) : (
+                                    <div className="score-breakdown-item">
+                                        <span className="category">No breakdown available</span>
+                                        <span className="score-value">-</span>
+                                    </div>
+                                )}
+                                <div className="score-breakdown-item total">
+                                    <span className="category">Total Score:</span>
+                                    <span className="score-value total-score">{score}/100</span>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Application Details */}
                         <div className="detail-section full-width">

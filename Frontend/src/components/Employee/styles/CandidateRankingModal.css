@@ -16,7 +16,8 @@
     align-items: flex-start;
     padding: 24px;
     border-bottom: 1px solid #e5e7eb;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* background: linear-gradient(135deg, #17276e 0%, #0d0f3f 100%); */
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
     color: white;
 }
 
@@ -139,6 +140,222 @@
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 500;
+}
+
+.education-grade {
+    color: #10b981 !important;
+    font-weight: 600 !important;
+}
+
+.al-subjects {
+    margin-top: 8px;
+}
+
+.subjects-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.subject-tag {
+    background-color: #e0f2fe;
+    color: #0277bd;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.education-results {
+    margin-top: 8px;
+}
+
+.results-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.result-tag {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.experience-industry {
+    color: #6366f1 !important;
+    font-style: italic;
+}
+
+.projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.project-item {
+    background: white;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.project-item h4 {
+    margin: 0 0 8px 0;
+    color: #1e293b;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.project-desc {
+    color: #64748b !important;
+    margin: 4px 0 8px 0 !important;
+}
+
+.project-technologies {
+    margin: 8px 0;
+}
+
+.tech-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.tech-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.project-link a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.project-link a:hover {
+    text-decoration: underline;
+}
+
+.certifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.certification-item {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.certification-item h4 {
+    margin: 0 0 4px 0;
+    color: #1e293b;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.certification-item p {
+    margin: 2px 0;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.platform {
+    font-weight: 600;
+    color: #374151;
+    min-width: 80px;
+    font-size: 0.875rem;
+}
+
+.social-link a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.875rem;
+}
+
+.social-link a:hover {
+    text-decoration: underline;
+}
+
+.languages-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.language-badge {
+    background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+    color: #1e293b;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.score-breakdown-detailed {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.score-breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.score-breakdown-item:last-child {
+    border-bottom: none;
+}
+
+.score-breakdown-item.total {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 2px solid #e2e8f0;
+    font-weight: 600;
+}
+
+.score-breakdown-item .category {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.score-breakdown-item .score-value {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.total-score {
+    color: #059669 !important;
+    font-size: 1.1rem !important;
 }
 
 .education-list,

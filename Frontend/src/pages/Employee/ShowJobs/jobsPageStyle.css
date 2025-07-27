@@ -214,14 +214,14 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+  background: linear-gradient(180deg, #4e7ecb 0%, #0d2765 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .job-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.15);
+  /* box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.15); */
 }
 
 .job-card:hover::before {

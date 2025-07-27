@@ -161,16 +161,16 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  /* background: linear-gradient(90deg, #4f46e5, #7c3aed); */
 }
 
-.job-card-modern.urgent::before {
+/* .job-card-modern.urgent::before {
   background: linear-gradient(90deg, #f59e0b, #d97706);
 }
 
 .job-card-modern.expired::before {
   background: linear-gradient(90deg, #ef4444, #dc2626);
-}
+} */
 
 .job-card-modern:hover {
   transform: translateY(-4px);
