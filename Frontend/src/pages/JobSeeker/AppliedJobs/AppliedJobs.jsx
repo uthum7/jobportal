@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { getUserId, isAuthenticated, isJobSeeker, getToken } from "../../../utils/auth";
 import JobseekerSidebar from "../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar.jsx";
-import Footer from "../../../components/Footer/Footer.jsx";
 import "./AppliedJobs.css";
 import "../Dashboard/Dashboard.css";
 
@@ -40,6 +39,9 @@ const AppliedJobsPage = () => {
       setLoading(true);
       setError(null);
       
+      console.log("Frontend - Fetching applied jobs for userId:", userId);
+      console.log("Frontend - userId type:", typeof userId);
+      
       // Configure axios with authentication header
       const config = {
         headers: {
@@ -50,6 +52,8 @@ const AppliedJobsPage = () => {
       
       const response = await axios.get(`http://localhost:5001/api/applied-jobs/${userId}`, config);
       console.log("Applied jobs response:", response.data);
+      console.log("Frontend - Response data type:", typeof response.data);
+      console.log("Frontend - Response data length:", Array.isArray(response.data) ? response.data.length : 'not an array');
       
       setAppliedJobs(response.data);
       setLoading(false);
