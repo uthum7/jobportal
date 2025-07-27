@@ -1,5 +1,7 @@
 import RegisterUser from '../models/RegisterUser.model.js';
 import Job from "../models/job.model.js";
+import Booking from '../models/bookings.js';
+
 import { Application } from '../models/application.model.js';
 import mongoose from 'mongoose';  // or import { Types } from 'mongoose';
 
@@ -388,5 +390,37 @@ export const updateJobDetails = async (req, res) => {
   } catch (error) {
     console.error("Error updating job:", error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+
+// controllers/bookingController.js
+
+export const getRecentBookingsForCounselor = async (req, res) => {
+  const { counselorId } = req.params;
+
+  try {
+    const bookings = await Booking.find({
+      counselor_id: counselorId,
+      deleted_at: null // Ensure only active bookings
+    })
+      .populate('user_id', 'username') // Only get username of counselee
+      .sort({ createdAt: -1 }) // Most recent first
+      
+
+    const formatted = bookings.map((booking) => ({
+      _id: booking._id,
+      sessionType: booking.topic,
+      clientName: booking.user_id?.username || 'Unknown',
+      bookingDate: booking.createdAt,
+      status: booking.status?.toLowerCase() || 'pending',
+      time: booking.time || null
+    }));
+
+    res.status(200).json(formatted);
+  } catch (err) {
+    console.error('Error fetching recent bookings:', err);
+    res.status(500).json({ message: 'Failed to fetch recent bookings', error: err.message });
   }
 };
