@@ -1,13 +1,12 @@
+// pages/SignUp/SignUpPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { saveToken } from '../../utils/auth'; // Not typically needed on signup, token is for login
-import { FaUser, FaEnvelope, FaLock, FaUsersCog } from "react-icons/fa"; // Changed FaUsers to FaUsersCog for role
-import styles from "./SignUpPage.module.css"; // Using CSS Modules
+import { FaUser, FaEnvelope, FaLock, FaUsersCog } from "react-icons/fa";
+import styles from "./SignUpPage.module.css";
 import logoPath from "../../assets/img/logo.png";
-// import backgroundPath from "../../assets/img/background.png"; // Removed as left pane is removed
 import AuthSplash from "../../components/AuthSplash/AuthSplash";
 
-const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a full page
+const SignUpPage = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -28,11 +27,9 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear the specific error when user types
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
-    // Clear submit error if user starts typing again
     if (errors.submit) {
         setErrors(prev => ({...prev, submit: ""}));
     }
@@ -62,14 +59,14 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setErrors({}); // Clear previous submit errors
+    setErrors({});
     
     try {
       const registrationData = {
         username: formData.username.trim(),
         email: formData.email.trim(),
         password: formData.password,
-        roles: [formData.role.toUpperCase()] // Backend expects 'roles' as an array
+        roles: [formData.role.toUpperCase()]
       };
 
       const response = await fetch("http://localhost:5001/api/register/register", {
@@ -81,8 +78,6 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
       const data = await response.json();
 
       if (response.ok) {
-        // Optionally, display a success message via a toast or alert
-        // For now, navigating to login directly after success
         navigate("/login", { state: { message: "Registration successful! Please login." } });
       } else {
         setErrors({ submit: data.message || "Registration failed. Please check your details." });
@@ -100,8 +95,8 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
   }
 
   return (
-    <div className={styles.signupPageWrapper}> {/* Full page wrapper */}
-      <div className={styles.signupFormCard}>   {/* The centered card for the form */}
+    <div className={styles.signupPageWrapper}>
+      <div className={styles.signupFormCard}>
         <div className={styles.logoContainer}>
           <img src={logoPath} alt="JobPortal Logo" className={styles.logoImg} />
         </div>
@@ -175,7 +170,7 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
               <FaUsersCog className={styles.inputIcon} /> I am a
             </label>
             <select
-              id="role" // Added id for label association
+              id="role"
               name="role"
               className={styles.selectField}
               value={formData.role}
@@ -183,9 +178,9 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
               disabled={isLoading}
             >
               <option value="" disabled>Select your role</option>
-              {ROLES.map((roleItem) => ( // Changed variable name to avoid conflict
+              {ROLES.map((roleItem) => (
                 <option key={roleItem} value={roleItem}>
-                  {roleItem.charAt(0).toUpperCase() + roleItem.slice(1).toLowerCase()} {/* Capitalize role */}
+                  {roleItem.charAt(0).toUpperCase() + roleItem.slice(1).toLowerCase()}
                 </option>
               ))}
             </select>
