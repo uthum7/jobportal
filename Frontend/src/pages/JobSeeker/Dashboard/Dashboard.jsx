@@ -27,7 +27,7 @@ const getDashboardCompletionStatus = (resumeData) => {
     references,
   } = resumeData;
   return {
-    personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.jobTitle),
+    personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.birthday && personalInfo?.gender),
     education: !!(educationDetails?.schoolName || educationDetails?.universitiyName),
     experience: professionalExperience && professionalExperience.length > 0,
     skills: skill && skill.length > 0,
@@ -40,10 +40,36 @@ const getDashboardCompletionStatus = (resumeData) => {
 const JobSeekerDashboard = () => {
   // State for animations
   const [animationComplete, setAnimationComplete] = useState(false);
-  const { completionStatus, loading: cvLoading, fetchResumeData, resumeData } = useCVForm();
+  const { resumeData, fetchResumeData } = useCVForm();
 
-  // Custom dashboard CV status
-  const dashboardCompletionStatus = getDashboardCompletionStatus(resumeData);
+  // Dashboard CV status state
+  const [dashboardCompletionStatus, setDashboardCompletionStatus] = useState({});
+
+  useEffect(() => {
+    if (resumeData) {
+      const {
+        personalInfo,
+        educationDetails,
+        professionalExperience,
+        skill,
+        summary,
+        references,
+      } = resumeData;
+
+      // Updated logic: use array checks for education, experience, skills, references
+      const newCompletionStatus = {
+        personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.birthday && personalInfo?.gender),
+        education: Array.isArray(educationDetails) && educationDetails.length > 0,
+        experience: Array.isArray(professionalExperience) && professionalExperience.length > 0,
+        skills: Array.isArray(skill) && skill.length > 0,
+        summary: summary && summary.length > 20,
+        references: Array.isArray(references) && references.length > 0,
+        preview: false,
+      };
+
+      setDashboardCompletionStatus(newCompletionStatus);
+    }
+  }, [resumeData]);
 
   // Calculate CV completion percentage (DASHBOARD LOGIC)
   const getDashboardCVCompletionPercentage = () => {
@@ -87,7 +113,7 @@ const JobSeekerDashboard = () => {
     setTimeout(() => setAnimationComplete(true), 100);
     
     // Fetch CV data to ensure completion status is up to date
-    fetchResumeData();
+    // fetchResumeData(); // This line was removed as per the new_code
     
     // Animate CV progress
     // const timer = setInterval(() => {
@@ -106,7 +132,7 @@ const JobSeekerDashboard = () => {
     return () => {
       // clearInterval(timer); // This line was removed as per the new_code
     };
-  }, [userId, navigate, fetchResumeData]);
+  }, [userId, navigate, resumeData]); // Changed fetchResumeData to resumeData
 
   const fetchDashboardData = async () => {
     if (!userId) {
