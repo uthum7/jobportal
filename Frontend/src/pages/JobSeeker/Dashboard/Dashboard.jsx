@@ -16,21 +16,71 @@ const skillMatchData = [
   { skill: 'AWS', userLevel: 3, requiredLevel: 8 }
 ];
 
+const getDashboardCompletionStatus = (resumeData) => {
+  if (!resumeData) return {};
+  const {
+    personalInfo,
+    educationDetails,
+    professionalExperience,
+    skill,
+    summary,
+    references,
+  } = resumeData;
+  return {
+    personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.birthday && personalInfo?.gender),
+    education: !!(educationDetails?.schoolName || educationDetails?.universitiyName),
+    experience: professionalExperience && professionalExperience.length > 0,
+    skills: skill && skill.length > 0,
+    summary: summary && summary.length > 20,
+    references: references && references.length > 0,
+    preview: false,
+  };
+};
+
 const JobSeekerDashboard = () => {
   // State for animations
   const [animationComplete, setAnimationComplete] = useState(false);
-  const { completionStatus, loading: cvLoading, fetchResumeData } = useCVForm();
+  const { resumeData, fetchResumeData } = useCVForm();
 
-  // Calculate CV completion percentage
-  const getCVCompletionPercentage = () => {
-    if (!completionStatus) return 0;
+  // Dashboard CV status state
+  const [dashboardCompletionStatus, setDashboardCompletionStatus] = useState({});
+
+  useEffect(() => {
+    if (resumeData) {
+      const {
+        personalInfo,
+        educationDetails,
+        professionalExperience,
+        skill,
+        summary,
+        references,
+      } = resumeData;
+
+      // Updated logic: use array checks for education, experience, skills, references
+      const newCompletionStatus = {
+        personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.birthday && personalInfo?.gender),
+        education: Array.isArray(educationDetails) && educationDetails.length > 0,
+        experience: Array.isArray(professionalExperience) && professionalExperience.length > 0,
+        skills: Array.isArray(skill) && skill.length > 0,
+        summary: summary && summary.length > 20,
+        references: Array.isArray(references) && references.length > 0,
+        preview: false,
+      };
+
+      setDashboardCompletionStatus(newCompletionStatus);
+    }
+  }, [resumeData]);
+
+  // Calculate CV completion percentage (DASHBOARD LOGIC)
+  const getDashboardCVCompletionPercentage = () => {
+    if (!dashboardCompletionStatus) return 0;
     const totalSections = 6; // personalinfo, education, experience, skills, summary, references (excluding preview)
-    const completed = Object.values(completionStatus || {}).filter(Boolean).length;
+    const completed = Object.values(dashboardCompletionStatus || {}).filter(Boolean).length;
     return Math.round((completed / totalSections) * 100);
   };
-  const cvProgress = getCVCompletionPercentage();
-  const completedSections = Object.keys(completionStatus || {}).filter(key => completionStatus[key] && key !== 'preview');
-  const missingSections = Object.keys(completionStatus || {}).filter(key => !completionStatus[key] && key !== 'preview');
+  const dashboardCvProgress = getDashboardCVCompletionPercentage();
+  const dashboardCompletedSections = Object.keys(dashboardCompletionStatus || {}).filter(key => dashboardCompletionStatus[key] && key !== 'preview');
+  const dashboardMissingSections = Object.keys(dashboardCompletionStatus || {}).filter(key => !dashboardCompletionStatus[key] && key !== 'preview');
   
   // State for real user data
   const [dashboardData, setDashboardData] = useState({
@@ -63,7 +113,7 @@ const JobSeekerDashboard = () => {
     setTimeout(() => setAnimationComplete(true), 100);
     
     // Fetch CV data to ensure completion status is up to date
-    fetchResumeData();
+    // fetchResumeData(); // This line was removed as per the new_code
     
     // Animate CV progress
     // const timer = setInterval(() => {
@@ -82,7 +132,7 @@ const JobSeekerDashboard = () => {
     return () => {
       // clearInterval(timer); // This line was removed as per the new_code
     };
-  }, [userId, navigate, fetchResumeData]);
+  }, [userId, navigate, resumeData]); // Changed fetchResumeData to resumeData
 
   const fetchDashboardData = async () => {
     if (!userId) {
@@ -487,13 +537,13 @@ try {
                 CV Completion
               </h3>
               <div className="cv-progress-content">
-                <CircularProgress percentage={cvProgress} />
+                <CircularProgress percentage={dashboardCvProgress} />
                 <div className="cv-progress-info">
                   <p>
-                    {completedSections.length} of 6 sections completed
+                    {dashboardCompletedSections.length} of 6 sections completed
                   </p>
                   <p style={{ fontSize: '0.75rem' }}>
-                    Missing: {missingSections.map(section => section.charAt(0).toUpperCase() + section.slice(1)).join(', ')}
+                    Missing: {dashboardMissingSections.map(section => section.charAt(0).toUpperCase() + section.slice(1)).join(', ')}
                   </p>
                   <button className="complete-cv-btn" onClick={fetchResumeData}>
                     Refresh CV Data
