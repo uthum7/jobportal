@@ -101,20 +101,23 @@
 }
 
 /* Search Bar Styles */
-.search-bar {
+.applied-jobs-search-bar {
   margin-bottom: 20px;
   display: flex;
   justify-content: center;
   padding: 0 25px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.search-input-container {
+.applied-jobs-search-input-container {
   position: relative;
   width: 100%;
   max-width: 600px;
+  flex-shrink: 0;
 }
 
-.search-input {
+.applied-jobs-search-input {
   width: 100%;
   padding: 15px 50px 15px 20px;
   border: 2px solid #e2e8f0;
@@ -124,20 +127,22 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   outline: none;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
-.search-input:focus {
+.applied-jobs-search-input:focus {
   border-color: #3B82F6;
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
   transform: translateY(-1px);
 }
 
-.search-input::placeholder {
+.applied-jobs-search-input::placeholder {
   color: #9ca3af;
   font-style: italic;
 }
 
-.clear-search-btn {
+.applied-jobs-clear-search-btn {
   position: absolute;
   right: 15px;
   top: 50%;
@@ -155,9 +160,10 @@
   font-size: 14px;
   font-weight: bold;
   transition: all 0.2s ease;
+  z-index: 10;
 }
 
-.clear-search-btn:hover {
+.applied-jobs-clear-search-btn:hover {
   background: #dc2626;
   transform: translateY(-50%) scale(1.1);
 }

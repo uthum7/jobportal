@@ -171,7 +171,7 @@ const AppliedJobsPage = () => {
             <div className="applied-jobs-info">
               <h3>Your Job Applications</h3>
               <p className="applied-jobs-count">
-                {loading ? "Loading..." : `${appliedJobs.length} Application${appliedJobs.length !== 1 ? 's' : ''} Submitted`}
+                {loading ? "Loading..." : `${appliedJobs.length} Application${appliedJobs.length !== 1 ? 's' : ''} Submitted `}
               </p>
             </div>
             {appliedJobs.length > 0 && (
@@ -186,17 +186,17 @@ const AppliedJobsPage = () => {
           </div>
           {/* Filter Bar */}
           {/* Search Bar */}
-          <div className="search-bar">
-            <div className="search-input-container">
+          <div className="applied-jobs-search-bar">
+            <div className="applied-jobs-search-input-container">
               <input
                 type="text"
                 placeholder="Search by job title, type, or mode..."
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                className="search-input"
+                className="applied-jobs-search-input"
               />
               <button 
-                className="clear-search-btn"
+                className="applied-jobs-clear-search-btn"
                 onClick={() => setSearchKeyword("")}
                 style={{ display: searchKeyword ? 'block' : 'none' }}
               >
@@ -329,7 +329,7 @@ const AppliedJobsPage = () => {
                 <h3 className="no-applied-jobs-title">
                   {filter === "all" 
                     ? (searchKeyword ? "No applications found" : "No job applications yet")
-                    : `No ${filter} applications${searchKeyword ? ' found' : ''}`}
+                    :` No ${filter} applications${searchKeyword ? ' found' : ''}`}
                 </h3>
 
                 <p className="no-applied-jobs-message">
@@ -337,7 +337,7 @@ const AppliedJobsPage = () => {
                     ? (searchKeyword 
                         ? "No applications match your search criteria. Try adjusting your search terms or filters."
                         : "You haven't applied to any jobs yet. Start exploring job opportunities and apply to positions that match your skills and interests.")
-                    : `You don't have any applications with ${filter} status${searchKeyword ? ' matching your search' : ''} at the moment.`}
+                    :` You don't have any applications with ${filter} status${searchKeyword ? ' matching your search' : ''} at the moment.`}
                 </p>
 
                 {(filter === "all" && !searchKeyword) && (
