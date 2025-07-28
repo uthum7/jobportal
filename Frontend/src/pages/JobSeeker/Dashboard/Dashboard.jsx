@@ -62,6 +62,9 @@ const JobSeekerDashboard = () => {
     // Trigger animations on mount
     setTimeout(() => setAnimationComplete(true), 100);
     
+    // Fetch CV data to ensure completion status is up to date
+    fetchResumeData();
+    
     // Animate CV progress
     // const timer = setInterval(() => {
     //   setCvProgress(prev => {
@@ -79,7 +82,7 @@ const JobSeekerDashboard = () => {
     return () => {
       // clearInterval(timer); // This line was removed as per the new_code
     };
-  }, [userId, navigate]);
+  }, [userId, navigate, fetchResumeData]);
 
   const fetchDashboardData = async () => {
     if (!userId) {
@@ -102,7 +105,7 @@ const JobSeekerDashboard = () => {
       // Fetch user profile for first name
       let firstName = 'Gimhani';
       try {
-        const userResponse = await axios.get(`http://localhost:5001/api/users/${userId}`, config);
+        const userResponse = await axios.get(`http://localhost:5001/api/register/users/${userId}`, config);
         firstName = userResponse.data.firstName || 'User';
       } catch (err) {
         console.warn("Could not fetch user profile:", err);

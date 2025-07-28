@@ -50,6 +50,7 @@ export const CVFormProvider = ({ children }) => {
         skill, summary, references,
       } = resumeData;
 
+
       // This logic now correctly checks the new data structures
       setCompletionStatus({
         personalinfo: !!(personalInfo?.fullname && personalInfo?.email),
@@ -59,6 +60,7 @@ export const CVFormProvider = ({ children }) => {
         summary: !!(summary && summary.trim().length > 10),
         references: Array.isArray(references) && references.length > 0,
       });
+
     }
   }, [resumeData]);
 
