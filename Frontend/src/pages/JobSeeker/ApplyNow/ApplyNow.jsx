@@ -129,7 +129,7 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
             return validSubjects.length > 0;
         }
         
-        if (['Diploma', 'Bachelor’s', 'Master’s', 'PhD'].includes(lastEdu.educationLevel)) {
+        if (['Diploma', 'Bachelor\'s', 'Master\'s', 'PhD'].includes(lastEdu.educationLevel)) {
             const hasRequiredFields = lastEdu.fieldOfStudy?.trim() && 
                                     lastEdu.gpaOrGrade?.trim() && 
                                     lastEdu.startDate?.trim();
@@ -657,6 +657,7 @@ case 'gender':
             // Filter out empty optional sections before submitting
             const submissionData = {
                     ...formData,
+                technicalSkills: formData.technicalSkills.filter(skill => skill.name && skill.name.trim()),
                 workExperience: formData.workExperience.filter(exp => 
                     hasAnyContent(exp, ['jobTitle', 'company', 'startDate', 'endDate', 'description'])
                 ),
@@ -981,8 +982,8 @@ case 'gender':
                                         <option value="" disabled>Select Level</option>
                                         <option value="A/L">A/L</option>
                                         <option value="Diploma">Diploma</option>
-                                        <option value="Bachelor’s">Bachelor's</option>
-                                        <option value="Master’s">Master's</option>
+                                        <option value="Bachelor's">Bachelor's</option>
+                                        <option value="Master's">Master's</option>
                                         <option value="PhD">PhD</option>
                                     </select>
                     </div>
@@ -1112,7 +1113,7 @@ case 'gender':
                                                 value={edu.fieldOfStudy || ''}
                                                 onChange={e => handleNestedChange('education', i, 'fieldOfStudy', e.target.value)}
                                                 className={errors[`education_${i}_fieldOfStudy`] ? 'error' : ''}
-                                                required={['Diploma', 'Bachelor’s', 'Master’s', 'PhD'].includes(edu.educationLevel)}
+                                                required={['Diploma', 'Bachelor\'s', 'Master\'s', 'PhD'].includes(edu.educationLevel)}
                                             />
                                             {errors[`education_${i}_fieldOfStudy`] && (
                                                 <span className="error-message">{errors[`education_${i}_fieldOfStudy`]}</span>

@@ -162,7 +162,7 @@ export const submitApplication = async (req, res) => {
         }
       }
       
-      if (['Diploma', 'Bachelor’s', 'Master’s', 'PhD', 'Other'].includes(edu.educationLevel) && !edu.fieldOfStudy) {
+      if (['Diploma', 'Bachelor\'s', 'Master\'s', 'PhD', 'Other'].includes(edu.educationLevel) && !edu.fieldOfStudy) {
         return res.status(400).json({ error: "Field of Study is required for diplomas and above." });
       }
       if (edu.educationLevel === 'A/L' && (!edu.alSubjects || !Array.isArray(edu.alSubjects) || edu.alSubjects.length === 0)) {
