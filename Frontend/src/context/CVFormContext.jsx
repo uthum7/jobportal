@@ -54,17 +54,15 @@ export const CVFormProvider = ({ children }) => {
         references,
       } = resumeData;
 
-      // These keys ('personalinfo', 'education', etc.) MUST match the keys in your ProgressBar.jsx
+      // Main branch logic: array-based checks, no preview key
       const newCompletionStatus = {
-        personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.jobTitle),
-        education: !!(educationDetails?.schoolName || educationDetails?.universitiyName),
-        experience: professionalExperience && professionalExperience.length > 0,
-        skills: skill && skill.length > 0,
-        summary: summary && summary.length > 20,
-        references: references && references.length > 0,
-        preview: false, 
+        personalinfo: !!(personalInfo?.fullname && personalInfo?.email),
+        education: Array.isArray(educationDetails) && educationDetails.length > 0,
+        experience: Array.isArray(professionalExperience) && professionalExperience.length > 0,
+        skills: Array.isArray(skill) && skill.length > 0,
+        summary: !!(summary && summary.trim().length > 10),
+        references: Array.isArray(references) && references.length > 0,
       };
-
       setCompletionStatus(newCompletionStatus);
     }
   }, [resumeData]); // This hook runs every time resumeData changes
