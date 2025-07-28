@@ -155,10 +155,6 @@ function App() {
 };
 
 
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
-  };
-
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
