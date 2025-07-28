@@ -6,10 +6,10 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
-import { CVFormProvider } from './context/CVFormContext'; // Adjust this path to where your CVFormContext.jsx file is located.
+import { CVFormProvider } from './context/CVFormContext';
 import { Toaster } from 'sonner';
 
-// Component Imports navbar and footer
+// Navbars
 import Navbar from "./components/Navbar/Navbar.jsx";
 import AdminNavbar from './components/Navbar/AdminNavbar';
 import MentorNavbar from './components/Navbar/MentorNavbar';
@@ -17,22 +17,23 @@ import MenteeNavbar from './components/Navbar/MenteeNavbar';
 import JobSeekerNavbar from './components/Navbar/JobSeekerNavbar';
 import EmployeeNavbar from './components/Navbar/EmployeeNavbar';
 import Footer from "./components/Footer/Footer.jsx";
-
-import EmployeePage from "./pages/Employee/EmployeePage.jsx";
-// Message navbars
 import MessageNavbar from "./components/Navbar/MessageNavbar.jsx";
-import NavbarSimple from "./components/Navbar/NavbarSimple.jsx"; // Ensure this exists
+import NavbarSimple from "./components/Navbar/NavbarSimple.jsx";
 
-// Login and registration
+// Message routes
+import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
+import MessageHomePage from "./pages/Message/MessageHomePage.jsx"; // Moved here for organization
+
+// Other Pages...
 import Homepage from "./pages/Homepage/Homepage.jsx";
 import LoginPage from "./pages/Login/login.jsx";
 import Register from "./pages/Registration/SignUpPage.jsx";
 import Unauthorized from "./pages/Unauthorized/Unauthorized.jsx";
 import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage.jsx";
 
-// Admin components
+// Admin Pages...
 import Admin from "./pages/Admin/Admin.jsx";
-import ManageCounselor from "./pages/Admin/ManageCounselor.jsx";
+import ManageCounselor from "./pages/Admin/managecounselor.jsx";
 import MyProfile from  "./pages/Admin/MyProfile.jsx";
 import ManageCounselee from "./pages/Admin/ManageCounselee.jsx";
 import ManageEmployee from "./pages/Admin/ManageEmployee.jsx";
@@ -40,9 +41,10 @@ import ManageJobseeker from "./pages/Admin/ManageJobseeker.jsx";
 import AdminChangePassword from "./pages/Admin/AdminChangePassword.jsx";
 import EnhancedEmployeeInfo from "./pages/Admin/Manage/ViewEmployee.jsx";
 import ViewAllJobs from "./pages/Admin/Manage/ViewAllJobs.jsx";
+import EnhancedCounselorInfo  from "./pages/Admin/Manage/ViewCounselor.jsx";
+import BookingManagement from "./pages/Admin/Manage/ViewAllBookings.jsx";
 
-
-//jobseeker
+// Job Seeker
 import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx";
 import ApplyForAjob from "./pages/JobSeeker/ApplyForAjob/ApplyForAjob.jsx";
 import JobDetails from "./pages/JobSeeker/JobDetails/JobDetails.jsx";
@@ -50,10 +52,6 @@ import AppliedJobsPage from "./pages/JobSeeker/AppliedJobs/AppliedJobs.jsx";
 import SavedJobs from "./pages/JobSeeker/SavedJobs/SavedJobs.jsx";
 import FeedbackInsights from './pages/JobSeeker/feedbackInsights/FeedbackInsights.jsx';
 
-
-// Message routes
-import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
-import MessageHomePage from "./pages/Message/MessageHomePage.jsx";
 
 // Counselee components
 import CounseleeDashboard from "./pages/counselee/dashboard.jsx";
@@ -65,7 +63,7 @@ import ChangePassword from "./pages/counselee/change-password.jsx";
 import DeleteAccount from "./pages/counselee/delete-account.jsx";
 import Logout from "./pages/counselee/logout.jsx";
 
-// Counselor components
+// Counselor
 import CounselorDashboard from "./pages/counselor/dashboard.jsx";
 import CounselorProfile from "./pages/counselor/profile.jsx"
 import CounselorBookings from "./pages/counselor/bookings.jsx"
@@ -75,7 +73,8 @@ import CounselorMessages from "./pages/counselor/messages.jsx"
 import CounselorChangePassword from "./pages/counselor/change-password.jsx"
 import CounselorDeleteAccount from "./pages/counselor/delete-account.jsx"
 
-
+// Employee
+import EmployeePage from "./pages/Employee/EmployeePage.jsx";
 
 // CV Pages
 import CVDashboard from "./pages/CVDashboard/CVDashboard.jsx";
@@ -88,28 +87,23 @@ import Cv6 from "./pages/Cv6/Cv6.jsx";
 import Cv7 from "./pages/Cv7/Cv7.jsx";
 import CVBuilderLayout from "./pages/CVBuilderLayout.jsx";
 
-// Job Posting
-import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
-//import Job from "../../Backend/src/models/Job.model.js";
-
 // Dashboard redirects
 const dashboardByRole = {
   ADMIN: '/admin',
   MENTOR: '/counselor/dashboard',
   MENTEE: '/counselee/dashboard',
   JOBSEEKER: '/jobseeker/dashboard',
-  EMPLOYEE: "/employee" // Assuming you have or will have this
+  EMPLOYEE: "/employee"
 };
 
 const RoleBasedRoute = ({ element, allowedRoles, userRole }) => {
-  const currentPath = window.location.pathname;
-  if (!userRole) return <Navigate to="/login" replace />;
-  const normalized = String(userRole).toUpperCase();
-  return allowedRoles.includes(normalized) ? element : <Navigate to="/unauthorized" replace />;
+  const normalized = String(userRole || "").toUpperCase();
+  return allowedRoles.includes(normalized)
+    ? element
+    : <Navigate to="/unauthorized" replace />;
 };
 
 function App() {
-  <Toaster position="top-center" />
   const [user, setUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem("user");
@@ -133,6 +127,7 @@ function App() {
       }
     }
   }, [user, navigate, location]);
+
 
  const handleLogin = (data) => {
   const userData = {
@@ -160,13 +155,16 @@ function App() {
 };
 
 
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+  };
+
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
     navigate("/login", { replace: true });
   };
 
-  // Navbar Rendering
   const renderNavbar = () => {
     if (!user?.role) return <Navbar onLogout={handleLogout} />;
     switch (user.role) {
@@ -176,36 +174,43 @@ function App() {
       case 'JOBSEEKER': return <JobSeekerNavbar onLogout={handleLogout} user={user} />;
       case 'EMPLOYEE': return <EmployeeNavbar onLogout={handleLogout} user={user} />;
       default:
-        console.warn("Rendering default Navbar for unknown user role:", user.role);
         return <Navbar user={user} onLogout={handleLogout} />;
     }
   };
 
-  const cvCreatorRoles = ['ADMIN', 'MENTEE', 'JOBSEEKER', 'MENTOR', "EMPLOYEE"];
-
-
-
-  // Check if the current path starts with "/message"
-  const isMessagePage = location.pathname.startsWith("/message");
-
-
-  const showMessageNavbar = [
+  //messaging system relatedpaths
+  const messageNavbarPaths = [
     "/message/messagehome",
     "/message/signup",
-    "/message/login",
     "/message/setting",
-    "/message/profile",
-  ].includes(location.pathname);
+    "/message/profile"
+  ];
 
+  const showMessageNavbar = messageNavbarPaths.includes(location.pathname);
   const showNavbarSimple = showMessageNavbar;
 
 
+  //end of messaging system related paths
+
+  const cvCreatorRoles = ['ADMIN', 'MENTEE', 'JOBSEEKER', 'MENTOR', "EMPLOYEE"];
+
+
   return (
-    
     <CVFormProvider>
-      {/* React.Fragment shorthand */}
-      <> 
-        {renderNavbar()}
+
+      <>
+        {/* messaging system Conditional Navbar Rendering */}
+        {showMessageNavbar ? (
+          <MessageNavbar />
+        ) : showNavbarSimple ? (
+          <NavbarSimple />
+        ) : (
+          renderNavbar()
+        )}
+
+        {/* end of Conditional messaging nav bar Rendering */}
+
+
         <Routes>
           {/* Public */}
           <Route path="/" element={<Homepage />} />
@@ -214,23 +219,22 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
-          
+          {/* Message Routes */}
           <Route path="/message/*" element={<MessageRoutes />} />
 
           {/* Admin */}
-          <Route path="/admin" element={<RoleBasedRoute element={<Admin/>} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
-          <Route path="/admin/managecounselor" element={<RoleBasedRoute element={<ManageCounselor/>} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
-          <Route path="/admin/myprofile" element={<RoleBasedRoute element={<MyProfile/>} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
-          <Route path="/admin/managecounselee" element={<RoleBasedRoute element={<ManageCounselee/>} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
-          <Route path="/admin/manageemployee" element={<RoleBasedRoute element={<ManageEmployee/>} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
-          <Route path="/admin/managejobseeker" element={<RoleBasedRoute element={<ManageJobseeker/>} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin" element={<RoleBasedRoute element={<Admin />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/managecounselor" element={<RoleBasedRoute element={<ManageCounselor />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/myprofile" element={<RoleBasedRoute element={<MyProfile />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/managecounselee" element={<RoleBasedRoute element={<ManageCounselee />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/manageemployee" element={<RoleBasedRoute element={<ManageEmployee />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/managejobseeker" element={<RoleBasedRoute element={<ManageJobseeker />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
           <Route path="/admin/changepassword" element={<RoleBasedRoute element={<AdminChangePassword />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
-
-          <Route path="/admin/viewemployee/:id" element={<RoleBasedRoute element={< EnhancedEmployeeInfo />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/viewemployee/:id" element={<RoleBasedRoute element={<EnhancedEmployeeInfo />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
           <Route path="/admin/viewalljobs/:id" element={<RoleBasedRoute element={<ViewAllJobs />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/viewcounselor/:id" element={<RoleBasedRoute element={<EnhancedCounselorInfo />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/viewallbookings/:id" element={<RoleBasedRoute element={<BookingManagement />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
 
-          
-          
 
           {/* Mentor */}
           <Route path="/counselor/dashboard" element={<RoleBasedRoute element={<CounselorDashboard />} allowedRoles={["ADMIN", "MENTOR"]} userRole={user?.role} />} />
@@ -252,40 +256,39 @@ function App() {
           <Route path="/counselee/delete-account" element={<RoleBasedRoute element={<DeleteAccount />} allowedRoles={["ADMIN", "MENTEE"]} userRole={user?.role} />} />
           <Route path="/logout" element={<RoleBasedRoute element={<Logout />} allowedRoles={["ADMIN", "MENTEE"]} userRole={user?.role} />} />
 
-          <Route path="/employee" element={<EmployeePage />} />
+          {/* Employee */}
+          <Route path="/employee" element={<EmployeePage />} />
 
-          {/* Job Seeker Dashboard */}
+          {/* Job Seeker */}
           <Route path="/jobseeker/dashboard" element={<RoleBasedRoute element={<JobSeekerDashboard />} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
           <Route path="/jobseeker/apply-for-job" element={<ApplyForAjob />} />
           <Route path="/jobseeker/job-details/:jobId" element={<JobDetails />} />
           <Route path="/JobSeeker/applied-jobs" element={<AppliedJobsPage />} />
           <Route path="/JobSeeker/saved-jobs" element={<SavedJobs />} />
           <Route path="/JobSeeker/application/:applicationId/feedback" element={<FeedbackInsights />} />
+
           {/* CV Dashboard */}
           <Route path="/cv" element={<RoleBasedRoute element={<CVDashboard />} allowedRoles={cvCreatorRoles} userRole={user?.role} />} />
 
-          {/* CV Creation Steps */}
-
+          {/* CV Builder */}
           <Route element={<CVBuilderLayout />}>
-             <Route path="/cv-builder/personal-info" element={<RoleBasedRoute element={<Cv />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-             <Route path="/cv-builder/education" element={<RoleBasedRoute element={<Cv2 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> } />
-             <Route path="/cv-builder/experience" element={<RoleBasedRoute element={<Cv6 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-             <Route path="/cv-builder/skills" element={<RoleBasedRoute element={<Cv3 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-             <Route path="/cv-builder/summary" element={<RoleBasedRoute element={<Cv4 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-             <Route path="/cv-builder/references" element={<RoleBasedRoute element={<Cv7 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
+            <Route path="/cv-builder/personal-info" element={<Cv />} />
+            <Route path="/cv-builder/education" element={<Cv2 />} />
+            <Route path="/cv-builder/experience" element={<Cv6 />} />
+            <Route path="/cv-builder/skills" element={<Cv3 />} />
+            <Route path="/cv-builder/summary" element={<Cv4 />} />
+            <Route path="/cv-builder/references" element={<Cv7 />} />
           </Route>
-          <Route path="/cv-builder/preview" element={<RoleBasedRoute element={<Cv5 />} allowedRoles={cvCreatorRoles} userRole={user?.role} /> }/>
-          
 
-          {/* Protected Home route */}
-          <Route path="/home" element={<RoleBasedRoute element={<Homepage />} allowedRoles={['ADMIN', 'MENTOR', 'MENTEE', 'JOBSEEKER']} userRole={user?.role} />} />
+          <Route path="/cv-builder/preview" element={<Cv5 />} />
 
-          {/* Fallback route */}
+
+          {/* Fallback */}
           <Route path="*" element={<Navigate to={user?.role && user?.userId ? (dashboardByRole[user.role] || "/") : "/"} replace />} />
         </Routes>
 
         <Footer />
-        <Toaster />
+        <Toaster position="top-center" />
       </>
     </CVFormProvider>
   );
