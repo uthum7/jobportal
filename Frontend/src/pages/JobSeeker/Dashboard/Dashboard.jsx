@@ -56,16 +56,63 @@ const JobSeekerDashboard = () => {
         references,
       } = resumeData;
 
+      // Check if education has meaningful data
+      const hasMeaningfulEducation = Array.isArray(educationDetails) && 
+        educationDetails.length > 0 && 
+        educationDetails.some(edu => 
+          edu.institute || edu.educationLevel || edu.fieldOfStudy || edu.gpaOrGrade
+        );
+
       // Updated logic: use array checks for education, experience, skills, references
       const newCompletionStatus = {
         personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.birthday && personalInfo?.gender),
-        education: Array.isArray(educationDetails) && educationDetails.length > 0,
+        education: hasMeaningfulEducation,
         experience: Array.isArray(professionalExperience) && professionalExperience.length > 0,
         skills: Array.isArray(skill) && skill.length > 0,
         summary: summary && summary.length > 20,
         references: Array.isArray(references) && references.length > 0,
         preview: false,
       };
+
+      console.log('CV Data received:', resumeData);
+      console.log('Completion status:', newCompletionStatus);
+      console.log('Personal Info details:', {
+        fullname: personalInfo?.fullname,
+        email: personalInfo?.email,
+        birthday: personalInfo?.birthday,
+        gender: personalInfo?.gender,
+        hasFullname: !!personalInfo?.fullname,
+        hasEmail: !!personalInfo?.email,
+        hasBirthday: !!personalInfo?.birthday,
+        hasGender: !!personalInfo?.gender
+      });
+      console.log('Education details:', {
+        isArray: Array.isArray(educationDetails),
+        length: educationDetails?.length,
+        data: educationDetails
+      });
+      console.log('Education data content:', educationDetails?.[0]);
+      console.log('Has meaningful education:', hasMeaningfulEducation);
+      console.log('Experience details:', {
+        isArray: Array.isArray(professionalExperience),
+        length: professionalExperience?.length,
+        data: professionalExperience
+      });
+      console.log('Skills details:', {
+        isArray: Array.isArray(skill),
+        length: skill?.length,
+        data: skill
+      });
+      console.log('Summary details:', {
+        summary: summary,
+        length: summary?.length,
+        hasRequiredLength: summary && summary.length > 20
+      });
+      console.log('References details:', {
+        isArray: Array.isArray(references),
+        length: references?.length,
+        data: references
+      });
 
       setDashboardCompletionStatus(newCompletionStatus);
     }
@@ -76,7 +123,9 @@ const JobSeekerDashboard = () => {
     if (!dashboardCompletionStatus) return 0;
     const totalSections = 6; // personalinfo, education, experience, skills, summary, references (excluding preview)
     const completed = Object.values(dashboardCompletionStatus || {}).filter(Boolean).length;
-    return Math.round((completed / totalSections) * 100);
+    const percentage = Math.round((completed / totalSections) * 100);
+    console.log('CV Completion calculation:', { completed, totalSections, percentage });
+    return percentage;
   };
   const dashboardCvProgress = getDashboardCVCompletionPercentage();
   const dashboardCompletedSections = Object.keys(dashboardCompletionStatus || {}).filter(key => dashboardCompletionStatus[key] && key !== 'preview');
@@ -113,18 +162,7 @@ const JobSeekerDashboard = () => {
     setTimeout(() => setAnimationComplete(true), 100);
     
     // Fetch CV data to ensure completion status is up to date
-    // fetchResumeData(); // This line was removed as per the new_code
-    
-    // Animate CV progress
-    // const timer = setInterval(() => {
-    //   setCvProgress(prev => {
-    //     if (prev >= cvCompletionData.percentage) {
-    //       clearInterval(timer);
-    //       return cvCompletionData.percentage;
-    //     }
-    //     return prev + 1;
-    //   });
-    // }, 20);
+    fetchResumeData();
 
     // Fetch real dashboard data
     fetchDashboardData();
@@ -132,7 +170,7 @@ const JobSeekerDashboard = () => {
     return () => {
       // clearInterval(timer); // This line was removed as per the new_code
     };
-  }, [userId, navigate, resumeData]); // Changed fetchResumeData to resumeData
+  }, [userId, navigate]); // Removed resumeData to prevent infinite re-renders
 
   const fetchDashboardData = async () => {
     if (!userId) {
@@ -456,7 +494,7 @@ try {
               <div className="applications-list">
                 {recentApplications.length > 0 ? (
                   recentApplications.map((app, index) => (
-                    <div key={app.id} className={`application-item ${animationComplete ? 'animate-slide-in' : ''}`} style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div key={app.id} className={`application-item ${animationComplete ? 'animate-slide-in' : ''}`} style={{ animationDelay: `${index * 0.1}s `}}>
                       <div className="status-icon" style={{ backgroundColor: getStatusColor(app.status) + '20', color: getStatusColor(app.status) }}>
                         {getStatusIcon(app.status)}
                       </div>

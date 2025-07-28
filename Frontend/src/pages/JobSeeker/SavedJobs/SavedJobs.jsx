@@ -181,17 +181,17 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
           
           {/* Search Bar */}
           {savedJobs.length > 0 && (
-            <div className="search-bar">
-              <div className="search-input-container">
+            <div className="saved-jobs-search-bar">
+              <div className="saved-jobs-search-input-container">
                 <input
                   type="text"
                   placeholder="Search by job title, type, or mode..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
-                  className="search-input"
+                  className="saved-jobs-search-input"
                 />
                 <button 
-                  className="clear-search-btn"
+                  className="saved-jobs-clear-search-btn"
                   onClick={() => setSearchKeyword("")}
                   style={{ display: searchKeyword ? 'block' : 'none' }}
                 >
@@ -287,5 +287,3 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
 };
 
 export default SavedJobs;
-
-
