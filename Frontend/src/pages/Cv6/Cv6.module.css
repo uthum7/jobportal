@@ -1,3 +1,8 @@
+/* Cv6.module.css - Fully Updated & Corrected */
+
+/* ======================================= */
+/* === ROOT VARIABLES & GLOBAL STYLES  === */
+/* ======================================= */
 :root {
   --primary-color: #4a90e2;
   --secondary-color: #f5f7fa;
@@ -14,77 +19,22 @@
   --PageTitle: #123456;
 }
 
-/* Page Header Styles */
-.pageHeader {
-   text-align: center;
-  padding: 40px 20px;
-  background-color: var(--background-color);
-  border-block-end: 1px solid var(--border-color);
-}
-
-.pageTitle {
-  font-size: 42px;
-  font-weight: 700;
-  color: var(--PageTitle);
-  margin-block-end: 8px;
-  letter-spacing: 1px;
-}
-
-.pageTitle span {
-  display: inline-block;
-  transition: transform 0.2s;
-}
-
-@keyframes jump {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-16px); }
-}
-
-.pageTitle:hover span {
-  animation: jump 0.5s forwards;
-}
-
-.pageTitle:hover span:nth-child(1) { animation-delay: 0s; }
-.pageTitle:hover span:nth-child(2) { animation-delay: 0.05s; }
-.pageTitle:hover span:nth-child(3) { animation-delay: 0.10s; }
-.pageTitle:hover span:nth-child(4) { animation-delay: 0.15s; }
-.pageTitle:hover span:nth-child(5) { animation-delay: 0.20s; }
-.pageTitle:hover span:nth-child(6) { animation-delay: 0.25s; }
-.pageTitle:hover span:nth-child(7) { animation-delay: 0.30s; }
-.pageTitle:hover span:nth-child(8) { animation-delay: 0.35s; }
-.pageTitle:hover span:nth-child(9) { animation-delay: 0.40s; }
-.pageTitle:hover span:nth-child(10) { animation-delay: 0.45s; }
-.pageTitle:hover span:nth-child(11) { animation-delay: 0.50s; }
-.pageTitle:hover span:nth-child(12) { animation-delay: 0.55s; }
-.pageTitle:hover span:nth-child(13) { animation-delay: 0.60s; }
-.pageTitle:hover span:nth-child(14) { animation-delay: 0.65s; }
-.pageTitle:hover span:nth-child(15) { animation-delay: 0.70s; }
-
-.pageSubtitle {
-  font-size: 22px;
-  font-weight: 400;
-  color: #666;
-  margin-block-end: 0;
-  letter-spacing: 0.5px;
-}
-
-/* Main Layout */
 body {
   font-family: 'Roboto', sans-serif;
   color: var(--text-color);
   background-color: var(--secondary-color);
   margin: 0;
   padding: 0;
-  min-block-size: 100vh;
-} 
+}
 
+/* ======================================= */
+/* ===      MAIN LAYOUT & CONTENT      === */
+/* ======================================= */
 .resumeBuilder {
   display: flex;
   background-color: var(--secondary-color);
-  /* padding: 40px; */
   box-sizing: border-box;
   margin: 0 auto;
-  min-block-size: calc(100vh - 40px);
   gap: 60px;
 }
 
@@ -94,228 +44,30 @@ body {
   gap: 40px;
   padding: 20px;
   margin: 30px;
-  background-color: transparent;
-  box-shadow: var(--shadow-soft);
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-  block-size: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
-
-/* Form Container */
-
-.formContainer,
-.cvPreview {
-  min-inline-size: 0;
-}
-
 
 .formContainer {
-   flex: 0.8 1 0;
+  flex: 0.8;
   background: var(--form-bg);
-  padding: 35px 20px;  
+  padding: 35px 40px;
   border-radius: 12px;
   box-shadow: var(--shadow-medium);
-  position: sticky;
-  inset-block-start: 15px;
-  block-size: 1560px;
-  inline-size: auto;
-  box-sizing: border-box; 
-}
-
-.formContainer h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--text-color);
-  margin-block-end: 20px;
-  margin-inline-start: 5px;
-}
-
-/* Experience Form */
-.experienceForm {
-  background: #f7fafc;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(74, 144, 226, 0.08);
-  padding: 32px 28px;
-  margin-block-end: 24px;
-  border: 1px solid var(--border-color);
-  transition: box-shadow 0.2s, border-color 0.2s;
-}
-
-.experienceForm:hover {
-  box-shadow: 0 8px 32px rgba(74, 144, 226, 0.14);
-  border-color: var(--primary-color);
-}
-
-/* Inputs & Textarea */
-input,
-textarea {
-  inline-size: 100%;
-  block-size: 56px;
+  height: 1560px;
+  overflow-y: auto;
   box-sizing: border-box;
-  padding: 16px 20px;
-  margin-block-end: 20px;
-  border: 1.5px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  background-color: rgba(253, 253, 253, 0.95);
-  font-family: inherit;
-  color: var(--text-color);
 }
 
-input:focus,
-textarea:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.13);
-  background-color: #fff;
-}
-
-textarea {
-  min-block-size: 120px;
-  block-size: auto;
-  resize: vertical;
-}
-
-/* Buttons */
-.saveBtn {
-  background: var(--success-color);
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 17px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  max-inline-size: 100%;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(40, 167, 69, 0.18);
-  /* REMOVED: margin-inline-start, display: block */
-}
-
-.saveBtn:hover {
-  background: #218838;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.24);
-}
-
-.saveBtn:active {
-  transform: translateY(0);
-}
-
-.addButton {
-  background: var(--primary-color);
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 17px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  max-inline-size: 100%;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(74, 144, 226, 0.18);
-  /* REMOVED: margin-inline-start: 800px; */
-}
-
-.addButton:hover {
-  background: var(--hover-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.24);
-}
-.removeButton {
-  background: var(--danger-color);
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 17px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  margin-block-start: 10px;
-  inline-size: 120px;
-  max-inline-size: 100%;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.18);
-}
-
-.removeButton:hover {
-  background: #c82333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.24);
-}
-
-.buttonsContainer {
-  display: flex;
-  gap: 20px;
-  justify-content: flex-start; /* This correctly aligns items to the left */
-  margin-block-start: 20px;
-}
-
-
-/* Instructions Section */
-.instractionSection {
-  background: #f8fafc;
-  border: 1px solid #e0e7ef;
-  border-radius: 10px;
-  padding: 24px 32px;
-  margin-block-start: 40px;
-  margin-block-end: 18px;
-  box-shadow: 0 2px 8px rgba(60, 72, 88, 0.07);
-  color: #222;
-  font-size: 20px;
-  inline-size: 100%;
-}
-
-.instractionSection h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #1a237e;
-  margin-block-end: 18px;
-  letter-spacing: 0.5px;
-}
-
-.instractionSection ul {
-  list-style: disc inside;
-  padding-inline-start: 0;
-  margin: 0;
-}
-
-.instractionSection li {
-  margin-block-end: 22px;
-  font-weight: 500;
-  color: #2c3e50;
-  font-size: 20px;
-  line-height: 1.3;
-  position: relative;
-}
-
-.instractionDetail {
-  font-size: 16px;
-  color: #607d8b;
-  font-weight: 400;
-  margin-block-start: 6px;
-  margin-inline-start: 22px;
-  line-height: 1.5;
-}
-
-/* CV Preview Section */
 .cvPreview {
-  flex: 1.2 1 0;
+  flex: 1.2;
   background: var(--preview-bg);
-  padding: 5px; 
+  padding: 5px;
   border-radius: 12px;
   box-shadow: var(--shadow-medium);
-  margin-block-start: 15px;
-  block-size: 1560px;
-  min-block-size: 800px;
-  inline-size: auto;
-  box-sizing: border-box; 
+  margin-top: 15px;
+  height: 1560px;
+  box-sizing: border-box;
 }
 
 .cvContainer {
@@ -323,454 +75,178 @@ textarea {
   gap: 30px;
   background-color: white;
   border-radius: 8px;
-  overflow: hidden;
   box-shadow: var(--shadow-soft);
-  block-size: 1550px;
+  height: 1550px;
   border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
-.cvLeft {
-  inline-size: 32%;
-  background: #f2f7fc;
+.header {
+  font-size: 24px;
+  font-weight: 600;
   color: var(--text-color);
-  padding: 35px 25px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  margin-bottom: 20px;
 }
 
-.cvRight {
-  inline-size: 68%;
-  padding: 35px 30px;
-  background-color: #fff;
-}
+/* ===================================================== */
+/* ===   DEDICATED STYLES FOR CV6 EXPERIENCE FORM    === */
+/* ===================================================== */
 
-.verticalLine {
-  border-inline-start: 1px solid var(--border-color);
-  block-size: 100%;
-  margin: 0;
-}
-
-/* Profile Image */
-.profilePictureLabel {
+.experienceForm {
+  background: #f7fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 25px;
+  transition: box-shadow 0.2s;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  margin-block-end: 25px;
 }
 
-.profileImage {
-  inline-size: 140px;
-  block-size: 140px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--primary-color);
-  margin-block-end: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.uploadIcon {
-  position: absolute;
-  inset-block-end: 10px;
-  inset-inline-end: 20px;
-  background: var(--primary-color);
-  color: white;
-  padding: 10px;
-  border-radius: 50%;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.uploadIcon:hover {
-  background: var(--hover-color);
-  transform: scale(1.05);
-}
-
-/* CV Content Styles */
-.cvRight h4 {
-  border-block-end: 2px solid var(--primary-color);
-  padding-block-end: 10px;
-  margin-block-end: 20px;
-  font-size: 20px;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.contactInfo,
-.education,
-.profileSection,
-.experience,
-.skills,
-.summary,
-.references,
-.profilePara {
-  margin-block-end: 25px;
-}
-
-.profileSection h2 {
-  margin-block-start: 15px;
-  margin-block-end: 5px;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.profileSection h3 {
-  color: #556677;
-  font-size: 16px;
-  font-weight: 500;
-  margin-block-start: 5px;
-}
-
-.contactInfo h4,
-.education h4 {
-  text-align: start;
-  inline-size: 100%;
-  border-block-end: 2px solid var(--primary-color);
-  padding-block-end: 8px;
-  margin-block-end: 15px;
-  font-size: 20px;
-  font-weight: 600;
-}
-.h4Header {
-  margin-block-end: 10px;
-  font-size: 20px;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.contactInfo p {
-  margin: 8px 0;
-  text-align: start;
-  font-size: 16px;
-}
-
-.education {
-  align-items: flex-start !important;
-  text-align: start !important;
-  inline-size: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.educationItem,
-.experienceItem {
-  margin-block-end: 20px;
-}
-
-.educationItem h5,
-.experienceItem h5 {
-  margin-block-end: 5px;
-  font-size: 20px;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.educationItem span,
-.experienceItem span {
+.sectionSubTitle {
   font-size: 18px;
-  color: #555;
-  display: block;
-  margin-block-end: 8px;
-}
-
-.educationItem p,
-.experienceItem p {
-  font-size: 16px;
-  line-height: 1.5;
-  color: #444;
-}
-
-.profilePara p, .summary p, .references p {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #444;
-}
-
-/* --- SKILLS SECTION: NAMES LEFT, STARS RIGHT, GOLD --- */
-.skillsList {
-  list-style: none;
-  padding: 0;
-  margin: 20px;
-}
-
-.skillRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-block-end: 1px solid #f0f0f0;
-}
-
-.skillName {
-  flex: 1;
-  text-align: start;
-  font-size: 18px;
-  color: #333;
   font-weight: 500;
+  color: var(--primary-color);
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
 }
 
-.skillStars {
-  flex: 0 0 auto;
-  text-align: end;
-  min-inline-size: 110px;
-}
-
-.star {
-  font-size: 22px;
-  color: #e0e0e0;
-  margin-inline-start: 3px;
-  transition: color 0.2s;
-}
-
-.checked {
-  color: #FFD700;
-}
-
-.skills ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.skills ul li {
-  background: #f0f5fa;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 20px;
-  color: #444;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-/* --- NEW STYLES for AI Enhancement Button on Job Description --- */
-
-.textareaContainer {
-  position: relative; /* This is crucial for positioning the button inside */
-  inline-size: 100%;
-  margin-block-end: 20px; /* Replaces the margin from the textarea */
-}
-
-/* You might need to adjust or create this class */
-.textareaField {
-  inline-size: 100%;
-  padding: 16px;
-  padding-inline-end: 150px; /* Add padding on the right to make space for the button */
+.inputField, .textareaField {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  margin-bottom: 15px;
   border: 1.5px solid var(--border-color);
   border-radius: 8px;
   font-size: 16px;
-  line-height: 1.6;
-  min-block-size: 120px;
+  font-family: inherit;
+}
+
+.textareaField {
+  min-height: 150px;
   resize: vertical;
-  margin-block-end: 0; /* The container will handle the bottom margin */
+  padding-right: 150px; /* Make space for AI button */
+}
+
+.formColumns {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+.formLeft, .formRight {
+  flex: 1;
+}
+.label {
+  display: block;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.textareaContainer {
+  position: relative;
 }
 
 .aiButton {
-  position: absolute;   /* Position the button relative to the container */
-  inset-block-start: 12px;            /* Position it from the top */
-  inset-inline-end: 12px;          /* Position it from the right */
+  position: absolute;
+  top: 12px; right: 12px;
   background-color: var(--primary-color);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 5px;
-  font-size: 14px;
+  color: white; padding: 8px 16px; border-radius: 5px; font-size: 14px;
+  font-weight: 600; border: none; cursor: pointer; z-index: 2;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.saveBtn, .addButton, .removeButton {
+  padding: 10px 24px;
+  border-radius: 8px;
   font-weight: 600;
-  border: none;
+  font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 2; /* Ensure it's above the textarea */
+  border: none;
 }
 
-.aiButton:hover:not(:disabled) {
-  background-color: var(--hover-color);
-  transform: translateY(-1px);
+.saveBtn { background-color: var(--success-color); color: white; }
+.addButton { background-color: var(--primary-color); color: white; }
+.removeButton { background-color: var(--danger-color); color: white; width: 100%; margin-top: 10px; }
+
+/* ======================================= */
+/* ===      CV PREVIEW STYLES          === */
+/* ======================================= */
+.contactInfo, .education {
+  width: 100%;
+  margin-bottom: 20px;
+  /* `align-items: flex-start` and `text-align: left` from old code were removed */
+  /* because they are not needed if the children are properly styled. */
 }
 
-.aiButton:disabled {
-  background-color: #b0bec5;
-  cursor: not-allowed;
-}
-/* Responsive Design */
+.cvLeft { width: 32%; background: #f2f7fc; padding: 35px 25px; display: flex; flex-direction: column; text-align: center; align-items: center; }
+.cvRight { width: 68%; padding: 35px 30px; }
+.verticalLine { border-left: 1px solid var(--border-color); }
+.profileImage { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-color); margin-bottom: 15px; }
+.profileSection h2 { font-size: 20px; font-weight: 600; margin-top: 15px; }
+.h4Headers { border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 20px; font-weight: 600; text-align: left; }
+.educationItem, .experienceItem { margin-bottom: 20px; text-align: left; }
+.educationItem h5, .experienceItem h5 { font-size: 18px; font-weight: 600; margin-bottom: 5px; }
+.educationItem span, .experienceItem span { font-size: 15px; color: #555; display: block; margin-bottom: 5px; }
+.companyName { font-style: italic; color: #666; margin-top: -5px; margin-bottom: 5px; text-align: left; }
+.jobDescription, .contactInfo p, .education p, .profilePara p, .summary p, .references p { font-size: 16px; line-height: 1.6; text-align: left; }
+.skillRow { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+.star { font-size: 20px; color: #e0e0e0; }
+.checked { color: #FFD700; }
+
+/*
+=====================================================
+===   CORRECTED RESPONSIVE & OTHER STYLES         ===
+=====================================================
+*/
+.loading, .error { padding: 30px; text-align: center; }
+
 @media (max-width: 1200px) {
-  .resumeBuilder {
-    flex-direction: column;
-    padding: 24px;
-    gap: 32px;
-  }
-  .content {
-    flex-direction: column;
-    margin: 12px 0;
-    gap: 24px;
-    padding: 0;
-  }
-  .formContainer,
-  .cvPreview {
-    max-inline-size: 100%;
-    inline-size: 100%;
-    min-inline-size: 0;
-    position: static;
-    block-size: auto;
-    margin: 0 auto;
-    box-sizing: border-box;
-    padding: 24px 12px;
-  }
-  .cvContainer {
-    flex-direction: column;
-    gap: 0;
-    block-size: auto;
-    min-inline-size: 0;
-  }
-  .cvLeft,
-  .cvRight {
-    inline-size: 100%;
-    padding: 24px 12px;
-    min-inline-size: 0;
-  }
-  .verticalLine {
-    display: none;
-  }
-  .formContainer {
-    block-size: auto;
-    inline-size: 100%;
-    padding: 24px 12px;
-  }
-  .cvPreview {
-    min-block-size: 600px;
-    padding: 24px 12px;
-    margin-block-start: 18px;
-  }
+  .resumeBuilder { flex-direction: column; padding: 24px; gap: 32px; }
+  .content { flex-direction: column; margin: 12px 0; gap: 24px; padding: 0; }
+  .formContainer, .cvPreview { max-width: 100%; width: 100%; min-width: 0; position: static; height: auto; margin: 0 auto; box-sizing: border-box; }
+  .cvContainer { flex-direction: column; gap: 0; height: auto; min-width: 0; }
+  .cvLeft, .cvRight { width: 100%; padding: 24px 12px; min-width: 0; }
+  .verticalLine { display: none; }
 }
 
 @media (max-width: 768px) {
-  .resumeBuilder {
-    padding: 8px 2px;
-    gap: 12px;
-  }
-  .pageHeader {
-    margin-block-start: 18px;
-    padding-block-start: 0;
-  }
-  .pageTitle {
-    font-size: 24px;
-  }
-  .pageSubtitle {
-    font-size: 13px;
-  }
-  .formContainer {
-    padding: 8px 2px;
-    border-radius: 8px;
-    min-inline-size: 0;
-    inline-size: 100%;
-    block-size: auto;
-  }
-  .experienceForm {
-    padding: 12px 4px;
-  }
-  input,
-  textarea {
-    font-size: 14px;
-    padding: 10px 8px;
-    block-size: 36px;
-    margin-block-end: 10px;
-  }
-  textarea {
-    min-block-size: 50px;
-  }
-  .saveBtn, .addButton, .removeButton {
-    inline-size: 100%;
-    font-size: 12px;
-    padding: 8px 0;
-    margin-block-start: 4px;
-  }
-  .instractionSection {
-    padding: 8px 2px;
-    margin-block-start: 24px;
-    font-size: 13px;
-    border-radius: 7px;
-  }
-  .instractionSection h3 {
-    font-size: 15px;
-  }
-  .instractionSection li {
-    font-size: 13px;
-  }
-  .instractionDetail {
-    font-size: 11px;
-  }
-  .cvPreview {
-    padding: 2px;
-    border-radius: 7px;
-    margin-block-start: 8px;
-    min-block-size: 200px;
-    max-inline-size: 100vw;
-    block-size: auto;
-  }
-  .cvContainer {
-    border-radius: 7px;
-    box-shadow: var(--shadow-soft);
-    min-inline-size: 0;
-    block-size: auto;
-    flex-direction: column;
-    gap: 0;
-  }
-  .cvLeft,
-  .cvRight {
-    padding: 8px 2px;
-    inline-size: 100%;
-    min-inline-size: 0;
-  }
-  .profileImage {
-    inline-size: 60px;
-    block-size: 60px;
-    margin-block-end: 6px;
-  }
-  .cvRight h4,
-  .contactInfo h4,
-  .education h4 {
-    font-size: 13px;
-    padding-block-end: 4px;
-    margin-block-end: 8px;
-  }
-  .educationItem h5,
-  .experienceItem h5 {
-    font-size: 13px;
-  }
-  .educationItem span,
-  .experienceItem span {
-    font-size: 11px;
-  }
-  .educationItem p,
-  .experienceItem p,
-  .profilePara p, .summary p, .references p {
-    font-size: 11px;
-  }
-  .skillsColumns li {
-    font-size: 11px;
-  }
+  .resumeBuilder { padding: 8px 2px; gap: 12px; }
+  .formContainer { padding: 8px 2px; border-radius: 8px; }
+  .cvPreview { padding: 2px; border-radius: 7px; margin-top: 8px; min-height: 200px; }
+  .content { padding: 15px; }
+  
+  .experienceForm { padding: 12px 4px; }
+  .formColumns { flex-direction: column; gap: 10px; }
+  .inputField, .textareaField { font-size: 14px; padding: 10px 8px; }
+  .textareaField { min-height: 50px; padding-right: 15px; }
+  .buttonsContainer { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
+  .saveBtn, .addButton, .removeButton { width: 100%; }
+  
+  .aiButton { position: static; width: 100%; margin-top: 10px; }
+  .textareaContainer { display: flex; flex-direction: column; }
+  
+  .cvContainer { border-radius: 7px; box-shadow: var(--shadow-soft); }
+  .cvLeft, .cvRight { padding: 8px 2px; }
+  .profileImage { width: 60px; height: 60px; margin-bottom: 6px; }
+  .h4Headers { font-size: 13px; padding-bottom: 4px; margin-bottom: 8px; }
+  .educationItem h5, .experienceItem h5 { font-size: 13px; }
+  .educationItem span, .experienceItem span { font-size: 11px; }
+  .jobDescription, .contactInfo p, .education p, .profilePara p, .summary p, .references p { font-size: 11px; }
 }
 
 @media (max-width: 480px) {
-  .pageTitle {
-    font-size: 16px;
-  }
-  .pageSubtitle {
-    font-size: 10px;
-  }
-  .formContainer,
-  .cvPreview {
-    padding: 2px 1px;
-    border-radius: 5px;
-  }
-  .cvLeft,
-  .cvRight {
-    padding: 2px 1px;
-  }
-  .profileImage {
-    inline-size: 36px;
-    block-size: 36px;
-  }
+  .formContainer, .cvPreview { padding: 2px 1px; border-radius: 5px; }
+  .cvLeft, .cvRight { padding: 2px 1px; }
+  .profileImage { width: 36px; height: 36px; }
 }

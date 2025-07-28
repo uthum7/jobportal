@@ -16,8 +16,10 @@ import {
   Clock,
   Briefcase,
   MapPin,
-  Phone
+  Phone,
+  AlertTriangle
 } from 'lucide-react';
+import axios from 'axios';
 
 const ManageEmployee = () => {
   const navigate = useNavigate();
@@ -26,8 +28,8 @@ const ManageEmployee = () => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
 
-  // Fetch employees
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -50,23 +52,29 @@ const ManageEmployee = () => {
   );
 
   const handleNavigation = (path) => navigate(path);
-
-const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
-
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this employee?")) return;
-    try {
-      const res = await fetch(`http://localhost:5001/api/users/employees/${id}`, { method: 'DELETE' });
-      if (res.ok) setEmployees(employees.filter(e => e._id !== id));
-    } catch (err) {
-      console.error('Error deleting employee:', err);
-    }
-  };
-
+  const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
   const handleEdit = (employee) => {
     setSelectedEmployee({ ...employee });
     setIsEditMode(true);
+  };
+
+  const handleDeleteClick = (employee) => {
+    setSelectedEmployee(employee);
+    setIsDeleteMode(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      const res = await axios.delete(`http://localhost:5001/api/users/employees/${selectedEmployee._id}`);
+      if (res.status === 200) {
+        setEmployees(employees.filter(e => e._id !== selectedEmployee._id));
+        setIsDeleteMode(false);
+        setSelectedEmployee(null);
+      }
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      alert('Error deleting employee');
+    }
   };
 
   const handleUpdate = async () => {
@@ -146,20 +154,18 @@ const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
           </div>
 
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Manage Employees</h2>
-          <div className="flex items-center mb-6 gap-4">
-            <input
-              type="text"
-              placeholder="Search employees..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-          </div>
+
+          <input
+            type="text"
+            placeholder="Search employees..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
 
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredEmployees.map((e) => (
               <div key={e._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                {/* Card Header */}
                 <div className="px-6 py-5 border-b border-gray-200 flex items-center space-x-4">
                   <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xl">
                     {e.username?.charAt(0).toUpperCase() || e.fullName?.charAt(0).toUpperCase() || "U"}
@@ -169,7 +175,6 @@ const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
                     <p className="text-sm text-gray-600">{e.email}</p>
                   </div>
                 </div>
-                {/* Details */}
                 <div className="p-6 space-y-3">
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <User className="w-4 h-4 text-blue-600" /> <span>ID: {e._id}</span>
@@ -178,7 +183,6 @@ const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
                     <Briefcase className="w-4 h-4 text-green-600" /> <span>Role: {e.roles?.join(', ') || 'N/A'}</span>
                   </div>
                 </div>
-                {/* Actions */}
                 <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
                   <button onClick={() => handleView(e._id)} className="text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
                     <Eye className="w-4 h-4" /> <span>View</span>
@@ -186,7 +190,7 @@ const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
                   <button onClick={() => handleEdit(e)} className="text-blue-600 hover:text-blue-700 flex items-center space-x-1">
                     <Edit className="w-4 h-4" /> <span>Edit</span>
                   </button>
-                  <button onClick={() => handleDelete(e._id)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
+                  <button onClick={() => handleDeleteClick(e)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
                     <Trash2 className="w-4 h-4" /> <span>Delete</span>
                   </button>
                 </div>
@@ -196,12 +200,12 @@ const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
 
           {/* Edit Modal */}
           {isEditMode && selectedEmployee && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded shadow-md w-[90%] max-w-md">
                 <h2 className="text-xl font-bold mb-4">Edit Employee</h2>
                 <input
                   type="text"
-                  value={selectedEmployee.username || selectedEmployee.fullName || ''}
+                  value={selectedEmployee.username || ''}
                   onChange={(e) => setSelectedEmployee({ ...selectedEmployee, username: e.target.value })}
                   className="w-full mb-3 px-4 py-2 border rounded"
                   placeholder="Username"
@@ -216,10 +220,12 @@ const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
                 <input
                   type="text"
                   value={selectedEmployee.roles?.join(', ') || ''}
-                  onChange={(e) => setSelectedEmployee({
-                    ...selectedEmployee,
-                    roles: e.target.value.split(',').map(r => r.trim())
-                  })}
+                  onChange={(e) =>
+                    setSelectedEmployee({
+                      ...selectedEmployee,
+                      roles: e.target.value.split(',').map(r => r.trim()),
+                    })
+                  }
                   className="w-full mb-3 px-4 py-2 border rounded"
                   placeholder="Roles (comma separated)"
                 />
@@ -230,10 +236,40 @@ const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
               </div>
             </div>
           )}
+
+          {/* Delete Modal */}
+          {isDeleteMode && selectedEmployee && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-3xl shadow-xl max-w-md w-full mx-4 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
+                      <AlertTriangle className="text-red-600" size={20} />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900">Delete User</h2>
+                  </div>
+                  <button onClick={() => setIsDeleteMode(false)} className="text-gray-400 hover:text-gray-600">
+                    <X size={24} />
+                  </button>
+                </div>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Are you sure you want to delete this user? This action cannot be undone.
+                </p>
+                <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+                  <h3 className="font-semibold text-gray-900 text-lg">{selectedEmployee.username || 'Unknown User'}</h3>
+                  <p className="text-gray-600">{selectedEmployee.email || 'No Email'}</p>
+                  <p className="text-gray-500 text-sm mt-1">ID: {selectedEmployee._id}</p>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setIsDeleteMode(false)} className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-2xl font-medium hover:bg-gray-200">No, Cancel</button>
+                  <button onClick={handleDeleteConfirm} className="flex-1 px-6 py-3 bg-red-600 text-white rounded-2xl font-medium hover:bg-red-700">Yes, Delete</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
