@@ -128,18 +128,32 @@ function App() {
     }
   }, [user, navigate, location]);
 
-  const handleLogin = (data) => {
-    const userData = {
-      ...data,
-      role: data.role ? String(data.role).toUpperCase() : null,
-    };
 
-    if (!userData.role || !userData.userId) {
-      localStorage.clear();
-      setUser(null);
-      navigate("/login", { replace: true });
-      return;
+ const handleLogin = (data) => {
+  const userData = {
+    ...data,
+    role: data.role ? String(data.role).toUpperCase() : null,
+  };
+
+  if (!userData.role || !userData.userId) {
+    console.error("Login handled, but role or userId is missing in userData:", userData);
+    // Potentially clear auth and redirect to login if essential data is missing
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate("/login", { replace: true });
+        return;
     }
+    
+  // Store the comprehensive user object
+  localStorage.setItem('user', JSON.stringify(userData));
+
+  // Set the user state in App
+  setUser(userData);
+};
+
 
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
@@ -175,12 +189,15 @@ function App() {
   const showMessageNavbar = messageNavbarPaths.includes(location.pathname);
   const showNavbarSimple = showMessageNavbar;
 
+
   //end of messaging system related paths
 
   const cvCreatorRoles = ['ADMIN', 'MENTEE', 'JOBSEEKER', 'MENTOR', "EMPLOYEE"];
 
+
   return (
     <CVFormProvider>
+
       <>
         {/* messaging system Conditional Navbar Rendering */}
         {showMessageNavbar ? (
@@ -192,6 +209,7 @@ function App() {
         )}
 
         {/* end of Conditional messaging nav bar Rendering */}
+
 
         <Routes>
           {/* Public */}
@@ -261,7 +279,9 @@ function App() {
             <Route path="/cv-builder/summary" element={<Cv4 />} />
             <Route path="/cv-builder/references" element={<Cv7 />} />
           </Route>
+
           <Route path="/cv-builder/preview" element={<Cv5 />} />
+
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to={user?.role && user?.userId ? (dashboardByRole[user.role] || "/") : "/"} replace />} />

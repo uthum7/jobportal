@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { getUserId, isAuthenticated, isJobSeeker, getToken } from "../../../utils/auth";
 import JobseekerSidebar from "../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar.jsx";
-import Footer from "../../../components/Footer/Footer.jsx";
+import ViewApplication from "./ViewApplication.jsx";
 import "./AppliedJobs.css";
 import "../Dashboard/Dashboard.css";
 
@@ -13,6 +13,8 @@ const AppliedJobsPage = () => {
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [showViewApplication, setShowViewApplication] = useState(false);
   const navigate = useNavigate();
   
   const userId = getUserId();
@@ -40,6 +42,9 @@ const AppliedJobsPage = () => {
       setLoading(true);
       setError(null);
       
+      console.log("Frontend - Fetching applied jobs for userId:", userId);
+      console.log("Frontend - userId type:", typeof userId);
+      
       // Configure axios with authentication header
       const config = {
         headers: {
@@ -50,6 +55,8 @@ const AppliedJobsPage = () => {
       
       const response = await axios.get(`http://localhost:5001/api/applied-jobs/${userId}`, config);
       console.log("Applied jobs response:", response.data);
+      console.log("Frontend - Response data type:", typeof response.data);
+      console.log("Frontend - Response data length:", Array.isArray(response.data) ? response.data.length : 'not an array');
       
       setAppliedJobs(response.data);
       setLoading(false);
@@ -105,8 +112,15 @@ const AppliedJobsPage = () => {
   };
 
   const handleViewApplication = (applicationId) => {
-    // Navigate to application details page
-    navigate(`/JobSeeker/application/${applicationId}`);
+    // Find the application data
+    const application = appliedJobs.find(app => app._id === applicationId);
+    if (application) {
+      setSelectedApplication({
+        id: applicationId,
+        jobTitle: application.job.JobTitle
+      });
+      setShowViewApplication(true);
+    }
   };
 
   const handleViewFeedback = (applicationId) => {
@@ -347,6 +361,14 @@ const AppliedJobsPage = () => {
             )}
           </div>
         </div>
+        {/* View Application Modal */}
+        {showViewApplication && selectedApplication && (
+          <ViewApplication
+            applicationId={selectedApplication.id}
+            jobTitle={selectedApplication.jobTitle}
+            onClose={() => setShowViewApplication(false)}
+          />
+        )}
       </div>
     </div>
   );
