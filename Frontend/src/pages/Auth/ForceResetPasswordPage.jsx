@@ -12,27 +12,25 @@ const ForceResetPasswordPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-    
-    // This state will hold the token we read from the URL.
     const [token, setToken] = useState(null);
     
-    // useSearchParams is the correct hook for reading URL query parameters like "?token=..."
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
-    // This effect runs once when the component loads to get the token from the URL.
+    // Effect to read the token from the URL query parameters when the component first loads.
     useEffect(() => {
         const urlToken = searchParams.get('token');
         if (urlToken) {
             setToken(urlToken);
         } else {
+            // Display an error if the URL doesn't contain a token.
             setError("Activation token not found in URL. Please use the link provided in your email.");
         }
-    }, [searchParams]);
+    }, [searchParams]); // This dependency array ensures the effect only runs when the URL changes.
 
     const handlePasswordReset = async (e) => {
         e.preventDefault();
-        setError(null);
+        setError(null); // Clear previous errors
 
         if (!token) {
             setError("A valid activation token is required. Please follow the link from your email again.");
@@ -52,18 +50,20 @@ const ForceResetPasswordPage = () => {
         setIsLoading(true);
 
         try {
-            // The API call now sends the token in the BODY of the request.
-            // There is no Authorization header needed for this public route.
             const response = await axios.post(
                 'http://localhost:5001/api/register/force-reset-password', 
-                { newPassword, token } // Send both the new password and the token from the URL
+                { newPassword, token } // Send the new password and the token to the backend
             );
             
-            setSuccessMessage(response.data.message + " Redirecting to the login page...");
+            // On success, set a confirmation message.
+            setSuccessMessage(response.data.message + " You will be redirected to the login page shortly...");
 
+            // --- NAVIGATION LOGIC ---
+            // After a short delay to allow the user to read the success message,
+            // navigate them to the login page.
             setTimeout(() => {
-                navigate('/login');
-            }, 3500);
+                navigate('/login', { state: { message: "Your account is now active! Please log in." } });
+            }, 3000); // Reduced delay to 3 seconds for a faster redirect.
 
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to set password. The link may be invalid or expired.');
@@ -80,12 +80,17 @@ const ForceResetPasswordPage = () => {
                 </div>
                 
                 <h1 className={styles.formTitle}>Activate Your Account</h1>
-                <p className={styles.formSubtitle}>Welcome! Please create a secure password to activate your account.</p>
+                
+                {/* Conditionally render a subtitle or the success message */}
+                {successMessage ? (
+                    <div className={styles.successMessage}>{successMessage}</div>
+                ) : (
+                    <p className={styles.formSubtitle}>Welcome! Please create a secure password to activate your account.</p>
+                )}
                 
                 {error && <div className={styles.errorMessage}>{error}</div>}
-                {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
 
-                {/* The form will only be displayed if a token was successfully extracted from the URL */}
+                {/* The form is only displayed if a token exists and the password has not been successfully set yet. */}
                 {token && !successMessage && (
                     <form onSubmit={handlePasswordReset} noValidate>
                         <div className={styles.formGroup}>

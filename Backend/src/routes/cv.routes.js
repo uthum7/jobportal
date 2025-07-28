@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/", auth, async (req, res) => {
     console.log(`[CV Route - GET /] Request received for user ID: ${req.user?._id}`);
     try {
-        const authenticatedUserId = req.user._id; // ID from validated token (ensured by auth middleware)
+        const authenticatedUserId = req.user._id;
 
         let userCv = await UserCv.findOne({ userId: authenticatedUserId });
         
@@ -18,11 +18,11 @@ router.get("/", auth, async (req, res) => {
             console.log(`[CV Route - GET /] No CV found for user ${authenticatedUserId}. Returning initial template.`);
             const initialCvData = new UserCv({ userId: authenticatedUserId }).toObject();
             
-            delete initialCvData._id; // Mongoose might add _id even to new unsaved object
+            // Clean up default Mongoose fields for a clean frontend state
+            delete initialCvData._id;
             delete initialCvData.__v;
             if (initialCvData.personalInfo && initialCvData.personalInfo._id !== undefined) delete initialCvData.personalInfo._id;
             if (initialCvData.educationDetails && initialCvData.educationDetails._id !== undefined) delete initialCvData.educationDetails._id;
-            // Repeat for other subdocuments if they have _id by default and you don't want them
 
             return res.status(200).json({
                 ...initialCvData,
@@ -33,7 +33,6 @@ router.get("/", auth, async (req, res) => {
         res.status(200).json(userCv);
     } catch (error) {
         console.error(`[CV Route - GET /] Error fetching CV for user ${req.user?._id}: ${error.message}`, error.stack);
-        // Ensure a JSON response even for unexpected errors
         if (!res.headersSent) {
             res.status(500).json({ message: 'Server error while fetching CV data.' });
         }
@@ -44,7 +43,7 @@ router.get("/", auth, async (req, res) => {
 router.post(
     "/update",
     [
-        auth, // Place auth middleware first
+        auth,
         check("step", "Step (CV section name) is required").notEmpty().isString(),
         check("data", "Data for the step is required").exists(),
     ],
@@ -55,7 +54,7 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const authenticatedUserId = req.user._id; // From auth middleware
+        const authenticatedUserId = req.user._id;
         const { step, data } = req.body;
         console.log(`[CV Route - POST /update] Request received for user ID: ${authenticatedUserId}, Step: "${step}"`);
 
@@ -67,12 +66,17 @@ router.post(
                 userCv = new UserCv({ userId: authenticatedUserId });
             }
 
+            // --- THIS GENERIC LOGIC IS WHY NO CHANGES ARE NEEDED ---
+            // It checks if the 'step' (e.g., "personalInfo") is a valid part of the schema.
+            // It doesn't care *what* is inside the 'data' object. It just passes it on.
+            // The Mongoose Model (`UserCv.js`) is responsible for validating the fields
+            // (like accepting 'gender' and 'birthday' and ignoring 'jobTitle').
             if (userCv.schema.paths[step]) {
                 if (typeof userCv[step] === 'object' && userCv[step] !== null && !Array.isArray(userCv[step])) {
-                    // Merge for object subdocuments to preserve other fields if `data` is partial
+                    // Merges the new data with existing data for that section.
                     userCv[step] = { ...userCv[step].toObject(), ...data };
                 } else {
-                    // Replace for arrays or simple types
+                    // Replaces the entire section (e.g., for an array of skills).
                     userCv[step] = data;
                 }
             } else {
@@ -80,9 +84,11 @@ router.post(
                 return res.status(400).json({ message: "Invalid CV section specified." });
             }
             
+            // When .save() is called, Mongoose validates the entire document against the
+            // updated UserCv model. This is where your new fields are officially saved.
             await userCv.save();
             console.log(`[CV Route - POST /update] CV successfully updated for user ${authenticatedUserId}, Step: "${step}".`);
-            res.status(200).json(userCv); // Return the full updated CV document
+            res.status(200).json(userCv);
 
         } catch (err) {
             if (err.name === "ValidationError") {
@@ -108,14 +114,14 @@ router.post("/", auth, async (req, res) => {
             return res.status(400).json({ message: "Resume already exists for this user. Use the /update endpoint." });
         }
 
-        const newCv = new UserCv({ userId: authenticatedUserId }); // Schema defaults will apply
+        const newCv = new UserCv({ userId: authenticatedUserId });
         await newCv.save();
         console.log(`[CV Route - POST /] New CV created for user ${authenticatedUserId}.`);
         res.status(201).json(newCv);
 
     } catch (err) {
         console.error(`[CV Route - POST /] Error creating new CV for user ${authenticatedUserId}: ${err.message}`, err.stack);
-        if (err.code === 11000) { // Duplicate key error
+        if (err.code === 11000) {
             return res.status(400).json({ message: "Resume already exists for this user (db constraint)." });
         }
         if (!res.headersSent) {
