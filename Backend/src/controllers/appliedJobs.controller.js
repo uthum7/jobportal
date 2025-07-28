@@ -1,5 +1,4 @@
 import { Application } from '../models/application.model.js';
-import Job from "../models/Job.model.js";
 
 // Get all applied jobs for a specific user
 export const getAppliedJobsByUser = async (req, res) => {

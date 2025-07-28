@@ -80,73 +80,104 @@ export const checkApplicationStatus = async (req, res) => {
 export const submitApplication = async (req, res) => {
   try {
     const { jobId, userId, applicationData } = req.body;
-    
     // Validate required fields
     if (!jobId || !userId || !applicationData) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-    
     // Check if user has already applied
     const existingApplication = await Application.findOne({ userId, jobId });
     if (existingApplication) {
       return res.status(400).json({ error: "You have already applied for this job" });
     }
-    
-    // Additional validation
+    // Required fields for personal info
     const requiredFields = ['fullName', 'nic', 'email', 'phoneNumber', 'address', 'birthday', 'gender'];
-    const missingFields = requiredFields.filter(field => !applicationData[field] || !applicationData[field].trim());
-    
+    const missingFields = requiredFields.filter(field => !applicationData[field] || !applicationData[field].toString().trim());
     if (missingFields.length > 0) {
-      return res.status(400).json({ 
-        error: "Missing required fields", 
-        missingFields 
-      });
+      return res.status(400).json({ error: "Missing required fields", missingFields });
     }
-    
+    // Validate full name (letters only)
+    if (!/^[A-Za-z\s]+$/.test(applicationData.fullName)) {
+      return res.status(400).json({ error: "Name can only contain letters." });
+    }
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(applicationData.email)) {
-      return res.status(400).json({ error: "Invalid email format" });
+      return res.status(400).json({ error: "Enter a valid email address." });
     }
-    
     // Validate NIC format
     const nicRegex = /^(\d{12}|\d{9}[VXvx])$/;
     if (!nicRegex.test(applicationData.nic)) {
-      return res.status(400).json({ error: "Invalid NIC format" });
+      return res.status(400).json({ error: "Enter a valid NIC." });
     }
-    
-    // Validate phone number format
+    // Validate phone number format (Sri Lankan)
     const phoneRegex = /^(0\d{9}|\+94\d{9})$/;
     if (!phoneRegex.test(applicationData.phoneNumber)) {
-      return res.status(400).json({ error: "Invalid phone number format" });
+      return res.status(400).json({ error: "Enter a valid phone number." });
     }
-
-    // Validate birthday
-const birthday = new Date(applicationData.birthday);
-const today = new Date();
-if (birthday >= today) {
-    return res.status(400).json({ error: "Invalid birthday - cannot be today or in the future" });
-}
-
-// Validate gender
-const validGenders = ['male', 'female', 'other', 'prefer-not-to-say'];
-if (!validGenders.includes(applicationData.gender)) {
-    return res.status(400).json({ error: "Invalid gender value" });
-}
-    
-    // Validate skills
-    if (!applicationData.skills || applicationData.skills.length === 0) {
-      return res.status(400).json({ error: "At least one skill is required" });
+    // Validate birthday (no future dates)
+    const birthday = new Date(applicationData.birthday);
+    const today = new Date();
+    if (birthday >= today) {
+      return res.status(400).json({ error: "Birthday cannot be today or in the future." });
     }
-    
-    // Validate education
-    if (!applicationData.education || applicationData.education.length === 0) {
-      return res.status(400).json({ error: "At least one education entry is required" });
+    // Auto-calculate age
+    const age = today.getFullYear() - birthday.getFullYear() - (today < new Date(today.getFullYear(), birthday.getMonth(), birthday.getDate()) ? 1 : 0);
+    applicationData.age = age;
+    // Validate gender
+    const validGenders = ['Male', 'Female', 'Prefer not to say'];
+    if (!validGenders.includes(applicationData.gender)) {
+      return res.status(400).json({ error: "Invalid gender value" });
     }
-    
-    // Encrypt sensitive data before storing
+    // Validate education (at least one entry)
+    if (!applicationData.education || !Array.isArray(applicationData.education) || applicationData.education.length === 0) {
+      return res.status(400).json({ error: "At least one education entry is required." });
+    }
+    // Validate each education entry
+    for (const edu of applicationData.education) {
+      if (!edu.institute || !edu.educationLevel || !edu.startDate) {
+        return res.status(400).json({ error: "Each education entry must have institute, education level, and start date." });
+      }
+      if (['Diploma', 'Bachelor’s', 'Master’s', 'PhD', 'Other'].includes(edu.educationLevel) && !edu.fieldOfStudy) {
+        return res.status(400).json({ error: "Field of Study is required for diplomas and above." });
+      }
+      if ((edu.educationLevel === 'O/L' || edu.educationLevel === 'A/L') && (!edu.results || !Array.isArray(edu.results) || edu.results.length === 0)) {
+        return res.status(400).json({ error: "Results are required for O/L and A/L." });
+      }
+      if (!edu.currentlyStudying && !edu.endDate) {
+        return res.status(400).json({ error: "End Date is required unless currently studying." });
+      }
+    }
+    // Validate work experience (if present)
+    if (applicationData.workExperience && Array.isArray(applicationData.workExperience)) {
+      for (const exp of applicationData.workExperience) {
+        if (!exp.jobTitle || !exp.company || !exp.startDate) {
+          return res.status(400).json({ error: "Each work experience entry must have job title, company, and start date." });
+        }
+        if (!exp.currentlyWorking && !exp.endDate) {
+          return res.status(400).json({ error: "End Date is required unless currently working." });
+        }
+      }
+    }
+    // Validate projects (if present)
+    if (applicationData.projects && Array.isArray(applicationData.projects)) {
+      for (const proj of applicationData.projects) {
+        if (!proj.title) {
+          return res.status(400).json({ error: "Each project must have a title." });
+        }
+      }
+    }
+    // Validate certifications (if present)
+    if (applicationData.certifications && Array.isArray(applicationData.certifications)) {
+      for (const cert of applicationData.certifications) {
+        if (!cert.name) {
+          return res.status(400).json({ error: "Each certification must have a name." });
+        }
+      }
+    }
+    // Accept technicalSkills, languages, socialLinks, etc. as optional
+    // Encrypt sensitive data before storing (if needed)
+    // (You may want to encrypt NIC, phone, address as before)
     const encryptedApplicationData = applicationData;
-    
     const application = new Application({
       jobId,
       userId,
@@ -154,12 +185,10 @@ if (!validGenders.includes(applicationData.gender)) {
       appliedDate: new Date(),
       status: 'pending'
     });
-    
     await application.save();
-    
-    res.status(201).json({ 
-      message: "Application submitted successfully", 
-      applicationId: application._id 
+    res.status(201).json({
+      message: "Application submitted successfully",
+      applicationId: application._id
     });
   } catch (error) {
     console.error('Error submitting application:', error);

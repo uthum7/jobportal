@@ -60,28 +60,21 @@ export const login = async (req, res) => {
     }
     const requestedRole = String(role).toUpperCase();
     try {
-        const user = await Registeruser.findOne({ email: email.toLowerCase() });
-        if (!user || !(await user.matchPassword(password))) {
-          return res.status(401).json({ message: "Invalid credentials or role." });
+        const user = await Registeruser.findOne({ email }).select('+password');
+        if (!user) {
+            return res.status(400).json({ message: "Invalid credentials" });
         }
         if (!user.roles.includes(requestedRole)) {
           return res.status(403).json({ message: "You do not have permission to log in with this role." });
         }
-        if (user.passwordResetRequired) {
-            return res.status(403).json({
-                message: "Account not activated. Please use the activation link sent to your email to set your password."
-            });
-        }
-        const payload = {
-            userId: user._id,
-            roles: user.roles,
-            currentRole: requestedRole
-        };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+         const token = generateToken(user._id);
         res.status(200).json({
+            message: "Login successful",
+            token, // Send token to frontend
             _id: user._id,
             username: user.username,
             email: user.email,
+            roles: user.roles,
         });
     } catch (error) {
         console.error("Login error:", error.message);
