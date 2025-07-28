@@ -3,37 +3,62 @@ import mongoose from "mongoose";
 
 const applicationSchema = new mongoose.Schema({
   jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'jobs', required: true },
-  userId: { type: String, required: true },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId, // It’s better if userId is also ObjectId
+    ref: "RegisterUser",                   // Reference to user model
+    required: true
+  },
   applicationData: {
     fullName: { type: String, required: true },
     nic: { type: String, required: true },
     email: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     address: { type: String, required: true },
-    birthday: { type: Date, required: true },  
-    gender: { type: String, required: true }, 
-    skills: [{ type: String }],
+    birthday: { type: Date, required: true },
+    gender: { type: String, required: true, enum: ['Male', 'Female', 'Prefer not to say'] },
+    age: { type: Number }, // auto-calculated, optional
+    technicalSkills: [{ type: String }],
+    languages: [{ type: String }],
+    socialLinks: {
+      linkedIn: { type: String },
+      github: { type: String },
+      portfolio: { type: String }
+    },
     education: [{
-      institute: String,
-      degree: String,
-      startDate: Date,
-      endDate: Date,
-      currentlyStudying: Boolean
+      institute: { type: String, required: true },
+      educationLevel: { type: String, required: true, enum: ['O/L', 'A/L', 'Diploma', 'Bachelor’s', 'Master’s', 'PhD', 'Other'] },
+      fieldOfStudy: { type: String },
+      gpaOrGrade: { type: String },
+      results: [{ subject: String, grade: String }], // for O/L and A/L
+      startDate: { type: Date, required: true },
+      endDate: { type: Date },
+      currentlyStudying: { type: Boolean, default: false }
     }],
-    summary: String,
     workExperience: [{
-      jobTitle: String,
-      company: String,
-      startDate: Date,
-      endDate: Date,
-      description: String,
-      currentlyWorking: Boolean
+      jobTitle: { type: String, required: true },
+      company: { type: String, required: true },
+      industry: { type: String },
+      startDate: { type: Date, required: true },
+      endDate: { type: Date },
+      currentlyWorking: { type: Boolean, default: false },
+      description: { type: String }
     }],
-    certifications: [{ type: String }],
-    coverLetter: String
+    projects: [{
+      title: { type: String, required: true },
+      description: { type: String },
+      technologies: [{ type: String }],
+      link: { type: String }
+    }],
+    certifications: [{
+      name: { type: String, required: true },
+      issuer: { type: String },
+      year: { type: String }
+    }],
+    coverLetter: { type: String },
+    summary: { type: String }
   },
   appliedDate: { type: Date, default: Date.now },
-  status: { type: String, enum: ['pending', 'reviewed', 'shortlisted', 'rejected'], default: 'pending' }
+  status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' }
 });
 
 // Prevent duplicate applications for same job by same user

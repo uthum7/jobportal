@@ -229,46 +229,95 @@ const Cv = () => {
                   </label>
                   <h2>{personalInfo.fullname || "Your Name"}</h2>
                 </div>
-                <div className={styles.contactInfo}><h4 className={styles.h4Headers}>Contact</h4><p>{personalInfo.phone || "Phone"}</p><p>{personalInfo.email || "Email"}</p><p>{personalInfo.address || "Address"}</p></div>
-                
-                <div className={styles.education}>
-                    <h4 className={styles.h4Headers}>Education</h4>
-                    {Array.isArray(educationPreview) && educationPreview.length > 0 ? (
-                    educationPreview.map((edu, index) => (
-                        edu.institute && (
-                        <div key={index} className={styles.educationItem}>
-                            <h5>{edu.institute}</h5>
-                            {edu.educationLevel === 'A/L' ? (
-                            <>
-                                <span>{edu.fieldOfStudy} - {formatDate(edu.alYear, 'year')}</span>
-                            </>
-                            ) : (
-                            <>
-                                <span>{formatDate(edu.startDate)} - {edu.currentlyStudying ? 'Present' : formatDate(edu.endDate)}</span>
-                                <p className={styles.uniPara}><strong>{edu.fieldOfStudy}</strong></p>
-                                <p>GPA Value-{edu.gpaOrGrade}</p>
-                            </> 
-                            )}
-                        </div>
-                        )
-                    ))
-                    ) : (
-                    <p>Education details will appear here.</p>
-                    )}
+                <div className={styles.contactInfo}>
+                  <h4 className={styles.h4Headers}>Contact</h4>
+                  <p>{personalInfo.phone || "Phone"}</p>
+                  <p>{personalInfo.email || "Email"}</p>
+                  <p>{personalInfo.address || "Address"}</p>
                 </div>
-            </div>
-            <div className={styles.verticalLine}></div>
-            <div className={styles.cvRight}>
-                <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{personalInfo.profileParagraph || "Your profile summary will appear here."}</p></div>
-                <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>{(experiencePreview || []).length > 0 ? (experiencePreview.map((exp, index) => (<div key={index} className={styles.experienceItem}><h5>{exp.jobTitle || "Job Title"}</h5><p className={styles.companyName}>{exp.companyName}</p><span>{formatDate(exp.jstartDate)} - {formatDate(exp.jendDate)}</span><p>{exp.jobDescription || "Job description"}</p></div>))) : ( <p>Experience details will appear here.</p> )}</div>
-                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4><ul className={styles.skillsList}>{(skillsPreview || []).length > 0 ? (skillsPreview.map((skill, index) => (<li key={index} className={styles.skillRow}><span className={styles.skillName}>{skill.skillName || "Skill"}</span><span className={styles.skillStars}>{[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>))}</span></li>))) : ( <li>Skills will appear here.</li> )}</ul></div>
-                <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{summaryPreview || "Summary will appear here."}</p></div>
-                <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>{(referencesPreview || []).length > 0 ? (referencesPreview.map((ref, index) => (<p key={index}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Email"}</p>))) : ( <p>References will appear here.</p> )}</div>
+                <div className={styles.education}>
+                  <h4 className={styles.h4Headers}>Education</h4>
+                  {(educationPreview.universitiyName || educationPreview.schoolName) ? (
+                    <div className={styles.educationItem}>
+                      {(educationPreview.universitiyName) && (
+                        <>
+                          <h5>{educationPreview.universitiyName || "University Name"}</h5>
+                          <span>{formatDate(educationPreview.uniStartDate)} - {formatDate(educationPreview.uniEndDate)}</span>
+                          <p className={styles.uniPara}>{educationPreview.uniMoreDetails || "Degree details"}</p>
+                        </>
+                      )}
+                      {(educationPreview.schoolName) && (
+                        <>
+                          <h5>{educationPreview.schoolName || "School Name"}</h5>
+                          <span>{formatDate(educationPreview.startDate)} - {formatDate(educationPreview.endDate)}</span>
+                          <p>{educationPreview.moreDetails || "Additional details"}</p>
+                        </>
+                      )}
+                    </div>
+                  ) : ( 
+                    <p>Education details will appear here.</p> 
+                  )}
+                </div>
+              </div>
+              <div className={styles.verticalLine}></div>
+              <div className={styles.cvRight}>
+                <div className={styles.profilePara}>
+                  <h4 className={styles.h4Headers}>Profile</h4>
+                  <p>{personalInfo.profileParagraph || "Your profile summary will appear here."}</p>
+                </div>
+                <div className={styles.experience}>
+                  <h4 className={styles.h4Headers}>Professional Experience</h4>
+                  {(experiencePreview || []).length > 0 ? (
+                    experiencePreview.map((exp, index) => (
+                      <div key={index} className={styles.experienceItem}>
+                        <h5>{exp.jobTitle || "Job Title"}</h5>
+                        <span>{exp.jstartDate ? formatDate(exp.jstartDate) : "Start Date"} - {exp.jendDate ? formatDate(exp.jendDate) : "End Date"}</span>
+                        <p>{exp.jobDescription || "Job description"}</p>
+                      </div>
+                    ))
+                  ) : ( 
+                    <p>Experience details will appear here.</p> 
+                  )}
+                </div>
+                <div className={styles.skillsColumns}>
+                  <h4 className={styles.h4Headers}>Skills</h4>
+                  <ul className={styles.skillsList}>
+                    {Array.isArray(skillsPreview) && skillsPreview.length > 0 ? (
+                      skillsPreview.map((skill, index) => (
+                        <li key={index} className={styles.skillRow}>
+                          <span className={styles.skillName}>{skill.skillName || "Skill"}</span>
+                          <span className={styles.skillStars}>
+                            {[...Array(5)].map((_, i) => (
+                              <span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>
+                            ))}
+                          </span>
+                        </li>
+                      ))
+                    ) : ( 
+                      <li>Skills will appear here.</li> 
+                    )}
+                  </ul>
+                </div>
+                <div className={styles.summary}>
+                  <h4 className={styles.h4Headers}>Summary</h4>
+                  <p>{typeof summaryPreview === "string" && summaryPreview ? summaryPreview : "Summary will appear here."}</p>
+                </div>
+                <div className={styles.references}>
+                  <h4 className={styles.h4Headers}>References</h4>
+                  {(referencesPreview || []).length > 0 ? (
+                    referencesPreview.map((ref, index) => (
+                      <p key={index}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Email"}</p>
+                    ))
+                  ) : ( 
+                    <p>References will appear here.</p> 
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 };
 

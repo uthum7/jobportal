@@ -160,7 +160,7 @@ const JobseekerSidebar = () => {
           {/* Each NavLink changes the route and highlights the active item */}
           <NavLink to="/jobSeeker/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <FiHome className="nav-icon" />
-            <span>User Dashboard</span>
+            <span>Dashboard</span>
           </NavLink>
 
           <NavLink to="/JobSeeker/profile" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
@@ -202,21 +202,6 @@ const JobseekerSidebar = () => {
             <span>Messages</span>
             <span className="notification-badge">3</span>
             {/* Static message count badge */}
-          </NavLink>
-
-          <NavLink to="/change-password" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <FiLock className="nav-icon" />
-            <span>Change Password</span>
-          </NavLink>
-
-          <NavLink to="/delete-account" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <FiTrash2 className="nav-icon" />
-            <span>Delete Account</span>
-          </NavLink>
-
-          <NavLink to="/logout" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <FiLogOut className="nav-icon" />
-            <span>Log Out</span>
           </NavLink>
         </nav>
       </div>

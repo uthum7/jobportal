@@ -13,13 +13,12 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    login(formData);
+    console.log("Login form data:", formData);
+   login(formData);
   };
 
   return (
-    <div className="h-screen grid lg:grid-cols-2">
-      {/* Left Side - Form */}
-      <div className="flex flex-col justify-center items-center p-6 sm:p-12">
+<div className="h-screen flex items-center justify-center px-6">      {/* Left Side - Form */}
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
           <div className="text-center mb-8">
@@ -96,15 +95,8 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <div className="text-center">
-            <p className="text-base-content/60">
-              Don&apos;t have an account?{" "}
-              <Link to="/message/signup" className="link link-primary">
-                Create account
-              </Link>
-            </p>
-          </div>
-        </div>
+          
+        
       </div>
 
       {/* Right Side - Image/Pattern */}

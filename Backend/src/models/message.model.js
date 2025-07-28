@@ -4,13 +4,13 @@ const messageSchema = new mongoose.Schema(
     {
         senderId:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"User",
+            ref:"Registeruser",
             required:true,
         },
 
         receiverId:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"User",
+            ref:"Registeruser",
             required:true,
 
         },
@@ -21,6 +21,10 @@ const messageSchema = new mongoose.Schema(
         image:{
             type:String,
         },
+        isRead: {
+      type: Boolean,
+      default: false, // <--- ✅ New field to track read/unread state
+    },
     },
     {timestamps:true}
 );
