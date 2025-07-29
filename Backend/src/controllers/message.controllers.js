@@ -23,14 +23,16 @@ export const getUserForSidebar = async (req, res) => {
     
     let allowedRoles = [];
 
-    // Define access logic based on role
-    if (currentRole === "ADMIN") {
-  allowedRoles = ["ADMIN", "EMPLOYEE", "JOBSEEKER", "MENTOR", "MENTEE"];
-} else if (currentRole === "MENTOR") {
-  allowedRoles = ["ADMIN", "MENTOR", "MENTEE"];
-} else if (currentRole === "EMPLOYEE") {
-  allowedRoles = ["ADMIN", "EMPLOYEE", "JOBSEEKER"];
-}
+          // Define access logic based on role
+          if (currentRole === "ADMIN") {
+        allowedRoles = ["ADMIN", "EMPLOYEE", "JOBSEEKER", "MENTOR", "MENTEE"];
+      } else if (currentRole === "MENTOR") {
+        allowedRoles = ["ADMIN", "MENTOR", "MENTEE"];
+      } else if (currentRole === "EMPLOYEE") {
+        allowedRoles = ["ADMIN", "EMPLOYEE", "JOBSEEKER"];
+      }else if (currentRole === "JOBSEEKER") {
+        allowedRoles = ["ADMIN", "EMPLOYEE"];
+      }
 
 
     // Query only users with allowed roles (excluding self)

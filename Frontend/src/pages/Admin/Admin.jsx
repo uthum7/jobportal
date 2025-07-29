@@ -7,7 +7,6 @@ import JobTypeChart from '../../../src/components/Employee/Dashboard/Chart/JobTy
 import JobModeChart from '../../../src/components/Employee/Dashboard/Chart/JobModeChart';
 import AdminChart from './Dashboard/Component/AdminChart';
 
-
 // ------------------- StatCard Component -------------------
 const StatCard = ({ icon: Icon, title, value, bgColor, iconColor }) => (
   <div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -23,7 +22,7 @@ const StatCard = ({ icon: Icon, title, value, bgColor, iconColor }) => (
   </div>
 );
 
-// ------------------- SidebarItem Component (from your AdminProfilePage sidebar) -------------------
+// ------------------- SidebarItem Component -------------------
 const SidebarItem = ({ icon: Icon, label, active = false, onClick, hasSubmenu = false, expanded = false }) => (
   <button
     onClick={onClick}
@@ -41,100 +40,51 @@ const SidebarItem = ({ icon: Icon, label, active = false, onClick, hasSubmenu = 
   </button>
 );
 
-// ------------------- AdminSidebar (adapted from AdminProfilePage sidebar) -------------------
-const AdminSidebar = () => {
+// ------------------- AdminSidebar -------------------
+const AdminSidebar = ({ adminInfo = { name: 'Admin' } }) => { // default fallback
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = React.useState(true); // Sidebar always open on desktop
-  // You can add submenu state if you want expandable menus, but omitted here for simplicity
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
 
   const handleNavigation = (path) => {
     navigate(path);
   };
 
   return (
-    <div
-className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg z-40 overflow-y-auto"    >
+    <div className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg z-40 overflow-y-auto">
       <div className="flex flex-col h-full">
-        {/* Profile Section */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
-              <img
-                src="/api/placeholder/48/48"
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              <img src="/api/placeholder/48/48" alt="Profile" className="w-full h-full object-cover" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800">Admin</h3>
+              {/* Use optional chaining and fallback */}
+              <h3 className="font-semibold text-gray-800">{adminInfo?.name || 'Admin'}</h3>
               <p className="text-sm text-gray-600">Administrator</p>
             </div>
           </div>
         </div>
 
-        {/* Navigation */}
         <div className="flex-1 px-4 py-6 overflow-y-auto">
           <h4 className="text-sm font-medium text-gray-500 mb-4">Main Navigation</h4>
           <div className="space-y-2">
-            <SidebarItem
-              icon={Calendar}
-              label="Admin Dashboard"
-              active={true}
-              onClick={() => handleNavigation('/admin/dashboard')}
-            />
-            <SidebarItem
-              icon={Users}
-              label="My Profile"
-              onClick={() => handleNavigation('/admin/myprofile')}
-            />
-            
-            {/* Manage Section */}
+            <SidebarItem icon={Calendar} label="Admin Dashboard" active={true} onClick={() => handleNavigation('/admin/dashboard')} />
+            <SidebarItem icon={Users} label="My Profile" onClick={() => handleNavigation('/admin/myprofile')} />
+
             <div className="pt-4">
               <h5 className="text-sm font-medium text-gray-500 mb-2">Manage</h5>
               <div className="space-y-1 ml-2">
-                <SidebarItem
-                  icon={Users}
-                  label="Counselor"
-                  onClick={() => handleNavigation('/admin/managecounselor')}
-                />
-                <SidebarItem
-                  icon={Users}
-                  label="Counselee"
-                  onClick={() => handleNavigation('/admin/managecounselee')}
-                />
-                <SidebarItem
-                  icon={Users}
-                  label="Employee"
-                  onClick={() => handleNavigation('/admin/manageemployee')}
-                />
-                <SidebarItem
-                  icon={Users}
-                  label="Jobseeker"
-                  onClick={() => handleNavigation('/admin/managejobseeker')}
-                />
+                <SidebarItem icon={Users} label="Counselor" onClick={() => handleNavigation('/admin/managecounselor')} />
+                <SidebarItem icon={Users} label="Counselee" onClick={() => handleNavigation('/admin/managecounselee')} />
+                <SidebarItem icon={Users} label="Employee" onClick={() => handleNavigation('/admin/manageemployee')} />
+                <SidebarItem icon={Users} label="Jobseeker" onClick={() => handleNavigation('/admin/managejobseeker')} />
               </div>
             </div>
 
             <div className="pt-4">
-              <SidebarItem
-                icon={MessageSquare}
-                label="Messages"
-                onClick={() => handleNavigation('/admin/messages')}
-              />
-              <SidebarItem
-                icon={Settings}
-                label="Settings"
-                onClick={() => handleNavigation('/admin/settings')}
-              />
-              <SidebarItem
-                icon={LogOut}
-                label="Logout"
-                onClick={() => {
-                  // Implement logout logic here
-                  console.log('Logging out...');
-                  // navigate('/login');
-                }}
-              />
+              <SidebarItem icon={MessageSquare} label="Messages" onClick={() => handleNavigation('/admin/messages')} />
+              <SidebarItem icon={Settings} label="Settings" onClick={() => handleNavigation('/admin/settings')} />
+              <SidebarItem icon={LogOut} label="Logout" onClick={() => console.log('Logging out...')} />
             </div>
           </div>
         </div>
@@ -142,6 +92,7 @@ className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg z-40
     </div>
   );
 };
+
 
 // ------------------- Stats Section -------------------
 const AdminStats = ({ data, loading }) => (
@@ -173,31 +124,15 @@ const AdminStats = ({ data, loading }) => (
         <StatCard icon={DollarSign} title="Total Earnings" value={loading ? '...' : `$${data.totalEarnings}`} bgColor="bg-gray-100" iconColor="text-gray-600" />
       </div>
     </div>
-     {/* Charts Section */}
-                <div className="charts-section">
-                    {/* Main Chart */}
-                   
-                    {/* Side Charts */}
-                    <div className="side-charts">
-                        <div className="chart-item">
-                            <JobTypeChart />
-                        </div>
-                        <div className="chart-item">
-                            <JobModeChart />
-                        </div>
-                    </div>
-                </div>
-    
 
-    
+    <div className="charts-section">
+      <div className="side-charts">
+        <div className="chart-item"><JobTypeChart /></div>
+        <div className="chart-item"><JobModeChart /></div>
+      </div>
+    </div>
   </>
-  
-
-  
 );
-
-
-
 
 // ------------------- Main Dashboard -------------------
 const AdminDashboard = () => {
@@ -215,7 +150,7 @@ const AdminDashboard = () => {
     totalEarnings: 0,
   });
 
-  const [adminInfo, setAdminInfo] = useState({ name: 'Admin', role: 'Administrator' });
+  const [adminInfo, setAdminInfo] = useState({ name: '', email: '', id: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -249,7 +184,33 @@ const AdminDashboard = () => {
       }
     };
 
+    const fetchAdminInfo = async () => {
+      const adminId = localStorage.getItem('userId');
+      if (!adminId) return;
+      try {
+        const res = await fetch(`http://localhost:5001/api/users/admin/${adminId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          setAdminInfo({
+            name: data.admin.name,
+            email: data.admin.email,
+            id: data.admin._id,
+          });
+        } else {
+          console.error('Admin fetch failed:', data.message);
+        }
+      } catch (err) {
+        console.error('Error fetching admin info:', err);
+      }
+    };
+
     fetchDashboardStats();
+    fetchAdminInfo();
   }, []);
 
   if (error) {
@@ -257,21 +218,17 @@ const AdminDashboard = () => {
       <div className="ml-64 p-6">
         <h2 className="text-xl font-semibold text-red-600">Dashboard Error</h2>
         <p className="text-gray-600">{error}</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
-          Retry
-        </button>
+        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">Retry</button>
       </div>
     );
   }
 
   return (
     <div className="flex">
-      <AdminSidebar />
-
+      <AdminSidebar adminInfo={adminInfo} />
       <main className="ml-64 flex-1 bg-gray-50 p-6 min-h-screen pt-16">
-        <h1 className="text-2xl font-semibold text-gray-800">Welcome, {adminInfo.name} 👋</h1>
+        <h1 className="text-2xl font-semibold text-gray-800">Welcome, {adminInfo.email} 👋</h1>
         <p className="text-gray-600 mb-6">Manage your dashboard here.</p>
-
         <AdminStats data={dashboardStats} loading={loading} />
         <AdminChart chartData={chartData} />
       </main>

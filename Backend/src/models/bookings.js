@@ -26,15 +26,15 @@ const bookingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Payment Pending', 'Confirmed', 'Cancelled'],
-      default: 'Payment Pending',
+      enum: ['Pending', 'Confirmed', 'cancelled'],
+      default: 'Pending',
     },
     location: {
       type: String,
     },
     type: {
       type: String,
-      enum: ['Video Call', 'Phone Call', 'In-Person'],
+      enum: ['Video Call', 'Phone Call', 'In-person'],
       default: 'Video Call',
     },
     notes: {
@@ -48,7 +48,7 @@ const bookingSchema = new mongoose.Schema(
     },
     payment_status: {
       type: String,
-      enum: ['Pending', 'Paid', 'Failed'],
+      enum: ['Pending', 'paid', 'Failed'],
       default: 'Pending',
     },
     payment_intent_id: {
@@ -72,4 +72,4 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('bookings', bookingSchema);
+export default mongoose.model('Booking', bookingSchema);

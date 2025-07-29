@@ -16,11 +16,11 @@ import {
   AlertTriangle
 } from 'lucide-react';
 
-const BookingManagement = ( ) => {
-    const { id } = useParams();
+const BookingManagement = () => {
+  const { id } = useParams();
   const [currentFilter, setCurrentFilter] = useState('all');
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const [currentBookingId, setCurrentBookingId] = useState(null);
+  const [bookingId, setCurrentBookingId] = useState(null);
   const [cancellationReason, setCancellationReason] = useState('');
   const [counselorInfo, setCounselorInfo] = useState(null);
   const [bookings, setBookings] = useState([]);
@@ -89,14 +89,13 @@ const BookingManagement = ( ) => {
     if (!cancellationReason.trim()) return;
 
     try {
-      await axios.put(`http://localhost:5001/api/users/recentbookings/${id}/cancel`, {
-        reason: cancellationReason,
-        cancelledBy: 'counselor'
+      await axios.put(`http://localhost:5001/api/users/cancelbooking/${bookingId}`, {
+        reason: cancellationReason
       });
       setShowCancelModal(false);
       setCancellationReason('');
       setCurrentBookingId(null);
-      fetchData(); // Refresh bookings
+      fetchData();
       alert('Session cancelled successfully!');
     } catch (err) {
       console.error('Error cancelling session:', err);
@@ -116,12 +115,12 @@ const BookingManagement = ( ) => {
   const getStatusDisplay = (status) =>
     status.charAt(0).toUpperCase() + status.slice(1);
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (loading) return <div className="max-w-6xl mx-auto p-6">Loading...</div>;
 
-  if (!counselorInfo) return <div className="p-6">Counselor not found.</div>;
+  if (!counselorInfo) return <div className="max-w-6xl mx-auto p-6">Counselor not found.</div>;
 
   return (
-    <div className="p-6">
+    <div className="max-w-6xl mx-auto p-6">
       <button
         className="flex items-center gap-2 text-white bg-blue-500 px-4 py-2 rounded hover:bg-blue-600"
         onClick={() => alert('Navigate back to counselor info page')}

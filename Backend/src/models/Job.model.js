@@ -35,7 +35,7 @@ const JobsSchema = new mongoose.Schema({
         type:Array
     },
 
-    PostedBy: { type: mongoose.Schema.Types.ObjectId, ref: "RegisterUser", required: true },
+    PostedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Registeruser", required: true },
     postedDate:{
         type:Date,
         default:Date.now
@@ -45,7 +45,7 @@ const JobsSchema = new mongoose.Schema({
 
 );
 // ✅ Prevent OverwriteModelError
-const Job = mongoose.models.jobs || mongoose.model("jobs", JobsSchema);
+const Job = mongoose.models.jobs || mongoose.model("Job", JobsSchema);
   //jobs is the collection name
 
 export default Job;
