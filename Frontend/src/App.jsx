@@ -54,9 +54,7 @@ import SavedJobs from "./pages/JobSeeker/SavedJobs/SavedJobs.jsx";
 import FeedbackInsights from './pages/JobSeeker/feedbackInsights/FeedbackInsights.jsx';
 
 
-// Message routes
-import MessageRoutes from "./pages/Message/MessageRoutes.jsx";
-import MessageHomePage from "./pages/Message/MessageHomePage.jsx";
+
 
 // Counselee components
 
