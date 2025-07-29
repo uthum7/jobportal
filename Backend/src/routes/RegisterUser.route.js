@@ -5,8 +5,10 @@ import { getCounselors, getCounselees, getJobseekers,
     getEmployeeById,updateEmployee,deleteEmployee,
     getJobseekerById,updateJobseeker,deleteJobseeker,
     getRecentJobsByEmployee,getApplicationCountByEmployee,getJobById,
-    updateJobDetails,getRecentBookingsForCounselor
+    updateJobDetails,getRecentBookingsForCounselor,
+    cancelBookingByAdmin,getAdminById
  } from '../controllers/RegisterUser.controller.js';
+
 
 const router = express.Router();
 
@@ -36,5 +38,9 @@ router.get('/applicationcount/:id', getApplicationCountByEmployee);
 router.get("/:id", getJobById);
 router.put('/jobs/:id/updatedetails', updateJobDetails);
 router.get('/recentbookings/:counselorId', getRecentBookingsForCounselor);
+router.put('/cancelbooking/:bookingId', cancelBookingByAdmin);
+
+
+router.get('/admin/:id', getAdminById);
 
 export default router;

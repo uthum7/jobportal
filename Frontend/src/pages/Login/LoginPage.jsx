@@ -19,32 +19,35 @@ const LoginModal = ({ isOpen, onClose }) => {
     setError(null); // Clear previous errors
 
     try {
-        // Send login request
-        const res = await axios.post("http://localhost:5001/api/register/login", { email, password });
+      // Send login request
+      const res = await axios.post("http://localhost:5001/api/register/login", { email, password });
 
-        // Save the token using saveToken utility function
-        saveToken(res.data.token);
+      // Save the token using saveToken utility function
+      saveToken(res.data.token);
 
-        console.log("Login successful!", res.data);
+      // Save user details in localStorage
+      localStorage.setItem("userId", res.data._id);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("username", res.data.username);
 
-        // Reset form fields
-        setEmail("");
-        setPassword("");
+      console.log("Login successful!", res.data);
 
-        // Close modal after successful login
-        onClose();
+      // Reset form fields
+      setEmail("");
+      setPassword("");
 
-        // Navigate to the home page
-        navigate("/");
+      // Close modal after successful login
+      onClose();
+
+      // Navigate to the home page
+      navigate("/");
     } catch (error) {
-        // Handle errors
-        const errorMessage = error.response?.data?.message || "Login failed. Please try again.";
-        console.error("Login failed:", errorMessage);
-
-        // Set error state to display in the UI
-        setError(errorMessage);
+      const errorMessage = error.response?.data?.message || "Login failed. Please try again.";
+      console.error("Login failed:", errorMessage);
+      setError(errorMessage);
     }
-};
+  };
+
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -76,7 +79,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                 required
               />
 
-              {/* Password Input (Fixed security issue) */}
+              {/* Password Input */}
               <input
                 type="password"
                 placeholder="Password"
@@ -90,6 +93,9 @@ const LoginModal = ({ isOpen, onClose }) => {
               <button type="submit" className={styles.magicLinkBtn}>
                 Sign in
               </button>
+
+              {/* Error Message */}
+              {error && <p className={styles.errorMessage}>{error}</p>}
             </form>
           </div>
         </div>
