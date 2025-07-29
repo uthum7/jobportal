@@ -22,8 +22,8 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
             startDate: '',
             endDate: '',
             currentlyStudying: false,
-            alYear: '', // For A/L year
-            alSubjects: [{ subject: '', grade: '' }] // For A/L subjects
+            alYear: '',
+            alSubjects: [{ subject: '', grade: '' }]
         }],
         workExperience: [{
             jobTitle: '',
@@ -57,19 +57,16 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
 
     // Field validation helpers
     const validateYear = (value) => {
-        if (!value) return true; // Allow empty for now
+        if (!value) return true;
         
-        // Check if contains non-digits
         if (!/^\d+$/.test(value)) {
             return false;
         }
         
-        // Check length
         if (value.length > 4) {
             return false;
         }
         
-        // Check if future year
         const currentYear = new Date().getFullYear();
         const inputYear = parseInt(value);
         if (value.length === 4 && inputYear > currentYear) {
@@ -80,7 +77,7 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
     };
 
     const validateURL = (url) => {
-        if (!url) return true; // Allow empty
+        if (!url) return true;
         try {
             new URL(url);
             return true;
@@ -90,14 +87,27 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
     };
 
     const validateTextOnly = (value) => {
-        if (!value) return true; // Allow empty for now
-        // Allow letters, spaces, and common punctuation, but no numbers
+        if (!value) return true;
         return /^[a-zA-Z\s\.',-/&()]+$/.test(value);
     };
 
-    // Date validation helper
     const getTodayString = () => {
         return new Date().toISOString().split('T')[0];
+    };
+
+    // Helper function to check if any field in an object has content
+    const hasAnyContent = (obj, fields) => {
+        return fields.some(field => {
+            const value = obj[field];
+            if (Array.isArray(value)) {
+                return value.length > 0 && value.some(item => 
+                    typeof item === 'string' ? item.trim() : 
+                    typeof item === 'object' ? Object.values(item).some(v => v && v.toString().trim()) : 
+                    item
+                );
+            }
+            return value && value.toString().trim();
+        });
     };
 
     // Validation functions for Add buttons
@@ -105,35 +115,29 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
         if (formData.education.length === 0) return true;
         const lastEdu = formData.education[formData.education.length - 1];
         
-        // Basic required fields
         if (!lastEdu.institute?.trim() || !lastEdu.educationLevel?.trim()) {
             return false;
         }
         
-        // A/L specific validation
         if (lastEdu.educationLevel === 'A/L') {
             if (!lastEdu.fieldOfStudy?.trim() || !lastEdu.alYear?.trim()) {
                 return false;
             }
-            // Check if at least one A/L subject is properly filled
             const validSubjects = (lastEdu.alSubjects || []).filter(sub => 
                 sub.subject?.trim() && sub.grade?.trim()
             );
             return validSubjects.length > 0;
         }
         
-        // Non-A/L validation - all fields required
-        if (['Diploma', 'Bachelor’s', 'Master’s', 'PhD'].includes(lastEdu.educationLevel)) {
+        if (['Diploma', 'Bachelor\'s', 'Master\'s', 'PhD'].includes(lastEdu.educationLevel)) {
             const hasRequiredFields = lastEdu.fieldOfStudy?.trim() && 
                                     lastEdu.gpaOrGrade?.trim() && 
                                     lastEdu.startDate?.trim();
             
-            // If currently studying, end date is not required
             if (lastEdu.currentlyStudying) {
                 return hasRequiredFields;
             }
             
-            // If not currently studying, end date is required
             return hasRequiredFields && lastEdu.endDate?.trim();
         }
         
@@ -144,17 +148,14 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
         if (formData.workExperience.length === 0) return true;
         const lastExp = formData.workExperience[formData.workExperience.length - 1];
         
-        // All fields except description are required
         const hasRequiredFields = lastExp.jobTitle?.trim() && 
                                  lastExp.company?.trim() && 
                                  lastExp.startDate?.trim();
         
-        // If currently working, end date is not required
         if (lastExp.currentlyWorking) {
             return hasRequiredFields;
         }
         
-        // If not currently working, end date is required
         return hasRequiredFields && lastExp.endDate?.trim();
     };
 
@@ -162,7 +163,6 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
         if (formData.projects.length === 0) return true;
         const lastProject = formData.projects[formData.projects.length - 1];
         
-        // All fields except description are required
         return lastProject.title?.trim() && 
                lastProject.technologies?.length > 0 && 
                lastProject.link?.trim();
@@ -172,7 +172,6 @@ const ApplyJobForm = ({ jobId, userId, JobTitle, onClose, onSuccess }) => {
         if (formData.certifications.length === 0) return true;
         const lastCert = formData.certifications[formData.certifications.length - 1];
         
-        // All fields are required
         return lastCert.name?.trim() && lastCert.issuer?.trim() && lastCert.year?.trim();
     };
 
@@ -286,17 +285,36 @@ case 'gender':
         }
     };
 
-    const validateCertifications = () => {
-        const validCertifications = formData.certifications.filter(cert =>
-            cert.name.trim() && cert.issuer.trim() && cert.year.trim()
+    // Updated validation functions for optional sections
+    const validateWorkExperience = () => {
+        // Check if any work experience entry has any content
+        const hasAnyWorkExperience = formData.workExperience.some(exp => 
+            hasAnyContent(exp, ['jobTitle', 'company', 'startDate', 'endDate', 'description'])
         );
-        if (validCertifications.length === 0) {
-            setErrors(prev => ({ ...prev, certifications: 'At least one certification is required' }));
+        
+        // If no work experience at all, it's valid (optional)
+        if (!hasAnyWorkExperience) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors.workExperience;
+                return newErrors;
+            });
+            return true;
+        }
+        
+        // If there's content, validate that at least one entry is complete
+        const validWorkExperience = formData.workExperience.filter(exp => {
+            const hasRequiredFields = exp.jobTitle?.trim() && exp.company?.trim() && exp.startDate?.trim();
+            return hasRequiredFields && (exp.currentlyWorking || exp.endDate?.trim());
+        });
+        
+        if (validWorkExperience.length === 0) {
+            setErrors(prev => ({ ...prev, workExperience: 'Please complete the work experience entry or remove it' }));
             return false;
         } else {
             setErrors(prev => {
                 const newErrors = { ...prev };
-                delete newErrors.certifications;
+                delete newErrors.workExperience;
                 return newErrors;
             });
             return true;
@@ -304,9 +322,26 @@ case 'gender':
     };
 
     const validateProjects = () => {
+        // Check if any project entry has any content
+        const hasAnyProjects = formData.projects.some(project => 
+            hasAnyContent(project, ['title', 'description', 'technologies', 'link'])
+        );
+        
+        // If no projects at all, it's valid (optional)
+        if (!hasAnyProjects) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors.projects;
+                return newErrors;
+            });
+            return true;
+        }
+        
+        // If there's content, validate that at least one entry has a title
         const validProjects = formData.projects.filter(project => project.title?.trim());
+        
         if (validProjects.length === 0) {
-            setErrors(prev => ({ ...prev, projects: 'At least one project is required' }));
+            setErrors(prev => ({ ...prev, projects: 'Please add a project title or remove the entry' }));
             return false;
         } else {
             setErrors(prev => {
@@ -318,9 +353,42 @@ case 'gender':
         }
     };
 
+    const validateCertifications = () => {
+        // Check if any certification entry has any content
+        const hasAnyCertifications = formData.certifications.some(cert =>
+            hasAnyContent(cert, ['name', 'issuer', 'year'])
+        );
+        
+        // If no certifications at all, it's valid (optional)
+        if (!hasAnyCertifications) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors.certifications;
+                return newErrors;
+            });
+            return true;
+        }
+        
+        // If there's content, validate that at least one entry is complete
+        const validCertifications = formData.certifications.filter(cert =>
+            cert.name?.trim() && cert.issuer?.trim() && cert.year?.trim()
+        );
+        
+        if (validCertifications.length === 0) {
+            setErrors(prev => ({ ...prev, certifications: 'Please complete the certification entry or remove it' }));
+            return false;
+        } else {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors.certifications;
+                return newErrors;
+            });
+            return true;
+        }
+    };
+
     // Mock data loading for demonstration
     useEffect(() => {
-        // Simulate loading user profile data
         const mockProfile = {
             fullName: '',
             nic: '',
@@ -357,7 +425,7 @@ case 'gender':
                         description: '',
                 technologies: [],
                 link: ''
-                    }],
+            }],
             certifications: [{
                 name: '',
                 issuer: '',
@@ -416,18 +484,15 @@ case 'gender':
         
         // Year field validation
         if (key === 'year' || key === 'alYear') {
-            // Only allow digits and max 4 characters
             const cleanValue = value.replace(/[^\d]/g, '').slice(0, 4);
             
             if (!validateYear(cleanValue)) {
-                // Set error for invalid year
                 setErrors(prev => ({
                     ...prev,
                     [`${field}_${index}_${key}`]: 'Enter a valid year'
                 }));
                 return;
             } else {
-                // Clear error if valid
                 setErrors(prev => {
                     const newErrors = { ...prev };
                     delete newErrors[`${field}_${index}_${key}`];
@@ -437,7 +502,7 @@ case 'gender':
             value = cleanValue;
         }
         
-        // Text-only field validation (no numbers allowed)
+        // Text-only field validation
         if (key === 'jobTitle' || key === 'fieldOfStudy' || key === 'subject') {
             if (value && !validateTextOnly(value)) {
                 setErrors(prev => ({
@@ -474,17 +539,14 @@ case 'gender':
         if (key === 'startDate' || key === 'endDate') {
             const today = new Date().toISOString().split('T')[0];
             
-            // Prevent future dates
             if (value > today) {
-                return; // Don't update if trying to set future date
+                return;
             }
             
-            // For end date, ensure it's not before start date
             if (key === 'endDate' && updated[index].startDate && value < updated[index].startDate) {
-                return; // Don't update if end date is before start date
+                return;
             }
             
-            // For start date, clear end date if it becomes before the new start date
             if (key === 'startDate' && updated[index].endDate && value > updated[index].endDate) {
                 updated[index].endDate = '';
             }
@@ -502,14 +564,13 @@ case 'gender':
         setIsFormDirty(true);
     };
 
-    // Handle A/L subjects - Updated to work like skills
+    // Handle A/L subjects
     const handleALSubjectChange = (eduIndex, subjectIndex, field, value) => {
         const updated = [...formData.education];
         if (!updated[eduIndex].alSubjects) {
             updated[eduIndex].alSubjects = [{ subject: '', grade: '' }];
         }
         
-        // Validate subject field (no numbers allowed)
         if (field === 'subject') {
             if (value && !validateTextOnly(value)) {
                 setErrors(prev => ({
@@ -574,8 +635,11 @@ case 'gender':
         });
 
         if (!validateSkills()) isValid = false;
-        if (!validateCertifications()) isValid = false;
+        
+        // Validate optional sections - they only need validation if they have content
+        if (!validateWorkExperience()) isValid = false;
         if (!validateProjects()) isValid = false;
+        if (!validateCertifications()) isValid = false;
 
         return isValid;
     };
@@ -590,8 +654,42 @@ case 'gender':
         setLoading(true);
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Filter out empty optional sections before submitting
+            const submissionData = {
+                    ...formData,
+                technicalSkills: formData.technicalSkills.filter(skill => skill.name && skill.name.trim()),
+                workExperience: formData.workExperience.filter(exp => 
+                    hasAnyContent(exp, ['jobTitle', 'company', 'startDate', 'endDate', 'description'])
+                ),
+                projects: formData.projects.filter(project => 
+                    hasAnyContent(project, ['title', 'description', 'technologies', 'link'])
+                ),
+                certifications: formData.certifications.filter(cert => 
+                    hasAnyContent(cert, ['name', 'issuer', 'year'])
+                )
+            };
+
+            // Make real API call to submit application
+            const response = await fetch('http://localhost:5001/api/applications/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    jobId: jobId,
+                    userId: userId,
+                    applicationData: submissionData
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to submit application');
+            }
+
+            const result = await response.json();
+            console.log('Application submitted successfully:', result);
+
             setSubmitSuccess(true);
             setShowSuccess(true);
             setIsFormDirty(false);
@@ -599,7 +697,8 @@ case 'gender':
                 setTimeout(() => onSuccess(), 3000);
             }
         } catch (err) {
-            alert('Submission failed');
+            console.error('Submission failed:', err);
+            alert(`Submission failed: ${err.message}`);
         } finally {
             setLoading(false);
         }
@@ -770,7 +869,7 @@ case 'gender':
                                         onChange={e => handleArrayChange('technicalSkills', formData.technicalSkills.length - 1, { ...formData.technicalSkills[formData.technicalSkills.length - 1], name: e.target.value })}
                                         placeholder="Enter a technical skill"
                                         className="skill-name-input"
-                                />
+                                    />
                                     <div className="proficiency-container">
                                         <label className="proficiency-label">Proficiency (1-5):</label>
                                         <select
@@ -803,7 +902,7 @@ case 'gender':
                                             value={skill.name}
                                         readOnly
                                             className="skill-name-input"
-                                    />
+                                        />
                                         <div className="proficiency-container">
                                             <label className="proficiency-label">Proficiency (1-5):</label>
                                             <select value={skill.proficiency} className="proficiency-select" disabled>
@@ -837,7 +936,7 @@ case 'gender':
                                 })}
                                 placeholder="LinkedIn URL"
                                 className="social-link-input"
-                                />
+                            />
                             <input
                                 name="github"
                                 value={formData.socialLinks?.github || ''}
@@ -1014,7 +1113,7 @@ case 'gender':
                                                 value={edu.fieldOfStudy || ''}
                                                 onChange={e => handleNestedChange('education', i, 'fieldOfStudy', e.target.value)}
                                                 className={errors[`education_${i}_fieldOfStudy`] ? 'error' : ''}
-                                                required={['Diploma', 'Bachelor’s', 'Master’s', 'PhD'].includes(edu.educationLevel)}
+                                                required={['Diploma', 'Bachelor\'s', 'Master\'s', 'PhD'].includes(edu.educationLevel)}
                                             />
                                             {errors[`education_${i}_fieldOfStudy`] && (
                                                 <span className="error-message">{errors[`education_${i}_fieldOfStudy`]}</span>
@@ -1101,7 +1200,8 @@ case 'gender':
 
                     {/* Work Experience Section */}
                     <div className="form-section">
-                        <h3>Work Experience</h3>
+                        <h3>Work Experience (Optional)</h3>
+                        {errors.workExperience && <span className="error-message">{errors.workExperience}</span>}
                         {formData.workExperience.map((exp, i) => (
                             <div key={i} className="work-experience-entry">
                                 <div className="work-experience-row">
@@ -1111,7 +1211,6 @@ case 'gender':
                                             value={exp.jobTitle || ''}
                                             onChange={e => handleNestedChange('workExperience', i, 'jobTitle', e.target.value)}
                                             className={errors[`workExperience_${i}_jobTitle`] ? 'error' : ''}
-                                            required
                                         />
                                         {errors[`workExperience_${i}_jobTitle`] && (
                                             <span className="error-message">{errors[`workExperience_${i}_jobTitle`]}</span>
@@ -1121,7 +1220,6 @@ case 'gender':
                                         placeholder="Company Name"
                                         value={exp.company || ''}
                                         onChange={e => handleNestedChange('workExperience', i, 'company', e.target.value)}
-                                        required
                                     />
                                 </div>
 
@@ -1134,7 +1232,6 @@ case 'gender':
                                                 value={exp.startDate || ''}
                                                 onChange={e => handleNestedChange('workExperience', i, 'startDate', e.target.value)}
                                                 max={getTodayString()}
-                                                required
                                             />
                                             <FaCalendarAlt className="calendar-icon-simple" />
                                         </div>
@@ -1149,8 +1246,7 @@ case 'gender':
                                                 disabled={exp.currentlyWorking}
                                                 min={exp.startDate || ''}
                                                 max={getTodayString()}
-                                                required={!exp.currentlyWorking}
-                                />
+                                            />
                                             <FaCalendarAlt className="calendar-icon-simple" />
                                         </div>
                                     </div>
@@ -1196,7 +1292,7 @@ case 'gender':
 
                     {/* Projects Section */}
                     <div className="form-section">
-                        <h3>Projects</h3>
+                        <h3>Projects (Optional)</h3>
                         {errors.projects && <span className="error-message">{errors.projects}</span>}
                         {formData.projects.map((proj, i) => (
                             <div key={i} className="project-entry">
@@ -1204,7 +1300,6 @@ case 'gender':
                                     placeholder="Project Title"
                                     value={proj.title || ''}
                                     onChange={e => handleNestedChange('projects', i, 'title', e.target.value)}
-                                    required
                                 />
                                 <textarea
                                     placeholder="Description (optional)"
@@ -1215,15 +1310,13 @@ case 'gender':
                                     placeholder="Technologies (comma separated)"
                                     value={proj.technologies ? proj.technologies.join(', ') : ''}
                                     onChange={e => handleNestedChange('projects', i, 'technologies', e.target.value.split(',').map(s => s.trim()).filter(Boolean))}
-                                    required
-                                    />
+                                />
                                 <div>
                                     <input
                                         placeholder="Project Link (GitHub or Live URL)"
                                         value={proj.link || ''}
                                         onChange={e => handleNestedChange('projects', i, 'link', e.target.value)}
                                         className={errors[`projects_${i}_link`] ? 'error' : ''}
-                                        required
                                     />
                                     {errors[`projects_${i}_link`] && (
                                         <span className="error-message">{errors[`projects_${i}_link`]}</span>
@@ -1248,7 +1341,7 @@ case 'gender':
 
                     {/* Certifications Section */}
                     <div className="form-section">
-                        <h3>Certifications</h3>
+                        <h3>Certifications (Optional)</h3>
                         {errors.certifications && <span className="error-message">{errors.certifications}</span>}
                         {formData.certifications.map((cert, i) => (
                             <div key={i} className="certification-entry">
@@ -1256,13 +1349,11 @@ case 'gender':
                                     placeholder="Certification Name"
                                     value={cert.name || ''}
                                     onChange={e => handleNestedChange('certifications', i, 'name', e.target.value)}
-                                    required
                                 />
                                 <input
                                     placeholder="Issuer"
                                     value={cert.issuer || ''}
                                     onChange={e => handleNestedChange('certifications', i, 'issuer', e.target.value)}
-                                    required
                                 />
                                 <div>
                                     <input
@@ -1270,7 +1361,6 @@ case 'gender':
                                         value={cert.year || ''}
                                         onChange={e => handleNestedChange('certifications', i, 'year', e.target.value)}
                                         className={errors[`certifications_${i}_year`] ? 'error' : ''}
-                                        required
                                     />
                                     {errors[`certifications_${i}_year`] && (
                                         <span className="error-message">{errors[`certifications_${i}_year`]}</span>
