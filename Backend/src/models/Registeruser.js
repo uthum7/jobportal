@@ -48,6 +48,11 @@ const RegisteruserSchema = new Schema(
         message: "At least one role must be selected",
       },
     },
+    // --- NEW FIELD ADDED HERE ---
+    passwordResetRequired: {
+        type: Boolean,
+        default: false // Default to false for self-registered users
+    },
     resetPasswordToken: {
       type: String,
       default: undefined,

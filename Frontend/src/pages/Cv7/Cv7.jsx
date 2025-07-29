@@ -54,6 +54,7 @@ const Cv7 = () => {
   useEffect(() => {
     if (contextResumeData) {
         const refsFromContext = contextResumeData.references || [];
+        // ✅ FIX: ID must be a valid template literal string
         setLocalReferences(refsFromContext.length > 0 ? refsFromContext : [{ ...initialReferenceState, id: `local-${Date.now()}` }]);
         
         setPersonalInfoPreview(contextResumeData.personalInfo || {});
@@ -71,11 +72,13 @@ const Cv7 = () => {
   };
 
   const handleAddReference = () => {
+    // ✅ FIX: ID must be a valid template literal string
     setLocalReferences(prev => [...prev, { ...initialReferenceState, id: `local-${Date.now()}` }]);
   };
 
   const handleRemoveReference = (index) => {
     const newRefs = localReferences.filter((_, i) => i !== index);
+    // ✅ FIX: ID must be a valid template literal string
     setLocalReferences(newRefs.length > 0 ? newRefs : [{ ...initialReferenceState, id: `local-${Date.now()}` }]);
   };
 
@@ -116,6 +119,7 @@ const Cv7 = () => {
               {localReferences.slice(-2).map((ref, indexInSlicedArray) => {
                 const originalIndex = localReferences.length - localReferences.slice(-2).length + indexInSlicedArray;
                 return (
+                  // ✅ FIX: The key prop must be a valid string or number. Use a template literal.
                   <div key={ref.id || `ref-${originalIndex}`} className={styles.referenceGroup}>
                     <h4>Reference #{originalIndex + 1}</h4>
                     <input type="text" name="referenceName" placeholder="Full Name of Reference" value={ref.referenceName || ""} onChange={(e) => handleReferenceChange(originalIndex, "referenceName", e.target.value)}/>
@@ -171,11 +175,15 @@ const Cv7 = () => {
               <div className={styles.cvRight}>
                 <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{personalInfoPreview.profileParagraph || "Your profile summary"}</p></div>
                 <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>
+                  {/* ✅ FIX: The key prop must be a valid string. Use a template literal. */}
                   {(experiencePreview || []).map((exp, i) => (<div key={`exp-preview-${i}`} className={styles.experienceItem}><h5>{exp.jobTitle}</h5><p className={styles.companyName}>{exp.companyName}</p><span>{formatDate(exp.jstartDate)} - {formatDate(exp.jendDate)}</span><p className={styles.jobDescription}>{exp.jobDescription}</p></div>))}
                 </div>
                 <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4>
                   <ul className={styles.skillsDisplayList}>
-                    {(skillsPreview || []).map((s, index) => (<li key={`skill-preview-${index}`} className={styles.skillDisplayItem}><span className={styles.skillNameDisplay}>{s.skillName}</span><div className={styles.skillStarsDisplay}>{[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (Number(s.skillLevel) || 0) ? styles.checked : ""}`}>★</span>))}</div></li>))}
+                    {/* ✅ FIX: The key prop must be a valid string. Use a template literal. */}
+                    {(skillsPreview || []).map((s, index) => (<li key={`skill-preview-${index}`} className={styles.skillDisplayItem}><span className={styles.skillNameDisplay}>{s.skillName}</span><div className={styles.skillStarsDisplay}>
+                    {/* ✅ FIX: className must use a template literal wrapped in {} */}
+                    {[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (Number(s.skillLevel) || 0) ? styles.checked : ""}`}>★</span>))}</div></li>))}
                   </ul>
                 </div>
                 <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{summaryPreview || "Your summary"}</p></div>
@@ -183,6 +191,7 @@ const Cv7 = () => {
                   <h4 className={styles.h4Headers}>References</h4>
                   {localReferences && localReferences.filter(ref => ref.referenceName?.trim()).length > 0 ? (
                     localReferences.filter(ref => ref.referenceName?.trim()).map((ref, idx) => (
+                      // ✅ FIX: The key prop must be a valid string. Use a template literal.
                       <div key={ref.id || `ref-preview-${idx}`} className={styles.referenceItemPreview}>
                         <p><strong>{ref.referenceName}</strong></p>
                         {ref.position && <p>{ref.position}{ref.company && ` at ${ref.company}`}</p>}

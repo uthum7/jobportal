@@ -8,7 +8,7 @@ import { useCVForm } from "../../context/CVFormContext";
 import axios from 'axios';
 import { toast } from 'sonner';
 
-// Initial state for the entire CV form
+// educationDetails is now an array
 const initialFormStateValues = {
     personalInfo: {
       fullname: "", nameWithInitials: "", gender: "", birthday: "", address: "",
@@ -22,9 +22,10 @@ const initialFormStateValues = {
     references: [],
 };
 
-// Helper function to format dates consistently for the preview
-const formatDate = (dateStr) => {
+// Helper function to format dates consistently
+const formatDate = (dateStr, formatType = 'date') => {
   if (!dateStr) return "Present";
+  if (formatType === 'year') return dateStr;
   try {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return "Invalid Date";
@@ -50,7 +51,7 @@ const Cv = () => {
   const [personalInfo, setPersonalInfo] = useState(initialFormStateValues.personalInfo);
   const [isAiLoading, setIsAiLoading] = useState(false);
 
-  // States to hold data for the live preview section
+  // Preview states initialized correctly
   const [educationPreview, setEducationPreview] = useState([]);
   const [experiencePreview, setExperiencePreview] = useState([]);
   const [skillsPreview, setSkillsPreview] = useState([]);
@@ -60,7 +61,6 @@ const Cv = () => {
   const hasAttemptedFetch = useRef(false);
   const lastObjectUrl = useRef(null);
 
-  // Effect to fetch initial CV data
   useEffect(() => {
     if (!isAuthenticated()) {
       navigate("/login", { replace: true });
@@ -74,7 +74,6 @@ const Cv = () => {
     }
   }, [contextFetchResumeData, navigate]);
 
-  // Effect to update local state and preview when context data changes
   useEffect(() => {
     if (contextResumeData) {
       const newContextPI = contextResumeData.personalInfo || initialFormStateValues.personalInfo;
@@ -95,8 +94,12 @@ const Cv = () => {
         setLocalPreviewImgUrl(newObjectUrl);
         lastObjectUrl.current = newObjectUrl;
       } else if (typeof newContextPI.profilePicture === 'string' && newContextPI.profilePicture) {
+        if (lastObjectUrl.current) URL.revokeObjectURL(lastObjectUrl.current);
+        lastObjectUrl.current = null;
         setLocalPreviewImgUrl(newContextPI.profilePicture);
       } else {
+        if (lastObjectUrl.current) URL.revokeObjectURL(lastObjectUrl.current);
+        lastObjectUrl.current = null;
         setLocalPreviewImgUrl(null);
       }
     }
@@ -106,6 +109,7 @@ const Cv = () => {
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     if (name === "profilePicture" && type === "file" && files?.[0]) {
+      if (lastObjectUrl.current?.startsWith("blob:")) URL.revokeObjectURL(lastObjectUrl.current);
       setPersonalInfo((prev) => ({ ...prev, profilePicture: files[0] }));
     } else {
       setPersonalInfo((prev) => ({ ...prev, [name]: value }));
@@ -128,21 +132,30 @@ const Cv = () => {
     } catch (error) {
       const errMsg = error.response?.data?.error || error.message || "AI enhancement failed.";
       toast.error(errMsg);
+      setPageErrorLocal(errMsg);
     } finally {
       setIsAiLoading(false);
     }
   };
 
-  const handleSubmit = (e) => {
+  // ===============================================
+  // ===        UPDATED SUBMIT FUNCTION        ===
+  // ===============================================
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const promise = saveToDatabase("personalInfo", personalInfo);
+
     toast.promise(promise, {
       loading: 'Saving personal details...',
-      success: (data) => {
-        setTimeout(() => navigate("/cv-builder/education"), 500);
-        return data.message || "Personal details saved successfully!";
+      success: () => {
+        setTimeout(() => navigate("/cv-builder/education"), 500); // Navigate AFTER success
+        return "Personal details saved successfully!";
       },
-      error: (err) => err.message || "Failed to save details.",
+      error: (err) => {
+        console.error("Cv.jsx: Error during handleSubmit:", err);
+        return err.message || "Failed to save details.";
+      },
     });
   };
 
@@ -191,6 +204,7 @@ const Cv = () => {
               <div className={styles.formGroup}>
                 <label htmlFor="profilePictureFile">Profile Picture:</label>
                 <input type="file" id="profilePictureFile" name="profilePicture" accept="image/*" onChange={handleChange} />
+                {localPreviewImgUrl && localPreviewImgUrl.startsWith("blob:") && <img src={localPreviewImgUrl} alt="Selected Preview" style={{width: "100px", height: "100px", marginTop:"10px", objectFit:"cover"}} />}
               </div>
               <button type="submit" className={styles.saveBtn} disabled={contextLoading || isAiLoading}>
                 {contextLoading || isAiLoading ? "Saving..." : "Save & Next"}
@@ -215,95 +229,42 @@ const Cv = () => {
                   </label>
                   <h2>{personalInfo.fullname || "Your Name"}</h2>
                 </div>
-                <div className={styles.contactInfo}>
-                  <h4 className={styles.h4Headers}>Contact</h4>
-                  <p>{personalInfo.phone || "Phone"}</p>
-                  <p>{personalInfo.email || "Email"}</p>
-                  <p>{personalInfo.address || "Address"}</p>
-                </div>
+                <div className={styles.contactInfo}><h4 className={styles.h4Headers}>Contact</h4><p>{personalInfo.phone || "Phone"}</p><p>{personalInfo.email || "Email"}</p><p>{personalInfo.address || "Address"}</p></div>
                 
                 <div className={styles.education}>
-                  <h4 className={styles.h4Headers}>Education</h4>
-                  {Array.isArray(educationPreview) && educationPreview.length > 0 ? (
+                    <h4 className={styles.h4Headers}>Education</h4>
+                    {Array.isArray(educationPreview) && educationPreview.length > 0 ? (
                     educationPreview.map((edu, index) => (
-                      <div key={index} className={styles.educationItem}>
-                        {edu.universitiyName && (
-                          <>
-                            <h5>{edu.universitiyName}</h5>
-                            <span>{formatDate(edu.uniStartDate)} - {formatDate(edu.uniEndDate)}</span>
-                            <p className={styles.uniPara}>{edu.uniMoreDetails}</p>
-                          </>
-                        )}
-                        {edu.schoolName && (
-                          <>
-                            <h5>{edu.schoolName}</h5>
-                            <span>{formatDate(edu.startDate)} - {formatDate(edu.endDate)}</span>
-                            <p>{edu.moreDetails}</p>
-                          </>
-                        )}
-                      </div>
+                        edu.institute && (
+                        <div key={index} className={styles.educationItem}>
+                            <h5>{edu.institute}</h5>
+                            {edu.educationLevel === 'A/L' ? (
+                            <>
+                                <span>{edu.fieldOfStudy} - {formatDate(edu.alYear, 'year')}</span>
+                            </>
+                            ) : (
+                            <>
+                                <span>{formatDate(edu.startDate)} - {edu.currentlyStudying ? 'Present' : formatDate(edu.endDate)}</span>
+                                <p className={styles.uniPara}><strong>{edu.fieldOfStudy}</strong></p>
+                                <p>GPA Value-{edu.gpaOrGrade}</p>
+                            </> 
+                            )}
+                        </div>
+                        )
                     ))
-                  ) : ( 
-                    <p>Education details will appear here.</p> 
-                  )}
-                </div>
-              </div>
-
-              <div className={styles.verticalLine}></div>
-
-              <div className={styles.cvRight}>
-                <div className={styles.profilePara}>
-                  <h4 className={styles.h4Headers}>Profile</h4>
-                  <p>{personalInfo.profileParagraph || "Your profile summary will appear here."}</p>
-                </div>
-                <div className={styles.experience}>
-                  <h4 className={styles.h4Headers}>Professional Experience</h4>
-                  {Array.isArray(experiencePreview) && experiencePreview.length > 0 ? (
-                    experiencePreview.map((exp, index) => (
-                      <div key={index} className={styles.experienceItem}>
-                        <h5>{exp.jobTitle || "Job Title"}</h5>
-                        <span>{formatDate(exp.jstartDate)} - {formatDate(exp.jendDate)}</span>
-                        <p>{exp.jobDescription || "Job description"}</p>
-                      </div>
-                    ))
-                  ) : ( 
-                    <p>Experience details will appear here.</p> 
-                  )}
-                </div>
-                <div className={styles.skillsColumns}>
-                  <h4 className={styles.h4Headers}>Skills</h4>
-                  <ul className={styles.skillsList}>
-                    {Array.isArray(skillsPreview) && skillsPreview.length > 0 ? (
-                      skillsPreview.map((skill, index) => (
-                        <li key={index} className={styles.skillRow}>
-                          <span className={styles.skillName}>{skill.skillName || "Skill"}</span>
-                          <span className={styles.skillStars}>
-                            {[...Array(5)].map((_, i) => (
-                              <span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>
-                            ))}
-                          </span>
-                        </li>
-                      ))
-                    ) : ( 
-                      <li>Skills will appear here.</li> 
+                    ) : (
+                    <p>Education details will appear here.</p>
                     )}
-                  </ul>
                 </div>
-                <div className={styles.summary}>
-                  <h4 className={styles.h4Headers}>Summary</h4>
-                  <p>{typeof summaryPreview === "string" && summaryPreview ? summaryPreview : "Summary will appear here."}</p>
-                </div>
-                <div className={styles.references}>
-                  <h4 className={styles.h4Headers}>References</h4>
-                  {Array.isArray(referencesPreview) && referencesPreview.length > 0 ? (
-                    referencesPreview.map((ref, index) => (
-                      <p key={index}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Email"}</p>
-                    ))
-                  ) : ( 
-                    <p>References will appear here.</p> 
-                  )}
-                </div>
-              </div>
+            </div>
+            <div className={styles.verticalLine}></div>
+            <div className={styles.cvRight}>
+                <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{personalInfo.profileParagraph || "Your profile summary will appear here."}</p></div>
+                <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>{(experiencePreview || []).length > 0 ? (experiencePreview.map((exp, index) => (<div key={index} className={styles.experienceItem}><h5>{exp.jobTitle || "Job Title"}</h5><p className={styles.companyName}>{exp.companyName}</p><span>{formatDate(exp.jstartDate)} - {formatDate(exp.jendDate)}</span><p>{exp.jobDescription || "Job description"}</p></div>))) : ( <p>Experience details will appear here.</p> )}</div>
+                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4><ul className={styles.skillsList}>{(skillsPreview || []).length > 0 ? (skillsPreview.map((skill, index) => (<li key={index} className={styles.skillRow}><span className={styles.skillName}>{skill.skillName || "Skill"}</span><span className={styles.skillStars}>{[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>))}</span></li>))) : ( <li>Skills will appear here.</li> )}</ul></div>
+                <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{summaryPreview || "Summary will appear here."}</p></div>
+                <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>{(referencesPreview || []).length > 0 ? (referencesPreview.map((ref, index) => (<p key={index}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Email"}</p>))) : ( <p>References will appear here.</p> )}</div>
+            </div>
           </div>
         </div>
       </main>
