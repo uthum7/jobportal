@@ -6,8 +6,7 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 
 import RegisterUserRoutes from "./routes/RegisterUser.route.js";
-import ProfileRoutes from "./routes/Profile.route.js";
-import AdminChangePasswordRoutes from "./routes/AdminChangePassword.js";
+
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
@@ -81,8 +80,7 @@ connectDB()
 console.log("🔧 Registering API routes...");
 
 app.use("/api/users", RegisterUserRoutes);
-app.use("/api", ProfileRoutes);
-app.use("/api/admin", AdminChangePasswordRoutes);
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);

@@ -1,5 +1,5 @@
 import Job from '../models/Job.model.js';
-import RegisterUser  from '../models/RegisterUser.model.js';
+import Registeruser  from '../models/Registeruser.js';
 
 // Get dashboard statistics
 export const getDashboardStats = async (req, res) => {
@@ -30,10 +30,10 @@ export const getDashboardStats = async (req, res) => {
 
          // Count users by role
 const [counselors, employees, jobseekers, counselees] = await Promise.all([
-    RegisterUser.countDocuments({ roles: 'COUNSELOR' }),
-   RegisterUser.countDocuments({ roles: 'EMPLOYEE' }),
-   RegisterUser.countDocuments({ roles: 'JOBSEEKER' }),
-RegisterUser.countDocuments({ roles: 'COUNSELEE' }),
+    Registeruser.countDocuments({ roles: 'COUNSELOR' }),
+   Registeruser.countDocuments({ roles: 'EMPLOYEE' }),
+   Registeruser.countDocuments({ roles: 'JOBSEEKER' }),
+Registeruser.countDocuments({ roles: 'COUNSELEE' }),
 ]);     
 
         
@@ -313,7 +313,7 @@ export const getMonthlyUserAnalytics = async (req, res) => {
     const currentYear = new Date().getFullYear();
     const rolesList = ["EMPLOYEE", "COUNSELOR", "COUNSELEE", "JOBSEEKER"];
 
-    const userAnalytics = await RegisterUser.aggregate([
+    const userAnalytics = await Registeruser.aggregate([
       {
         $match: {
           createdAt: {

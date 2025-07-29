@@ -1,6 +1,6 @@
-import RegisterUser from '../models/RegisterUser.model.js';
-import Job from "../models/job.model.js";
-import Booking from '../models/bookings.js';
+import Registeruser from '../models/Registeruser.js';
+import Job from "../models/Job.model.js";
+import Booking from '../models/bookings.js';  // Capital B
 
 import { Application } from '../models/application.model.js';
 import mongoose from 'mongoose';  // or import { Types } from 'mongoose';
@@ -9,7 +9,7 @@ import mongoose from 'mongoose';  // or import { Types } from 'mongoose';
 
 export const getCounselors = async (req, res) => {
   try {
-    const counselors = await RegisterUser.find({
+    const counselors = await Registeruser.find({
       roles: { $elemMatch: { $regex: /^counselor$/i } }
     });
     res.status(200).json(counselors);
@@ -20,7 +20,7 @@ export const getCounselors = async (req, res) => {
 
 export const getCounselees = async (req, res) => {
   try {
-    const counselees = await RegisterUser.find({
+    const counselees = await Registeruser.find({
       roles: { $elemMatch: { $regex: /^counselee$/i } }
     });
     res.status(200).json(counselees);
@@ -31,7 +31,7 @@ export const getCounselees = async (req, res) => {
 
 export const getEmployees = async (req, res) => {
   try {
-    const employees = await RegisterUser.find({
+    const employees = await Registeruser.find({
       roles: { $elemMatch: { $regex: /^employee$/i } }
     });
     res.status(200).json(employees);
@@ -42,7 +42,7 @@ export const getEmployees = async (req, res) => {
 
 export const getJobseekers = async (req, res) => {
   try {
-    const jobseekers = await RegisterUser.find({
+    const jobseekers = await Registeruser.find({
       roles: { $elemMatch: { $regex: /^jobseeker$/i } }
     });
     res.status(200).json(jobseekers);
@@ -55,7 +55,7 @@ export const getJobseekers = async (req, res) => {
 
 export const getCounselorById = async (req, res) => {
   try {
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'counselor')) {
       return res.status(404).json({ message: 'Counselor not found' });
     }
@@ -67,7 +67,7 @@ export const getCounselorById = async (req, res) => {
 
 export const getCounseleeById = async (req, res) => {
   try {
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'counselee')) {
       return res.status(404).json({ message: 'Counselee not found' });
     }
@@ -79,7 +79,7 @@ export const getCounseleeById = async (req, res) => {
 
 export const getEmployeeById = async (req, res) => {
   try {
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'employee')) {
       return res.status(404).json({ message: 'Employee not found' });
     }
@@ -91,7 +91,7 @@ export const getEmployeeById = async (req, res) => {
 
 export const getJobseekerById = async (req, res) => {
   try {
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'jobseeker')) {
       return res.status(404).json({ message: 'Jobseeker not found' });
     }
@@ -106,7 +106,7 @@ export const getJobseekerById = async (req, res) => {
 export const updateCounselor = async (req, res) => {
   try {
     const { name, email, roles } = req.body;
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'counselor')) {
       return res.status(404).json({ message: 'Counselor not found' });
     }
@@ -125,7 +125,7 @@ export const updateCounselor = async (req, res) => {
 export const updateCounselee = async (req, res) => {
   try {
     const { name, email, roles } = req.body;
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'counselee')) {
       return res.status(404).json({ message: 'Counselee not found' });
     }
@@ -144,7 +144,7 @@ export const updateCounselee = async (req, res) => {
 export const updateEmployee = async (req, res) => {
   try {
     const { name, email, roles } = req.body;
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'employee')) {
       return res.status(404).json({ message: 'Employee not found' });
     }
@@ -163,7 +163,7 @@ export const updateEmployee = async (req, res) => {
 export const updateJobseeker = async (req, res) => {
   try {
     const { name, email, roles } = req.body;
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'jobseeker')) {
       return res.status(404).json({ message: 'Jobseeker not found' });
     }
@@ -183,12 +183,12 @@ export const updateJobseeker = async (req, res) => {
 
 export const deleteCounselor = async (req, res) => {
   try {
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'counselor')) {
       return res.status(404).json({ message: 'Counselor not found' });
     }
 
-    await RegisterUser.findByIdAndDelete(req.params.id);
+    await Registeruser.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Counselor deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting counselor', error });
@@ -197,12 +197,12 @@ export const deleteCounselor = async (req, res) => {
 
 export const deleteCounselee = async (req, res) => {
   try {
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'counselee')) {
       return res.status(404).json({ message: 'Counselee not found' });
     }
 
-    await RegisterUser.findByIdAndDelete(req.params.id);
+    await Registeruser.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Counselee deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting counselee', error });
@@ -211,12 +211,12 @@ export const deleteCounselee = async (req, res) => {
 
 export const deleteEmployee = async (req, res) => {
   try {
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'employee')) {
       return res.status(404).json({ message: 'Employee not found' });
     }
 
-    await RegisterUser.findByIdAndDelete(req.params.id);
+    await Registeruser.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Employee deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting employee', error });
@@ -225,12 +225,12 @@ export const deleteEmployee = async (req, res) => {
 
 export const deleteJobseeker = async (req, res) => {
   try {
-    const user = await RegisterUser.findById(req.params.id);
+    const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'jobseeker')) {
       return res.status(404).json({ message: 'Jobseeker not found' });
     }
 
-    await RegisterUser.findByIdAndDelete(req.params.id);
+    await Registeruser.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Jobseeker deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting jobseeker', error });
@@ -252,7 +252,6 @@ export const getRecentJobsByEmployee = async (req, res) => {
     // Get recent jobs and convert to plain objects
     const recentJobs = await Job.find({ PostedBy: postedById })
       .sort({ postedDate: -1 })
-      
       .lean();
 
     const jobIds = recentJobs.map(job => job._id);
@@ -349,27 +348,32 @@ export const getJobById = async (req, res) => {
 
 // ------------------ UPDATE JOB DEADLINE AND POST OWNER ------------------
 
+
 export const updateJobDetails = async (req, res) => {
   try {
-    const { id } = req.params; // Job ID
+    const { id } = req.params;
     const { JobDeadline, PostedBy } = req.body;
 
-    // Validate JobDeadline
+    console.log('Incoming update request:', { id, JobDeadline, PostedBy });
+
     if (!JobDeadline || isNaN(Date.parse(JobDeadline))) {
+      console.log('Invalid or missing JobDeadline:', JobDeadline);
       return res.status(400).json({ message: 'Invalid or missing JobDeadline' });
     }
 
-    // Validate PostedBy (must be a valid ObjectId and belong to an employee)
     if (!mongoose.Types.ObjectId.isValid(PostedBy)) {
+      console.log('Invalid PostedBy ID:', PostedBy);
       return res.status(400).json({ message: 'Invalid PostedBy ID' });
     }
 
-    const user = await RegisterUser.findById(PostedBy);
-    if (!user || !user.roles.some(role => role.toLowerCase() === 'employee')) {
+    const user = await Registeruser.findById(PostedBy);
+    console.log('Fetched user:', user);
+
+    if (!user || !Array.isArray(user.roles) || !user.roles.some(role => role.toLowerCase() === 'employee')) {
+      console.log('PostedBy is not a valid employee:', user?.roles);
       return res.status(400).json({ message: 'PostedBy must be a valid employee' });
     }
 
-    // Update the job
     const updatedJob = await Job.findByIdAndUpdate(
       id,
       {
@@ -380,6 +384,7 @@ export const updateJobDetails = async (req, res) => {
     ).populate('PostedBy', 'name email');
 
     if (!updatedJob) {
+      console.log('Job not found with ID:', id);
       return res.status(404).json({ message: 'Job not found' });
     }
 
@@ -388,14 +393,15 @@ export const updateJobDetails = async (req, res) => {
       job: updatedJob
     });
   } catch (error) {
-    console.error("Error updating job:", error);
+    console.error('❌ Error updating job:', error.stack);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
 
 
-// controllers/bookingController.js
+
+// ------------------ BOOKINGS CONTROLLERS ------------------
 
 export const getRecentBookingsForCounselor = async (req, res) => {
   const { counselorId } = req.params;
@@ -406,8 +412,7 @@ export const getRecentBookingsForCounselor = async (req, res) => {
       deleted_at: null // Ensure only active bookings
     })
       .populate('user_id', 'username') // Only get username of counselee
-      .sort({ createdAt: -1 }) // Most recent first
-      
+      .sort({ createdAt: -1 }); // Most recent first
 
     const formatted = bookings.map((booking) => ({
       _id: booking._id,
@@ -422,5 +427,63 @@ export const getRecentBookingsForCounselor = async (req, res) => {
   } catch (err) {
     console.error('Error fetching recent bookings:', err);
     res.status(500).json({ message: 'Failed to fetch recent bookings', error: err.message });
+  }
+};
+
+
+// Cancel Booking by Admin
+export const cancelBookingByAdmin = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { reason } = req.body;
+
+    if (!reason) {
+      return res.status(400).json({ message: "Cancellation reason is required." });
+    }
+
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found." });
+    }
+
+    if (booking.status === "cancelled") {
+      return res.status(400).json({ message: "This booking is already cancelled." });
+    }
+
+    booking.status = "cancelled";
+    booking.cancelled_by = "admin";
+    booking.cancellation_reason = reason;
+    booking.updatedAt = new Date();
+
+    await booking.save();
+
+    res.status(200).json({
+      message: "Booking cancelled successfully.",
+      booking,
+    });
+  } catch (error) {
+    console.error("Error cancelling booking:", {
+      message: error.message,
+      stack: error.stack,
+      cause: error.cause,
+    });
+    res.status(500).json({ message: "Server error.", error: error.message });
+  }
+};
+
+
+export const getAdminById = async (req, res) => {
+  try {
+    const user = await Registeruser.findById(req.params.id);
+
+    if (!user || !user.roles.some(role => role.toLowerCase() === 'admin')) {
+      return res.status(404).json({ message: 'Admin not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching admin info:', error);
+    res.status(500).json({ message: 'Error fetching admin info', error });
   }
 };

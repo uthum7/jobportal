@@ -34,6 +34,9 @@ const UserChart = () => {
     fetchUserData();
   }, []);
 
+
+  
+
   if (loading) return <div>Loading...</div>;
 
   return (
