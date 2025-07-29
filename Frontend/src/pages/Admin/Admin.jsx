@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Users, MessageSquare, Settings, LogOut, Calendar, CheckCircle, Clock, PlusCircle, DollarSign, Briefcase
+  Users, MessageSquare, Settings, LogOut, Calendar, CheckCircle, Clock, PlusCircle, DollarSign, Briefcase, ChevronDown, ChevronRight, Menu, X
 } from 'lucide-react';
 import JobTypeChart from '../../../src/components/Employee/Dashboard/Chart/JobTypeChart';
 import JobModeChart from '../../../src/components/Employee/Dashboard/Chart/JobModeChart';
@@ -26,7 +26,7 @@ const StatCard = ({ icon: Icon, title, value, bgColor, iconColor }) => (
 const SidebarItem = ({ icon: Icon, label, active = false, onClick, hasSubmenu = false, expanded = false }) => (
   <button
     onClick={onClick}
-    className={`w-full flex items-center justify-between px-4 py-3 text-left rounded-lg transition-colors ${
+    className={`w-full flex items-center justify-between px-4 py-2 text-left rounded-lg transition-colors ${
       active
         ? 'bg-emerald-50 text-emerald-600 border-r-2 border-emerald-600'
         : 'text-gray-600 hover:bg-gray-50'
@@ -34,65 +34,11 @@ const SidebarItem = ({ icon: Icon, label, active = false, onClick, hasSubmenu = 
   >
     <div className="flex items-center space-x-3">
       <Icon className="w-5 h-5" />
-      <span className="font-medium">{label}</span>
+      <span className="text-sm font-medium">{label}</span>
     </div>
     {hasSubmenu && (expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />)}
   </button>
 );
-
-// ------------------- AdminSidebar -------------------
-const AdminSidebar = ({ adminInfo = { name: 'Admin' } }) => { // default fallback
-  const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
-
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
-
-  return (
-    <div className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white shadow-lg z-40 overflow-y-auto">
-      <div className="flex flex-col h-full">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
-              <img src="/api/placeholder/48/48" alt="Profile" className="w-full h-full object-cover" />
-            </div>
-            <div>
-              {/* Use optional chaining and fallback */}
-              <h3 className="font-semibold text-gray-800">{adminInfo?.name || 'Admin'}</h3>
-              <p className="text-sm text-gray-600">Administrator</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-1 px-4 py-6 overflow-y-auto">
-          <h4 className="text-sm font-medium text-gray-500 mb-4">Main Navigation</h4>
-          <div className="space-y-2">
-            <SidebarItem icon={Calendar} label="Admin Dashboard" active={true} onClick={() => handleNavigation('/admin/dashboard')} />
-            <SidebarItem icon={Users} label="My Profile" onClick={() => handleNavigation('/admin/myprofile')} />
-
-            <div className="pt-4">
-              <h5 className="text-sm font-medium text-gray-500 mb-2">Manage</h5>
-              <div className="space-y-1 ml-2">
-                <SidebarItem icon={Users} label="Counselor" onClick={() => handleNavigation('/admin/managecounselor')} />
-                <SidebarItem icon={Users} label="Counselee" onClick={() => handleNavigation('/admin/managecounselee')} />
-                <SidebarItem icon={Users} label="Employee" onClick={() => handleNavigation('/admin/manageemployee')} />
-                <SidebarItem icon={Users} label="Jobseeker" onClick={() => handleNavigation('/admin/managejobseeker')} />
-              </div>
-            </div>
-
-            <div className="pt-4">
-              <SidebarItem icon={MessageSquare} label="Messages" onClick={() => handleNavigation('/admin/messages')} />
-              <SidebarItem icon={Settings} label="Settings" onClick={() => handleNavigation('/admin/settings')} />
-              <SidebarItem icon={LogOut} label="Logout" onClick={() => console.log('Logging out...')} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 
 // ------------------- Stats Section -------------------
 const AdminStats = ({ data, loading }) => (
@@ -137,6 +83,7 @@ const AdminStats = ({ data, loading }) => (
 // ------------------- Main Dashboard -------------------
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dashboardStats, setDashboardStats] = useState({
     counselors: 0,
     employees: 0,
@@ -160,6 +107,10 @@ const AdminDashboard = () => {
     { name: 'Mar', Jobs: 15 },
     { name: 'Apr', Jobs: 25 },
   ];
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -215,23 +166,200 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <div className="ml-64 p-6">
-        <h2 className="text-xl font-semibold text-red-600">Dashboard Error</h2>
-        <p className="text-gray-600">{error}</p>
-        <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">Retry</button>
+      <div className="min-h-screen bg-gray-50">
+        <div className="flex">
+          {/* Sidebar */}
+          <div className={`
+            fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
+            lg:translate-x-0 lg:static lg:inset-0
+            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          `}>
+            <div className="flex flex-col h-full">
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
+                    <img src="/api/placeholder/48/48" alt="Profile" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800">{adminInfo?.name || 'Admin'}</h3>
+                    <p className="text-sm text-gray-600">Administrator</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 px-4 py-6">
+                <h4 className="text-sm font-medium text-gray-500 mb-4">Main Navigation</h4>
+                <div className="space-y-2">
+                  <SidebarItem icon={Calendar} label="Admin Dashboard" active={true} onClick={() => handleNavigation('/admin/dashboard')} />
+                  <SidebarItem icon={Users} label="My Profile" onClick={() => handleNavigation('/admin/myprofile')} />
+
+                  <div className="pt-6">
+                    <h5 className="text-sm font-medium text-gray-500 mb-2">Manage</h5>
+                    <div className="space-y-1">
+                      <SidebarItem icon={Users} label="Employee" onClick={() => handleNavigation('/admin/manageemployee')} />
+                      <SidebarItem icon={Users} label="Jobseeker" onClick={() => handleNavigation('/admin/managejobseeker')} />
+                      <SidebarItem icon={Users} label="Counselor" onClick={() => handleNavigation('/admin/managecounselor')} />
+                      <SidebarItem icon={Users} label="Counselee" onClick={() => handleNavigation('/admin/managecounselee')} />
+                    </div>
+                  </div>
+
+                  <div className="pt-6">
+                    <SidebarItem icon={MessageSquare} label="Messages" onClick={() => handleNavigation('/admin/messages')} />
+                    <SidebarItem icon={PlusCircle} label="AddUser" onClick={() => handleNavigation('/admin/adduser')} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 lg:ml-0">
+            <div className="p-6">
+              <div className="lg:hidden mb-4">
+                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-gray-700 bg-white rounded-lg shadow-sm">
+                  {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                </button>
+              </div>
+
+              <h2 className="text-xl font-semibold text-red-600">Dashboard Error</h2>
+              <p className="text-gray-600">{error}</p>
+              <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">Retry</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
       </div>
     );
   }
 
   return (
-    <div className="flex">
-      <AdminSidebar adminInfo={adminInfo} />
-      <main className="ml-64 flex-1 bg-gray-50 p-6 min-h-screen pt-16">
-        <h1 className="text-2xl font-semibold text-gray-800">Welcome, {adminInfo.email} 👋</h1>
-        <p className="text-gray-600 mb-6">Manage your dashboard here.</p>
-        <AdminStats data={dashboardStats} loading={loading} />
-        <AdminChart chartData={chartData} />
-      </main>
+    <div className="min-h-screen bg-gray-50">
+      <div className="flex">
+        {/* Sidebar */}
+        <div className={`
+          fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
+          lg:translate-x-0 lg:static lg:inset-0
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}>
+          <div className="flex flex-col h-full">
+            {/* Profile Section */}
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
+                  <img 
+                    src="/api/placeholder/48/48" 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800">{adminInfo?.name || 'Admin'}</h3>
+                  <p className="text-sm text-gray-600">Administrator</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div className="flex-1 px-4 py-6">
+              <h4 className="text-sm font-medium text-gray-500 mb-4">Main Navigation</h4>
+              <div className="space-y-2">
+                <SidebarItem 
+                  icon={Calendar} 
+                  label="Admin Dashboard"
+                  active={true}
+                  onClick={() => handleNavigation('/admin/dashboard')}
+                />
+                <SidebarItem 
+                  icon={Users} 
+                  label="My Profile"
+                  onClick={() => handleNavigation('/admin/myprofile')}
+                />
+                
+                <div className="pt-6">
+                  <h5 className="text-sm font-medium text-gray-500 mb-2">Manage</h5>
+                  <div className="space-y-1">
+                    <SidebarItem 
+                      icon={Users} 
+                      label="Employee"
+                      onClick={() => handleNavigation('/admin/manageemployee')}
+                    />
+                    <SidebarItem 
+                      icon={Users} 
+                      label="Jobseeker"  
+                      onClick={() => handleNavigation('/admin/managejobseeker')}
+                    />
+                    <SidebarItem 
+                      icon={Users} 
+                      label="Counselor"
+                      onClick={() => handleNavigation('/admin/managecounselor')}
+                    />
+                    <SidebarItem 
+                      icon={Users} 
+                      label="Counselee"
+                      onClick={() => handleNavigation('/admin/managecounselee')}
+                    />
+                  </div>
+                </div>
+                
+                <div className="pt-6">
+                  <SidebarItem 
+                    icon={MessageSquare} 
+                    label="Messages"
+                    onClick={() => handleNavigation('/admin/messages')}
+                  />
+                  <SidebarItem 
+                    icon={PlusCircle} 
+                    label="AddUser" 
+                    onClick={() => handleNavigation('/admin/adduser')} 
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 lg:ml-0">
+          <div className="p-6">
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden mb-4">
+              <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-gray-700 bg-white rounded-lg shadow-sm">
+                {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+
+            {/* Breadcrumb */}
+            <div className="mb-6">
+              <nav className="flex items-center space-x-2 text-sm text-gray-600">
+                <span>Admin</span>
+                <span>/</span>
+                <span className="text-emerald-600">Dashboard</span>
+              </nav>
+              <h1 className="text-2xl font-bold text-gray-800 mt-2">Welcome, {adminInfo.email} 👋</h1>
+              <p className="text-gray-600">Manage your dashboard here.</p>
+            </div>
+
+            {/* Dashboard Content */}
+            <AdminStats data={dashboardStats} loading={loading} />
+            <AdminChart chartData={chartData} />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 };

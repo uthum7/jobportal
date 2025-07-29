@@ -20,6 +20,7 @@ import dashboardRoutes from "./routes/dashboard.route.js";
 import savedJobRoutes from "./routes/savedJob.route.js";
 import appliedJobRoutes from "./routes/appliedJobs.route.js";
 import applicationRoutes from "./routes/application.route.js";
+import adminRoutes from './routes/admin.routes.js';
 
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
@@ -90,6 +91,7 @@ app.use("/api/job", jobPostRoutes);
 app.use('/api/saved-jobs', savedJobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/applied-jobs', appliedJobRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use("/api/ai", aiRoutes);
 app.use('/api/dashboard', dashboardRoutes);
