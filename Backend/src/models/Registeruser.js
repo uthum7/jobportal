@@ -40,7 +40,7 @@ const RegisteruserSchema = new Schema(
     roles: {
       type: [String],
       required: [true, "At least one role is required"],
-      enum: ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
+      enum: ["COUNSELOR", "COUNSELEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
       validate: {
         validator: function (roles) {
           return roles && roles.length > 0;
@@ -85,5 +85,7 @@ RegisteruserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const Registeruser = mongoose.model("Registeruser", RegisteruserSchema);
+const Registeruser =
+  mongoose.models.Registeruser || mongoose.model("Registeruser", RegisteruserSchema);
+
 export default Registeruser;
