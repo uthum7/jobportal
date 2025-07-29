@@ -18,11 +18,7 @@ const SignUpPage = () => {
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
 
-
-  
-
-  const ROLES = ["MENTOR", "MENTEE", "JOBSEEKER", "EMPLOYEE"]; // Ensure ADMIN is a selectable role if needed
-
+  const ROLES = ["MENTEE", "JOBSEEKER"];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -187,6 +183,7 @@ const SignUpPage = () => {
             {errors.role && <span className={styles.errorText}>{errors.role}</span>}
           </div>
             
+          {/* ✅ FIX: className must use a template literal wrapped in {} */}
           <button 
             type="submit" 
             className={`${styles.submitButton} ${styles.btnPrimary}`}

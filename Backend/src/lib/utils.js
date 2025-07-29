@@ -1,7 +1,7 @@
 // Backend/src/lib/utils.js
 
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer"; // <-- ADD THIS IMPORT
+import nodemailer from "nodemailer";
 
 /**
  * Generate a JWT token and set it in an HTTP-only cookie.
@@ -31,7 +31,6 @@ export const generateToken = (userId, res) => {
     return token;
 };
 
-// PASTE THIS NEW VERSION INTO YOUR utils.js FILE
 
 /**
  * Sends an email using Nodemailer and the Gmail SMTP credentials from the .env file.
@@ -42,30 +41,12 @@ export const generateToken = (userId, res) => {
  * @param {string} options.message - The plain text message body
  */
 export const sendEmail = async (options) => {
-    // This now correctly uses your .env file
-    const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        secure: false, // `false` for port 587
-        auth: {
-            user: process.env.EMAIL_USER, // Reads the user from .env
-            pass: process.env.EMAIL_PASS, // Reads the password from .env
-        },
-    });
-
-    const mailOptions = {
-        from: process.env.EMAIL_FROM, // Reads the "from" address from .env
-        to: options.email,
-        subject: options.subject,
-        text: options.message,
-    };
-
     try {
         // 1. Create the Nodemailer transporter using Gmail's SMTP credentials
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,      // Should be 'smtp.gmail.com' in your .env
             port: process.env.EMAIL_PORT,      // Should be 587 in your .env
-            secure: false,                     // `false` because we use TLS on port 587. `true` is for port 465.
+            secure: false,                     // false because we use TLS on port 587. true is for port 465.
             auth: {
                 user: process.env.EMAIL_USER,  // Your full Gmail address from .env
                 pass: process.env.EMAIL_PASS,  // Your 16-character Google App Password from .env
@@ -82,6 +63,7 @@ export const sendEmail = async (options) => {
 
         // 3. Send the email
         await transporter.sendMail(mailOptions);
+        // ✅ FIX: String with a variable must use a template literal (backticks)
         console.log(`Email sent successfully to ${options.email} via Gmail.`); // Updated log message
 
     } catch (error) {

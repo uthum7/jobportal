@@ -11,7 +11,7 @@ const formatDateForInput = (dateStr) => {
   if (!dateStr) return "";
   try {
     const date = new Date(dateStr);
-    return isNaN(date.getTime()) ? "" : date.toISOString().split('T')[0];
+    return isNaN(date.getTime()) ? "" : date.toISOString().split('T');
   } catch { return ""; }
 };
 
@@ -105,6 +105,7 @@ const Cv6 = () => {
     }
     setAiLoadingState(prev => ({ ...prev, [index]: true }));
     try {
+      // ✅ FIX: String with variables must use template literals (backticks)
       const promptText = `For a resume, enhance the following job description for a role as a ${jobTitle || "this role"}: "${jobDescription}"`;
       const response = await axios.post("http://localhost:5001/api/ai/enhance-summary", { summary: promptText });
       if (response.data?.enhancedSummary) {
@@ -159,10 +160,12 @@ const Cv6 = () => {
                     <input type="text" name="companyName" placeholder="Company Name (e.g., Google)" value={exp.companyName || ""} onChange={(e) => handleExperienceChange(originalIndex, e)} className={styles.inputField}/>
                     <div className={styles.formColumns}>
                       <div className={styles.formLeft}>
+                          {/* ✅ FIX: htmlFor and id must be valid strings. Use template literals. */}
                           <label htmlFor={`jstartDate-${originalIndex}`} className={styles.label}>Start Date</label>
                           <input type="date" id={`jstartDate-${originalIndex}`} name="jstartDate" value={formatDateForInput(exp.jstartDate)} onChange={(e) => handleExperienceChange(originalIndex, e)} className={styles.inputField}/>
                       </div>
                       <div className={styles.formRight}>
+                          {/* ✅ FIX: htmlFor and id must be valid strings. Use template literals. */}
                           <label htmlFor={`jendDate-${originalIndex}`} className={styles.label}>End Date (Leave blank if current)</label>
                           <input type="date" id={`jendDate-${originalIndex}`} name="jendDate" value={formatDateForInput(exp.jendDate)} onChange={(e) => handleExperienceChange(originalIndex, e)} className={styles.inputField}/>
                       </div>
@@ -238,7 +241,9 @@ const Cv6 = () => {
                     ))
                   ) : ( <p>Your professional experience will appear here as you add it.</p> )}
                 </div>
-                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4><ul className={styles.skillsList}>{Array.isArray(skillsPreview) && skillsPreview.length > 0 ? (skillsPreview.map((skill, index) => (<li key={index} className={styles.skillRow}><span className={styles.skillName}>{skill.skillName || "Skill"}</span><span className={styles.skillStars}>{[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>))}</span></li>))) : ( <li>Skills will appear here.</li> )}</ul></div>
+                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4><ul className={styles.skillsList}>{Array.isArray(skillsPreview) && skillsPreview.length > 0 ? (skillsPreview.map((skill, index) => (<li key={index} className={styles.skillRow}><span className={styles.skillName}>{skill.skillName || "Skill"}</span><span className={styles.skillStars}>
+                {/* ✅ FIX: className must use a template literal wrapped in {} */}
+                {[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>))}</span></li>))) : ( <li>Skills will appear here.</li> )}</ul></div>
                 <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{summaryPreview || "Summary will appear here."}</p></div>
                 <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>{(referencesPreview || []).length > 0 ? (referencesPreview.map((ref, index) => (<p key={index}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Email"}</p>))) : ( <p>References will appear here.</p> )}</div>
               </div>

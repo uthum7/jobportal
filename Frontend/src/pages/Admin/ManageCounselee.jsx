@@ -12,7 +12,10 @@ import {
   Menu,
   X,
   User,
-  Briefcase
+  Briefcase,
+  PlusCircle
+
+
 } from 'lucide-react';
 
 const ManageCounselee = () => {
@@ -116,16 +119,17 @@ const ManageCounselee = () => {
           <div className="pt-6">
             <h5 className="text-sm font-medium text-gray-500 mb-2">Manage</h5>
             <div className="space-y-1">
-              <SidebarItem icon={Users} label="Counselor" onClick={() => handleNavigation('/admin/managecounselor')} />
-              <SidebarItem icon={Users} label="Counselee" active onClick={() => handleNavigation('/admin/managecounselee')} />
               <SidebarItem icon={Users} label="Employee" onClick={() => handleNavigation('/admin/manageemployee')} />
               <SidebarItem icon={Users} label="Jobseeker" onClick={() => handleNavigation('/admin/managejobseeker')} />
+              <SidebarItem icon={Users} label="Counselor" onClick={() => handleNavigation('/admin/managecounselor')} />
+              <SidebarItem icon={Users} label="Counselee" active onClick={() => handleNavigation('/admin/managecounselee')} />
+              
             </div>
           </div>
           <div className="pt-6">
             <SidebarItem icon={MessageSquare} label="Messages" onClick={() => handleNavigation('/message/login')} />
-            <SidebarItem icon={Settings} label="Change Password" onClick={() => handleNavigation('/admin/changepassword')} />
-            <SidebarItem icon={LogOut} label="Log Out" onClick={() => console.log('Logging out...')} />
+            <SidebarItem icon={PlusCircle} label="AddUser" onClick={() => handleNavigation('/admin/adduser')} />
+           
           </div>
         </div>
       </div>

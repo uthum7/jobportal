@@ -244,7 +244,7 @@ input:focus, select:focus, textarea:focus {
 .contactInfo, .education {
   width: 100%;
   margin-bottom: 20px;
-  /* `align-items: flex-start` and `text-align: left` from old code were removed */
+  /* align-items: flex-start and text-align: left from old code were removed */
   /* because they are not needed if the children are properly styled. */
 }
 .contactInfo p, .educationItem p, .experienceItem p, .profilePara p, .summary p, .references p {

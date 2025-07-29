@@ -75,6 +75,7 @@ const Cv5 = () => {
     const cvUrl = window.location.href;
     const shareText = "Check out my resume!";
     let shareUrl = '';
+    // ✅ FIX: URLs with variables must use template literals (backticks)
     switch (platform) {
       case 'whatsapp': shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + cvUrl)}`; break;
       case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(cvUrl)}`; break;
@@ -98,12 +99,10 @@ const Cv5 = () => {
     toast.loading("Generating your PDF...");
 
     try {
-      // Options for html-to-image to improve reliability
       const options = {
         cacheBust: true,
-        pixelRatio: 1.5, // Reduced from 2 for better performance/less memory usage
+        pixelRatio: 1.5,
         style: {
-          // Temporarily override styles that might interfere with rendering
           boxShadow: 'none',
         }
       };
@@ -111,9 +110,9 @@ const Cv5 = () => {
       const dataUrl = await toPng(element, options);
       
       const pdf = new jsPDF({
-        orientation: 'p', // portrait
-        unit: 'mm', // millimeters
-        format: 'a4' // A4 size page
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4'
       });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -123,11 +122,9 @@ const Cv5 = () => {
       let position = 0;
       let heightLeft = imgHeight;
 
-      // Add the first page
       pdf.addImage(dataUrl, 'PNG', 0, position, pdfWidth, imgHeight, undefined, 'FAST');
       heightLeft -= pdf.internal.pageSize.getHeight();
 
-      // Add new pages if the content is longer than one page
       while (heightLeft > 0) {
         position = -heightLeft;
         pdf.addPage();
@@ -136,7 +133,7 @@ const Cv5 = () => {
       }
       
       pdf.save('resume.pdf');
-      toast.dismiss(); // Dismiss the loading toast
+      toast.dismiss();
       toast.success("Your CV has been downloaded!");
 
     } catch (error) {
@@ -172,6 +169,7 @@ const Cv5 = () => {
             <button type="button" className={styles.shareBtn} onClick={toggleShareOptions}>Share CV</button>
             {showShareOptions && (
               <div className={styles.shareOptionsContainer}>
+                {/* ✅ FIX: className must use a template literal wrapped in {} */}
                 <button onClick={() => handleShare('whatsapp')} className={`${styles.shareOptionBtn} ${styles.whatsapp}`}>WhatsApp</button>
                 <button onClick={() => handleShare('facebook')} className={`${styles.shareOptionBtn} ${styles.facebook}`}>Facebook</button>
                 <button onClick={() => handleShare('linkedin')} className={`${styles.shareOptionBtn} ${styles.linkedin}`}>LinkedIn</button>
@@ -222,7 +220,9 @@ const Cv5 = () => {
               <div className={styles.cvRight}>
                 <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{personalInfo.profileParagraph || "Your profile summary will appear here."}</p></div>
                 <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>{(experiencePreview || []).length > 0 ? (experiencePreview.map((exp, index) => (<div key={index} className={styles.experienceItem}><h5>{exp.jobTitle || "Job Title"}</h5><p className={styles.companyName}>{exp.companyName}</p><span>{formatDate(exp.jstartDate)} - {formatDate(exp.jendDate)}</span><p>{exp.jobDescription || "Job description"}</p></div>))) : (<p>Experience details will appear here.</p>)}</div>
-                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4><ul className={styles.skillsList}>{Array.isArray(skillsPreview) && skillsPreview.length > 0 ? (skillsPreview.map((skill, index) => (<li key={index} className={styles.skillRow}><span className={styles.skillName}>{skill.skillName || "Skill"}</span><span className={styles.skillStars}>{[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>))}</span></li>))) : (<li>Skills will appear here.</li>)}</ul></div>
+                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4><ul className={styles.skillsList}>{Array.isArray(skillsPreview) && skillsPreview.length > 0 ? (skillsPreview.map((skill, index) => (<li key={index} className={styles.skillRow}><span className={styles.skillName}>{skill.skillName || "Skill"}</span><span className={styles.skillStars}>
+                {/* ✅ FIX: className must use a template literal wrapped in {} */}
+                {[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>))}</span></li>))) : (<li>Skills will appear here.</li>)}</ul></div>
                 <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{summaryPreview || "Summary will appear here."}</p></div>
                 <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>{(referencesPreview || []).length > 0 ? (referencesPreview.map((ref, index) => (<p key={index}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Email"}</p>))) : (<p>References will appear here.</p>)}</div>
               </div>

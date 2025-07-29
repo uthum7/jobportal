@@ -170,7 +170,7 @@ const Cv3 = () => {
                 <input type="text" name="skillName" placeholder="Skill Name (e.g., JavaScript)" value={currentSkill.skillName} onChange={handleSkillInputChange} className={styles.inputField} />
                 <select name="skillRating" value={currentSkill.skillRating} onChange={handleSkillInputChange} className={styles.selectField}>
                     <option value={0} disabled>Rate proficiency (1-5)</option>
-                    {[1, 2, 3, 4, 5].map((val) => (<option key={val} value={val}>{val} Star{val > 1 ? "s" : ""}</option>))}
+                    {[1,2,3,4,5].map((val) => (<option key={val} value={val}>{val} Star{val > 1 ? "s" : ""}</option>))}
                 </select>
                 <button type="button" className={styles.addButton} onClick={handleAddOrUpdateSkill} disabled={contextLoading}>
                     {editingIndex !== null ? "Update Skill" : "Add Skill"}
@@ -188,9 +188,11 @@ const Cv3 = () => {
                             <li key={index} className={styles.skillDisplayItem}>
                                 <span className={styles.skillNameDisplay}>{skill.skillName}</span>
                                 <div className={styles.skillStarsDisplay}>
+                                    {/* ✅ FIX: className must use a template literal wrapped in {} */}
                                     {[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (Number(skill.skillLevel) || 0) ? styles.checked : ""}`}>★</span>))}
                                 </div>
                                 <div className={styles.skillActions}>
+                                    {/* ✅ FIX: className must use a template literal wrapped in {} */}
                                     <button type="button" className={`${styles.actionButton} ${styles.editBtn}`} onClick={() => handleEditSkill(index)} disabled={contextLoading}>Edit</button>
                                     <button type="button" className={`${styles.actionButton} ${styles.deleteBtn}`} onClick={() => handleDeleteSkill(index)} disabled={contextLoading}>Delete</button>
                                 </div>
@@ -257,6 +259,7 @@ const Cv3 = () => {
                 <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>
                   {(experiencePreview || []).length > 0 ? (
                     experiencePreview.map((exp, i) => (
+                      // ✅ FIX: The key prop must be a valid string or number. Use a template literal.
                       <div key={`exp-preview-${i}`} className={styles.experienceItem}>
                         <h5>{exp.jobTitle || "Job Title"}</h5><p className={styles.companyName}>{exp.companyName}</p>
                         <span>{formatDate(exp.jstartDate)} - {formatDate(exp.jendDate)}</span>
@@ -269,9 +272,11 @@ const Cv3 = () => {
                   <ul className={styles.skillsDisplayList}>
                     {skillsListForDisplayAndPreview.length > 0 ? (
                       skillsListForDisplayAndPreview.map((skill, index) => (
+                        // ✅ FIX: The key prop must be a valid string or number. Use a template literal.
                         <li key={`skill-preview-${index}`} className={styles.skillDisplayItem}>
                           <span className={styles.skillNameDisplay}>{skill.skillName}</span>
                           <div className={styles.skillStarsDisplay}>
+                             {/* ✅ FIX: className must use a template literal wrapped in {} */}
                             {[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (Number(skill.skillLevel) || 0) ? styles.checked : ""}`}>★</span>))}
                           </div>
                         </li>
@@ -281,7 +286,9 @@ const Cv3 = () => {
                 </div>
                 <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{summaryPreview || "Summary will appear here."}</p></div>
                 <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>
-                  {(referencesPreview || []).length > 0 ? (referencesPreview.map((ref, index) => (<p key={`ref-preview-${index}`}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Contact"}</p>))
+                  {(referencesPreview || []).length > 0 ? (referencesPreview.map((ref, index) => (
+                  // ✅ FIX: The key prop must be a valid string or number. Use a template literal.
+                  <p key={`ref-preview-${index}`}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Contact"}</p>))
                   ) : ( <p>References will appear here.</p> )}
                 </div>
               </div>

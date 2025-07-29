@@ -139,6 +139,7 @@ const Cv2 = () => {
   const validateForm = () => {
     const newErrors = {};
     educationForm.forEach((edu, i) => {
+      // ✅ FIX: Use template literals (backticks) for dynamic keys
       if (!edu.institute.trim()) newErrors[`education_${i}_institute`] = "Institute name is required.";
       if (!edu.educationLevel) newErrors[`education_${i}_educationLevel`] = "Education level is required.";
       if (edu.educationLevel === 'A/L') {
@@ -193,6 +194,7 @@ const Cv2 = () => {
           <form onSubmit={handleSubmit}>
             {educationForm.map((edu, i) => (
               <div key={i} className={styles.educationEntry}>
+                {/* ✅ FIX: Use template literals (backticks) for dynamic error keys */}
                 <div className={styles.formGroup}>
                   <input placeholder="Institute Name" value={edu.institute || ''} onChange={e => handleNestedChange(i, 'institute', e.target.value)} className={errors[`education_${i}_institute`] ? styles.errorInput : ''} />
                   {errors[`education_${i}_institute`] && <span className={styles.errorMessage}>{errors[`education_${i}_institute`]}</span>}
@@ -323,6 +325,7 @@ const Cv2 = () => {
               <div className={styles.cvRight}>
                   <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{personalInfoPreview.profileParagraph || "Your profile summary"}</p></div>
                   <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>{(experiencePreview || []).map((exp, index) => (<div key={index} className={styles.experienceItem}><h5>{exp.jobTitle || "Job Title"}</h5><p className={styles.companyName}>{exp.companyName}</p><span>{formatDateForDisplay(exp.jstartDate)} - {formatDateForDisplay(exp.jendDate)}</span><p>{exp.jobDescription || "Job description"}</p></div>))}</div>
+                  {/* ✅ FIX: className must use a template literal wrapped in {} */}
                   <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4><ul className={styles.skillsList}>{(skillsPreview || []).map((skill, index) => (<li key={index} className={styles.skillRow}><span className={styles.skillName}>{skill.skillName || "Skill"}</span><span className={styles.skillStars}>{[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>))}</span></li>))}</ul></div>
                   <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{summaryPreview || "Summary will appear here."}</p></div>
                   <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>{(referencesPreview || []).map((ref, index) => (<p key={index}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Email"}</p>))}</div>

@@ -9,7 +9,6 @@ import jwt from "jsonwebtoken";
 // =====================================================================
 // --- STANDARD AUTHENTICATION CONTROLLERS ---
 // =====================================================================
-// signup, login, logout, and checkAuth controllers remain the same...
 
 /**
  * Handles public registration for roles like MENTEE and JOBSEEKER.
@@ -17,7 +16,7 @@ import jwt from "jsonwebtoken";
 export const signup = async (req, res) => {
     const { username, email, password, roles } = req.body;
     try {
-        if (!username || !email || !password) {
+        if (!username || !email || !password || !roles) {
             return res.status(400).json({ message: "All fields are required" });
         }
         if (password.length < 6) {
@@ -28,9 +27,7 @@ export const signup = async (req, res) => {
             return res.status(400).json({ message: "Email already exists" });
         }
         const newUser = await Registeruser.create({
-            username,
-            email,
-            password: hashedPassword,
+            username, email, password, roles
         });
         if (roles.includes('JOBSEEKER')) {
             await UserCv.create({
@@ -43,6 +40,7 @@ export const signup = async (req, res) => {
             _id: newUser._id,
             username: newUser.username,
             email: newUser.email,
+            message: "Registration successful. Please log in."
         });
     } catch (error) {
         console.error("Signup error:", error.message);
@@ -60,27 +58,36 @@ export const login = async (req, res) => {
     }
     const requestedRole = String(role).toUpperCase();
     try {
-const user = await Registeruser.findOne({ email }).select('+password username');
-
-
-        if (!user) {
-            return res.status(400).json({ message: "Invalid credentials" });
+        const user = await Registeruser.findOne({ email: email.toLowerCase() });
+        if (!user || !(await user.matchPassword(password))) {
+          return res.status(401).json({ message: "Invalid credentials or role." });
         }
         if (!user.roles.includes(requestedRole)) {
           return res.status(403).json({ message: "You do not have permission to log in with this role." });
         }
-         const token = generateToken(user._id);
+        if (user.passwordResetRequired) {
+            return res.status(403).json({
+                message: "Account not activated. Please use the activation link sent to your email to set your password."
+            });
+        }
+        const payload = {
+            userId: user._id,
+            roles: user.roles,
+            currentRole: requestedRole
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
         res.status(200).json({
-            message: "Login successful",
-            token, // Send token to frontend
-            _id: user._id,
+            token,
+            userId: user._id,
             username: user.username,
             email: user.email,
-            roles: user.roles,
+            role: requestedRole,
+            allRoles: user.roles,
+            message: "Login successful."
         });
     } catch (error) {
         console.error("Login error:", error.message);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error during login." });
     }
 };
 
@@ -117,35 +124,27 @@ export const forgotPassword = async (req, res) => {
         const user = await Registeruser.findOne({ email });
 
         if (!user) {
-            // Security Best Practice: Don't reveal if an email exists or not.
             return res.status(200).json({ message: 'If an account with that email exists, a reset token has been sent.' });
         }
 
-        // --- Generate a non-hashed token for the email ---
         const resetToken = crypto.randomBytes(32).toString('hex');
-
-        // --- Hash the token before saving it to the database for security ---
         user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-        user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // Token is valid for 15 minutes
+        user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
         await user.save();
 
-        // --- Construct the message with the token for the user ---
-        // This is the raw token the user will paste into the form on the frontend.
+        // ✅ FIX: String with variables must use a template literal (backticks)
         const message = `You requested a password reset. Please use the following token to reset your password. The token is valid for 15 minutes:\n\n${resetToken}\n\nIf you did not request this, please ignore this email.`;
 
-        // Send the email using the utility function
         await sendEmail({
             email: user.email,
             subject: 'JobPortal Password Reset Request',
-            message: message, // Use the constructed message
+            message: message,
         });
 
-        // Send a success response to the frontend
         res.status(200).json({ message: 'If an account with that email exists, a reset token has been sent to it.' });
 
     } catch (error) {
         console.error("FORGOT PASSWORD ERROR:", error);
-        // Clear sensitive fields in case of a failure after they were set
         if (req.body.email) {
             const user = await Registeruser.findOne({ email: req.body.email });
             if (user) {
@@ -158,31 +157,29 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// --- NEW RESET PASSWORD FUNCTION ---
+/**
+ * Handles the actual password reset using a token from the "Forgot Password" email.
+ */
 export const resetPassword = async (req, res) => {
     try {
         const { token, newPassword } = req.body;
         if (!token || !newPassword || newPassword.length < 6) {
             return res.status(400).json({ message: "A valid token and a new password (min 6 chars) are required." });
         }
-        // Hash the token received from the user to compare it with the one in the database
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
         const user = await Registeruser.findOne({
             resetPasswordToken: hashedToken,
-            resetPasswordExpires: { $gt: Date.now() }, // Check if the token has not expired
+            resetPasswordExpires: { $gt: Date.now() },
         });
 
         if (!user) {
             return res.status(400).json({ message: "Token is invalid or has expired." });
         }
 
-        // If the token is valid, update the password and clear the reset fields
         user.password = newPassword;
-        // Clear the token fields
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
-        await user.save(); // The pre-save hook will hash the new password
+        await user.save();
 
         res.status(200).json({ message: 'Password has been reset successfully.' });
     } catch (error) {
@@ -218,13 +215,14 @@ export const adminCreateUser = async (req, res) => {
             passwordResetRequired: true,
         });
 
-        // Use the same token logic as password reset, but with a longer expiry
         const resetToken = crypto.randomBytes(32).toString('hex');
         newUser.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-        newUser.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000; // 24-hour expiry
+        newUser.resetPasswordExpires = Date.now() + 24 * 60 * 60 * 1000;
         await newUser.save();
 
+        // ✅ FIX: String with variables must use a template literal (backticks)
         const resetURL = `${process.env.FRONTEND_URL}/force-reset-password?token=${resetToken}`;
+        // ✅ FIX: String with variables must use a template literal (backticks)
         const message = `Hello ${newUser.username},\n\nAn administrator has created an account for you on our JobPortal.\n\nPlease click the following link to set your password and activate your account. This link is valid for 24 hours:\n\n${resetURL}\n\nThank you,\nThe JobPortal Team`;
 
         await sendEmail({
@@ -233,6 +231,7 @@ export const adminCreateUser = async (req, res) => {
             message,
         });
         res.status(201).json({
+            // ✅ FIX: String with variables must use a template literal (backticks)
             message: `User '${newUser.username}' created successfully. An activation email has been sent to ${newUser.email}.`,
         });
     } catch (error) {

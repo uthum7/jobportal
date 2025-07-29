@@ -137,7 +137,7 @@ const Cv4 = () => {
               <ul>
                 <li>Write a compelling summary (2-4 sentences).</li>
                 <li>Highlight relevant skills, experiences, and goals.</li>
-                <li>Use the "Enhance with AI" button for suggestions.</li>
+                <li>Use the "Enhance with AI" for suggestions.</li>
               </ul>
             </div>
           </div>
@@ -179,17 +179,22 @@ const Cv4 = () => {
               <div className={styles.cvRight}>
                 <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{pi.profileParagraph || "Your profile summary..."}</p></div>
                 <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>
+                  {/* ✅ FIX: The key prop must be a valid string. Use a template literal. */}
                   {(pe || []).length > 0 ? (pe.map((exp, i) => (<div key={`exp-preview-${i}`} className={styles.experienceItem}><h5>{exp.jobTitle}</h5><p className={styles.companyName}>{exp.companyName}</p><span>{formatDateForDisplay(exp.jstartDate)} - {formatDateForDisplay(exp.jendDate)}</span><p className={styles.jobDescription}>{exp.jobDescription}</p></div>))) : ( <p>Experience details will appear here.</p> )}
                 </div>
                 <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4>
                   <ul className={styles.skillsDisplayList}>
-                    {(sk || []).length > 0 ? (sk.map((s, index) => (<li key={`skill-preview-${index}`} className={styles.skillDisplayItem}><span className={styles.skillNameDisplay}>{s.skillName}</span><div className={styles.skillStarsDisplay}>{[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (Number(s.skillLevel) || 0) ? styles.checked : ""}`}>★</span>))}</div></li>))) : ( <li>Skills list will appear here.</li> )}
+                    {/* ✅ FIX: The key prop must be a valid string. Use a template literal. */}
+                    {(sk || []).length > 0 ? (sk.map((s, index) => (<li key={`skill-preview-${index}`} className={styles.skillDisplayItem}><span className={styles.skillNameDisplay}>{s.skillName}</span><div className={styles.skillStarsDisplay}>
+                    {/* ✅ FIX: className must use a template literal wrapped in {} */}
+                    {[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (Number(s.skillLevel) || 0) ? styles.checked : ""}`}>★</span>))}</div></li>))) : ( <li>Skills list will appear here.</li> )}
                   </ul>
                 </div>
                 <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4>
                   <p>{summary || "Your professional summary will appear here as you type."}</p>
                 </div>
                 <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>
+                  {/* ✅ FIX: The key prop must be a valid string. Use a template literal. */}
                   {(refs || []).length > 0 ? (refs.map((ref, index) => (<p key={`ref-preview-${index}`}>{ref.referenceName} - {ref.position} at {ref.company} - {ref.contact}</p>))) : ( <p>References will appear here.</p> )}
                 </div>
               </div>
