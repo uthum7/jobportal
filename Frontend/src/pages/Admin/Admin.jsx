@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -232,9 +234,13 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+
       {sidebarOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
+
     </div>
   );
 };
 
+
 export default AdminDashboard;
+

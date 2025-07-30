@@ -1,12 +1,20 @@
 // pages/ForgotPassword/ForgotPasswordPage.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
+import styles from './forgotPassword.module.css'; // We'll create this CSS file
+=======
 import styles from './forgotPassword.module.css';
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 import logoPath from "../../assets/img/logo.png";
 import axios from 'axios';
 
 const ForgotPasswordPage = () => {
+<<<<<<< HEAD
+    const [step, setStep] = useState(1); // 1: Enter email, 2: Enter token and new password
+=======
     const [step, setStep] = useState(1);
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     const [email, setEmail] = useState('');
     const [token, setToken] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -15,7 +23,11 @@ const ForgotPasswordPage = () => {
     const [successMessage, setSuccessMessage] = useState(null);
     const navigate = useNavigate();
 
+<<<<<<< HEAD
+    // Handles Step 1: Requesting the reset token
+=======
     // Step 1: Requesting the reset token
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     const handleRequestToken = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -25,7 +37,11 @@ const ForgotPasswordPage = () => {
         try {
             const response = await axios.post('http://localhost:5001/api/auth/forgot-password', { email });
             setSuccessMessage(response.data.message);
+<<<<<<< HEAD
+            setStep(2); // Move to the next step
+=======
             setStep(2); // Move to the next step to enter the token
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to send reset token. Please try again.');
         } finally {
@@ -33,7 +49,11 @@ const ForgotPasswordPage = () => {
         }
     };
 
+<<<<<<< HEAD
+    // Handles Step 2: Submitting the token and new password
+=======
     // Step 2: Submitting the token and new password
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     const handleResetPassword = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -44,6 +64,10 @@ const ForgotPasswordPage = () => {
             const response = await axios.post('http://localhost:5001/api/auth/reset-password', { token, newPassword });
             setSuccessMessage(response.data.message + " You will be redirected to the login page shortly.");
             
+<<<<<<< HEAD
+            // Redirect to login after a short delay
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
             setTimeout(() => {
                 navigate('/login');
             }, 3000);
@@ -69,7 +93,11 @@ const ForgotPasswordPage = () => {
 
                 {step === 1 ? (
                     <>
+<<<<<<< HEAD
+                        <p className={styles.formSubtitle}>Enter your email address and we'll send you a link to reset your password.</p>
+=======
                         <p className={styles.formSubtitle}>Enter your email address and we'll send you a token to reset your password.</p>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                         <form onSubmit={handleRequestToken} noValidate>
                             <div className={styles.formGroup}>
                                 <label htmlFor="email">Email Address</label>
@@ -90,7 +118,11 @@ const ForgotPasswordPage = () => {
                                 className={styles.submitButton}
                                 disabled={isLoading}
                             >
+<<<<<<< HEAD
+                                {isLoading ? "Sending..." : "Send Reset Link"}
+=======
                                 {isLoading ? "Sending..." : "Send Reset Token"}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                             </button>
                         </form>
                     </>

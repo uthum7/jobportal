@@ -1,0 +1,434 @@
+/* CounselorManagement.css - Combined Styles */
+
+/* Main Layout */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    width: 250px;
+    background-color: white;
+    border-right: 1px solid #e0e0e0;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+  }
+  
+  .sidebar-user {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 15px;
+  }
+  
+  .user-avatar {
+    margin-right: 12px;
+  }
+  
+  .user-avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .user-info h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  
+  .user-info p {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+  }
+  
+  .sidebar-title {
+    padding: 0 20px;
+    font-size: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  
+  .sidebar-navigation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar-navigation ul li {
+    margin-bottom: 2px;
+  }
+  
+  .sidebar-navigation ul li a,
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #475569;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    cursor: pointer;
+  }
+  
+  .sidebar-navigation ul li a svg,
+  .menu-item svg {
+    margin-right: 12px;
+    font-size: 16px;
+  }
+  
+  .menu-item {
+    justify-content: space-between;
+  }
+  
+  .menu-title {
+    display: flex;
+    align-items: center;
+  }
+  
+  .sidebar-navigation ul li a:hover,
+  .menu-item:hover {
+    
+    color: #1CA774; /* Green text */
+  }
+  
+  .sidebar-navigation ul li.active > a,
+  .sidebar-navigation ul li.active > .menu-item {
+    background: rgba(28, 167, 116, 0.5); /* Green with 70% transparency */
+    color: #1CA774; /* Green text */
+    font-weight: 500;
+  }
+  
+  .submenu {
+    margin-left: 20px !important;
+  }
+  
+  .submenu li a {
+    padding: 10px 15px !important;
+  }
+  
+  .arrow {
+    transition: transform 0.2s;
+  }
+  
+  .arrow.rotated {
+    transform: rotate(180deg);
+  }
+  
+  .badge {
+    background-color: #12b76a;
+    color: white;
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+  
+  /* Main Content Styles */
+  .main-content {
+    flex: 1;
+    padding: 20px 30px;
+    background-color: #f5f7f9;
+  }
+  
+  .header {
+    margin-bottom: 20px;
+  }
+  
+  .header h1 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+  
+  .breadcrumb {
+    font-size: 14px;
+    color: #7f8c8d;
+  }
+  
+  .search-container {
+    margin-bottom: 30px;
+  }
+  
+  .search-container form {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .search-container input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .search-btn {
+    background-color: #12b76a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .search-btn:hover {
+    background-color: #0ea25a;
+  }
+  
+  /* Counselors Table Styles */
+  .counselors-table {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+  
+  .table-header {
+    display: flex;
+    padding: 16px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #eaeaea;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  
+  .header-name {
+    flex: 3;
+  }
+  
+  .header-id, .header-status {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .counselor-card {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  .counselor-card:last-child {
+    border-bottom: none;
+  }
+  
+  .counselor-info {
+    display: flex;
+    align-items: center;
+    flex: 3;
+  }
+  
+  .counselor-avatar {
+    position: relative;
+    margin-right: 15px;
+  }
+  
+  .counselor-avatar img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .status-indicator {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+  
+  .status-indicator.online {
+    background-color: #12b76a;
+  }
+  
+  .status-indicator.offline {
+    background-color: #cbd5e0;
+  }
+  
+  .counselor-details h3 {
+    font-size: 16px;
+    margin: 0 0 4px 0;
+    color: #2c3e50;
+  }
+  
+  .counselor-title {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0 0 6px 0;
+  }
+  
+  .counselor-location {
+    font-size: 13px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+  
+  .counselor-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .skill-tag {
+    font-size: 12px;
+    padding: 2px 8px;
+    background-color: #f1f5f9;
+    border-radius: 4px;
+    color: #64748b;
+  }
+  
+  .counselor-id {
+    flex: 1;
+    text-align: center;
+    color: #2c3e50;
+    font-size: 14px;
+  }
+  
+  .counselor-actions {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .action-btn.view {
+    background-color: #e7f5ff;
+    color: #3498db;
+  }
+  
+  .action-btn.edit {
+    background-color: #e7faf0;
+    color: #12b76a;
+  }
+  
+  .action-btn.delete {
+    background-color: #ffeeee;
+    color: #e74c3c;
+  }
+  
+  .action-btn.view:hover {
+    background-color: #d0e8fd;
+  }
+  
+  .action-btn.edit:hover {
+    background-color: #d0f3e3;
+  }
+  
+  .action-btn.delete:hover {
+    background-color: #fddede;
+  }
+  
+  .loading {
+    padding: 30px;
+    text-align: center;
+    color: #64748b;
+  }
+
+  /* SearchBar.css */
+.search-container {
+  display: flex;
+  justify-content: center;
+  padding: 15px 0;
+}
+
+.search-container form {
+  display: flex;
+  width: 100%;
+  max-width: 350px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+  outline: none;
+  color: #333;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-button {
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.search-button:hover {
+  background-color: #15803d;
+}
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      flex-direction: column;
+    }
+    
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    
+    .counselor-card {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .counselor-info {
+      margin-bottom: 15px;
+      width: 100%;
+    }
+    
+    .counselor-id {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    
+    .counselor-actions {
+      width: 100%;
+      justify-content: flex-start;
+    }
+    
+    .table-header {
+      display: none;
+    }
+  }

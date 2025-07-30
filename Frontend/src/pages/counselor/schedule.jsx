@@ -1,6 +1,10 @@
 "use client"
 
+<<<<<<< HEAD
+import { useState, useEffect } from "react"
+=======
 import { useState } from "react"
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 import { Link } from "react-router-dom"
 import {
   FaHome,
@@ -12,6 +16,129 @@ import {
   FaTrashAlt,
   FaSignOutAlt,
   FaClock,
+<<<<<<< HEAD
+  FaSpinner,
+  FaExclamationTriangle,
+} from "react-icons/fa"
+import Calendar from "../../components/Calendar/Calendar"
+import BookingModal from "../../components/BookingModal/BookingModal"
+import BookingStats from "../../components/BookingStats/BookingStats"
+import Notification from "../../components/Notification/Notification"
+import { bookingAPI } from "../../services/api.jsx"
+import "./schedule.css"
+
+export default function ScheduleTimings() {
+  const [bookings, setBookings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [selectedBooking, setSelectedBooking] = useState(null)
+  const [showModal, setShowModal] = useState(false)
+  const [actionLoading, setActionLoading] = useState(false)
+  const [notification, setNotification] = useState(null)
+
+  // Get user from localStorage
+  const userString = localStorage.getItem("user")
+  const user = userString ? JSON.parse(userString) : null
+  const counselorId = user?.counselors_id
+
+  // Fetch bookings for this counselor
+  const fetchBookings = async () => {
+    if (!counselorId) {
+      setError("Counselor ID not found. Please log in again.")
+      setLoading(false)
+      return
+    }
+
+    try {
+      setLoading(true)
+      setError(null)
+
+      const response = await bookingAPI.getBookingsByCounselor(counselorId)
+      
+      if (response.success) {
+        setBookings(response.data || [])
+      } else {
+        throw new Error(response.message || "Failed to fetch bookings")
+      }
+    } catch (err) {
+      console.error("Error fetching bookings:", err)
+      setError(err.message || "Failed to load bookings")
+      setBookings([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fetch bookings on component mount
+  useEffect(() => {
+    fetchBookings()
+  }, [counselorId])
+
+  // Handle booking click
+  const handleBookingClick = (booking) => {
+    setSelectedBooking(booking)
+    setShowModal(true)
+  }
+
+  // Handle date selection
+  const handleDateSelect = (date) => {
+    console.log("Selected date:", date)
+    // You can implement additional functionality here
+  }
+
+  // Handle status change
+  const handleStatusChange = async (bookingId, newStatus) => {
+    try {
+      setActionLoading(true)
+      
+      const response = await bookingAPI.updateBooking(bookingId, {
+        status: newStatus
+      })
+      
+      if (response.success) {
+        // Refresh bookings
+        await fetchBookings()
+        setShowModal(false)
+        setNotification({
+          message: `Booking ${newStatus.toLowerCase()} successfully`,
+          type: 'success'
+        })
+      } else {
+        throw new Error(response.message || "Failed to update booking")
+      }
+    } catch (error) {
+      console.error("Error updating booking:", error)
+      setNotification({
+        message: error.message || "Failed to update booking",
+        type: 'error'
+      })
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Handle modal close
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setSelectedBooking(null)
+  }
+
+  // Handle edit booking
+  const handleEditBooking = (booking) => {
+    // You can implement edit functionality here
+    console.log("Edit booking:", booking)
+    setNotification({
+      message: "Edit functionality will be implemented in the next update",
+      type: 'success'
+    })
+  }
+
+  // Handle notification close
+  const handleCloseNotification = () => {
+    setNotification(null)
+  }
+   
+=======
   FaPlus,
   FaMinus,
   FaSave,
@@ -185,6 +312,7 @@ export default function ScheduleTimings() {
     Afternoon: timeSlots.filter((slot) => slot.includes("PM") && Number.parseInt(slot.split(":")[0]) < 5),
     Evening: timeSlots.filter((slot) => slot.includes("PM") && Number.parseInt(slot.split(":")[0]) >= 5),
   }
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
   return (
     <div className="dashboard-layout">
@@ -192,12 +320,21 @@ export default function ScheduleTimings() {
       <aside className="sidebar">
         <div className="sidebar-profile">
           <img
+<<<<<<< HEAD
+            src={user?.profilePic || "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg"}
+            alt={user?.fullName || "Counselor"}
+            className="profile-image"
+          />
+          <h3 className="profile-name">{user.name}</h3>
+          <p className="profile-title">{user.specialty}</p>
+=======
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg"
             alt="James Anderson"
             className="profile-image"
           />
           <h3 className="profile-name">James Anderson</h3>
           <p className="profile-title">Career Development Specialist</p>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         </div>
 
         <nav className="sidebar-menu">
@@ -230,7 +367,11 @@ export default function ScheduleTimings() {
               <span className="menu-icon">
                 <FaClock />
               </span>
+<<<<<<< HEAD
+              <span className="menu-text">Booking Calendar</span>
+=======
               <span className="menu-text">Schedule Timings</span>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
             </div>
           </Link>
           <Link to="/counselor/counselees" className="menu-item">
@@ -280,6 +421,69 @@ export default function ScheduleTimings() {
       {/* Main Content */}
       <main className="main-content">
         <div className="schedule-header">
+<<<<<<< HEAD
+          <h1>Booking Calendar</h1>
+          <div className="breadcrumb">
+            <Link to="/">Home</Link> / Booking Calendar
+          </div>
+        </div>
+
+        <div className="schedule-content">
+          <div className="schedule-instructions">
+            <h2>Your Booking Calendar</h2>
+            <p>
+              View and manage all your counseling appointments. Click on any booking to see details, update status, or make changes.
+            </p>
+          </div>
+
+          {/* Booking Statistics */}
+          {!loading && !error && (
+            <BookingStats bookings={bookings} />
+          )}
+
+          {loading ? (
+            <div className="loading-state">
+              <FaSpinner className="loading-spinner" />
+              <p>Loading your bookings...</p>
+            </div>
+          ) : error ? (
+            <div className="error-state">
+              <FaExclamationTriangle className="error-icon" />
+              <h3>Error Loading Bookings</h3>
+              <p>{error}</p>
+              <button onClick={fetchBookings} className="retry-btn">
+                Try Again
+              </button>
+            </div>
+          ) : (
+            <Calendar
+              bookings={bookings}
+              onDateSelect={handleDateSelect}
+              onBookingClick={handleBookingClick}
+            />
+          )}
+        </div>
+      </main>
+
+      {/* Booking Details Modal */}
+      <BookingModal
+        booking={selectedBooking}
+        isOpen={showModal}
+        onClose={handleCloseModal}
+        onStatusChange={handleStatusChange}
+        onEdit={handleEditBooking}
+        actionLoading={actionLoading}
+      />
+
+      {/* Notification */}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={handleCloseNotification}
+        />
+      )}
+=======
           <h1>Schedule Timings</h1>
           <div className="breadcrumb">
             <Link to="/">Home</Link> / Schedule Timings
@@ -460,6 +664,7 @@ export default function ScheduleTimings() {
           </div>
         </div>
       </main>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     </div>
   )
 }

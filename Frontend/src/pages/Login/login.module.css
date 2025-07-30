@@ -179,7 +179,11 @@
 }
 
 .submitButton {
+<<<<<<< HEAD
+  /* This class is already combined with btnPrimary in JSX: className={`${styles.submitButton} ${styles.btnPrimary}`} */
+=======
   /* This class is already combined with btnPrimary in JSX: className={${styles.submitButton} ${styles.btnPrimary}} */
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   /* So, .btnPrimary styles will apply. Add any specific overrides for submitButton here if needed. */
   /* For example, if you wanted a different margin: */
   margin-top: 0.5rem; /* Adjusted from default .btnBase if it had margin */

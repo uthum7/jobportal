@@ -1,3 +1,41 @@
+<<<<<<< HEAD
+
+.sidebar-nav{
+    /* margin-left: 60px; */
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+.nav-item{
+    display:flex;
+    padding:12px 20px;
+    color:rgba(255, 255, 255, 0.8);
+    font-weight:500;
+    border-left: 3px solid transparent;
+}
+
+.nav-item:hover{
+    color:#50fa7b;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left-color: #50fa7b;
+}
+.profile-section{
+    padding: 24px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+}
+.profile-image{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover; 
+    object-position: center;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+=======
 /* Employee Sidebar Styles */
 .employee-sidebar {
   width: 300px;
@@ -380,4 +418,5 @@
   .sidebar-footer {
     padding: 1rem;
   }
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 }
