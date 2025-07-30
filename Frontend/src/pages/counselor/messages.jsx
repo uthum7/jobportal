@@ -194,7 +194,9 @@ export default function CounselorMessages() {
       handleSendMessage()
     }
   }
-
+ const userstring = localStorage.getItem("user")
+  const user = userstring ? JSON.parse(userstring) : null
+  console.log("User data from localStorage:", user)
   return (
     <div className="dashboard-layout">
       {/* Left Sidebar */}
@@ -205,8 +207,8 @@ export default function CounselorMessages() {
             alt="James Anderson"
             className="profile-image"
           />
-          <h3 className="profile-name">James Anderson</h3>
-          <p className="profile-title">Career Development Specialist</p>
+          <h3 className="profile-name">{user.name}</h3>
+          <p className="profile-title">{user.specialty}</p>
         </div>
 
         <nav className="sidebar-menu">

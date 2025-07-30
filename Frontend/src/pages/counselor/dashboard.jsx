@@ -36,7 +36,7 @@ const upcomingSessions = [
     date: "05 January 2025",
     time: "9:00 AM - 10:00 AM",
     topic: "Career Development Strategy",
-    status: "Confirmed",
+    status: "Approved",
     type: "Video Call",
   },
   {
@@ -62,7 +62,7 @@ const upcomingSessions = [
     date: "07 January 2025",
     time: "11:00 AM - 12:00 PM",
     topic: "Interview Preparation",
-    status: "Confirmed",
+    status: "Approved",
     type: "Phone Call",
   },
 ]
@@ -123,6 +123,10 @@ export default function CounselorDashboard() {
     pendingPayments: 450,
   }
 
+  const userstring = localStorage.getItem("user") 
+  const user = userstring ? JSON.parse(userstring) : null
+  console.log("User data from localStorage:", user)
+
   return (
     <div className="dashboard-layout">
       {/* Left Sidebar */}
@@ -133,8 +137,8 @@ export default function CounselorDashboard() {
             alt="James Anderson"
             className="profile-image"
           />
-          <h3 className="profile-name">James Anderson</h3>
-          <p className="profile-title">Career Development Specialist</p>
+          <h3 className="profile-name">{user.name}</h3>
+          <p className="profile-title">{user.specialty}</p>
         </div>
 
         <nav className="sidebar-menu">
@@ -369,7 +373,7 @@ export default function CounselorDashboard() {
                     <div className={`session-status ${session.status.toLowerCase()}`}>{session.status}</div>
                     <div className="session-buttons">
                       <button className="view-details-btn">View Details</button>
-                      {session.status === "Confirmed" && <button className="start-session-btn">Start Session</button>}
+                      {session.status === "Approved" && <button className="start-session-btn">Start Session</button>}
                       {session.status === "Pending" && (
                         <>
                           <button className="accept-btn">

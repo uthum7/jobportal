@@ -2,6 +2,7 @@ import User from "../models/user.model.js"
 import{generateToken} from "../lib/utils.js";
 import bcrypt from "bcryptjs"
 import cloudinary from "../lib/cloudinary.js";
+import Registeruser from "../models/Registeruser.js";
 
 
 export const signup = async (req,res)=>{
@@ -21,8 +22,7 @@ export const signup = async (req,res)=>{
 
         if(user) return res.status(400).json({message:"Email already exists"});
 
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password,salt)
+        const hashedPassword = await bcrypt.hash(password,10)
 
         const newUser = new User({
             fullName:fullName,
@@ -40,7 +40,6 @@ export const signup = async (req,res)=>{
                 fullName:newUser.fullName,
                 email:newUser.email,
                 profilePic:newUser.profilepic,
-
             });
 
         }else{
@@ -70,14 +69,29 @@ export const login = async (req,res)=>{
         }
 
         generateToken(user._id,res)
-
-        res.status(200).json({
-            _id:user._id,
-            fullName:user.fullName,
-           email:user.email,
-            profilePic:user.profilepic,
-        })
-    } catch(error){
+        
+        if("MENTOR" in user.roles) {
+            console.log("User is a mentor, counselors_id:", user.counselors_id);
+            res.status(200).json({
+                _id:user._id,
+                fullName:user.fullName,
+                email:user.email,
+                profilePic:user.profilepic,
+                role:user.role,
+                counselors_id: user.counselors_id 
+            })
+        }
+        else {
+            res.status(200).json({
+                _id:user._id,
+                fullName:user.fullName,
+                email:user.email,
+                profilePic:user.profilepic,
+                role:user.role
+            });
+        }
+        
+        } catch(error){
         console.log("error in login controller",error.message);
         res.status(500).json({message:"Internal server Error"});
 
@@ -120,6 +134,37 @@ export const updateProfile = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   };
+// Change Password Endpoint
+export const changePassword = async (req, res) => {
+    console.log("Change Password request received");
+  try {
+    console.log("Request body:", req.body);
+    const { oldPassword, newPassword, userId } = req.body;
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ message: "Old and new password are required" });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "New password must be at least 6 characters" });
+    }
+    const user = await Registeruser.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+        console.log("Old password does not match for user:", user.email);
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.log("Error in changePassword controller", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
   
 export const checkAuth = (req, res)=> {
     try{

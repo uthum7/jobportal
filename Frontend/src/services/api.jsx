@@ -89,3 +89,129 @@ export const createNewResume = async (userId) => {
     throw error;
   }
 };
+
+// Booking API functions
+export const bookingAPI = {
+  // Get all bookings with optional filters
+  getAllBookings: async (params = {}) => {
+    try {
+      const response = await api.get("/bookings", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      throw error;
+    }
+  },
+
+  // Get bookings by user ID
+  getBookingsByUser: async (userId, params = {}) => {
+    try {
+      const response = await api.get(`/bookings/user/${userId}`, { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user bookings:", error);
+      throw error;
+    }
+  },
+
+  // Get bookings by counselor ID
+  getBookingsByCounselor: async (counselorId, params = {}) => {
+    try {
+      const response = await api.get(`/bookings/counselor/${counselorId}`, { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching counselor bookings:", error);
+      throw error;
+    }
+  },
+
+  // Get single booking by ID
+  getBookingById: async (bookingId) => {
+    try {
+      const response = await api.get(`/bookings/${bookingId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching booking:", error);
+      throw error;
+    }
+  },
+
+  // Create new booking
+  createBooking: async (bookingData) => {
+    try {
+      const response = await api.post("/bookings", bookingData);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      throw error;
+    }
+  },
+
+  // Update booking
+  updateBooking: async (bookingId, updateData) => {
+    try {
+      const response = await api.put(`/bookings/${bookingId}`, updateData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating booking:", error);
+      throw error;
+    }
+  },
+
+  // Approve booking
+  approveBooking: async (bookingId, approvalData = {}) => {
+    try {
+      const response = await api.patch(`/bookings/${bookingId}/approve`, approvalData);
+      return response.data;
+    } catch (error) {
+      console.error("Error approving booking:", error);
+      throw error;
+    }
+  },
+
+  // Cancel booking
+  cancelBooking: async (bookingId, cancellationData) => {
+    try {
+      const response = await api.patch(`/bookings/${bookingId}/cancel`, cancellationData);
+      return response.data;
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      throw error;
+    }
+  },
+
+  // Reschedule booking
+  rescheduleBooking: async (bookingId, rescheduleData) => {
+    try {
+      const response = await api.patch(`/bookings/${bookingId}/reschedule`, rescheduleData);
+      return response.data;
+    } catch (error) {
+      console.error("Error rescheduling booking:", error);
+      throw error;
+    }
+  },
+
+  // Delete booking (soft delete)
+  deleteBooking: async (bookingId) => {
+    try {
+      const response = await api.delete(`/bookings/${bookingId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      throw error;
+    }
+  },
+
+  // Get booking statistics
+  getBookingStats: async (params = {}) => {
+    try {
+      const response = await api.get("/bookings/stats", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching booking stats:", error);
+      throw error;
+    }
+  }
+};
+
+export default api;

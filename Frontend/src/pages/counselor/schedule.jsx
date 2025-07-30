@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import {
   FaHome,
@@ -12,179 +12,127 @@ import {
   FaTrashAlt,
   FaSignOutAlt,
   FaClock,
-  FaPlus,
-  FaMinus,
-  FaSave,
-  FaChevronLeft,
-  FaChevronRight,
+  FaSpinner,
+  FaExclamationTriangle,
 } from "react-icons/fa"
+import Calendar from "../../components/Calendar/Calendar"
+import BookingModal from "../../components/BookingModal/BookingModal"
+import BookingStats from "../../components/BookingStats/BookingStats"
+import Notification from "../../components/Notification/Notification"
+import { bookingAPI } from "../../services/api.jsx"
 import "./schedule.css"
 
-// Days of the week
-const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-
-// Time slots from 8 AM to 8 PM in 30-minute intervals
-const generateTimeSlots = () => {
-  const slots = []
-  for (let hour = 8; hour < 20; hour++) {
-    const hourFormatted = hour % 12 === 0 ? 12 : hour % 12
-    const period = hour >= 12 ? "PM" : "AM"
-
-    slots.push(`${hourFormatted}:00 ${period}`)
-    slots.push(`${hourFormatted}:30 ${period}`)
-  }
-  return slots
-}
-
-const timeSlots = generateTimeSlots()
-
 export default function ScheduleTimings() {
-  const [schedule, setSchedule] = useState({
-    Monday: [],
-    Tuesday: [],
-    Wednesday: [],
-    Thursday: [],
-    Friday: [],
-    Saturday: [],
-    Sunday: [],
-  })
+  const [bookings, setBookings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [selectedBooking, setSelectedBooking] = useState(null)
+  const [showModal, setShowModal] = useState(false)
+  const [actionLoading, setActionLoading] = useState(false)
+  const [notification, setNotification] = useState(null)
 
-  const [successMessage, setSuccessMessage] = useState("")
-  const [activeDay, setActiveDay] = useState("Monday")
+  // Get user from localStorage
+  const userString = localStorage.getItem("user")
+  const user = userString ? JSON.parse(userString) : null
+  const counselorId = user?.counselors_id
 
-  // Toggle time slot selection
-  const toggleTimeSlot = (day, time) => {
-    setSchedule((prevSchedule) => {
-      const daySchedule = [...prevSchedule[day]]
-
-      if (daySchedule.includes(time)) {
-        // Remove time slot if already selected
-        return {
-          ...prevSchedule,
-          [day]: daySchedule.filter((slot) => slot !== time),
-        }
-      } else {
-        // Add time slot if not selected
-        return {
-          ...prevSchedule,
-          [day]: [...daySchedule, time].sort((a, b) => {
-            // Sort time slots chronologically
-            const aHour = Number.parseInt(a.split(":")[0])
-            const bHour = Number.parseInt(b.split(":")[0])
-            const aMinute = Number.parseInt(a.split(":")[1].split(" ")[0])
-            const bMinute = Number.parseInt(b.split(":")[1].split(" ")[0])
-            const aPeriod = a.split(" ")[1]
-            const bPeriod = b.split(" ")[1]
-
-            if (aPeriod !== bPeriod) {
-              return aPeriod === "AM" ? -1 : 1
-            }
-
-            if (aHour !== bHour) {
-              return aHour - bHour
-            }
-
-            return aMinute - bMinute
-          }),
-        }
-      }
-    })
-  }
-
-  // Add a time range (start time to end time)
-  const addTimeRange = (day, startTime, endTime) => {
-    // Find indices of start and end times in the timeSlots array
-    const startIndex = timeSlots.indexOf(startTime)
-    const endIndex = timeSlots.indexOf(endTime)
-
-    if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
-      return // Invalid range
+  // Fetch bookings for this counselor
+  const fetchBookings = async () => {
+    if (!counselorId) {
+      setError("Counselor ID not found. Please log in again.")
+      setLoading(false)
+      return
     }
 
-    // Get all time slots between start and end (inclusive)
-    const slotsToAdd = timeSlots.slice(startIndex, endIndex + 1)
+    try {
+      setLoading(true)
+      setError(null)
 
-    setSchedule((prevSchedule) => {
-      const daySchedule = [...prevSchedule[day]]
-
-      // Add all slots in the range that aren't already selected
-      const updatedSchedule = [...new Set([...daySchedule, ...slotsToAdd])].sort((a, b) => {
-        // Sort time slots chronologically
-        const aHour = Number.parseInt(a.split(":")[0])
-        const bHour = Number.parseInt(b.split(":")[0])
-        const aMinute = Number.parseInt(a.split(":")[1].split(" ")[0])
-        const bMinute = Number.parseInt(b.split(":")[1].split(" ")[0])
-        const aPeriod = a.split(" ")[1]
-        const bPeriod = b.split(" ")[1]
-
-        if (aPeriod !== bPeriod) {
-          return aPeriod === "AM" ? -1 : 1
-        }
-
-        if (aHour !== bHour) {
-          return aHour - bHour
-        }
-
-        return aMinute - bMinute
-      })
-
-      return {
-        ...prevSchedule,
-        [day]: updatedSchedule,
+      const response = await bookingAPI.getBookingsByCounselor(counselorId)
+      
+      if (response.success) {
+        setBookings(response.data || [])
+      } else {
+        throw new Error(response.message || "Failed to fetch bookings")
       }
+    } catch (err) {
+      console.error("Error fetching bookings:", err)
+      setError(err.message || "Failed to load bookings")
+      setBookings([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fetch bookings on component mount
+  useEffect(() => {
+    fetchBookings()
+  }, [counselorId])
+
+  // Handle booking click
+  const handleBookingClick = (booking) => {
+    setSelectedBooking(booking)
+    setShowModal(true)
+  }
+
+  // Handle date selection
+  const handleDateSelect = (date) => {
+    console.log("Selected date:", date)
+    // You can implement additional functionality here
+  }
+
+  // Handle status change
+  const handleStatusChange = async (bookingId, newStatus) => {
+    try {
+      setActionLoading(true)
+      
+      const response = await bookingAPI.updateBooking(bookingId, {
+        status: newStatus
+      })
+      
+      if (response.success) {
+        // Refresh bookings
+        await fetchBookings()
+        setShowModal(false)
+        setNotification({
+          message: `Booking ${newStatus.toLowerCase()} successfully`,
+          type: 'success'
+        })
+      } else {
+        throw new Error(response.message || "Failed to update booking")
+      }
+    } catch (error) {
+      console.error("Error updating booking:", error)
+      setNotification({
+        message: error.message || "Failed to update booking",
+        type: 'error'
+      })
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  // Handle modal close
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setSelectedBooking(null)
+  }
+
+  // Handle edit booking
+  const handleEditBooking = (booking) => {
+    // You can implement edit functionality here
+    console.log("Edit booking:", booking)
+    setNotification({
+      message: "Edit functionality will be implemented in the next update",
+      type: 'success'
     })
   }
 
-  // Clear all time slots for a day
-  const clearDay = (day) => {
-    setSchedule((prevSchedule) => ({
-      ...prevSchedule,
-      [day]: [],
-    }))
+  // Handle notification close
+  const handleCloseNotification = () => {
+    setNotification(null)
   }
-
-  // Copy schedule from one day to another
-  const copySchedule = (fromDay, toDay) => {
-    setSchedule((prevSchedule) => ({
-      ...prevSchedule,
-      [toDay]: [...prevSchedule[fromDay]],
-    }))
-  }
-
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log("Schedule saved:", schedule)
-
-    // Show success message
-    setSuccessMessage("Schedule updated successfully!")
-
-    // Hide success message after 3 seconds
-    setTimeout(() => {
-      setSuccessMessage("")
-    }, 3000)
-  }
-
-  // Navigate to previous day
-  const goToPreviousDay = () => {
-    const currentIndex = daysOfWeek.indexOf(activeDay)
-    const previousIndex = (currentIndex - 1 + daysOfWeek.length) % daysOfWeek.length
-    setActiveDay(daysOfWeek[previousIndex])
-  }
-
-  // Navigate to next day
-  const goToNextDay = () => {
-    const currentIndex = daysOfWeek.indexOf(activeDay)
-    const nextIndex = (currentIndex + 1) % daysOfWeek.length
-    setActiveDay(daysOfWeek[nextIndex])
-  }
-
-  // Group time slots into morning, afternoon, and evening
-  const groupedTimeSlots = {
-    Morning: timeSlots.filter((slot) => slot.includes("AM")),
-    Afternoon: timeSlots.filter((slot) => slot.includes("PM") && Number.parseInt(slot.split(":")[0]) < 5),
-    Evening: timeSlots.filter((slot) => slot.includes("PM") && Number.parseInt(slot.split(":")[0]) >= 5),
-  }
+   
 
   return (
     <div className="dashboard-layout">
@@ -192,12 +140,12 @@ export default function ScheduleTimings() {
       <aside className="sidebar">
         <div className="sidebar-profile">
           <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg"
-            alt="James Anderson"
+            src={user?.profilePic || "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg"}
+            alt={user?.fullName || "Counselor"}
             className="profile-image"
           />
-          <h3 className="profile-name">James Anderson</h3>
-          <p className="profile-title">Career Development Specialist</p>
+          <h3 className="profile-name">{user.name}</h3>
+          <p className="profile-title">{user.specialty}</p>
         </div>
 
         <nav className="sidebar-menu">
@@ -230,7 +178,7 @@ export default function ScheduleTimings() {
               <span className="menu-icon">
                 <FaClock />
               </span>
-              <span className="menu-text">Schedule Timings</span>
+              <span className="menu-text">Booking Calendar</span>
             </div>
           </Link>
           <Link to="/counselor/counselees" className="menu-item">
@@ -280,186 +228,67 @@ export default function ScheduleTimings() {
       {/* Main Content */}
       <main className="main-content">
         <div className="schedule-header">
-          <h1>Schedule Timings</h1>
+          <h1>Booking Calendar</h1>
           <div className="breadcrumb">
-            <Link to="/">Home</Link> / Schedule Timings
+            <Link to="/">Home</Link> / Booking Calendar
           </div>
         </div>
-
-        {successMessage && (
-          <div className="success-message">
-            <span>{successMessage}</span>
-          </div>
-        )}
 
         <div className="schedule-content">
           <div className="schedule-instructions">
-            <h2>Set Your Availability</h2>
+            <h2>Your Booking Calendar</h2>
             <p>
-              Select the time slots when you are available for counseling sessions. Counselees will only be able to book
-              appointments during these times.
+              View and manage all your counseling appointments. Click on any booking to see details, update status, or make changes.
             </p>
           </div>
 
-          <div className="schedule-tabs">
-            <div className="tabs-header">
-              {daysOfWeek.map((day) => (
-                <button
-                  key={day}
-                  className={`tab-button ${activeDay === day ? "active" : ""}`}
-                  onClick={() => setActiveDay(day)}
-                >
-                  {day}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Booking Statistics */}
+          {!loading && !error && (
+            <BookingStats bookings={bookings} />
+          )}
 
-          <div className="day-schedule">
-            <div className="day-header">
-              <button className="nav-button" onClick={goToPreviousDay}>
-                <FaChevronLeft />
-              </button>
-              <h3>{activeDay}</h3>
-              <button className="nav-button" onClick={goToNextDay}>
-                <FaChevronRight />
+          {loading ? (
+            <div className="loading-state">
+              <FaSpinner className="loading-spinner" />
+              <p>Loading your bookings...</p>
+            </div>
+          ) : error ? (
+            <div className="error-state">
+              <FaExclamationTriangle className="error-icon" />
+              <h3>Error Loading Bookings</h3>
+              <p>{error}</p>
+              <button onClick={fetchBookings} className="retry-btn">
+                Try Again
               </button>
             </div>
-
-            <div className="time-range-selector">
-              <div className="time-range-form">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Start Time</label>
-                    <select id="startTime" className="time-select">
-                      {timeSlots.map((time, index) => (
-                        <option key={`start-${index}`} value={time}>
-                          {time}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>End Time</label>
-                    <select id="endTime" className="time-select">
-                      {timeSlots.map((time, index) => (
-                        <option key={`end-${index}`} value={time}>
-                          {time}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <button
-                    type="button"
-                    className="add-range-btn"
-                    onClick={() => {
-                      const startTime = document.getElementById("startTime").value
-                      const endTime = document.getElementById("endTime").value
-                      addTimeRange(activeDay, startTime, endTime)
-                    }}
-                  >
-                    <FaPlus /> Add
-                  </button>
-                </div>
-              </div>
-              <div className="schedule-actions">
-                <button type="button" className="clear-day-btn" onClick={() => clearDay(activeDay)}>
-                  <FaMinus /> Clear Day
-                </button>
-                <div className="copy-schedule">
-                  <select id="copyToDay" className="day-select">
-                    {daysOfWeek
-                      .filter((day) => day !== activeDay)
-                      .map((day) => (
-                        <option key={day} value={day}>
-                          {day}
-                        </option>
-                      ))}
-                  </select>
-                  <button
-                    type="button"
-                    className="copy-btn"
-                    onClick={() => {
-                      const toDay = document.getElementById("copyToDay").value
-                      copySchedule(activeDay, toDay)
-                    }}
-                  >
-                    Copy To
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="time-slots-container">
-              {Object.entries(groupedTimeSlots).map(([period, slots]) => (
-                <div key={period} className="time-period">
-                  <h4>{period}</h4>
-                  <div className="time-slots">
-                    {slots.map((time, index) => (
-                      <button
-                        key={`${activeDay}-${index}`}
-                        className={`time-slot ${schedule[activeDay].includes(time) ? "selected" : ""}`}
-                        onClick={() => toggleTimeSlot(activeDay, time)}
-                      >
-                        {time}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="selected-slots">
-              <h4>Selected Time Slots</h4>
-              <div className="selected-slots-list">
-                {schedule[activeDay].length > 0 ? (
-                  schedule[activeDay].map((time, index) => (
-                    <div key={index} className="selected-slot">
-                      <span>{time}</span>
-                      <button className="remove-slot-btn" onClick={() => toggleTimeSlot(activeDay, time)}>
-                        <FaMinus />
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="no-slots">No time slots selected for {activeDay}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="schedule-summary">
-            <h3>Weekly Schedule Summary</h3>
-            <div className="summary-grid">
-              {daysOfWeek.map((day) => (
-                <div key={day} className="summary-day">
-                  <h4>{day}</h4>
-                  <div className="summary-slots">
-                    {schedule[day].length > 0 ? (
-                      schedule[day].map((time, index) => (
-                        <div key={index} className="summary-slot">
-                          {time}
-                        </div>
-                      ))
-                    ) : (
-                      <p className="no-slots">Not available</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button type="button" className="save-btn" onClick={handleSubmit}>
-              <FaSave className="btn-icon" /> Save Schedule
-            </button>
-            <Link to="/counselor/dashboard" className="cancel-btn">
-              Cancel
-            </Link>
-          </div>
+          ) : (
+            <Calendar
+              bookings={bookings}
+              onDateSelect={handleDateSelect}
+              onBookingClick={handleBookingClick}
+            />
+          )}
         </div>
       </main>
+
+      {/* Booking Details Modal */}
+      <BookingModal
+        booking={selectedBooking}
+        isOpen={showModal}
+        onClose={handleCloseModal}
+        onStatusChange={handleStatusChange}
+        onEdit={handleEditBooking}
+        actionLoading={actionLoading}
+      />
+
+      {/* Notification */}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={handleCloseNotification}
+        />
+      )}
     </div>
   )
 }

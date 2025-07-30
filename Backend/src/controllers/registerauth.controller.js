@@ -5,6 +5,8 @@ import { generateToken,sendEmail } from "../lib/utils.js";
 import bcrypt from "bcryptjs";
 import UserCv from "../models/UserCv.js";
 
+import Counselors from "../models/counselors.model.js";
+
 // --- NEW IMPORTS for Password Reset ---
 import crypto from 'crypto';
 // import sendEmail from '../lib/utils.js'; // Assuming you created sendEmail in utils.js
@@ -65,11 +67,25 @@ export const login = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
         generateToken(user._id, res);
-        res.status(200).json({
-            _id: user._id,
-            username: user.username,
-            email: user.email,
-        });
+        if (user.roles && user.roles[0] === 'MENTOR') {
+            console.log("Mentor login detected, including counselors_id if available.");
+            res.status(200).json({
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.roles[0],
+                counselors_id: user.counselors_id || null // Include counselors_id if it exists
+
+            });
+        } else {
+            res.status(200).json({
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.roles[0]
+                
+            });
+        }
     } catch (error) {
         console.error("Login error:", error.message);
         res.status(500).json({ message: "Internal server error" });
@@ -159,8 +175,8 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ message: "Token is invalid or has expired." });
         }
 
-        // Set the new password. The pre-save hook in your model will automatically hash it.
-        user.password = newPassword;
+        // Hash the new password before saving
+        user.password = await bcrypt.hash(newPassword, 10);
         // Clear the token fields
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;

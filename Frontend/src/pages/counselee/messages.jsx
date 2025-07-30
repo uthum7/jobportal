@@ -146,6 +146,8 @@ const conversationData = {
     },
   ],
 }
+ const userstring = localStorage.getItem("user")
+  const user = userstring ? JSON.parse(userstring) : null
 
 export default function Messages() {
   const [contacts, setContacts] = useState(contactsData)
@@ -206,8 +208,8 @@ export default function Messages() {
             alt="Sanduni Dilhara"
             className="profile-image"
           />
-          <h3 className="profile-name">Alexander Mitchell</h3>
-          <p className="profile-title">Web Designer</p>
+         <h3 className="profile-name">{user.name}</h3>
+          
         </div>
 
         <nav className="sidebar-menu">
