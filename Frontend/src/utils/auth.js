@@ -15,7 +15,7 @@ export const saveAuthData = (userData) => {
 
   console.log('Saving auth data (user object):', userData);
   localStorage.setItem('user', JSON.stringify(userData)); // Store the whole user object
-  // No need to store token, role, userId separately if they are in the 'user' object
+  localStorage.setItem('token', userData.token); // ✅ Add this line// No need to store token, role, userId separately if they are in the 'user' object
 };
 
 // Get the entire user object
@@ -48,6 +48,7 @@ export const getUserId = () => {
 
 export const clearAuth = () => {
   localStorage.removeItem('user'); // Just remove the single 'user' object
+  localStorage.removeItem('token'); // ✅ Add this too
   // Any other app-specific items you might want to clear on logout
 };
 

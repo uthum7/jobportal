@@ -6,35 +6,71 @@ import bcrypt from "bcryptjs";
 
 const Schema = mongoose.Schema;
 
-// Registeruser Schema
-const RegisteruserSchema = new Schema({
+const RegisteruserSchema = new Schema(
+  {
     username: {
-        type: String,
-        required: [true, "Username is required"],
-        trim: true,
+      type: String,
+      required: [true, "Username is required"],
+      trim: true,
+    },
+    fullName: {
+      type: String,
+      
+      trim: true,
     },
     email: {
-        type: String,
-        required: [true, "Email is required"],
-        unique: true,
-        trim: true,
-        lowercase: true,
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      trim: true,
+      lowercase: true,
     },
     password: {
-        type: String,
-        required: [true, "Password is required"],
-        minlength: [5, "Password must be at least 5 characters"],
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [6, "Password must be at least 6 characters"], // Match previous user model
+    },
+    profilePic: {
+      type: String,
+      default: "", // Optional, frontend can fall back to placeholder
+    },
+
+      phone: {
+      type: String,
+      default: "",
+      validate: {
+        validator: function (v) {
+          return /^(\+?\d{7,15})?$/.test(v); // basic international phone number format
+        },
+        message: props => `${props.value} is not a valid phone number!`,
+      },
+    },
+
+    // ✅ Newly added address field
+    address: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
     },
     roles: {
-        type: [String],
-        required: [true, "At least one role is required"],
-        enum: ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN"],
-        validate: {
-            validator: function(roles) {
-                return roles && roles.length > 0;
-            },
-            message: "At least one role must be selected"
-        }
+      type: [String],
+      required: [true, "At least one role is required"],
+      enum: ["COUNSELOR", "COUNSELEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
+      validate: {
+        validator: function (roles) {
+          return roles && roles.length > 0;
+        },
+        message: "At least one role must be selected",
+      },
+    },
+    // --- NEW FIELD ADDED HERE ---
+    passwordResetRequired: {
+        type: Boolean,
+        default: false // Default to false for self-registered users
     },
     // Reference to counselor profile if user is a MENTOR
     counselors_id: {
@@ -55,19 +91,27 @@ const RegisteruserSchema = new Schema({
     },
     // --- ADD THESE TWO NEW FIELDS HERE ---
     resetPasswordToken: {
-        type: String,
-        default: undefined // It will not exist in the document unless set
+      type: String,
+      default: undefined,
     },
     resetPasswordExpires: {
-        type: Date,
-        default: undefined // It will not exist in the document unless set
+      type: Date,
+      default: undefined,
     },
-    // ------------------------------------
-}, { timestamps: true });
 
-// Hash password before saving
+   
+    phone: {
+      type: String,
+      default: "", // Optional, validate if needed
+    },
+    
+  },
+  { timestamps: true }
+);
+
+// ✅ Hash password before saving
 RegisteruserSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+  if (!this.isModified("password")) return next();
 
     try {
         
@@ -78,10 +122,12 @@ RegisteruserSchema.pre("save", async function (next) {
     }
 });
 
-// Method to compare passwords
+// ✅ Compare password method
 RegisteruserSchema.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const Registeruser = mongoose.model('Registeruser', RegisteruserSchema);
+const Registeruser =
+  mongoose.models.Registeruser || mongoose.model("Registeruser", RegisteruserSchema);
+
 export default Registeruser;
