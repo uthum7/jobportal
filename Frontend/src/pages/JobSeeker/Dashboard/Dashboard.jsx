@@ -115,8 +115,8 @@ const JobSeekerDashboard = () => {
       let firstName = 'User';
       try {
         const userResponse = await axios.get(`http://localhost:5001/api/register/users/${userId}`, config);
-        // Use username field like in JobSeekerSidebar, fallback to firstName or other fields
-        const rawName = userResponse.data.username || userResponse.data.firstName || userResponse.data.fullName || 'User';
+        // Use username field like in JobSeekerSidebar, fallback to fullName or other fields
+        const rawName = userResponse.data.username || userResponse.data.fullName || 'User';
         firstName = capitalizeFirstWord(rawName);
       } catch (err) {
         console.warn("Could not fetch user profile:", err);

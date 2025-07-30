@@ -17,13 +17,6 @@ import {
   FaTimes,
 } from "react-icons/fa"
 import "./change-password.css"
-<<<<<<< HEAD
-import { axiosInstance } from "../../lib/axios"
-  const userstring = localStorage.getItem("user")
-  const user = userstring ? JSON.parse(userstring) : null
-
-=======
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
 export default function ChangePassword() {
   const [formData, setFormData] = useState({
@@ -94,46 +87,16 @@ export default function ChangePassword() {
     return errors
   }
 
-<<<<<<< HEAD
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    const errors = validateForm()
-=======
   const handleSubmit = (e) => {
     e.preventDefault()
 
     // Validate form
     const errors = validateForm()
 
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors)
       return
     }
-<<<<<<< HEAD
-    try {
-      // Call backend API to change password
-      const res = await axiosInstance.put("http://localhost:5001/api/auth/change-password", {
-        userId: JSON.parse(localStorage.getItem("user")).userId, // Get userId from localStorage
-        oldPassword: formData.currentPassword,
-        newPassword: formData.newPassword,
-      })
-      setFormSuccess(true)
-      setFormErrors({})
-      setFormData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      })
-    } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setFormErrors({ api: err.response.data.message })
-      } else {
-        setFormErrors({ api: "Failed to change password. Please try again." })
-      }
-      setFormSuccess(false)
-    }
-=======
 
     // In a real app, you would call an API to change the password
     console.log("Password change submitted:", formData)
@@ -147,7 +110,6 @@ export default function ChangePassword() {
       newPassword: "",
       confirmPassword: "",
     })
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   }
 
   return (
@@ -160,13 +122,8 @@ export default function ChangePassword() {
             alt="Sanduni Dilhara"
             className="profile-image"
           />
-<<<<<<< HEAD
-          <h3 className="profile-name">{user.name}</h3>
-          
-=======
           <h3 className="profile-name">Alexander Mitchell</h3>
           <p className="profile-title">Web Designer</p>
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         </div>
 
         <nav className="sidebar-menu">
@@ -253,14 +210,6 @@ export default function ChangePassword() {
               <p>Your password has been changed successfully!</p>
             </div>
           )}
-<<<<<<< HEAD
-          {formErrors.api && (
-            <div className="error-message" style={{ marginBottom: "1rem" }}>
-              <FaTimes className="criteria-icon" /> {formErrors.api}
-            </div>
-          )}
-=======
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
           <form className="password-form" onSubmit={handleSubmit}>
             <div className="form-group">

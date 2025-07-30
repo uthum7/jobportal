@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 const applicationSchema = new mongoose.Schema({
-  jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'jobs', required: true },
+  jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job', required: true },
   userId: {
     type: String, // Keep as String to match existing data
     required: true

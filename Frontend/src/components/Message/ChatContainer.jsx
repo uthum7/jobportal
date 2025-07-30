@@ -1,61 +1,3 @@
-<<<<<<< HEAD
-import {useChatStore} from "../../store/useChatStore";
-import { useEffect, useRef } from "react";
-
-import ChatHeader from "../skeletons/ChatHeader";
-import MessageInput from "../skeletons/MessageInput";
-import MessageSkeleton from  "../skeletons/MessageSkeleton";
-import { useAuthStore } from "../../store/useAuthStore";
-import { formatMessageTime } from "../../lib/utils.js";
-
-const ChatContainer = () => {
-    const {messages,getMessages ,isMessagesLoading ,selectedUser, subscribeToMessages,unsubscribeFromMessages}= useChatStore()
-    const { authUser } = useAuthStore();
-    const messageEndRef = useRef(null);
-
-    useEffect(()=> {
-        getMessages(selectedUser._id);
-
-        subscribeToMessages();
-
-        return () => unsubscribeFromMessages();
-    },[selectedUser._id, getMessages , subscribeToMessages ,unsubscribeFromMessages]);
-
-    //when new message get ,the page will automatically scroll
-    useEffect(() => {
-      if (messageEndRef.current && messages) {
-        messageEndRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-    }, [messages]);
-  
-
-    if(isMessagesLoading) {return (
-        <div className="flex-1 flex flex-col overflow-auto">
-            <ChatHeader/>
-            <MessageSkeleton/>
-            <MessageInput/>
-        </div>);
-    }
-
-    //Chatcontainer
-
-    return (
-        <div className="flex-1 flex flex-col overflow-auto">
-          <ChatHeader />
-    
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message._id}
-                className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
-                ref={messageEndRef}
-              >
-                <div className=" chat-image avatar">
-                  <div className="size-10 rounded-full border">
-                    <img
-                      src={
-                        message.senderId === authUser._id
-=======
 import { useChatStore } from "../../store/useChatStore";
 import { useEffect, useRef, useState } from "react";
 
@@ -157,7 +99,6 @@ const ChatContainer = () => {
                     <img
                       src={
                         isSender
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                           ? authUser.profilePic || "/avatar.png"
                           : selectedUser.profilePic || "/avatar.png"
                       }
@@ -165,13 +106,6 @@ const ChatContainer = () => {
                     />
                   </div>
                 </div>
-<<<<<<< HEAD
-                <div className="chat-header mb-1">
-                  <time className="text-xs opacity-50 ml-1">
-                    {formatMessageTime(message.createdAt)}
-                  </time>
-                </div>
-=======
 
                 <div className="chat-header mb-1 flex items-center justify-between gap-2">
                   <time className="text-xs opacity-50 ml-1">
@@ -188,7 +122,6 @@ const ChatContainer = () => {
                   )}
                 </div>
 
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                 <div className="chat-bubble flex flex-col">
                   {message.image && (
                     <img
@@ -200,18 +133,6 @@ const ChatContainer = () => {
                   {message.text && <p>{message.text}</p>}
                 </div>
               </div>
-<<<<<<< HEAD
-            ))}
-          </div>
-
-        <MessageInput/>
-
-    </div>)
-
-};
-
-export default ChatContainer;
-=======
             );
           })
         )}
@@ -233,4 +154,3 @@ export default ChatContainer;
 };
 
 export default ChatContainer;
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
