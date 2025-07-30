@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Route,
@@ -10,6 +11,7 @@ import { CVFormProvider } from './context/CVFormContext';
 import { Toaster } from 'sonner';
 
 // Navbars
+
 import Navbar from "./components/Navbar/Navbar.jsx";
 import AdminNavbar from './components/Navbar/AdminNavbar';
 import MentorNavbar from './components/Navbar/MentorNavbar';
@@ -44,6 +46,9 @@ import ViewAllJobs from "./pages/Admin/Manage/ViewAllJobs.jsx";
 import EnhancedCounselorInfo  from "./pages/Admin/Manage/ViewCounselor.jsx";
 import BookingManagement from "./pages/Admin/Manage/ViewAllBookings.jsx";
 import AddUserForm from "./pages/Admin/AddUserForm.jsx";
+import ViewJobseeker from "./pages/Admin/Manage/ViewJobseeker.jsx";
+import ViewCounselee from "./pages/Admin/Manage/ViewCounselee.jsx";
+
 // Job Seeker
 import JobSeekerDashboard from "./pages/JobSeeker/Dashboard/Dashboard.jsx";
 import ApplyForAjob from "./pages/JobSeeker/ApplyForAjob/ApplyForAjob.jsx";
@@ -85,7 +90,7 @@ import Cv5 from "./pages/Cv5/Cv5.jsx";
 import Cv6 from "./pages/Cv6/Cv6.jsx";
 import Cv7 from "./pages/Cv7/Cv7.jsx";
 import CVBuilderLayout from "./pages/CVBuilderLayout.jsx";
-
+import JobFormComponent from "./components/Employee/PostJob/JobFormComponent/JobFormComponent.jsx";
 // Dashboard redirects
 const dashboardByRole = {
   ADMIN: '/admin',
@@ -217,6 +222,9 @@ function App() {
           <Route path="/admin/viewcounselor/:id" element={<RoleBasedRoute element={<EnhancedCounselorInfo />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
           <Route path="/admin/viewallbookings/:id" element={<RoleBasedRoute element={<BookingManagement />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
           <Route path="/admin/adduser" element={<RoleBasedRoute element={<AddUserForm />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/viewjobseeker/:id" element={<RoleBasedRoute element={<ViewJobseeker />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+          <Route path="/admin/viewcounselee/:id" element={<RoleBasedRoute element={<ViewCounselee />} allowedRoles={["ADMIN"]} userRole={user?.role} />} />
+
 
           {/* Counselor */}
           <Route path="/counselor/dashboard" element={<RoleBasedRoute element={<CounselorDashboard />} allowedRoles={["ADMIN", "MENTOR"]} userRole={user?.role} />} />
