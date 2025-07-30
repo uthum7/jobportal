@@ -7,50 +7,41 @@ import cloudinary from "../lib/cloudinary.js";
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
   try {
-    // Validation for required fields
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Password length validation
     if (password.length < 6) {
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
-    // Check if user already exists with the same email
     const existingUser = await Registeruser.findOne({ email });
-
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // Hash the password for security
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create new user object
     const newUser = new Registeruser({
       fullName,
       email,
       password: hashedPassword
     });
 
-    if (newUser) {
-      generateToken(newUser._id, res);
-      await newUser.save(); // Save the user to the database
+    const token = generateToken(newUser._id, res); // ✅ get token
 
-      res.status(201).json({
-        _id: newUser._id,
-        fullName: newUser.fullName,
-        email: newUser.email,
-        profilePic: newUser.profilePic,
-        roles: newUser.roles,
-        username: newUser.username
+    await newUser.save();
 
-      });
-    } else {
-      res.status(400).json({ message: "Invalid user data" });
-    }
+    res.status(201).json({
+      token,
+      _id: newUser._id,
+      fullName: newUser.fullName,
+      email: newUser.email,
+      profilePic: newUser.profilePic,
+      roles: newUser.roles,
+      username: newUser.username
+    });
   } catch (error) {
     console.log("Error in signup controller:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
@@ -72,9 +63,10 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    generateToken(user._id, res);
+    const token = generateToken(user._id, res); // ✅ get token
 
     res.status(200).json({
+      token,
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
