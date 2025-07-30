@@ -308,7 +308,7 @@ body, html {
 }
 
 .chart-container {
-  height: 300px;
+  height: 500px;
   min-height: 300px;
   width: 100%;
 }

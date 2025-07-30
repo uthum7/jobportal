@@ -10,7 +10,7 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
     const scoreResult = calculateCandidateScore(candidate, job?.Requirements, job?.Qualifications);
     const score = scoreResult.score;
 
-    const formatDate = (date) => {
+    const formatDate = (date) => {  
         if (!date) return 'Not specified';
         return new Date(date).toLocaleDateString('en-US', {
             year: 'numeric',

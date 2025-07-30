@@ -19,6 +19,7 @@
 .job-form-header {
   text-align: center;
   margin-bottom: 3rem;
+  width:80vw;
   padding: 3rem 2rem;
   margin-top: -120px;
   border-radius: 24px;
@@ -73,6 +74,7 @@
   background: white;
   border-radius: 28px;
   padding: 3.5rem;
+  width:80vw;
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
   position: relative;
@@ -85,7 +87,8 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+  /* background: linear-gradient(90deg, #2cefb7, #21d26b, #26ec61, #60ed0e); */
+  background: linear-gradient(135deg, #10b981, #059669);
   border-radius: 28px 28px 0 0;
 }
 

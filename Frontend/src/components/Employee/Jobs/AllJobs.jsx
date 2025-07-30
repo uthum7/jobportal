@@ -48,6 +48,14 @@ const AllJobs = () => {
         return matchesSearch && matchesFilter;
     });
 
+    // Custom grid style for 3 columns
+    const gridStyle = {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '1.5rem',
+        width: '100%'
+    };
+
     return (
         <div className="all-jobs-container">
             <div className="jobs-header">
@@ -109,7 +117,7 @@ const AllJobs = () => {
                         </p>
                     </div>
                 ) : (
-                    <div className="jobs-grid">
+                    <div className="jobs-grid" style={gridStyle}>
                         {filteredJobs.map(job => (
                             <JobCard
                                 key={job._id}

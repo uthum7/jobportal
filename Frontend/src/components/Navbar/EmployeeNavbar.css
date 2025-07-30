@@ -1,6 +1,6 @@
 /* Employee Navbar Styles */
 .employee-navbar {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  /* background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-left: -150px;
+  margin-left: -220px;
   text-decoration: none;
   transition: all 0.3s ease;
 }
@@ -40,8 +40,8 @@
 }
 
 .employee-navbar-logo-img {
-  height: 40px;
-  width: auto;
+  height: 150px;
+  width: 150px;
   filter: brightness(1.1);
   transition: all 0.3s ease;
 }
@@ -136,15 +136,18 @@
 }
 
 .btn-logout-employee {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  color: white;
+  /* background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white; */
   padding: 0.75rem 1.5rem;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  font-size: large;
+  /* box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); */
 }
 
 .btn-logout-employee:hover {
   background: linear-gradient(135deg, #dc2626, #b91c1c);
   transform: translateY(-2px);
+  transition:0.25s ease-in-out;
+  color:white;
   box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
 }
 

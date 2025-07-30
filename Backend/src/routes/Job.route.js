@@ -6,7 +6,9 @@ import {
     deleteJobPost, 
     getAllJobApplications,
     getJobsWithApplications,
-    getJobApplications
+    getJobApplications,
+    getAllFiteredJobs,
+    getJobById
 } from "../controllers/Job.controller.js";
 
 const router = express.Router();

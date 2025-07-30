@@ -238,7 +238,7 @@ const EmployeeDashboardChart = () => {
   }
 
   return (
-    <div className="chart-container">
+    <div className="chart-container chart-container-2">
       <div className="chart-header">
         <div className="chart-title-section">
           <h2>Monthly Analytics</h2>

@@ -12,8 +12,9 @@ const EmployeePage = () => {
 
   return (
     <div className="employee-page">
-      <aside className="sidebar">
+      <aside className="sidebar-employee">
         <EmployeeSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        
       </aside>
       <main className="main-content">
         {activeTab === "Dashboard" && <EmployeeDashboard />}

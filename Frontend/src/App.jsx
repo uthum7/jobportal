@@ -92,7 +92,7 @@ const dashboardByRole = {
   MENTOR: '/counselor/dashboard',
   MENTEE: '/counselee/dashboard',
   JOBSEEKER: '/jobseeker/dashboard',
-  EMPLOYEE: "/employee/dashboard"
+  EMPLOYEE: "/employee"
 };
 
 // --- Protected Route Component ---

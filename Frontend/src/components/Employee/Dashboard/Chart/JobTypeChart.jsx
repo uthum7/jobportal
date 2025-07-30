@@ -16,6 +16,64 @@ const JobTypeChart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Function to normalize and group job types
+  const normalizeJobTypes = (jobTypes) => {
+    const normalizedMap = new Map();
+    
+    // Define mapping for common job type variations
+    const jobTypeMapping = {
+      'full-time': 'Full-time',
+      'full time': 'Full-time',
+      'fulltime': 'Full-time',
+      'part-time': 'Part-time',
+      'part time': 'Part-time',
+      'parttime': 'Part-time',
+      'remote': 'Remote',
+      'internship': 'Internship',
+      'intern': 'Internship',
+      'contract': 'Contract',
+      'contractor': 'Contract',
+      'freelance': 'Freelance',
+      'freelancer': 'Freelance',
+      'temporary': 'Temporary',
+      'temp': 'Temporary',
+      'project': 'Project-based',
+      'project base': 'Project-based',
+      'project based': 'Project-based',
+      'project-based': 'Project-based',
+      'projectbased': 'Project-based'
+    };
+    
+    jobTypes.forEach(type => {
+      // Convert to lowercase and trim whitespace for comparison
+      const rawValue = (type._id || 'Unknown').toLowerCase().trim();
+      
+      // Check if we have a mapping for this value
+      const displayName = jobTypeMapping[rawValue] || 
+                         rawValue.charAt(0).toUpperCase() + rawValue.slice(1);
+      
+      // Use the display name as the key to group similar variations
+      const normalizedKey = displayName.toLowerCase();
+      
+      if (normalizedMap.has(normalizedKey)) {
+        // Add to existing count
+        normalizedMap.set(normalizedKey, {
+          displayName,
+          count: normalizedMap.get(normalizedKey).count + type.count
+        });
+      } else {
+        // Create new entry
+        normalizedMap.set(normalizedKey, {
+          displayName,
+          count: type.count
+        });
+      }
+    });
+    
+    // Convert map back to array format and sort by count (descending)
+    return Array.from(normalizedMap.values()).sort((a, b) => b.count - a.count);
+  };
+
   useEffect(() => {
     const fetchJobTypes = async () => {
       try {
@@ -23,7 +81,10 @@ const JobTypeChart = () => {
         const response = await axios.get("http://localhost:5001/api/dashboard/analytics/job-types");
         
         if (response.data.success) {
-          const jobTypes = response.data.jobTypes;
+          const rawJobTypes = response.data.jobTypes;
+          
+          // Normalize and group similar job types
+          const normalizedJobTypes = normalizeJobTypes(rawJobTypes);
           
           const colors = [
             '#4f46e5',
@@ -37,11 +98,11 @@ const JobTypeChart = () => {
           ];
 
           setChartData({
-            labels: jobTypes.map(type => type._id || 'Unknown'),
+            labels: normalizedJobTypes.map(type => type.displayName),
             datasets: [{
-              data: jobTypes.map(type => type.count),
-              backgroundColor: colors.slice(0, jobTypes.length),
-              borderColor: colors.slice(0, jobTypes.length).map(color => color),
+              data: normalizedJobTypes.map(type => type.count),
+              backgroundColor: colors.slice(0, normalizedJobTypes.length),
+              borderColor: colors.slice(0, normalizedJobTypes.length).map(color => color),
               borderWidth: 2,
               hoverBorderWidth: 3,
               hoverOffset: 8

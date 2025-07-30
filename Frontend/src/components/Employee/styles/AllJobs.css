@@ -1,7 +1,8 @@
 /* styles/AllJobs.css */
 .all-jobs-container {
-    max-width: 1400px;
-    margin: 0 auto;
+    /* max-width: 1400px; */
+    margin:0;
+    width:100vw;
     padding: 20px;
     min-height: 100vh;
     background-color: #f8fafc;
@@ -14,6 +15,7 @@
     color: rgb(23, 8, 119);
     padding: 40px 20px;
     border-radius: 12px;
+    width: 100%;
 }
 
 .jobs-header h1 {
@@ -162,7 +164,7 @@
 .jobs-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 24px;
+    /* gap: 24px; */
     padding: 4px;
 }
 

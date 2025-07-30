@@ -33,8 +33,7 @@ const EmployeeNavbar = ({ onLogout }) => {
       <div className="employee-navbar-container">
         <div className="employee-navbar-brand">
           <Link to="/employee" onClick={handleLinkClick}>
-            <img src={logoPath} alt="Employee Dashboard Logo" className="employee-navbar-logo-img" />
-            <span className="employee-brand-text">Employee Portal</span>
+            <img src={logoPath} alt="Employee Dashboard Logo" className="employee-navbar-logo-img height-[50px] width-[50px]" />
           </Link>
         </div>
 

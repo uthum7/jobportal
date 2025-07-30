@@ -62,6 +62,11 @@ const Navbar = ({ onLogout }) => {
       { path: '/jobseeker/dashboard', label: 'Dashboard' },
       { path: '/jobseeker/cv-dashboard', label: 'CV Builder' },
       { path: '/jobseeker/jobs', label: 'Find Jobs' }
+    ],
+    EMPLOYEE: [
+      { path: '/employee', label: 'Dashboard' },
+      { path: '/employee/profile', label: 'Profile' },
+      { path: '/employee/jobs', label: 'My Jobs' }
     ]
     // Add other roles if necessary
   };
