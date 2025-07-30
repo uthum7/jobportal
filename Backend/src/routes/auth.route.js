@@ -1,3 +1,5 @@
+//route file for the authentication 
+
 import express from "express";
 import { protectRoute}from "../middleware/auth.middleware.js";
 import {  updateProfile, checkAuth,login,logout,signup, changePassword} from "../controllers/auth.controller.js";
@@ -6,7 +8,7 @@ import { forgotPassword, resetPassword } from "../controllers/registerauth.contr
 
 const router = express.Router();
 
-router.post("/signup",signup);
+router.post("/signup",signup);//in here founctions build up in controllers
 
 router.post("/login",login);
 

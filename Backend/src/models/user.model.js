@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,  
     },
-    profilePic: {
+    profilePic: {// Profile picture URL (optional, default is an empty string)
       type: String,
       default: "",
     },
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
       default: null, 
     },
   },
-  { timestamps: true }
+  { timestamps: true }// Automatically adds createdAt and updatedAt timestamps
 );
 
 const User = mongoose.model("User", userSchema);
