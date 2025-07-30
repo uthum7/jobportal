@@ -1,21 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+// Complete updated ManageCounselee.jsx with delete confirmation modal
+
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  Users,
-  MessageSquare,
-  Settings,
-  LogOut,
-  Calendar,
-  Eye,
-  Edit,
-  Trash2,
-  Menu,
-  X,
-  User,
-  Briefcase,
-  PlusCircle
-
-
+  Users, MessageSquare, Settings, LogOut, Calendar, Eye, Edit, Trash2, Menu, X, User, Briefcase, PlusCircle, AlertTriangle
 } from 'lucide-react';
 
 const ManageCounselee = () => {
@@ -25,8 +13,8 @@ const ManageCounselee = () => {
   const [counselees, setCounselees] = useState([]);
   const [selectedCounselee, setSelectedCounselee] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // Fetch counselees
   useEffect(() => {
     const fetchCounselees = async () => {
       try {
@@ -49,13 +37,23 @@ const ManageCounselee = () => {
 
   const handleNavigation = (path) => navigate(path);
 
-  const handleView = (id) => navigate(`/admin/enhancedcounseleeinfo?id=${id}`);
+  const handleView = (id) => navigate(`/admin/viewcounselee/${id}`);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this counselee?")) return;
+  const handleDeleteClick = (counselee) => {
+    setSelectedCounselee(counselee);
+    setConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:5001/api/users/counselees/${id}`, { method: 'DELETE' });
-      if (res.ok) setCounselees(counselees.filter(c => c._id !== id));
+      const res = await fetch(`http://localhost:5001/api/users/counselees/${selectedCounselee._id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setCounselees(counselees.filter(c => c._id !== selectedCounselee._id));
+        setConfirmDelete(false);
+        setSelectedCounselee(null);
+      }
     } catch (err) {
       console.error('Error deleting counselee:', err);
     }
@@ -97,7 +95,6 @@ const ManageCounselee = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
@@ -123,18 +120,15 @@ const ManageCounselee = () => {
               <SidebarItem icon={Users} label="Jobseeker" onClick={() => handleNavigation('/admin/managejobseeker')} />
               <SidebarItem icon={Users} label="Counselor" onClick={() => handleNavigation('/admin/managecounselor')} />
               <SidebarItem icon={Users} label="Counselee" active onClick={() => handleNavigation('/admin/managecounselee')} />
-              
             </div>
           </div>
           <div className="pt-6">
             <SidebarItem icon={MessageSquare} label="Messages" onClick={() => handleNavigation('/message/login')} />
             <SidebarItem icon={PlusCircle} label="AddUser" onClick={() => handleNavigation('/admin/adduser')} />
-           
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-0">
         <div className="p-6">
           <div className="lg:hidden mb-4">
@@ -157,7 +151,6 @@ const ManageCounselee = () => {
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredCounselees.map((c) => (
               <div key={c._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                {/* Card Header */}
                 <div className="px-6 py-5 border-b border-gray-200 flex items-center space-x-4">
                   <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-semibold text-xl">
                     {c.username?.charAt(0).toUpperCase() || "C"}
@@ -167,7 +160,6 @@ const ManageCounselee = () => {
                     <p className="text-sm text-gray-600">{c.email}</p>
                   </div>
                 </div>
-                {/* Details */}
                 <div className="p-6 space-y-3">
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <User className="w-4 h-4 text-green-600" /> <span>ID: {c._id}</span>
@@ -176,15 +168,14 @@ const ManageCounselee = () => {
                     <Briefcase className="w-4 h-4 text-blue-600" /> <span>Role: {c.roles?.join(', ') || 'N/A'}</span>
                   </div>
                 </div>
-                {/* Actions */}
                 <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
-                  <button onClick={() => navigate(`/admin/viewemployee/${e._id}`)} className="text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
+                  <button onClick={() => handleView(c._id)} className="text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
                     <Eye className="w-4 h-4" /> <span>View</span>
                   </button>
                   <button onClick={() => handleEdit(c)} className="text-blue-600 hover:text-blue-700 flex items-center space-x-1">
                     <Edit className="w-4 h-4" /> <span>Edit</span>
                   </button>
-                  <button onClick={() => handleDelete(c._id)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
+                  <button onClick={() => handleDeleteClick(c)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
                     <Trash2 className="w-4 h-4" /> <span>Delete</span>
                   </button>
                 </div>
@@ -214,10 +205,7 @@ const ManageCounselee = () => {
                 <input
                   type="text"
                   value={selectedCounselee.roles?.join(', ') || ''}
-                  onChange={(e) => setSelectedCounselee({
-                    ...selectedCounselee,
-                    roles: e.target.value.split(',').map(r => r.trim())
-                  })}
+                  onChange={(e) => setSelectedCounselee({ ...selectedCounselee, roles: e.target.value.split(',').map(r => r.trim()) })}
                   className="w-full mb-3 px-4 py-2 border rounded"
                   placeholder="Roles (comma separated)"
                 />
@@ -228,10 +216,45 @@ const ManageCounselee = () => {
               </div>
             </div>
           )}
+
+          {/* Delete Modal */}
+          {confirmDelete && selectedCounselee && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-3xl shadow-xl max-w-md w-full mx-4 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
+                      <AlertTriangle className="text-red-600" size={20} />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900">Delete Counselee</h2>
+                  </div>
+                  <button onClick={() => setConfirmDelete(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                    <X size={24} />
+                  </button>
+                </div>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Are you sure you want to delete this counselee? This action cannot be undone.
+                </p>
+                <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+                  <h3 className="font-semibold text-gray-900 text-lg">{selectedCounselee.username || 'Unknown Counselee'}</h3>
+                  <p className="text-gray-600">{selectedCounselee.email || 'No Email'}</p>
+                  <p className="text-gray-500 text-sm mt-1">ID: {selectedCounselee._id}</p>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setConfirmDelete(false)} className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-2xl font-medium hover:bg-gray-200 transition-colors">
+                    No, Cancel
+                  </button>
+                  <button onClick={handleConfirmDelete} className="flex-1 px-6 py-3 bg-red-600 text-white rounded-2xl font-medium hover:bg-red-700 transition-colors">
+                    Yes, Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
 
-      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
