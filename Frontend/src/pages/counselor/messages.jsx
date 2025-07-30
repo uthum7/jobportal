@@ -194,7 +194,6 @@ export default function CounselorMessages() {
       handleSendMessage()
     }
   }
-
   return (
     <div className="dashboard-layout">
       {/* Left Sidebar */}

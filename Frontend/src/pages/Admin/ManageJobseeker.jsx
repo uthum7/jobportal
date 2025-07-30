@@ -1,19 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  Users,
-  MessageSquare,
-  Settings,
-  LogOut,
-  Calendar,
-  Eye,
-  Edit,
-  Trash2,
-  Menu,
-  X,
-  User,
-  Briefcase,
-  PlusCircle
+  Users, MessageSquare, Settings, LogOut, Calendar, Eye, Edit, Trash2,
+  Menu, X, User, Briefcase, PlusCircle, AlertTriangle
 } from 'lucide-react';
 
 const ManageJobseeker = () => {
@@ -23,8 +12,8 @@ const ManageJobseeker = () => {
   const [jobseekers, setJobseekers] = useState([]);
   const [selectedJobseeker, setSelectedJobseeker] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 
-  // Fetch jobseekers
   useEffect(() => {
     const fetchJobseekers = async () => {
       try {
@@ -47,21 +36,29 @@ const ManageJobseeker = () => {
   );
 
   const handleNavigation = (path) => navigate(path);
-  const handleView = (id) => navigate(`/admin/enhancedjobseekerinfo?id=${id}`);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this jobseeker?")) return;
-    try {
-      const res = await fetch(`http://localhost:5001/api/users/jobseekers/${id}`, { method: 'DELETE' });
-      if (res.ok) setJobseekers(jobseekers.filter(j => j._id !== id));
-    } catch (err) {
-      console.error('Error deleting jobseeker:', err);
-    }
-  };
+  const handleView = (id) => navigate(`/admin/viewjobseeker/${id}`);
 
   const handleEdit = (jobseeker) => {
     setSelectedJobseeker({ ...jobseeker });
     setIsEditMode(true);
+  };
+
+  const handleDeleteConfirm = (jobseeker) => {
+    setSelectedJobseeker(jobseeker);
+    setIsDeleteConfirmVisible(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`http://localhost:5001/api/users/jobseekers/${selectedJobseeker._id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setJobseekers(jobseekers.filter(j => j._id !== selectedJobseeker._id));
+        setIsDeleteConfirmVisible(false);
+      }
+    } catch (err) {
+      console.error('Error deleting jobseeker:', err);
+    }
   };
 
   const handleUpdate = async () => {
@@ -95,7 +92,6 @@ const ManageJobseeker = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
@@ -121,18 +117,15 @@ const ManageJobseeker = () => {
               <SidebarItem icon={Users} label="Jobseeker" active onClick={() => handleNavigation('/admin/managejobseeker')} />
               <SidebarItem icon={Users} label="Counselor" onClick={() => handleNavigation('/admin/managecounselor')} />
               <SidebarItem icon={Users} label="Counselee" onClick={() => handleNavigation('/admin/managecounselee')} />
-              
             </div>
           </div>
           <div className="pt-6">
             <SidebarItem icon={MessageSquare} label="Messages" onClick={() => handleNavigation('/message/login')} />
             <SidebarItem icon={PlusCircle} label="AddUser" onClick={() => handleNavigation('/admin/adduser')} />
-            
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 lg:ml-0">
         <div className="p-6">
           <div className="lg:hidden mb-4">
@@ -140,7 +133,6 @@ const ManageJobseeker = () => {
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
-
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Manage Jobseekers</h2>
           <div className="flex items-center mb-6 gap-4">
             <input
@@ -151,12 +143,9 @@ const ManageJobseeker = () => {
               className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
-
-          {/* Jobseeker Cards */}
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredJobseekers.map((j) => (
               <div key={j._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                {/* Card Header */}
                 <div className="px-6 py-5 border-b border-gray-200 flex items-center space-x-4">
                   <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-xl">
                     {j.username?.charAt(0).toUpperCase() || j.fullName?.charAt(0).toUpperCase() || "U"}
@@ -166,7 +155,6 @@ const ManageJobseeker = () => {
                     <p className="text-sm text-gray-600">{j.email}</p>
                   </div>
                 </div>
-                {/* Details */}
                 <div className="p-6 space-y-3">
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <User className="w-4 h-4 text-blue-600" /> <span>ID: {j._id}</span>
@@ -175,7 +163,6 @@ const ManageJobseeker = () => {
                     <Briefcase className="w-4 h-4 text-green-600" /> <span>Role: {j.roles?.join(', ') || 'N/A'}</span>
                   </div>
                 </div>
-                {/* Actions */}
                 <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
                   <button onClick={() => handleView(j._id)} className="text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
                     <Eye className="w-4 h-4" /> <span>View</span>
@@ -183,7 +170,7 @@ const ManageJobseeker = () => {
                   <button onClick={() => handleEdit(j)} className="text-blue-600 hover:text-blue-700 flex items-center space-x-1">
                     <Edit className="w-4 h-4" /> <span>Edit</span>
                   </button>
-                  <button onClick={() => handleDelete(j._id)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
+                  <button onClick={() => handleDeleteConfirm(j)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
                     <Trash2 className="w-4 h-4" /> <span>Delete</span>
                   </button>
                 </div>
@@ -191,7 +178,6 @@ const ManageJobseeker = () => {
             ))}
           </div>
 
-          {/* Edit Modal */}
           {isEditMode && selectedJobseeker && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40 z-50">
               <div className="bg-white p-6 rounded shadow-md w-[90%] max-w-md">
@@ -213,10 +199,7 @@ const ManageJobseeker = () => {
                 <input
                   type="text"
                   value={selectedJobseeker.roles?.join(', ') || ''}
-                  onChange={(e) => setSelectedJobseeker({
-                    ...selectedJobseeker,
-                    roles: e.target.value.split(',').map(r => r.trim())
-                  })}
+                  onChange={(e) => setSelectedJobseeker({ ...selectedJobseeker, roles: e.target.value.split(',').map(r => r.trim()) })}
                   className="w-full mb-3 px-4 py-2 border rounded"
                   placeholder="Roles (comma separated)"
                 />
@@ -227,10 +210,42 @@ const ManageJobseeker = () => {
               </div>
             </div>
           )}
+
+          {isDeleteConfirmVisible && selectedJobseeker && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-3xl shadow-xl max-w-md w-full mx-4 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
+                      <AlertTriangle className="text-red-600" size={20} />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900">Delete User</h2>
+                  </div>
+                  <button onClick={() => setIsDeleteConfirmVisible(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                    <X size={24} />
+                  </button>
+                </div>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Are you sure you want to delete this user? This action cannot be undone.
+                </p>
+                <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+                  <h3 className="font-semibold text-gray-900 text-lg">{selectedJobseeker.username || 'Unknown User'}</h3>
+                  <p className="text-gray-600">{selectedJobseeker.email || 'No Email'}</p>
+                  <p className="text-gray-500 text-sm mt-1">ID: {selectedJobseeker._id}</p>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setIsDeleteConfirmVisible(false)} className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-2xl font-medium hover:bg-gray-200 transition-colors">
+                    No, Cancel
+                  </button>
+                  <button onClick={handleDelete} className="flex-1 px-6 py-3 bg-red-600 text-white rounded-2xl font-medium hover:bg-red-700 transition-colors">
+                    Yes, Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}

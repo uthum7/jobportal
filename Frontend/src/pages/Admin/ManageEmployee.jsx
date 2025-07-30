@@ -54,10 +54,8 @@ const ManageEmployee = () => {
 
   const handleNavigation = (path) => navigate(path);
   const handleView = (id) => navigate(`/admin/viewemployee/${id}`);
-  const handleEdit = (employee) => {
-    setSelectedEmployee({ ...employee });
-    setIsEditMode(true);
-  };
+const handleEdit = (employee) => {navigate(`/admin/viewalljobs/${employee._id}`);};
+
 
   const handleDeleteClick = (employee) => {
     setSelectedEmployee(employee);

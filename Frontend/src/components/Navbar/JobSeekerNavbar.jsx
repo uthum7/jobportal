@@ -25,10 +25,12 @@ const JobSeekerNavbar = ({ onLogout }) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const handleLinkClick = () => {
     if (isMenuOpen) toggleMenu();
+
   };
 
   return (
     <nav className="jobseeker-navbar">
+
       <div className="jobseeker-navbar-container">
         <div className="jobseeker-navbar-brand">
           <Link to="/" onClick={handleLinkClick}>
@@ -44,7 +46,7 @@ const JobSeekerNavbar = ({ onLogout }) => {
         <div className="jobseeker-nav-links-group">
           <Link
             to="/jobseeker/dashboard"
-            className={`jobseeker-nav-link ${location.pathname === '/jobseeker/dashboard' ? 'active' : ''}`}
+            className={`jobseeker-nav-link ${location.pathname.toLowerCase() === '/jobseeker/dashboard' ? 'active' : ''}`}
             onClick={handleLinkClick}
           >
             Dashboard
@@ -83,7 +85,7 @@ const JobSeekerNavbar = ({ onLogout }) => {
         <div className={`jobseeker-mobile-menu ${isMenuOpen ? 'active' : ''}`}>
           <Link
             to="/jobseeker/dashboard"
-            className={`jobseeker-nav-link ${location.pathname === '/jobseeker/dashboard' ? 'active' : ''}`}
+            className={`jobseeker-nav-link ${location.pathname.toLowerCase() === '/jobseeker/dashboard' ? 'active' : ''}`}
             onClick={handleLinkClick}
           >
             Dashboard
@@ -106,9 +108,11 @@ const JobSeekerNavbar = ({ onLogout }) => {
             Logout
           </button>
         </div>
+
       </div>
     </nav>
   );
 };
 
 export default JobSeekerNavbar;
+

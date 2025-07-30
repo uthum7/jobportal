@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import JobseekerSidebar from "../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar.jsx";
 import { getUserId, isAuthenticated, isJobSeeker, getToken } from "../../../utils/auth.js";
-import "./JobDetails.css";
-import "../Dashboard/Dashboard.css";
 import ApplyNow from "../ApplyNow/ApplyNow.jsx";
-
+import { Bookmark, BookmarkCheck, Calendar, Clock, MapPin, Briefcase, User, ArrowLeft } from "lucide-react";
 
 //Displays detailed information about a specific job listing with save functionality
 const JobDetails = () => {
   const { jobId } = useParams(); // Extract jobId from URL parameters
+  const navigate = useNavigate();
   const [job, setJob] = useState(null); // Store job details
   const [loading, setLoading] = useState(true); // Loading state flag
   const [error, setError] = useState(null); // Error handling state
@@ -39,6 +38,16 @@ const JobDetails = () => {
     coverLetter: ''
   });
 
+  // Check if job has expired
+  const isJobExpired = () => {
+    if (!job?.JobDeadline) return false;
+    const deadline = new Date(job.JobDeadline);
+    const now = new Date();
+    // Set deadline to end of day (23:59:59) and compare with current time
+    deadline.setHours(23, 59, 59, 999);
+    return now > deadline;
+  };
+
   useEffect(() => {
   if (!isAuthenticated() || !isJobSeeker()) {
     navigate("/login");
@@ -49,7 +58,8 @@ const JobDetails = () => {
   if (uid) {
     setUserId(uid);
   }
-}, []);
+}, [navigate]);
+
 useEffect(() => {
   if (!userId) return;
     // Fetch job details from API based on URL parameter
@@ -98,235 +108,322 @@ useEffect(() => {
         }
       } catch (err) {
         console.error("Error checking saved job status:", err);
-        setIsJobSaved(false);
       }
     };
 
     checkSavedStatus();
-  }, [jobId, userId]); // Re-run when jobId or userId changes
+  }, [userId, jobId]);
 
-  //  function to format relative time
   const formatRelativeTime = (dateString) => {
-    if (!dateString) return "Not specified";
-
-    const posted = new Date(dateString);
     const now = new Date();
-    const diffInMilliseconds = now - posted;
+    const postedDate = new Date(dateString);
+    const diffInMs = now - postedDate;
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-    // Convert to minutes, hours, days
-    const diffInMinutes = Math.floor(diffInMilliseconds / 60000);
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
-
-    if (diffInMinutes < 1) {
-      return "Just now";
-    } else if (diffInMinutes < 60) {
-      return `${diffInMinutes} ${diffInMinutes === 1 ? 'minute' : 'minutes'} ago`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+    if (diffInDays === 0) {
+      return "Today";
+    } else if (diffInDays === 1) {
+      return "Yesterday";
+    } else if (diffInDays < 7) {
+      return `${diffInDays} days ago`;
     } else if (diffInDays < 30) {
-      return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
+      const weeks = Math.floor(diffInDays / 7);
+      return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
     } else {
-      return posted.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
+      return postedDate.toLocaleDateString();
     }
   };
 
-  // function to format date
   const formatDate = (dateString) => {
-    if (!dateString) return "Not specified";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
-  // Function to handle saving or removing a job
+  // Helper function to capitalize first letter of each word
+  const capitalizeWords = (str) => {
+    if (!str) return "Not specified";
+    return str.replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+
   const handleSaveJob = async () => {
+    if (!userId) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    setAnimating(true);
+
     try {
-      // Start animation
-      setAnimating(true);
-
-      if (!isJobSaved) {
-        // Save the job
-        const response = await axios.post('http://localhost:5001/api/saved-jobs/save', {
-          jobId: jobId,
-          userId: userId
-        });
-
-        // Store returned document ID for later deletion if needed
-        if (response.data && response.data._id) {
-          setSavedJobId(response.data._id);
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${getToken()}`,
+          'Content-Type': 'application/json'
         }
+      };
 
-        setIsJobSaved(true);
-      } else {
-        // Delete the saved job
-        await axios.delete('http://localhost:5001/api/saved-jobs/remove', {
+      if (isJobSaved) {
+        // Remove from saved jobs - Updated to match JobCard endpoint
+        await axios.delete(`http://localhost:5001/api/saved-jobs/remove`, {
+          ...config,
           data: {
             jobId: jobId,
             userId: userId
           }
         });
-
         setIsJobSaved(false);
         setSavedJobId(null);
+      } else {
+        // Add to saved jobs - Updated to match JobCard endpoint
+        const response = await axios.post(`http://localhost:5001/api/saved-jobs/save`, {
+          userId: userId,
+          jobId: jobId
+        }, config);
+        setIsJobSaved(true);
+        setSavedJobId(response.data._id);
       }
-
-      // Reset animation state after animation completes
-      setTimeout(() => {
-        setAnimating(false);
-      }, 500);
-    } catch (error) {
-      console.error("Error saving/removing job:", error);
+    } catch (err) {
+      console.error("Error saving/unsaving job:", err);
+    } finally {
       setAnimating(false);
     }
   };
 
-  // Conditional rendering states
-  if (loading) return <div className="loading-container">Loading job details...</div>;
-  if (error) return <div className="error-container">{error}</div>;
-  if (!job) return <div className="error-container">Job not found</div>;
-
-  return (
-    <div className="dashboard-containerJS">
-      <JobseekerSidebar />
-      <div className="main-content-wrapper">
-        {/* Page header with title and breadcrumb navigation */}
-        <div className="header">
-          <h1 className="page-title">Job Details</h1>
-          <div className="breadcrumb">
-            <Link to="/" className="breadcrumb-link">Home</Link>
-            <span className="breadcrumb-separator">/</span>
-            <Link to="/JobSeeker/apply-for-job" className="breadcrumb-link">Apply For A Job</Link>
-            <span className="breadcrumb-separator">/</span>
-            <span className="breadcrumb-current">Job Details</span>
-          </div>
-        </div>
-
-        <div className="job-details-container">
-          {/* Job Header Section with title and action buttons */}
-          <div className="job-header">
-            <div className="job-header-content">
-              <div className="job-header-info">
-                <h2 className="job-title-details">{job.JobTitle}</h2>
-              </div>
-              <div className="job-apply-button">
-                <button
-                  className={`apply-now-btn ${hasApplied ? 'applied' : ''}`}
-                  onClick={() => setShowApplyForm(true)}
-                  disabled={hasApplied}
-                >
-                  {hasApplied ? 'Already Applied' : 'Apply Now'}
-                </button>
-                {/* save job button */}
-                <button
-                  className={`save-job-btn ${isJobSaved ? 'saved' : ''} ${animating ? 'animate' : ''}`}
-                  onClick={handleSaveJob}
-                >
-                  {isJobSaved ? 'Saved Job' : 'Save Job'}
-                </button>
-              </div>
+  if (loading) {
+    return (
+      <div className="min-h-screen flex bg-gray-50">
+        <JobseekerSidebar />
+        <div className="flex-1 lg:ml-0">
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading job details...</p>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
 
-          {/* Job Details Section */}
-          <div className="job-details-content">
-            <div className="job-details-summary">
-              <div className="job-summary-item">
-                <h4>Job Type</h4>
-                <p>{job.JobType || "Not specified"}</p>
-              </div>
-              <div className="job-summary-item">
-                <h4>Experience</h4>
-                <p>{job.JobExperienceYears || 0} Years</p>
-              </div>
-              <div className="job-summary-item">
-                <h4>Job Mode</h4>
-                <p>{job.JobMode || "Not specified"}</p>
-              </div>
-              <div className="job-summary-item">
-                <h4>Posted</h4>
-                <p>{formatRelativeTime(job.postedDate)}</p>
+  if (error || !job) {
+    return (
+      <div className="min-h-screen flex bg-gray-50">
+        <JobseekerSidebar />
+        <div className="flex-1 lg:ml-0">
+          <div className="flex items-center justify-center h-full">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center max-w-md">
+              <h2 className="text-xl font-semibold text-red-800 mb-2">Error Loading Job</h2>
+              <p className="text-red-600">{error || "Job not found"}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex bg-gray-50">
+      <JobseekerSidebar />
+      <div className="flex-1 lg:ml-0">
+        <div className="p-6">
+          {/* Page header with title and breadcrumb navigation */}
+          <header className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Job Details</h1>
+            <nav className="text-sm text-gray-600">
+              <Link to="/" className="text-blue-600 hover:text-blue-700">Home</Link>
+              <span className="mx-2">/</span>
+              <Link to="/JobSeeker/apply-for-job" className="text-blue-600 hover:text-blue-700">Apply For A Job</Link>
+              <span className="mx-2">/</span>
+              <span className="text-gray-500">Job Details</span>
+            </nav>
+          </header>
+
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            {/* Job Header Section with title and action buttons */}
+            <div className="p-6 border-b border-gray-200 bg-green-50">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h2 className="text-3xl font-extrabold text-gray-800 mb-8">{job.JobTitle}</h2>
+                  
+                  {/* Job Summary Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <Briefcase className="w-4 h-4 text-green-600" />
+                      <div>
+                        <p className="text-sm font-semibold text-green-700">Job Type</p>
+                        <p className="font-medium text-gray-800">{capitalizeWords(job.JobType)}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <User className="w-4 h-4 text-green-600" />
+                      <div>
+                        <p className="text-sm font-semibold text-green-700">Experience</p>
+                        <p className="font-medium text-gray-800">{job.JobExperienceYears || 0} Years</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="w-4 h-4 text-green-600" />
+                      <div>
+                        <p className="text-sm font-semibold text-green-700">Job Mode</p>
+                        <p className="font-medium text-gray-800">{capitalizeWords(job.JobMode)}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="w-4 h-4 text-green-600" />
+                      <div>
+                        <p className="text-sm font-semibold text-green-700">Posted</p>
+                        <p className="font-medium text-gray-800">{formatRelativeTime(job.postedDate)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col space-y-3 ml-6">
+                  {isJobExpired() ? (
+                    <div className="flex items-center space-x-2 px-6 py-3 rounded-lg font-medium bg-red-100 text-red-700">
+                      <Clock className="w-4 h-4" />
+                      <span>Job Expired</span>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                          hasApplied 
+                            ? 'bg-blue-100 text-blue-700 cursor-not-allowed' 
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                        onClick={() => setShowApplyForm(true)}
+                        disabled={hasApplied}
+                      >
+                        {hasApplied ? 'Already Applied' : 'Apply Now'}
+                      </button>
+                      
+                      <button
+                        className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                          isJobSaved 
+                            ? 'bg-yellow-500 text-white hover:bg-yellow-600' 
+                            : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                        }`}
+                        onClick={handleSaveJob}
+                      >
+                        {isJobSaved ? (
+                          <>
+                            <BookmarkCheck className="w-4 h-4" />
+                            <span>Saved Job</span>
+                          </>
+                        ) : (
+                          <>
+                            <Bookmark className="w-4 h-4" />
+                            <span>Save Job</span>
+                          </>
+                        )}
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Job Description Tab Section */}
-            <div className="job-tabs">
-              <div className="tab-navigation">
-                <button
-                  className={`tab-btn ${activeTab === "description" ? "active" : ""}`}
-                  onClick={() => setActiveTab("description")}
-                >
-                  Job Description
-                </button>
-                <button
-                  className={`tab-btn ${activeTab === "requirements" ? "active" : ""}`}
-                  onClick={() => setActiveTab("requirements")}
-                >
-                  Job Requirements & Qualifications
-                </button>
+            <div className="p-6">
+              <div className="border-b border-gray-300 mb-6 bg-gray-50 p-4 rounded-t-lg">
+                <div className="flex space-x-8">
+                  <button
+                    className={`py-3 px-4 border-b-2 font-semibold text-sm transition-colors rounded-t-lg ${
+                      activeTab === "description" 
+                        ? 'border-blue-600 text-blue-700 bg-white' 
+                        : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setActiveTab("description")}
+                  >
+                    Job Description
+                  </button>
+                  <button
+                    className={`py-3 px-4 border-b-2 font-semibold text-sm transition-colors rounded-t-lg ${
+                      activeTab === "requirements" 
+                        ? 'border-blue-600 text-blue-700 bg-white' 
+                        : 'border-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setActiveTab("requirements")}
+                  >
+                    Job Requirements & Qualifications
+                  </button>
+                </div>
               </div>
 
               {/* Description Tab content*/}
-              <div className={`tab-content ${activeTab === "description" ? "active" : ""}`}>
-                <div className="job-description">
-                  <h3>Job Description</h3>
-                  <p>{job.JobDescription || "No description provided."}</p>
+              {activeTab === "description" && (
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Job Description</h3>
+                    <p className="text-gray-700 leading-relaxed">{job.JobDescription || "No description provided."}</p>
+                  </div>
 
                   {/* Conditional rendering of responsibilities section */}
                   {job.Responsibilities && job.Responsibilities.length > 0 && (
-                    <>
-                      <h3>Responsibilities</h3>
-                      <ul>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">Responsibilities</h3>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700">
                         {job.Responsibilities.map((responsibility, index) => (
                           <li key={index}>{responsibility}</li>
                         ))}
                       </ul>
-                    </>
+                    </div>
                   )}
 
-                  <div className="application-deadline">
-                    <h3>Application Deadline</h3>
-                    <p>{formatDate(job.JobDeadline)}</p>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Application Deadline</h3>
+                    <p className="text-red-700">{formatDate(job.JobDeadline)}</p>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Requirements & Qualifications Tab content*/}
-              <div className={`tab-content ${activeTab === "requirements" ? "active" : ""}`}>
-                <div className="job-description">
+              {activeTab === "requirements" && (
+                <div className="space-y-6">
                   {/* Conditional rendering of requirements section */}
                   {job.Requirements && job.Requirements.length > 0 ? (
-                    <>
-                      <h3>Requirements</h3>
-                      <ul>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">Requirements</h3>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700">
                         {job.Requirements.map((requirement, index) => (
                           <li key={index}>{requirement}</li>
                         ))}
                       </ul>
-                    </>
+                    </div>
                   ) : (
-                    <p>No specific requirements listed for this position.</p>
+                    <p className="text-gray-600">No specific requirements listed for this position.</p>
                   )}
+                  
                   {/* Conditional rendering of qualifications section */}
                   {job.Qualifications && job.Qualifications.length > 0 && (
-                    <>
-                      <h3>Qualifications</h3>
-                      <ul>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3">Qualifications</h3>
+                      <ul className="list-disc list-inside space-y-2 text-gray-700">
                         {job.Qualifications.map((qualification, index) => (
                           <li key={index}>{qualification}</li>
                         ))}
                       </ul>
-                    </>
+                    </div>
                   )}
+
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">Application Deadline</h3>
+                    <p className="text-red-700">{formatDate(job.JobDeadline)}</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

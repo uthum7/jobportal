@@ -94,7 +94,6 @@ export default function CounselorChangePassword() {
       })
     }, 1000)
   }
-
   return (
     <div className="dashboard-layout">
       {/* Left Sidebar */}
