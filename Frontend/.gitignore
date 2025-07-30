@@ -61,3 +61,6 @@ Icon?
 # Others
 *.env
 coverage/
+
+# Ignore sensitive environment files
+Backend/.env

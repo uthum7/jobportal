@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+/* ======================================= */
+/* === ROOT VARIABLES & GLOBAL STYLES  === */
+/* ======================================= */
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 :root {
   --primary-color: #4a90e2;
   --secondary-color: #f5f7fa;
@@ -23,6 +29,7 @@ body {
   min-height: 100vh;
 }
 
+<<<<<<< HEAD
 .resumeBuilder {
   display: flex;
   background-color: var(--secondary-color);
@@ -34,10 +41,24 @@ body {
 }
 
 /* Main content area with form and preview side by side */
+=======
+/* ======================================= */
+/* ===      MAIN LAYOUT & CONTENT      === */
+/* ======================================= */
+.resumeBuilder {
+  display: flex;
+  background-color: var(--secondary-color);
+  box-sizing: border-box;
+  margin: 0 auto;
+  gap:60px;
+}
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 .content {
   display: flex;
   flex-direction: row;
   gap: 40px;
+<<<<<<< HEAD
   padding: 0;
   margin: 30px;
   background-color: transparent;
@@ -111,12 +132,20 @@ body {
   margin-top : 40px;
 }
 /* Left side - Form container */
+=======
+  padding: 20px;
+  margin: 30px;
+  width: 100%;
+}
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 .formContainer {
   flex: 5;
   background: var(--form-bg);
   padding: 35px 40px;
   border-radius: 12px;
   box-shadow: var(--shadow-medium);
+<<<<<<< HEAD
   position: sticky;
   top: 15px;
   height: 1560px;
@@ -286,6 +315,11 @@ textarea {
 
 
 /* --- CV Preview Styles --- */
+=======
+  height: 1560px;
+}
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 .cvPreview {
   flex: 7;
   background: var(--preview-bg);
@@ -294,8 +328,11 @@ textarea {
   box-shadow: var(--shadow-medium);
   margin-top: 15px;
   height: 1560px;
+<<<<<<< HEAD
   min-height: 800px;
   width: 1800px;
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 }
 
 .cvContainer {
@@ -309,6 +346,7 @@ textarea {
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+<<<<<<< HEAD
 .cvLeft {
   width: 32%;
   background: #f2f7fc;
@@ -577,6 +615,85 @@ textarea {
   position: absolute;   /* Position the button relative to the container */
   top: 12px;            /* Position it from the top */
   right: 12px;          /* Position it from the right */
+=======
+.header {
+  margin-top : 40px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ======================================= */
+/* ===      FORM ELEMENTS & STYLES     === */
+/* ======================================= */
+.formColumns {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 24px;
+  background: #f7fafc;
+  border-radius: 12px;
+  padding: 32px 28px;
+  border: 1px solid var(--border-color);
+}
+
+.formLeft,
+.formRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.formLeft {
+  border-right: 1.5px solid #e3e9f2;
+  padding-right: 24px;
+}
+
+input, select, textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  color: var(--text-color);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.13);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+/* --- NEW STYLES for AI Enhancement Button on Profile Paragraph --- */
+.textareaContainer {
+  position: relative;
+  width: 100%;
+}
+
+.profileParagraph {
+  /* Adjust the existing profileParagraph textarea style to make space for the button */
+  padding-right: 150px !important; /* The !important ensures this overrides other textarea styles */
+  min-height: 150px;
+}
+
+.aiButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   background-color: var(--primary-color);
   color: white;
   padding: 8px 16px;
@@ -599,6 +716,7 @@ textarea {
   cursor: not-allowed;
 }
 
+<<<<<<< HEAD
 /* Adjust the existing profileParagraph textarea style to make space for the button */
 .profileParagraph {
   padding-right: 150px !important; /* The !important ensures this overrides other textarea styles if needed */
@@ -846,4 +964,179 @@ textarea {
     width: 36px;
     height: 36px;
   }
+=======
+/* --- SAVE BUTTON --- */
+.saveBtn {
+  background: var(--success-color);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  width: auto;      
+  display: block;
+  margin-left: auto; 
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.saveBtn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* --- DATE INPUT PLACEHOLDER STYLES --- */
+input[type="date"] {
+  position: relative;
+  color: transparent;
+}
+input[type="date"]::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  left: 20px; /* Aligns with other input padding */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+input[type="date"]:focus,
+input[type="date"][value]:not([value=""]) {
+  color: var(--text-color);
+}
+input[type="date"]:focus::before,
+input[type="date"][value]:not([value=""])::before {
+  opacity: 0;
+}
+
+/* ======================================= */
+/* ===      CV PREVIEW STYLES          === */
+/* ======================================= */
+.cvLeft {
+  width: 32%;
+  background: #f2f7fc;
+  color: var(--text-color);
+  padding: 35px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cvRight {
+  width: 68%;
+  padding: 35px 30px;
+}
+
+.verticalLine {
+  border-left: 1px solid var(--border-color);
+}
+
+.profileImage {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.profileSection h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 15px;
+}
+.profileSection h3 { /* For job title - if you bring it back */
+  font-size: 16px;
+  font-weight: 500;
+  color: #556677;
+  margin-top: 5px;
+}
+
+.h4Headers {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: left;
+}
+.contactInfo, .education {
+  width: 100%;
+  margin-bottom: 20px;
+  /* align-items: flex-start and text-align: left from old code were removed */
+  /* because they are not needed if the children are properly styled. */
+}
+.contactInfo p, .educationItem p, .experienceItem p, .profilePara p, .summary p, .references p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #444;
+  text-align: left;
+}
+
+.educationItem, .experienceItem {
+  margin-bottom: 20px;
+  text-align: left;
+}
+.educationItem h5, .experienceItem h5 {
+  margin-bottom: 5px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.educationItem span, .experienceItem span {
+  font-size: 15px;
+  color: #555;
+  display: block;
+  margin-bottom: 8px;
+}
+.uniPara { margin-top: 4px; }
+
+.skillsList { list-style: none; padding: 0; }
+.skillRow { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+.skillName { flex: 1; }
+.star { font-size: 20px; color: #e0e0e0; }
+.checked { color: #FFD700; }
+
+/* ======================================= */
+/* === INSTRUCTION & RESPONSIVE STYLES === */
+/* ======================================= */
+.instractionSection {
+  background: #f8fafc;
+  border: 1px solid #e0e7ef;
+  border-radius: 10px;
+  padding: 24px 32px;
+  margin-top: 40px;
+}
+.instractionSection h3 { font-size: 20px; font-weight: 600; color: #1a237e; margin-top: 0; margin-bottom: 18px; }
+.instractionSection ul { list-style: disc inside; padding-left: 0; margin: 0; color: #2c3e50; }
+.instractionSection li { margin-bottom: 10px; line-height: 1.5; }
+
+.loading, .error { padding: 30px; text-align: center; }
+
+@media (max-width: 1200px) {
+  .content, .resumeBuilder { flex-direction: column; }
+  .formContainer, .cvPreview { width: 100%; box-sizing: border-box; height: auto; position: static; padding: 24px; }
+  .cvContainer { flex-direction: column; height: auto; }
+  .cvLeft, .cvRight { width: 100%; padding: 15px; box-sizing: border-box; }
+  .verticalLine { display: none; }
+}
+
+@media (max-width: 768px) {
+  .content { padding: 15px; margin: 10px; }
+  .formContainer { padding: 20px; }
+  .formColumns { flex-direction: column; }
+  .formLeft { border-right: none; padding-right: 0; }
+  .textareaContainer .profileParagraph { padding-right: 15px; } /* Reset padding for mobile */
+  .aiButton { position: static; width: 100%; margin-top: 10px; } /* Stack button on mobile */
+  .textareaContainer { display: flex; flex-direction: column; }
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 }

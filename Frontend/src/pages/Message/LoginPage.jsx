@@ -13,6 +13,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     login(formData);
   };
 
@@ -20,6 +21,14 @@ const LoginPage = () => {
     <div className="h-screen grid lg:grid-cols-2">
       {/* Left Side - Form */}
       <div className="flex flex-col justify-center items-center p-6 sm:p-12">
+=======
+    console.log("Login form data:", formData);
+   login(formData);
+  };
+
+  return (
+<div className="h-screen flex items-center justify-center px-6">      {/* Left Side - Form */}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
           <div className="text-center mb-8">
@@ -96,6 +105,7 @@ const LoginPage = () => {
             </button>
           </form>
 
+<<<<<<< HEAD
           <div className="text-center">
             <p className="text-base-content/60">
               Don&apos;t have an account?{" "}
@@ -105,6 +115,10 @@ const LoginPage = () => {
             </p>
           </div>
         </div>
+=======
+          
+        
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
       </div>
 
       {/* Right Side - Image/Pattern */}

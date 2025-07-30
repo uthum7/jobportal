@@ -1,0 +1,95 @@
+/* src/components/ProgressBar/ProgressBar.module.css */
+
+/* --- Container: Reduced height and added a modern background --- */
+.progressBarContainer {
+  padding: 25px 0; /* Reduced vertical padding to decrease height */
+  margin-block-end: 25px; /* Added margin to separate it from the content below */
+  background: linear-gradient(to right, #f8f9fa, #e9ecef);
+  border-block-end: 1px solid #dee2e6;
+}
+
+.progressBar {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-inline-size: 700px; /* Increased width slightly for better spacing */
+  margin: 0 auto;
+}
+
+/* --- Lines: Made them sleeker --- */
+/* The grey background line */
+.progressBar::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  block-size: 3px; /* Made the line thinner */
+  inline-size: 100%;
+  background-color: #d8dde3; /* A softer grey */
+  z-index: 1;
+}
+
+/* The blue progress line that fills up */
+.progressLine {
+  position: absolute;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  block-size: 3px; /* Made the line thinner */
+  background: linear-gradient(to right, #3a7bd5, #00d2ff); /* Modern gradient */
+  z-index: 2;
+  transition: inline-size 0.5s cubic-bezier(0.25, 1, 0.5, 1); /* Smoother animation */
+  border-radius: 3px;
+}
+
+/* --- Circles: Added shadows and improved transitions --- */
+.step {
+  position: relative;
+  z-index: 3;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.step:hover {
+  transform: translateY(-3px); /* Lifts the circle on hover for a nice effect */
+}
+
+.stepCircle {
+  inline-size: 36px; /* Slightly smaller circles */
+  block-size: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px; /* Adjusted font size */
+  font-weight: 600; /* Bolder font */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
+}
+
+/* --- STATES --- */
+
+/* Default State (Pending Step) */
+.stepCircle {
+  border: 2px solid #ced4da; /* Lighter border color */
+  color: #6c757d;
+}
+
+/* Active State (Current Step) */
+.step.active .stepCircle {
+  color: #ffffff;
+  background: linear-gradient(to right, #3a7bd5, #00d2ff);
+  border: 2px solid #3a7bd5;
+  transform: scale(1.15); /* More prominent active state */
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3); /* Stronger glow effect */
+}
+
+/* Completed State (Finished Step) */
+.step.completed .stepCircle {
+  background-color: #28a745; /* A clear success green */
+  color: #ffffff;
+  border-color: #28a745;
+  font-size: 20px;
+}

@@ -15,6 +15,7 @@ import {
   FaGraduationCap,
   FaChevronDown,
   FaChevronUp,
+<<<<<<< HEAD
   FaStar,
   FaClock,
   FaMapMarkerAlt,
@@ -46,6 +47,77 @@ const groupCounselorsBySpecialty = (counselors) => {
       grouped[specialty] = []
     }
     grouped[specialty].push(counselor)
+=======
+} from "react-icons/fa"
+import "./dashboard.css"
+
+// Updated counselor data with expertise and education
+const counselorsData = [
+  {
+    id: "01",
+    name: "Tyrone Roberts",
+    email: "tyroneroberts@gmail.com",
+    expertise: "Career Development",
+    education: "Ph.D. in Organizational Psychology, Stanford University",
+    avatar:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/320x400%20%281%29-REpF9XlE1aGoNXc24DtZUcea6LSrGe.jpeg",
+  },
+  {
+    id: "02",
+    name: "Allen Davis",
+    email: "allendavis@gmail.com",
+    expertise: "Resume Building",
+    education: "MBA, Harvard Business School",
+    avatar:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/320x400%20%282%29-m3fEUTnh5jJi5e6WV6WR3ejFSlLlIc.jpeg",
+  },
+  {
+    id: "03",
+    name: "Julie Pennington",
+    email: "juliepennington@gmail.com",
+    expertise: "Career Transition",
+    education: "M.S. in Career Counseling, Columbia University",
+    avatar:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Female-lecturer-Stock-Photo.jpg-h6Tl73b8PiEfCwBGJORaorrkD1kqxt.jpeg",
+  },
+  {
+    id: "04",
+    name: "Patricia Manzi",
+    email: "patriciamanzi@gmail.com",
+    expertise: "Workplace Communication",
+    education: "Ph.D. in Communication Studies, UCLA",
+    avatar: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/320x400-A7ZyoORw73Amv0euMJmB7XmwLTmaS8.jpeg",
+  },
+  {
+    id: "05",
+    name: "Olivia Lawrence",
+    email: "olivialawrence@gmail.com",
+    expertise: "Job Search Strategy",
+    education: "M.A. in Human Resources Management, NYU",
+    avatar:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/images%20%281%29-dkn0B1cwNTfYcnLeKWZtV9YDBBTHdg.jpeg",
+  },
+  {
+    id: "06",
+    name: "Michael Thompson",
+    email: "michaelthompson@gmail.com",
+    expertise: "Professional Development",
+    education: "Ed.D. in Adult Learning, University of Pennsylvania",
+    avatar:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg",
+  },
+]
+
+// Group counselors by expertise
+const groupCounselorsByExpertise = (counselors) => {
+  const grouped = {}
+
+  counselors.forEach((counselor) => {
+    if (!grouped[counselor.expertise]) {
+      grouped[counselor.expertise] = []
+    }
+    grouped[counselor.expertise].push(counselor)
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   })
 
   return grouped
@@ -53,6 +125,7 @@ const groupCounselorsBySpecialty = (counselors) => {
 
 export default function CounseleeDashboard() {
   const [searchQuery, setSearchQuery] = useState("")
+<<<<<<< HEAD
   const [counselors, setCounselors] = useState([])
   const [expandedSections, setExpandedSections] = useState({})
   const [filteredCounselors, setFilteredCounselors] = useState([])
@@ -143,6 +216,28 @@ export default function CounseleeDashboard() {
     setExpandedSections((prev) => ({
       ...prev,
       [specialty]: !prev[specialty],
+=======
+  const [counselors] = useState(counselorsData)
+  const [expandedSections, setExpandedSections] = useState({})
+
+  // Filter counselors based on search query
+  const filteredCounselors = counselors.filter(
+    (counselor) =>
+      counselor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      counselor.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      counselor.expertise.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      counselor.education.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      counselor.id.includes(searchQuery),
+  )
+
+  // Group filtered counselors by expertise
+  const groupedCounselors = groupCounselorsByExpertise(filteredCounselors)
+
+  const toggleSection = (expertise) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [expertise]: !prev[expertise],
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     }))
   }
 
@@ -151,6 +246,7 @@ export default function CounseleeDashboard() {
     console.log("Searching for:", searchQuery)
   }
 
+<<<<<<< HEAD
   // Helper function to render availability
   const renderAvailability = (availability) => {
     if (!availability || !Array.isArray(availability)) return 'Not specified'
@@ -235,6 +331,19 @@ export default function CounseleeDashboard() {
             className="profile-image"
           />
           <h3 className="profile-name">{user.name}</h3>
+=======
+  return (
+    <div className="app-container">
+      {/* Left Sidebar */}
+      <aside className="sidebar">
+        <div className="sidebar-profile">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/depositphotos_65103937-stock-illustration-male-avatar-profile-picture-vector.jpg-sGxy88AMCTZclrYwVI5URVtYVKxafN.jpeg"
+            alt="Alexander Mitchell"
+            className="profile-image"
+          />
+          <h3 className="profile-name">Alexander Mitchell</h3>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         </div>
 
         <nav className="sidebar-menu">
@@ -309,7 +418,11 @@ export default function CounseleeDashboard() {
       {/* Main Content */}
       <main className="main-content">
         <div className="main-header">
+<<<<<<< HEAD
           <h1>Welcome Back {user?.fullName || "User"}!</h1>
+=======
+          <h1>Welcome Back Alexander!</h1>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
           <div className="breadcrumb">
             <Link to="/">Home</Link> / Dashboard
           </div>
@@ -321,13 +434,19 @@ export default function CounseleeDashboard() {
             <div className="stat-icon users">
               <FaUsers />
             </div>
+<<<<<<< HEAD
             <h2>{counselors.length}</h2>
             <p>Available Counselors</p>
+=======
+            <h2>05</h2>
+            <p>Mentors Connected</p>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
           </div>
           <div className="stat-card">
             <div className="stat-icon calendar">
               <FaCalendarAlt />
             </div>
+<<<<<<< HEAD
             <h2>{bookingStats.scheduled}</h2>
             <p>Scheduled Sessions</p>
           </div>
@@ -495,3 +614,81 @@ export default function CounseleeDashboard() {
     </div>
   )
 }
+=======
+            <h2>12</h2>
+            <p>Sessions Booked</p>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon check">
+              <span>✓</span>
+            </div>
+            <h2>03</h2>
+            <p>Sessions Completed</p>
+          </div>
+        </div>
+
+        {/* Counselor Lists by Expertise */}
+        <div className="counselor-section">
+          <div className="section-header">
+            <h2>Available Counselors by Expertise</h2>
+            <div className="search-box">
+              <input
+                type="text"
+                placeholder="Search by name, expertise, education..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button onClick={handleSearch}>
+                <FaSearch /> Search
+              </button>
+            </div>
+          </div>
+
+          {/* Expertise Groups */}
+          <div className="expertise-groups">
+            {Object.keys(groupedCounselors).length > 0 ? (
+              Object.entries(groupedCounselors).map(([expertise, counselorList]) => (
+                <div key={expertise} className="expertise-group">
+                  <div className="expertise-header" onClick={() => toggleSection(expertise)}>
+                    <div className="expertise-title">
+                      <FaGraduationCap className="expertise-icon" />
+                      <h3>{expertise}</h3>
+                    </div>
+                    <button className="toggle-btn">
+                      {expandedSections[expertise] ? <FaChevronUp /> : <FaChevronDown />}
+                    </button>
+                  </div>
+
+                  {expandedSections[expertise] !== false && (
+                    <div className="counselors-grid">
+                      {counselorList.map((counselor) => (
+                        <div key={counselor.id} className="counselor-card">
+                          <div className="counselor-avatar">
+                            <img src={counselor.avatar || "/placeholder.svg"} alt={counselor.name} />
+                          </div>
+                          <div className="counselor-info">
+                            <div className="counselor-id">ID: {counselor.id}</div>
+                            <h4 className="counselor-name">{counselor.name}</h4>
+                            <p className="counselor-email">{counselor.email}</p>
+                            <p className="counselor-education">{counselor.education}</p>
+                            <button className="view-button">View Profile</button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="no-results">
+                <p>No counselors found matching your search criteria.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19

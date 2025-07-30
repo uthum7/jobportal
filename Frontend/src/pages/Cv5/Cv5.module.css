@@ -1,6 +1,12 @@
 /* Cv5.module.css - Fully Merged & Corrected */
 
+<<<<<<< HEAD
 /* --- Variable Definitions --- */
+=======
+/* ======================================= */
+/* === ROOT VARIABLES & GLOBAL STYLES  === */
+/* ======================================= */
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 :root {
   --primary-color: #3b82f6;
   --secondary-color: #f3f4f6;
@@ -17,7 +23,13 @@
   --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
+<<<<<<< HEAD
 /* --- General Page Layout --- */
+=======
+/* ======================================= */
+/* ===      PAGE & MAIN LAYOUT         === */
+/* ======================================= */
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 .pageHeader {
   text-align: center;
   padding: 40px 20px;
@@ -52,7 +64,13 @@
   align-items: flex-start;
 }
 
+<<<<<<< HEAD
 /* --- Left Column: Actions / Form Panel --- */
+=======
+/* ======================================= */
+/* ===      LEFT PANEL: ACTIONS        === */
+/* ======================================= */
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 .formContainer {
   flex: 1;
   max-width: 400px;
@@ -77,6 +95,7 @@
   line-height: 1.6;
 }
 
+<<<<<<< HEAD
 /* --- Right Column: The CV Preview --- */
 .cvPreview {
   flex: 2.5;
@@ -111,6 +130,10 @@
 
 /* --- All Button Styles --- */
 .downloadBtn, .editBtn, .saveBtn, .removeButton, .addButton, .aiButton {
+=======
+/* --- All Action Button Styles --- */
+.downloadBtn, .editBtn, .shareBtn {
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   display: block;
   width: 100%;
   text-align: center;
@@ -141,6 +164,7 @@
 .editBtn:hover {
   background-color: var(--hover-color);
 }
+<<<<<<< HEAD
 .saveBtn {
     background-color: var(--success-color);
     color: white;
@@ -191,25 +215,41 @@
   transition: all 0.2s ease-in-out;
   margin-bottom: 12px;
   background-color: #f39c12; /* A nice orange color */
+=======
+
+/* --- Share Button Styles --- */
+.shareBtn {
+  background-color: #f39c12;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   color: white;
 }
 .shareBtn:hover {
   background-color: #e67e22;
 }
+<<<<<<< HEAD
 
 /* Container for the share options that appear */
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 .shareOptionsContainer {
   display: flex;
   flex-direction: column;
   gap: 10px;
+<<<<<<< HEAD
   margin-top: -5px; /* Pull it slightly closer to the main share button */
+=======
+  margin-top: -5px;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   margin-bottom: 15px;
   padding: 15px;
   background-color: #ecf0f1;
   border-radius: 8px;
 }
+<<<<<<< HEAD
 
 /* Individual share buttons (WhatsApp, Facebook, etc.) */
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 .shareOptionBtn {
   width: 100%;
   padding: 10px;
@@ -223,6 +263,7 @@
 .shareOptionBtn:hover {
   opacity: 0.9;
 }
+<<<<<<< HEAD
 
 /* Platform-specific colors */
 .whatsapp {
@@ -274,6 +315,85 @@
 .experienceItem .companyName { font-size: 14px; font-weight: 500; color: var(--text-light); margin-bottom: 4px; }
 .educationItem span, .experienceItem span { font-size: 13px; color: var(--text-light); display: block; margin-bottom: 6px; }
 .educationItem p, .experienceItem p, .profilePara p, .summary p, .references p { font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap; }
+=======
+.whatsapp { background-color: #25D366; }
+.facebook { background-color: #1877F2; }
+.linkedin { background-color: #0A66C2; }
+
+
+/* ======================================= */
+/* ===      RIGHT PANEL: CV PREVIEW    === */
+/* ======================================= */
+.cvPreview {
+  flex: 2.5;
+  min-width: 0;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
+}
+.cvContainer {
+  display: flex;
+}
+.cvLeft {
+  width: 35%;
+  background: #f9fafb;
+  padding: 35px 25px;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* This centers all direct children */
+}
+.cvRight {
+  width: 65%;
+  padding: 35px 30px;
+  background-color: var(--background-color);
+}
+.verticalLine {
+  border-left: 1px solid var(--border-color);
+}
+
+/* --- CV Content Styles --- */
+.profileSection { text-align: center; }
+
+/* === THIS IS THE CORRECTED PART === */
+.profileImage {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  margin-bottom: 10px;
+  /* The margin-left property that pushed it off-center has been removed. */
+}
+/* ================================ */
+
+.profileSection h2 { font-size: 22px; font-weight: 600; margin: 10px 0 4px 0; }
+.profileSection h3 { font-size: 15px; color: var(--text-light); font-weight: 500; margin-top: 0; }
+
+.h4Headers {
+  border-bottom: 1.5px solid var(--primary-color);
+  padding-bottom: 8px;
+  margin-top: 24px;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  text-align: left;
+}
+.contactInfo, .education, .experience, .skillsColumns, .summary, .references, .profilePara {
+  margin-bottom: 20px;
+}
+.contactInfo p { margin: 4px 0; font-size: 14px; text-align: left; }
+
+.educationItem, .experienceItem { margin-bottom: 20px; text-align: left; }
+.educationItem h5, .experienceItem h5 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+.experienceItem .companyName { font-size: 14px; font-weight: 500; color: var(--text-light); margin-bottom: 4px; }
+.educationItem span, .experienceItem span { font-size: 13px; color: var(--text-light); display: block; margin-bottom: 6px; }
+.uniPara { margin-top: 4px; }
+.educationItem p, .experienceItem p, .profilePara p, .summary p, .references p { font-size: 14px; line-height: 1.6; color: var(--text-color); white-space: pre-wrap; text-align: left; }
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 .skillsList, .skillsDisplayList { list-style: none; padding: 0; margin: 0; }
 .skillRow, .skillDisplayItem { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
 .skillRow:last-child, .skillDisplayItem:last-child { border-bottom: none; }
@@ -281,6 +401,7 @@
 .star { font-size: 16px; color: #d1d5db; margin-left: 2px; }
 .checked { color: #facc15; }
 
+<<<<<<< HEAD
 
 /* --- Responsive Design --- */
 @media (max-width: 992px) {
@@ -312,3 +433,22 @@
     display: none;
   }
 } 
+=======
+/* ======================================= */
+/* ===    RESPONSIVE & OTHER STYLES    === */
+/* ======================================= */
+.loading, .error { padding: 30px; text-align: center; }
+
+@media (max-width: 992px) {
+  .content { flex-direction: column; }
+  .formContainer { position: static; max-width: 100%; margin-bottom: 20px; }
+}
+
+@media (max-width: 768px) {
+  .resumeBuilder { padding: 15px 10px; }
+  .content { gap: 20px; }
+  .cvContainer { flex-direction: column; }
+  .cvLeft, .cvRight { width: 100%; padding: 20px 15px; box-sizing: border-box; }
+  .verticalLine { display: none; }
+}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19

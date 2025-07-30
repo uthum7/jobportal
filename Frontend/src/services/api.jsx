@@ -89,6 +89,7 @@ export const createNewResume = async (userId) => {
     throw error;
   }
 };
+<<<<<<< HEAD
 
 // Booking API functions
 export const bookingAPI = {
@@ -215,3 +216,5 @@ export const bookingAPI = {
 };
 
 export default api;
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19

@@ -273,9 +273,12 @@ export default function CounselorProfile() {
       setSuccessMessage("")
     }, 3000)
   }
+<<<<<<< HEAD
   const userstring = localStorage.getItem("user")
   const user = userstring ? JSON.parse(userstring) : null
   console.log("User data from localStorage:", user)
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
   return (
     <div className="dashboard-layout">
@@ -287,8 +290,13 @@ export default function CounselorProfile() {
             alt="James Anderson"
             className="profile-image"
           />
+<<<<<<< HEAD
           <h3 className="profile-name">{user.name}</h3>
           <p className="profile-title">{user.specialty}</p>
+=======
+          <h3 className="profile-name">James Anderson</h3>
+          <p className="profile-title">Career Development Specialist</p>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         </div>
 
         <nav className="sidebar-menu">

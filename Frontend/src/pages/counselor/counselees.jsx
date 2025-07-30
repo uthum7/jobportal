@@ -1,6 +1,10 @@
 "use client"
 
+<<<<<<< HEAD
 import { useState, useEffect } from "react"
+=======
+import { useState } from "react"
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 import { Link } from "react-router-dom"
 import {
   FaHome,
@@ -17,16 +21,94 @@ import {
   FaSortAmountDown,
   FaComment,
   FaHistory,
+<<<<<<< HEAD
   FaSpinner,
 } from "react-icons/fa"
 import { getCounselees, deleteCounselee } from "../../services/counselorService"
 import { useAuthStore } from "../../store/useAuthStore"
 import "./counselees.css"
 
+=======
+  FaUserPlus,
+} from "react-icons/fa"
+import "./counselees.css"
+
+// Sample counselees data
+const counseleesData = [
+  {
+    id: 1,
+    name: "Alexander Mitchell",
+    email: "alexander.mitchell@gmail.com",
+    avatar:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/depositphotos_65103937-stock-illustration-male-avatar-profile-picture-vector.jpg-sGxy88AMCTZclrYwVI5URVtYVKxafN.jpeg",
+    age: 28,
+    topic: "Career Development",
+    lastSession: "03 Jan 2025",
+    nextSession: "15 Jan 2025",
+    sessionCount: 5,
+    status: "Active",
+    progress: "On Track",
+  },
+  {
+    id: 2,
+    name: "Emily Johnson",
+    email: "emily.johnson@gmail.com",
+    avatar: "/placeholder.svg?height=100&width=100",
+    age: 32,
+    topic: "Resume Review",
+    lastSession: "28 Dec 2024",
+    nextSession: "11 Jan 2025",
+    sessionCount: 3,
+    status: "Active",
+    progress: "Excellent",
+  },
+  {
+    id: 3,
+    name: "Michael Brown",
+    email: "michael.brown@gmail.com",
+    avatar: "/placeholder.svg?height=100&width=100",
+    age: 25,
+    topic: "Interview Preparation",
+    lastSession: "05 Jan 2025",
+    nextSession: "19 Jan 2025",
+    sessionCount: 2,
+    status: "Active",
+    progress: "Needs Attention",
+  },
+  {
+    id: 4,
+    name: "Sarah Thompson",
+    email: "sarah.thompson@gmail.com",
+    avatar: "/placeholder.svg?height=100&width=100",
+    age: 29,
+    topic: "Career Transition",
+    lastSession: "20 Dec 2024",
+    nextSession: "None",
+    sessionCount: 8,
+    status: "Inactive",
+    progress: "Completed",
+  },
+  {
+    id: 5,
+    name: "David Wilson",
+    email: "david.wilson@gmail.com",
+    avatar: "/placeholder.svg?height=100&width=100",
+    age: 35,
+    topic: "Salary Negotiation",
+    lastSession: "15 Dec 2024",
+    nextSession: "16 Jan 2025",
+    sessionCount: 4,
+    status: "Active",
+    progress: "On Track",
+  },
+]
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 export default function CounselorCounselees() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sortBy, setSortBy] = useState("name")
+<<<<<<< HEAD
   const [counselees, setCounselees] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -62,6 +144,11 @@ export default function CounselorCounselees() {
   }, [counselorId, searchQuery, statusFilter, sortBy])
 
   // Filter counselees based on search query and status (client-side backup)
+=======
+  const [counselees] = useState(counseleesData)
+
+  // Filter counselees based on search query and status
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   const filteredCounselees = counselees.filter((counselee) => {
     const matchesSearch =
       counselee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -73,7 +160,11 @@ export default function CounselorCounselees() {
     return matchesSearch && matchesStatus
   })
 
+<<<<<<< HEAD
   // Sort counselees (client-side backup)
+=======
+  // Sort counselees
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   const sortedCounselees = [...filteredCounselees].sort((a, b) => {
     if (sortBy === "name") {
       return a.name.localeCompare(b.name)
@@ -93,6 +184,7 @@ export default function CounselorCounselees() {
     setSortBy(sortOption)
   }
 
+<<<<<<< HEAD
   const handleDeleteCounselee = async (counseleeId) => {
     if (window.confirm("Are you sure you want to end this counselee relationship?")) {
       try {
@@ -132,6 +224,8 @@ export default function CounselorCounselees() {
     alert(`Opening message with ${counselee.name}`)
   }
 
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   return (
     <div className="dashboard-layout">
       {/* Left Sidebar */}
@@ -142,8 +236,13 @@ export default function CounselorCounselees() {
             alt="James Anderson"
             className="profile-image"
           />
+<<<<<<< HEAD
          <h3 className="profile-name">{user.name}</h3>
           <p className="profile-title">{user.specialty}</p>
+=======
+          <h3 className="profile-name">James Anderson</h3>
+          <p className="profile-title">Career Development Specialist</p>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         </div>
 
         <nav className="sidebar-menu">
@@ -303,6 +402,7 @@ export default function CounselorCounselees() {
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* Counselees Grid */}
           {loading ? (
             <div className="loading-container">
@@ -406,6 +506,83 @@ export default function CounselorCounselees() {
             <div className="no-counselees">
               <h3>No counselees found</h3>
               <p>Try adjusting your search or filter criteria, or check back later when you have new counselees.</p>
+=======
+          {/* Add New Counselee Button */}
+          <div className="add-counselee-section">
+            <button className="add-counselee-btn">
+              <FaUserPlus className="add-icon" /> Add New Counselee
+            </button>
+          </div>
+
+          {/* Counselees Grid */}
+          <div className="counselees-grid">
+            {sortedCounselees.map((counselee) => (
+              <div key={counselee.id} className="counselee-card">
+                <div className="counselee-card-header">
+                  <div className={`status-indicator ${counselee.status.toLowerCase()}`}></div>
+                  <div className={`progress-badge ${counselee.progress.toLowerCase().replace(/\s+/g, "-")}`}>
+                    {counselee.progress}
+                  </div>
+                </div>
+                <div className="counselee-card-content">
+                  <div className="counselee-image-container">
+                    <img
+                      src={counselee.avatar || "/placeholder.svg"}
+                      alt={counselee.name}
+                      className="counselee-image"
+                    />
+                  </div>
+                  <div className="counselee-info">
+                    <h3 className="counselee-name">{counselee.name}</h3>
+                    <p className="counselee-topic">
+                      <span className="topic-label">Focus:</span> {counselee.topic}
+                    </p>
+                    <div className="counselee-stats">
+                      <div className="stat-item">
+                        <span className="stat-label">Age:</span>
+                        <span className="stat-value">{counselee.age}</span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="stat-label">Sessions:</span>
+                        <span className="stat-value">{counselee.sessionCount}</span>
+                      </div>
+                    </div>
+                    <div className="counselee-sessions">
+                      <div className="session-item">
+                        <span className="session-label">Last Session:</span>
+                        <span className="session-value">{counselee.lastSession}</span>
+                      </div>
+                      <div className="session-item">
+                        <span className="session-label">Next Session:</span>
+                        <span className="session-value">{counselee.nextSession || "Not Scheduled"}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="counselee-card-actions">
+                  <button className="action-btn view-profile-btn">View Profile</button>
+                  <button className="action-btn view-history-btn">
+                    <FaHistory className="action-icon" /> Session History
+                  </button>
+                  <button className="action-btn add-session-btn">
+                    <FaCalendarAlt className="action-icon" /> Schedule Session
+                  </button>
+                  <button className="action-btn send-message-btn">
+                    <FaComment className="action-icon" /> Message
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {sortedCounselees.length === 0 && (
+            <div className="no-counselees">
+              <h3>No counselees found</h3>
+              <p>Try adjusting your search or filter criteria</p>
+              <button className="add-counselee-btn mt-4">
+                <FaUserPlus className="add-icon" /> Add New Counselee
+              </button>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
             </div>
           )}
         </div>

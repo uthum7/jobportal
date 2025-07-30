@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Cv.module.css";
 import { isAuthenticated } from "../../utils/auth";
 import { useCVForm } from "../../context/CVFormContext";
+<<<<<<< HEAD
 import axios from 'axios'; // Import axios for the AI call
 
 const initialFormStateValues = {
@@ -15,6 +16,36 @@ const initialFormStateValues = {
     },
     educationDetails: {}, skill: [], summary: "",
     professionalExperience: [], references: [],
+=======
+import axios from 'axios';
+import { toast } from 'sonner';
+
+// educationDetails is now an array
+const initialFormStateValues = {
+    personalInfo: {
+      fullname: "", nameWithInitials: "", gender: "", birthday: "", address: "",
+      email: "", phone: "", profileParagraph: "",
+      profilePicture: null,
+    },
+    educationDetails: [],
+    skill: [],
+    summary: "",
+    professionalExperience: [],
+    references: [],
+};
+
+// Helper function to format dates consistently
+const formatDate = (dateStr, formatType = 'date') => {
+  if (!dateStr) return "Present";
+  if (formatType === 'year') return dateStr;
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "Invalid Date";
+    return date.toLocaleDateString(undefined, { year: "numeric", month: "short" });
+  } catch {
+    return "Invalid Date";
+  }
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 };
 
 const Cv = () => {
@@ -25,13 +56,17 @@ const Cv = () => {
     fetchResumeData: contextFetchResumeData,
     loading: contextLoading,
     error: contextError,
+<<<<<<< HEAD
     setError: setContextError,
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   } = useCVForm();
 
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [pageError, setPageErrorLocal] = useState(null);
   const [localPreviewImgUrl, setLocalPreviewImgUrl] = useState(null);
   const [personalInfo, setPersonalInfo] = useState(initialFormStateValues.personalInfo);
+<<<<<<< HEAD
   
   // --- NEW STATE FOR AI FEATURE ---
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -42,12 +77,23 @@ const Cv = () => {
   const [skillsPreview, setSkillsPreview] = useState(initialFormStateValues.skill);
   const [summaryPreview, setSummaryPreview] = useState(initialFormStateValues.summary);
   const [referencesPreview, setReferencesPreview] = useState(initialFormStateValues.references);
+=======
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
+  // Preview states initialized correctly
+  const [educationPreview, setEducationPreview] = useState([]);
+  const [experiencePreview, setExperiencePreview] = useState([]);
+  const [skillsPreview, setSkillsPreview] = useState([]);
+  const [summaryPreview, setSummaryPreview] = useState("");
+  const [referencesPreview, setReferencesPreview] = useState([]);
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
   const hasAttemptedFetch = useRef(false);
   const lastObjectUrl = useRef(null);
 
   useEffect(() => {
     if (!isAuthenticated()) {
+<<<<<<< HEAD
       setPageErrorLocal("User not authenticated. Redirecting to login...");
       setIsPageLoading(false);
       navigate("/login", { replace: true });
@@ -72,10 +118,23 @@ const Cv = () => {
       setIsPageLoading(false);
     }
   }, [contextFetchResumeData, navigate, setContextError]);
+=======
+      navigate("/login", { replace: true });
+      return;
+    }
+    if (!hasAttemptedFetch.current) {
+      hasAttemptedFetch.current = true;
+      contextFetchResumeData().finally(() => setIsPageLoading(false));
+    } else {
+      setIsPageLoading(false);
+    }
+  }, [contextFetchResumeData, navigate]);
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
   useEffect(() => {
     if (contextResumeData) {
       const newContextPI = contextResumeData.personalInfo || initialFormStateValues.personalInfo;
+<<<<<<< HEAD
       setPersonalInfo(prevLocalPI => {
         if (prevLocalPI.profilePicture instanceof File) {
           return { ...newContextPI, profilePicture: prevLocalPI.profilePicture };
@@ -88,6 +147,18 @@ const Cv = () => {
       setSkillsPreview(contextResumeData.skill || initialFormStateValues.skill);
       setSummaryPreview(contextResumeData.summary !== undefined ? contextResumeData.summary : initialFormStateValues.summary);
       setReferencesPreview(contextResumeData.references || initialFormStateValues.references);
+=======
+      if (newContextPI.birthday) {
+        newContextPI.birthday = new Date(newContextPI.birthday).toISOString().split('T')[0];
+      }
+      setPersonalInfo(prev => ({ ...prev, ...newContextPI }));
+      
+      setEducationPreview(contextResumeData.educationDetails || []);
+      setExperiencePreview(contextResumeData.professionalExperience || []);
+      setSkillsPreview(contextResumeData.skill || []);
+      setSummaryPreview(contextResumeData.summary || "");
+      setReferencesPreview(contextResumeData.references || []);
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
       if (personalInfo.profilePicture instanceof File) {
         if (lastObjectUrl.current) URL.revokeObjectURL(lastObjectUrl.current);
@@ -117,6 +188,7 @@ const Cv = () => {
     }
   };
 
+<<<<<<< HEAD
   // --- NEW FUNCTION TO HANDLE AI ENHANCEMENT FOR PROFILE PARAGRAPH ---
   const handleEnhanceProfile = async () => {
     const profileText = personalInfo.profileParagraph;
@@ -143,12 +215,31 @@ const Cv = () => {
     } catch (error) {
       const errMsg = error.response?.data?.error || error.message || "AI enhancement failed.";
       console.error("Error enhancing profile:", errMsg);
+=======
+  const handleEnhanceProfile = async () => {
+    const profileText = personalInfo.profileParagraph;
+    if (!profileText || !profileText.trim()) {
+      toast.warning("Please write something in your profile before enhancing with AI.");
+      return;
+    }
+    setIsAiLoading(true);
+    try {
+      const response = await axios.post("http://localhost:5001/api/ai/enhance-summary", { summary: profileText });
+      if (response.data && response.data.enhancedSummary) {
+        setPersonalInfo(prev => ({ ...prev, profileParagraph: response.data.enhancedSummary }));
+        toast.success("Profile enhanced with AI!");
+      } else { throw new Error("AI response was not in the expected format."); }
+    } catch (error) {
+      const errMsg = error.response?.data?.error || error.message || "AI enhancement failed.";
+      toast.error(errMsg);
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
       setPageErrorLocal(errMsg);
     } finally {
       setIsAiLoading(false);
     }
   };
 
+<<<<<<< HEAD
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (setContextError) setContextError(null);
@@ -167,6 +258,27 @@ const Cv = () => {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return "Invalid Date";
     return date.toLocaleDateString(undefined, { year: "numeric", month: "short" });
+=======
+  // ===============================================
+  // ===        UPDATED SUBMIT FUNCTION        ===
+  // ===============================================
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const promise = saveToDatabase("personalInfo", personalInfo);
+
+    toast.promise(promise, {
+      loading: 'Saving personal details...',
+      success: () => {
+        setTimeout(() => navigate("/cv-builder/education"), 500); // Navigate AFTER success
+        return "Personal details saved successfully!";
+      },
+      error: (err) => {
+        console.error("Cv.jsx: Error during handleSubmit:", err);
+        return err.message || "Failed to save details.";
+      },
+    });
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   };
 
   const displayedError = pageError || (contextError ? (typeof contextError === 'string' ? contextError : contextError.message) : null);
@@ -175,6 +287,7 @@ const Cv = () => {
   if (displayedError) return (
     <div className={styles.error}>
       <p>Error: {displayedError}</p>
+<<<<<<< HEAD
       <button onClick={() => {
         if (setContextError) setContextError(null);
         setPageErrorLocal(null);
@@ -194,12 +307,16 @@ const Cv = () => {
          displayedError.toLowerCase().includes("user id") ||
          displayedError.toLowerCase().includes("token") ? "Go to Login" : "Try Again"}
       </button>
+=======
+      <button onClick={() => window.location.reload()}>Try Again</button>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     </div>
   );
   
   let cvPreviewImageSrc = localPreviewImgUrl || "/default-profile.png";
 
   return (
+<<<<<<< HEAD
     <>
       <header className={styles.pageHeader}>
         <h1 className={styles.pageTitle}><span>R</span><span>e</span><span>s</span><span>u</span><span>m</span><span>e</span> <span>B</span><span>u</span><span>i</span><span>l</span><span>d</span><span>e</span><span>r</span></h1>
@@ -208,12 +325,18 @@ const Cv = () => {
       <div className={styles.resumeBuilder}>
         <main className={styles.content}>
           <div className={styles.formContainer}>
+=======
+    <div className={styles.resumeBuilder}>
+      <main className={styles.content}>
+        <div className={styles.formContainer}>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
             <h3 className={styles.header}>Step 1: Personal Details</h3>
             <form onSubmit={handleSubmit}>
               <div className={styles.formColumns}>
                 <div className={styles.formLeft}>
                   <input type="text" name="fullname" placeholder="Full Name" value={personalInfo.fullname || ""} onChange={handleChange} required />
                   <input type="text" name="nameWithInitials" placeholder="Name with Initials" value={personalInfo.nameWithInitials || ""} onChange={handleChange} />
+<<<<<<< HEAD
                   <input type="text" name="jobTitle" placeholder="Job Title" value={personalInfo.jobTitle || ""} onChange={handleChange} required />
                 </div>
                 <div className={styles.formRight}>
@@ -245,18 +368,45 @@ const Cv = () => {
                 </button>
               </div>
 
+=======
+                  <select name="gender" value={personalInfo.gender || ""} onChange={handleChange} required>
+                    <option value="" disabled>Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div className={styles.formRight}>
+                   <input type="text" name="address" placeholder="Address" value={personalInfo.address || ""} onChange={handleChange} required autoComplete="street-address" />
+                   <input type="date" name="birthday" value={personalInfo.birthday || ""} onChange={handleChange} required data-placeholder="Birthday" />
+                    <input type="email" name="email" placeholder="Email" value={personalInfo.email || ""} onChange={handleChange} required autoComplete="email" />
+                    <input type="tel" name="phone" placeholder="Phone Number" value={personalInfo.phone || ""} onChange={handleChange} required autoComplete="tel" />
+                </div>
+              </div>
+              <div className={styles.textareaContainer}>
+                <textarea name="profileParagraph" placeholder="Add Your Profile Details (Short Bio)" value={personalInfo.profileParagraph || ""} onChange={handleChange} autoComplete="off" className={styles.profileParagraph} rows={6} />
+                <button type="button" className={styles.aiButton} onClick={handleEnhanceProfile} disabled={isAiLoading || contextLoading}>
+                  {isAiLoading ? 'Enhancing...' : 'Enhance with AI'}
+                </button>
+              </div>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
               <div className={styles.formGroup}>
                 <label htmlFor="profilePictureFile">Profile Picture:</label>
                 <input type="file" id="profilePictureFile" name="profilePicture" accept="image/*" onChange={handleChange} />
                 {localPreviewImgUrl && localPreviewImgUrl.startsWith("blob:") && <img src={localPreviewImgUrl} alt="Selected Preview" style={{width: "100px", height: "100px", marginTop:"10px", objectFit:"cover"}} />}
               </div>
               <button type="submit" className={styles.saveBtn} disabled={contextLoading || isAiLoading}>
+<<<<<<< HEAD
                 {contextLoading || isAiLoading ? "Saving..." : "Save"}
+=======
+                {contextLoading || isAiLoading ? "Saving..." : "Save & Next"}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
               </button>
             </form>
             <div className={styles.instractionSection}>
                 <h3>Instructions</h3>
                 <ul>
+<<<<<<< HEAD
                     <li>Fill in your personal details. <div className={styles.instractionDetail}>Enter your full name, contact information, and address accurately.</div></li>
                     <li>Click "Save & Next" to save your changes and proceed. <div className={styles.instractionDetail}>Make sure to save each section before moving to the next step.</div></li>
                 </ul>
@@ -267,11 +417,23 @@ const Cv = () => {
           <div className={styles.cvPreview}>
             <div className={styles.cvContainer}>
               <div className={styles.cvLeft}>
+=======
+                    <li>Fill in your personal details accurately.</li>
+                    <li>Click "Save & Next" to proceed to the next step.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div className={styles.cvPreview}>
+          <div className={styles.cvContainer}>
+            <div className={styles.cvLeft}>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                  <div className={styles.profileSection}>
                   <label htmlFor="profilePictureFileTrigger" className={styles.profilePictureLabel}>
                     <img src={cvPreviewImageSrc} alt="Profile" className={styles.profileImage} />
                     <span className={styles.uploadIcon} onClick={() => document.getElementById('profilePictureFile')?.click()} role="button" tabIndex={0}>📷</span>
                   </label>
+<<<<<<< HEAD
                   <h3>{personalInfo.jobTitle || "Your Profession"}</h3>
                   <h2>{personalInfo.fullname || "Your Name"}</h2>
                 </div>
@@ -291,6 +453,50 @@ const Cv = () => {
         </main>
       </div>
     </>
+=======
+                  <h2>{personalInfo.fullname || "Your Name"}</h2>
+                </div>
+                <div className={styles.contactInfo}><h4 className={styles.h4Headers}>Contact</h4><p>{personalInfo.phone || "Phone"}</p><p>{personalInfo.email || "Email"}</p><p>{personalInfo.address || "Address"}</p></div>
+                
+                <div className={styles.education}>
+                    <h4 className={styles.h4Headers}>Education</h4>
+                    {Array.isArray(educationPreview) && educationPreview.length > 0 ? (
+                    educationPreview.map((edu, index) => (
+                        edu.institute && (
+                        <div key={index} className={styles.educationItem}>
+                            <h5>{edu.institute}</h5>
+                            {edu.educationLevel === 'A/L' ? (
+                            <>
+                                <span>{edu.fieldOfStudy} - {formatDate(edu.alYear, 'year')}</span>
+                            </>
+                            ) : (
+                            <>
+                                <span>{formatDate(edu.startDate)} - {edu.currentlyStudying ? 'Present' : formatDate(edu.endDate)}</span>
+                                <p className={styles.uniPara}><strong>{edu.fieldOfStudy}</strong></p>
+                                <p>GPA Value-{edu.gpaOrGrade}</p>
+                            </> 
+                            )}
+                        </div>
+                        )
+                    ))
+                    ) : (
+                    <p>Education details will appear here.</p>
+                    )}
+                </div>
+            </div>
+            <div className={styles.verticalLine}></div>
+            <div className={styles.cvRight}>
+                <div className={styles.profilePara}><h4 className={styles.h4Headers}>Profile</h4><p>{personalInfo.profileParagraph || "Your profile summary will appear here."}</p></div>
+                <div className={styles.experience}><h4 className={styles.h4Headers}>Professional Experience</h4>{(experiencePreview || []).length > 0 ? (experiencePreview.map((exp, index) => (<div key={index} className={styles.experienceItem}><h5>{exp.jobTitle || "Job Title"}</h5><p className={styles.companyName}>{exp.companyName}</p><span>{formatDate(exp.jstartDate)} - {formatDate(exp.jendDate)}</span><p>{exp.jobDescription || "Job description"}</p></div>))) : ( <p>Experience details will appear here.</p> )}</div>
+                <div className={styles.skillsColumns}><h4 className={styles.h4Headers}>Skills</h4><ul className={styles.skillsList}>{(skillsPreview || []).length > 0 ? (skillsPreview.map((skill, index) => (<li key={index} className={styles.skillRow}><span className={styles.skillName}>{skill.skillName || "Skill"}</span><span className={styles.skillStars}>{[...Array(5)].map((_, i) => (<span key={i} className={`${styles.star} ${i < (skill.skillLevel || 0) ? styles.checked : ""}`}>★</span>))}</span></li>))) : ( <li>Skills will appear here.</li> )}</ul></div>
+                <div className={styles.summary}><h4 className={styles.h4Headers}>Summary</h4><p>{summaryPreview || "Summary will appear here."}</p></div>
+                <div className={styles.references}><h4 className={styles.h4Headers}>References</h4>{(referencesPreview || []).length > 0 ? (referencesPreview.map((ref, index) => (<p key={index}>{ref.referenceName || "Name"} - {ref.position || "Position"} at {ref.company || "Company"} - {ref.contact || "Email"}</p>))) : ( <p>References will appear here.</p> )}</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   );
 };
 

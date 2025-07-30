@@ -415,6 +415,7 @@
   color: #666;
 }
 
+<<<<<<< HEAD
 /* Success/Error Messages */
 .fixed {
   position: fixed;
@@ -765,6 +766,8 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 /* Responsive Design */
 @media (max-width: 768px) {
   .sidebar {
@@ -797,10 +800,13 @@
   .counselors-grid {
     grid-template-columns: 1fr;
   }
+<<<<<<< HEAD
 
   .quick-access-sections {
     grid-template-columns: 1fr;
   }
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 }
 
 /* Make the table more responsive */

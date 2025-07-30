@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { saveToken } from '../../utils/auth'; // Not typically needed on signup, token is for login
@@ -8,6 +9,17 @@ import logoPath from "../../assets/img/logo.png";
 import AuthSplash from "../../components/AuthSplash/AuthSplash";
 
 const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a full page
+=======
+// pages/SignUp/SignUpPage.jsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaUser, FaEnvelope, FaLock, FaUsersCog } from "react-icons/fa";
+import styles from "./SignUpPage.module.css";
+import logoPath from "../../assets/img/logo.png";
+import AuthSplash from "../../components/AuthSplash/AuthSplash";
+
+const SignUpPage = () => {
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -19,16 +31,26 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
   const [showSplash, setShowSplash] = useState(true);
   const navigate = useNavigate();
 
+<<<<<<< HEAD
   const ROLES = ["MENTOR", "MENTEE", "JOBSEEKER", "ADMIN"]; // Ensure ADMIN is a selectable role if needed
+=======
+  const ROLES = ["MENTEE", "JOBSEEKER"];
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+<<<<<<< HEAD
     // Clear the specific error when user types
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
     // Clear submit error if user starts typing again
+=======
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     if (errors.submit) {
         setErrors(prev => ({...prev, submit: ""}));
     }
@@ -58,14 +80,22 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
     if (!validateForm()) return;
 
     setIsLoading(true);
+<<<<<<< HEAD
     setErrors({}); // Clear previous submit errors
+=======
+    setErrors({});
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     
     try {
       const registrationData = {
         username: formData.username.trim(),
         email: formData.email.trim(),
         password: formData.password,
+<<<<<<< HEAD
         roles: [formData.role.toUpperCase()] // Backend expects 'roles' as an array
+=======
+        roles: [formData.role.toUpperCase()]
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
       };
 
       const response = await fetch("http://localhost:5001/api/register/register", {
@@ -77,8 +107,11 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
       const data = await response.json();
 
       if (response.ok) {
+<<<<<<< HEAD
         // Optionally, display a success message via a toast or alert
         // For now, navigating to login directly after success
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         navigate("/login", { state: { message: "Registration successful! Please login." } });
       } else {
         setErrors({ submit: data.message || "Registration failed. Please check your details." });
@@ -96,8 +129,13 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
   }
 
   return (
+<<<<<<< HEAD
     <div className={styles.signupPageWrapper}> {/* Full page wrapper */}
       <div className={styles.signupFormCard}>   {/* The centered card for the form */}
+=======
+    <div className={styles.signupPageWrapper}>
+      <div className={styles.signupFormCard}>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         <div className={styles.logoContainer}>
           <img src={logoPath} alt="JobPortal Logo" className={styles.logoImg} />
         </div>
@@ -171,7 +209,11 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
               <FaUsersCog className={styles.inputIcon} /> I am a
             </label>
             <select
+<<<<<<< HEAD
               id="role" // Added id for label association
+=======
+              id="role"
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
               name="role"
               className={styles.selectField}
               value={formData.role}
@@ -179,15 +221,25 @@ const SignUpPage = ({ onClose }) => { // onClose might not be used if it's a ful
               disabled={isLoading}
             >
               <option value="" disabled>Select your role</option>
+<<<<<<< HEAD
               {ROLES.map((roleItem) => ( // Changed variable name to avoid conflict
                 <option key={roleItem} value={roleItem}>
                   {roleItem.charAt(0).toUpperCase() + roleItem.slice(1).toLowerCase()} {/* Capitalize role */}
+=======
+              {ROLES.map((roleItem) => (
+                <option key={roleItem} value={roleItem}>
+                  {roleItem.charAt(0).toUpperCase() + roleItem.slice(1).toLowerCase()}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                 </option>
               ))}
             </select>
             {errors.role && <span className={styles.errorText}>{errors.role}</span>}
           </div>
             
+<<<<<<< HEAD
+=======
+          {/* ✅ FIX: className must use a template literal wrapped in {} */}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
           <button 
             type="submit" 
             className={`${styles.submitButton} ${styles.btnPrimary}`}

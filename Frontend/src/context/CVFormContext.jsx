@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // CVFormContext.jsx
 import React, { createContext, useState, useContext, useCallback } from "react";
 import { getToken, getUserId as authGetUserId } from "../utils/auth"; // Ensure path is correct
@@ -9,6 +10,21 @@ const toBase64 = file => new Promise((resolve, reject) => {
         if (typeof file === 'string') return resolve(file);
         console.warn("toBase64: Input was not a File, but was a string. Passing through:", file);
         return resolve(file); // Pass through if it's already a string (URL/base64)
+=======
+// /context/CVFormContext.jsx
+
+import React, { createContext, useState, useContext, useCallback, useEffect } from "react";
+import { getToken, getUserId } from "../utils/auth"; // Ensure you have a getUserId function
+import axios from "axios"; // Using axios for simplicity and better error handling
+
+const CVFormContext = createContext(undefined);
+
+// Helper to convert an image file to a base64 string for JSON transfer
+const toBase64 = file => new Promise((resolve, reject) => {
+    if (!(file instanceof File)) {
+        // If it's already a string (like a URL from the DB), just pass it through.
+        return resolve(file);
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     }
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -17,6 +33,7 @@ const toBase64 = file => new Promise((resolve, reject) => {
 });
 
 export const CVFormProvider = ({ children }) => {
+<<<<<<< HEAD
   const initialResumeState = {
     userId: null,
     personalInfo: {
@@ -28,6 +45,18 @@ export const CVFormProvider = ({ children }) => {
       schoolName: "", startDate: "", endDate: "", moreDetails: "",
       universitiyName: "", uniStartDate: "", uniEndDate: "", uniMoreDetails: "",
     },
+=======
+  // ===============================================
+  // ===        UPDATED INITIAL STATE            ===
+  // ===============================================
+  const initialResumeState = {
+    userId: null,
+    personalInfo: {
+      fullname: "", nameWithInitials: "", gender: "", birthday: "", address: "",
+      email: "", phone: "", profileParagraph: "", profilePicture: null,
+    },
+    educationDetails: [], // FIX: Must be an array
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     professionalExperience: [],
     skill: [],
     summary: "",
@@ -36,6 +65,7 @@ export const CVFormProvider = ({ children }) => {
 
   const [resumeData, setResumeData] = useState(initialResumeState);
   const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
   const [error, setError] = useState(null); // This error is for context-level operations
 
   const fetchResumeData = useCallback(async () => {
@@ -49,10 +79,46 @@ export const CVFormProvider = ({ children }) => {
       setResumeData(initialResumeState); // Reset on auth failure
       // throw new Error(msg + " Cannot fetch CV data."); // Or throw
       return { error: msg + " Cannot fetch CV data." };
+=======
+  const [error, setError] = useState(null);
+  const [completionStatus, setCompletionStatus] = useState({});
+
+  // ===============================================
+  // ===   UPDATED COMPLETION STATUS LOGIC       ===
+  // ===============================================
+  useEffect(() => {
+    if (resumeData) {
+      const {
+        personalInfo, educationDetails, professionalExperience,
+        skill, summary, references,
+      } = resumeData;
+
+      // This logic now correctly checks the new data structures
+      setCompletionStatus({
+        personalinfo: !!(personalInfo?.fullname && personalInfo?.email),
+        education: Array.isArray(educationDetails) && educationDetails.length > 0, // FIX: Check if array has items
+        experience: Array.isArray(professionalExperience) && professionalExperience.length > 0,
+        skills: Array.isArray(skill) && skill.length > 0,
+        summary: !!(summary && summary.trim().length > 10),
+        references: Array.isArray(references) && references.length > 0,
+      });
+    }
+  }, [resumeData]);
+
+
+  const fetchResumeData = useCallback(async () => {
+    const userId = getUserId();
+    const token = getToken();
+    if (!userId || !token) {
+      setError("Authentication error. Please log in.");
+      setResumeData(initialResumeState);
+      return;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     }
 
     setLoading(true);
     setError(null);
+<<<<<<< HEAD
     console.log("[Context] Fetching resume data for user ID:", userId);
 
     try {
@@ -218,10 +284,93 @@ export const CVFormProvider = ({ children }) => {
       return { ...prev, skill: skills };
     });
   }, []);
+=======
+    try {
+      // ✅ FIX: URL must be a string, and Authorization header must use a template literal (backticks)
+      const response = await axios.get('http://localhost:5001/api/cv/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setResumeData(prev => ({ ...prev, ...response.data, userId }));
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || "Failed to fetch CV data.";
+      setError(errorMsg);
+      console.error("[Context] Fetch Error:", errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // ===============================================
+  // ===      UPDATED SAVE TO DATABASE LOGIC     ===
+  // ===============================================
+  const saveToDatabase = async (sectionKey, sectionData) => {
+    const token = getToken();
+    if (!token) {
+      setError("Authentication error. Please log in again.");
+      throw new Error("User not authenticated.");
+    }
+    
+    setLoading(true);
+    setError(null);
+
+    let dataPayload = sectionData;
+
+    // Handle profile picture conversion if it's a new file
+    if (sectionKey === "personalInfo" && sectionData?.profilePicture instanceof File) {
+      try {
+        const base64Image = await toBase64(sectionData.profilePicture);
+        dataPayload = { ...sectionData, profilePicture: base64Image };
+      } catch (e) {
+        console.error("Error converting profile picture:", e);
+        // Proceed without the picture if conversion fails
+        const { profilePicture, ...restData } = sectionData;
+        dataPayload = restData;
+      }
+    }
+    
+    try {
+      // ✅ FIX: Authorization header must use a template literal (backticks)
+      const response = await axios.post("http://localhost:5001/api/cv/update",
+        { step: sectionKey, data: dataPayload },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // CRITICAL FIX: Update the context's state with the full, fresh data from the server.
+      // This is what allows the progress bar to update correctly.
+      setResumeData(response.data);
+      
+      return response.data; // Return data on success for the promise chain
+    } catch (err) {
+      // ✅ FIX: Strings with variables must use template literals (backticks)
+      const errorMessage = err.response?.data?.message || err.message || `Failed to save ${sectionKey}.`;
+      setError(errorMessage);
+      console.error(`[Context] Save Error for ${sectionKey}:`, errorMessage);
+      // Re-throw the error to be caught by toast.promise on the page
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Simplified context handlers for skills, as local state is managed on the page
+  const addSkill = useCallback((newSkill) => {
+    setResumeData(prev => ({ ...prev, skill: [...(prev.skill || []), newSkill] }));
+  }, []);
+
+  const updateSkill = useCallback((index, updatedSkill) => {
+     setResumeData(prev => {
+      const skills = [...(prev.skill || [])];
+      skills[index] = updatedSkill;
+      return { ...prev, skill: skills };
+    });
+  }, []);
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   const removeSkill = useCallback((index) => {
     setResumeData(prev => ({ ...prev, skill: (prev.skill || []).filter((_, i) => i !== index) }));
   }, []);
   
+<<<<<<< HEAD
   const addReference = useCallback((newReference = {}) => {
     const defaultRef = { referenceName: "", position: "", company: "", contact: "" };
     setResumeData(prev => ({ ...prev, references: [...(prev.references || []), {...defaultRef, ...newReference}] }));
@@ -246,6 +395,20 @@ export const CVFormProvider = ({ children }) => {
     addSkill, removeSkill, updateSkill,
     addReference, updateReference, removeReference,
     loading, error, setError,
+=======
+  const contextValue = {
+    resumeData,
+    loading,
+    error,
+    setError,
+    completionStatus,
+    fetchResumeData,
+    saveToDatabase,
+    // Provide skill handlers for Cv3.jsx
+    addSkill,
+    updateSkill,
+    removeSkill,
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   };
 
   return (
@@ -258,6 +421,7 @@ export const CVFormProvider = ({ children }) => {
 export const useCVForm = () => {
   const context = useContext(CVFormContext);
   if (context === undefined) {
+<<<<<<< HEAD
     throw new Error('useCVForm must be used within a CVFormProvider. Check your App.jsx component tree.');
   }
   return context;
@@ -266,3 +430,9 @@ export const useCVForm = () => {
 // Default export can be the provider itself or an object containing both
 export default CVFormContext; // Exporting context itself if preferred for direct import elsewhere
 // export { CVFormProvider, useCVForm }; // Alternative more common export pattern
+=======
+    throw new Error('useCVForm must be used within a CVFormProvider.');
+  }
+  return context;
+};
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19

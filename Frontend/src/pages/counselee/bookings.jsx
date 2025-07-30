@@ -1,6 +1,10 @@
 "use client"
 
+<<<<<<< HEAD
 import { useState, useEffect } from "react"
+=======
+import { useState } from "react"
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 import { Link } from "react-router-dom"
 import {
   FaHome,
@@ -18,6 +22,7 @@ import {
   FaPhone,
   FaFilter,
   FaSortAmountDown,
+<<<<<<< HEAD
   FaSpinner,
   FaExclamationCircle,
   FaCreditCard,
@@ -132,15 +137,141 @@ export default function CounseleeBookings() {
       booking.topic?.toLowerCase().includes(searchLower) ||
       booking.location?.toLowerCase().includes(searchLower)
     )
+=======
+} from "react-icons/fa"
+import "./bookings.css"
+
+// Sample bookings data with updated counselor images
+const bookingsData = [
+  {
+    id: 1,
+    counselor: {
+      name: "Tyrone Roberts",
+      email: "tyroneroberts@gmail.com",
+      avatar:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/320x400%20%281%29-REpF9XlE1aGoNXc24DtZUcea6LSrGe.jpeg",
+      expertise: "Career Development",
+      education: "Ph.D. in Organizational Psychology, Stanford University",
+    },
+    date: "05 January 2025",
+    time: "9:00 AM - 10:00 AM",
+    topic: "Career Development Strategy",
+    status: "Scheduled",
+    location: "Online (Zoom)",
+    type: "Video Call",
+  },
+  {
+    id: 2,
+    counselor: {
+      name: "Allen Davis",
+      email: "allendavis@gmail.com",
+      avatar:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/320x400%20%282%29-m3fEUTnh5jJi5e6WV6WR3ejFSlLlIc.jpeg",
+      expertise: "Resume Building",
+      education: "MBA, Harvard Business School",
+    },
+    date: "05 January 2025",
+    time: "9:00 AM - 10:00 AM",
+    topic: "Resume Review",
+    status: "Completed",
+    location: "Online (Google Meet)",
+    type: "Video Call",
+  },
+  {
+    id: 3,
+    counselor: {
+      name: "Sarah Johnson",
+      email: "sarahjohnson@gmail.com",
+      avatar:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Female-lecturer-Stock-Photo.jpg-h6Tl73b8PiEfCwBGJORaorrkD1kqxt.jpeg",
+      expertise: "Career Transition",
+      education: "M.S. in Career Counseling, Columbia University",
+    },
+    date: "05 January 2025",
+    time: "9:00 AM - 10:00 AM",
+    topic: "Interview Preparation",
+    status: "Scheduled",
+    location: "Phone Call",
+    type: "Phone",
+  },
+  {
+    id: 4,
+    counselor: {
+      name: "Patricia Manzi",
+      email: "patriciamanzi@gmail.com",
+      avatar: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/320x400-A7ZyoORw73Amv0euMJmB7XmwLTmaS8.jpeg",
+      expertise: "Workplace Communication",
+      education: "Ph.D. in Communication Studies, UCLA",
+    },
+    date: "05 January 2025",
+    time: "9:00 AM - 10:00 AM",
+    topic: "Leadership Skills",
+    status: "Cancelled",
+    location: "Online (Zoom)",
+    type: "Video Call",
+  },
+  {
+    id: 5,
+    counselor: {
+      name: "Olivia Lawrence",
+      email: "olivialawrence@gmail.com",
+      avatar:
+        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/images%20%281%29-dkn0B1cwNTfYcnLeKWZtV9YDBBTHdg.jpeg",
+      expertise: "Job Search Strategy",
+      education: "M.A. in Human Resources Management, NYU",
+    },
+    date: "05 January 2025",
+    time: "9:00 AM - 10:00 AM",
+    topic: "Career Transition",
+    status: "Scheduled",
+    location: "Online (Microsoft Teams)",
+    type: "Video Call",
+  },
+]
+
+export default function CounseleeBookings() {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [bookings] = useState(bookingsData)
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [sortBy, setSortBy] = useState("date")
+
+  // Filter bookings based on search query and status
+  const filteredBookings = bookings.filter((booking) => {
+    const matchesSearch =
+      booking.counselor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      booking.counselor.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      booking.counselor.expertise.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      booking.topic.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const matchesStatus = statusFilter === "all" || booking.status.toLowerCase() === statusFilter.toLowerCase()
+
+    return matchesSearch && matchesStatus
+  })
+
+  // Sort bookings
+  const sortedBookings = [...filteredBookings].sort((a, b) => {
+    if (sortBy === "date") {
+      return new Date(a.date) - new Date(b.date)
+    } else if (sortBy === "name") {
+      return a.counselor.name.localeCompare(b.counselor.name)
+    } else if (sortBy === "status") {
+      return a.status.localeCompare(b.status)
+    }
+    return 0
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   })
 
   const handleStatusFilterChange = (status) => {
     setStatusFilter(status)
+<<<<<<< HEAD
     setCurrentPage(1) // Reset to first page when filtering
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   }
 
   const handleSortChange = (sortOption) => {
     setSortBy(sortOption)
+<<<<<<< HEAD
     setCurrentPage(1) // Reset to first page when sorting
   }
 
@@ -219,6 +350,8 @@ export default function CounseleeBookings() {
       default:
         return 'pending'
     }
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   }
 
   return (
@@ -231,7 +364,11 @@ export default function CounseleeBookings() {
             alt="Alexander Mitchell"
             className="profile-image"
           />
+<<<<<<< HEAD
         <h3 className="profile-name">{user.name}</h3>
+=======
+          <h3 className="profile-name">Alexander Mitchell</h3>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         </div>
 
         <nav className="sidebar-menu">
@@ -318,9 +455,15 @@ export default function CounseleeBookings() {
             <div className="search-box">
               <input
                 type="text"
+<<<<<<< HEAD
                 placeholder="Search bookings by counselor, topic, or location..."
                 value={searchQuery}
                 onChange={handleSearch}
+=======
+                placeholder="Search bookings..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                 className="search-input"
               />
               <button className="search-button">
@@ -341,6 +484,7 @@ export default function CounseleeBookings() {
                     All
                   </button>
                   <button
+<<<<<<< HEAD
                     className={`filter-option ${statusFilter === "pending" ? "active" : ""}`}
                     onClick={() => handleStatusFilterChange("pending")}
                   >
@@ -359,6 +503,8 @@ export default function CounseleeBookings() {
                     Payment Pending
                   </button>
                   <button
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                     className={`filter-option ${statusFilter === "scheduled" ? "active" : ""}`}
                     onClick={() => handleStatusFilterChange("scheduled")}
                   >
@@ -409,6 +555,7 @@ export default function CounseleeBookings() {
 
           {/* Bookings List */}
           <div className="bookings-list">
+<<<<<<< HEAD
             {loading ? (
               <div className="loading-state">
                 <FaSpinner className="loading-spinner" />
@@ -569,10 +716,67 @@ export default function CounseleeBookings() {
                   </div>
                 )}
               </>
+=======
+            {sortedBookings.length > 0 ? (
+              sortedBookings.map((booking) => (
+                <div key={booking.id} className="booking-card">
+                  <div className="booking-left">
+                    <div className="booking-counselor">
+                      <img
+                        src={booking.counselor.avatar || "/placeholder.svg"}
+                        alt={booking.counselor.name}
+                        className="counselor-avatar"
+                      />
+                      <div className="counselor-details">
+                        <h3 className="counselor-name">{booking.counselor.name}</h3>
+                        <p className="counselor-expertise">{booking.counselor.expertise}</p>
+                      </div>
+                    </div>
+                    <div className="booking-details">
+                      <div className="booking-detail">
+                        <FaCalendarAlt className="detail-icon" />
+                        <span>{booking.date}</span>
+                      </div>
+                      <div className="booking-detail">
+                        <FaClock className="detail-icon" />
+                        <span>{booking.time}</span>
+                      </div>
+                      <div className="booking-detail">
+                        <FaMapMarkerAlt className="detail-icon" />
+                        <span>{booking.location}</span>
+                      </div>
+                      <div className="booking-detail">
+                        {booking.type === "Video Call" ? (
+                          <FaVideo className="detail-icon" />
+                        ) : (
+                          <FaPhone className="detail-icon" />
+                        )}
+                        <span>{booking.type}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="booking-right">
+                    <div className="booking-topic">
+                      <h4>Topic:</h4>
+                      <p>{booking.topic}</p>
+                    </div>
+                    <div className="booking-actions">
+                      <div className={`booking-status ${booking.status.toLowerCase()}`}>{booking.status}</div>
+                      <div className="action-buttons">
+                        <button className="view-details-btn">View Details</button>
+                        {booking.status === "Scheduled" && <button className="cancel-booking-btn">Cancel</button>}
+                        {booking.status === "Completed" && <button className="feedback-btn">Leave Feedback</button>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
             ) : (
               <div className="no-bookings">
                 <FaCalendarAlt className="no-bookings-icon" />
                 <h3>No bookings found</h3>
+<<<<<<< HEAD
                 <p>
                   {searchQuery 
                     ? "Try adjusting your search criteria" 
@@ -581,6 +785,9 @@ export default function CounseleeBookings() {
                     : "You haven't made any bookings yet"
                   }
                 </p>
+=======
+                <p>Try adjusting your search or filter criteria</p>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                 <Link to="/counselee/find-counselor" className="find-counselor-btn">
                   Find a Counselor
                 </Link>
@@ -589,6 +796,7 @@ export default function CounseleeBookings() {
           </div>
         </div>
       </main>
+<<<<<<< HEAD
 
       {/* Booking Details Modal */}
       <BookingDetailsModal
@@ -618,6 +826,8 @@ export default function CounseleeBookings() {
           </div>
         </div>
       )}
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     </div>
   )
 }
