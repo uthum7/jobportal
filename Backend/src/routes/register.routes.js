@@ -40,6 +40,7 @@ router.post(
         message: "All fields are required, and roles must be a non-empty array." 
       });
     }
+   
 
     // --- ⬇ CRITICAL SECURITY UPDATE ⬇ ---
     // Define which roles are allowed for public, self-registration
@@ -68,6 +69,7 @@ router.post(
       // The passwordResetRequired field will correctly default to false here.
     });
 
+    console.log(password);
     if (newUser) {
       // You might not want to automatically log in a user after registration.
       // But if you do, this is correct.
@@ -101,8 +103,9 @@ router.post(
     }
     const requestedRole = String(role).toUpperCase();
     const user = await Registeruser.findOne({ email: email.toLowerCase() });
+    console.log("User found:", user);
     
-    if (!user || !(await user.matchPassword(password))) {
+    if (!user || !await user.matchPassword(password)) {
       return res.status(401).json({ message: "Invalid credentials." });
     }
 

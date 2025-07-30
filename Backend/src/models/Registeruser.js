@@ -59,7 +59,7 @@ const RegisteruserSchema = new Schema(
     roles: {
       type: [String],
       required: [true, "At least one role is required"],
-      enum: ["COUNSELOR", "COUNSELEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
+      enum: ["COUNSELOR", "MENTOR", "COUNSELEE", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
       validate: {
         validator: function (roles) {
           return roles && roles.length > 0;
@@ -78,17 +78,6 @@ const RegisteruserSchema = new Schema(
         ref: 'Counselor',
         required: false // Only required if user has MENTOR role
     },
-    // Full name field
-    fullName: {
-        type: String,
-        required: false,
-        trim: true
-    },
-    // Profile picture URL
-    profilePic: {
-        type: String,
-        required: false
-    },
     // --- ADD THESE TWO NEW FIELDS HERE ---
     resetPasswordToken: {
       type: String,
@@ -97,12 +86,6 @@ const RegisteruserSchema = new Schema(
     resetPasswordExpires: {
       type: Date,
       default: undefined,
-    },
-
-   
-    phone: {
-      type: String,
-      default: "", // Optional, validate if needed
     },
     
   },
@@ -124,6 +107,10 @@ RegisteruserSchema.pre("save", async function (next) {
 
 // ✅ Compare password method
 RegisteruserSchema.methods.matchPassword = async function (enteredPassword) {
+  console.log("Entered Password:", enteredPassword);
+  console.log("Stored Password:", this.password);
+  
+
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
