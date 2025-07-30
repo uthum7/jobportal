@@ -17,6 +17,10 @@ import {
   FaTimes,
 } from "react-icons/fa"
 import "./change-password.css"
+import { axiosInstance } from "../../lib/axios"
+  const userstring = localStorage.getItem("user")
+  const user = userstring ? JSON.parse(userstring) : null
+
 
 export default function ChangePassword() {
   const [formData, setFormData] = useState({
@@ -87,29 +91,35 @@ export default function ChangePassword() {
     return errors
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-
-    // Validate form
     const errors = validateForm()
-
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors)
       return
     }
-
-    // In a real app, you would call an API to change the password
-    console.log("Password change submitted:", formData)
-
-    // Show success message
-    setFormSuccess(true)
-
-    // Reset form
-    setFormData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    })
+    try {
+      // Call backend API to change password
+      const res = await axiosInstance.put("http://localhost:5001/api/auth/change-password", {
+        userId: JSON.parse(localStorage.getItem("user")).userId, // Get userId from localStorage
+        oldPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+      })
+      setFormSuccess(true)
+      setFormErrors({})
+      setFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      })
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        setFormErrors({ api: err.response.data.message })
+      } else {
+        setFormErrors({ api: "Failed to change password. Please try again." })
+      }
+      setFormSuccess(false)
+    }
   }
 
   return (
@@ -122,8 +132,8 @@ export default function ChangePassword() {
             alt="Sanduni Dilhara"
             className="profile-image"
           />
-          <h3 className="profile-name">Alexander Mitchell</h3>
-          <p className="profile-title">Web Designer</p>
+          <h3 className="profile-name">{user.name}</h3>
+          
         </div>
 
         <nav className="sidebar-menu">
@@ -208,6 +218,11 @@ export default function ChangePassword() {
             <div className="success-message">
               <FaCheck className="success-icon" />
               <p>Your password has been changed successfully!</p>
+            </div>
+          )}
+          {formErrors.api && (
+            <div className="error-message" style={{ marginBottom: "1rem" }}>
+              <FaTimes className="criteria-icon" /> {formErrors.api}
             </div>
           )}
 

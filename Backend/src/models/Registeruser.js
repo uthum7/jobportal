@@ -3,6 +3,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
+
 const Schema = mongoose.Schema;
 
 // Registeruser Schema
@@ -35,6 +36,23 @@ const RegisteruserSchema = new Schema({
             message: "At least one role must be selected"
         }
     },
+    // Reference to counselor profile if user is a MENTOR
+    counselors_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Counselor',
+        required: false // Only required if user has MENTOR role
+    },
+    // Full name field
+    fullName: {
+        type: String,
+        required: false,
+        trim: true
+    },
+    // Profile picture URL
+    profilePic: {
+        type: String,
+        required: false
+    },
     // --- ADD THESE TWO NEW FIELDS HERE ---
     resetPasswordToken: {
         type: String,
@@ -52,8 +70,8 @@ RegisteruserSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
 
     try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
+        
+        this.password = await bcrypt.hash(this.password, 10);
         next();
     } catch (err) {
         next(err);

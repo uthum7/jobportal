@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import Registeruser from "../models/Registeruser.js";
 import jwt from "jsonwebtoken";
+import Counselor from "../models/counselors.model.js";
 
 
 // --- Import the controller functions ---
@@ -11,6 +12,7 @@ import {
     forgotPassword,
     resetPassword
 } from "../controllers/registerauth.controller.js"; // Assuming you have a registerauth.controller.js
+import { addCounselee } from "../controllers/counselees.controller.js";
 
 
 const router = express.Router();
@@ -97,12 +99,11 @@ router.post(
 
     try {
       const user = await Registeruser.findOne({ email: email.toLowerCase() });
-      
       if (!user) {
         console.log("Login failed: User not found for email:", email);
         return res.status(401).json({ message: "Invalid credentials or role." }); // Generic message
       }
-
+      
       // Check if the user actually has the role they are trying to log in with
       if (!user.roles.map(r => r.toUpperCase()).includes(requestedRole)) {
         console.log(`Login failed: Role mismatch for user ${email}. User roles: ${user.roles.join(', ')}, Requested role: ${requestedRole}`);
@@ -115,26 +116,39 @@ router.post(
         return res.status(401).json({ message: "Invalid credentials or role." }); // Generic message
       }
 
+      let roleObj;
+      if (requestedRole === "MENTOR") {
+        roleObj = await Counselor.findOne({ _id: user.counselors_id });
+      } else if(requestedRole === "MENTEE") {
+        roleObj = {};
+      }
       // --- CORRECTED JWT PAYLOAD ---
       const payload = {
         userId: user._id,      // <<<<---- CHANGE 'id' TO 'userId' HERE ---->>>>
         roles: user.roles,     // Include all user's roles in the token
-        currentRole: requestedRole // The specific role they logged in as for this session
+        currentRole: requestedRole, // The specific role they logged in as for this session
       };
 
       const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" });
 
       console.log("Login successful for:", email, "as role:", requestedRole);
-
-      res.status(200).json({
+     console.log(roleObj)
+      // Create response object step by step for debugging
+      const responseData = {
         token,
         userId: user._id,         // Send userId explicitly
         username: user.username,
         email: user.email,
         role: requestedRole,      // The role they logged in as for this session
         allRoles: user.roles,     // All roles the user possesses
-        message: "Login successful."
-      });
+        message: "Login successful.",
+        counselors_id: user.counselors_id ? user.counselors_id.toString() : null, // Ensure string or null
+        fullName: user.fullName || user.username, // Add full name
+        profilePic: user.profilePic || null, // Add profile picture
+        specialty: roleObj ? roleObj.specialty || null : null, // Add specialty if available
+      };
+      
+      res.status(200).json(responseData);
 
     } catch (error) {
       console.error("Server error during login:", error.message, error.stack);

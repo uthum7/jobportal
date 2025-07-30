@@ -11,6 +11,10 @@ import messageRoutes from "./routes/message.route.js";
 import registerUserRoutes from "./routes/register.routes.js";
 import cvRoutes from "./routes/cv.routes.js";
 import jobPostRoutes from "./routes/JobPost.route.js";
+import counselorsRoutes from "./routes/counselors.route.js";
+import bookingRoutes from "./routes/booking.route.js";
+import counseleesRoutes from "./routes/counselees.route.js";
+import paymentRoutes from "./routes/payment.route.js";
 // --- FIX 1: Correctly import the AI routes ---
 import aiRoutes from "./routes/gemini.route.js"; // Renamed variable to camelCase `aiRoutes` for consistency
 
@@ -34,6 +38,11 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN || "http://localhost:5173",
     credentials: true,
 }));
+
+// Stripe webhook route needs raw body, so we register it before JSON parsing
+app.use("/api/payments/webhook", express.raw({type: 'application/json'}));
+
+// JSON parsing for all other routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -56,6 +65,10 @@ app.use("/api/message", messageRoutes);
 app.use("/api/register", registerUserRoutes);
 app.use("/api/cv", cvRoutes);
 app.use("/api/job", jobPostRoutes);
+app.use("/api/counselors", counselorsRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/counselees", counseleesRoutes);
+app.use("/api/payments", paymentRoutes);
 // --- FIX 2: Connect the AI routes to your app ---
 app.use("/api/ai", aiRoutes); // This will make your route available at /api/ai/...
 console.log("API routes registered.");
