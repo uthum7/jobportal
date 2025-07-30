@@ -1,4 +1,6 @@
 import express from 'express';
+import { protectRoute } from '../middleware/auth.middleware.js';  // adjust the path accordingly
+
 import { getCounselors, getCounselees, getJobseekers,
     getEmployees,getCounselorById,updateCounselor,deleteCounselor,
     getCounseleeById,updateCounselee,deleteCounselee,
@@ -6,7 +8,7 @@ import { getCounselors, getCounselees, getJobseekers,
     getJobseekerById,updateJobseeker,deleteJobseeker,
     getRecentJobsByEmployee,getApplicationCountByEmployee,getJobById,
     updateJobDetails,getRecentBookingsForCounselor,
-    cancelBookingByAdmin,getAdminById
+    cancelBookingByAdmin,getAdminById,updateAdminProfile
  } from '../controllers/RegisterUser.controller.js';
 
 
@@ -42,5 +44,7 @@ router.put('/cancelbooking/:bookingId', cancelBookingByAdmin);
 
 
 router.get('/admin/:id', getAdminById);
+router.put('/admin/:id', protectRoute, updateAdminProfile);
+
 
 export default router;
