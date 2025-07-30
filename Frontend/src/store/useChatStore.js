@@ -3,7 +3,10 @@ import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
 
+<<<<<<< HEAD
+=======
 let messageListener = null; // <-- Keep the listener reference globally
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
 export const useChatStore = create((set, get) => ({
   messages: [],
@@ -11,15 +14,27 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+<<<<<<< HEAD
+
+=======
   unreadMessages: {},
 
   // ✅ Get all users
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
       const res = await axiosInstance.get("messages/users");
       set({ users: res.data });
     } catch (error) {
+<<<<<<< HEAD
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isUsersLoading: false });
+    }
+  },
+
+=======
       toast.error(error.response?.data?.message || "Failed to fetch users.");
     } finally {
       set({ isUsersLoading: false });
@@ -28,25 +43,67 @@ export const useChatStore = create((set, get) => ({
   },
 
   // ✅ Get all messages with selected user
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   getMessages: async (userId) => {
     set({ isMessagesLoading: true });
     try {
       const res = await axiosInstance.get(`/messages/${userId}`);
       set({ messages: res.data });
     } catch (error) {
+<<<<<<< HEAD
+      toast.error(error.response.data.message);
+=======
       toast.error(error.response?.data?.message || "Failed to fetch messages.");
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     } finally {
       set({ isMessagesLoading: false });
     }
   },
 
+<<<<<<< HEAD
+=======
   // ✅ Send a new message
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
       set({ messages: [...messages, res.data] });
     } catch (error) {
+<<<<<<< HEAD
+      const message =
+      error.response?.data?.message || error.message || "Failed to send message.";
+    toast.error(message);
+    console.error("sendMessage error:", error);    }
+  },
+  
+  subscribeToMessages: () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+
+    const socket = useAuthStore.getState().socket;
+
+    socket.on("newMessage", (newMessage) => {
+      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+      if (!isMessageSentFromSelectedUser) return;
+
+      set({
+        messages: [...get().messages, newMessage],
+      });
+    });
+  },
+
+  unsubscribeFromMessages: () => {
+    const socket = useAuthStore.getState().socket;
+    socket.off("newMessage");
+  },
+
+  setSelectedUser: (selectedUser)=> set({selectedUser}),
+
+  
+
+ }));
+=======
       const message = error.response?.data?.message || error.message || "Failed to send message.";
       toast.error(message);
       console.error("sendMessage error:", error);
@@ -121,3 +178,4 @@ setMessages: (newMessages) => set({ messages: newMessages }),
 
   
 }));
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19

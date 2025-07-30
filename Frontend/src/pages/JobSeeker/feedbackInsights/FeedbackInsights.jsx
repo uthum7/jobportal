@@ -4,9 +4,6 @@ import { rankCandidates, calculateCandidateScore, getScoreColor } from '../../..
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import JobseekerSidebar from '../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar';
 import Footer from '../../../components/Footer/Footer.jsx';
-import '../AppliedJobs/AppliedJobs.css';
-import '../Dashboard/Dashboard.css';
-import './FeedbackInsights.css';
 import { FiUserX } from 'react-icons/fi';
 
 const FeedbackInsights = () => {
@@ -227,4 +224,4 @@ const FeedbackInsights = () => {
   );
 };
 
-export default FeedbackInsights; 
+export default FeedbackInsights;

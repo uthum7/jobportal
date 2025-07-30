@@ -7,6 +7,12 @@ import JobseekerSidebar from '../../../components/JobSeeker/JobseekerSidebar/Job
 import { getUserId, isAuthenticated, isJobSeeker, getToken } from '../../../utils/auth';
 import { useCVForm } from '../../../context/CVFormContext';
 
+// Helper function to capitalize first word (first name)
+const capitalizeFirstWord = (str) => {
+  if (!str) return '';
+  return str.split(' ')[0].replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
 const skillMatchData = [
   { skill: 'React', userLevel: 8, requiredLevel: 9 },
   { skill: 'JavaScript', userLevel: 9, requiredLevel: 8 },
@@ -16,71 +22,26 @@ const skillMatchData = [
   { skill: 'AWS', userLevel: 3, requiredLevel: 8 }
 ];
 
-const getDashboardCompletionStatus = (resumeData) => {
-  if (!resumeData) return {};
-  const {
-    personalInfo,
-    educationDetails,
-    professionalExperience,
-    skill,
-    summary,
-    references,
-  } = resumeData;
-  return {
-    personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.birthday && personalInfo?.gender),
-    education: !!(educationDetails?.schoolName || educationDetails?.universitiyName),
-    experience: professionalExperience && professionalExperience.length > 0,
-    skills: skill && skill.length > 0,
-    summary: summary && summary.length > 20,
-    references: references && references.length > 0,
-    preview: false,
-  };
-};
+
 
 const JobSeekerDashboard = () => {
   // State for animations
   const [animationComplete, setAnimationComplete] = useState(false);
-  const { resumeData, fetchResumeData } = useCVForm();
+  const { resumeData, fetchResumeData, completionStatus } = useCVForm();
 
-  // Dashboard CV status state
-  const [dashboardCompletionStatus, setDashboardCompletionStatus] = useState({});
-
-  useEffect(() => {
-    if (resumeData) {
-      const {
-        personalInfo,
-        educationDetails,
-        professionalExperience,
-        skill,
-        summary,
-        references,
-      } = resumeData;
-
-      // Updated logic: use array checks for education, experience, skills, references
-      const newCompletionStatus = {
-        personalinfo: !!(personalInfo?.fullname && personalInfo?.email && personalInfo?.birthday && personalInfo?.gender),
-        education: Array.isArray(educationDetails) && educationDetails.length > 0,
-        experience: Array.isArray(professionalExperience) && professionalExperience.length > 0,
-        skills: Array.isArray(skill) && skill.length > 0,
-        summary: summary && summary.length > 20,
-        references: Array.isArray(references) && references.length > 0,
-        preview: false,
-      };
-
-      setDashboardCompletionStatus(newCompletionStatus);
-    }
-  }, [resumeData]);
-
-  // Calculate CV completion percentage (DASHBOARD LOGIC)
+  // Calculate CV completion percentage using context's completionStatus
   const getDashboardCVCompletionPercentage = () => {
-    if (!dashboardCompletionStatus) return 0;
+    console.log('getDashboardCVCompletionPercentage called with completionStatus:', completionStatus);
+    if (!completionStatus) return 0;
     const totalSections = 6; // personalinfo, education, experience, skills, summary, references (excluding preview)
-    const completed = Object.values(dashboardCompletionStatus || {}).filter(Boolean).length;
-    return Math.round((completed / totalSections) * 100);
+    const completed = Object.values(completionStatus || {}).filter(Boolean).length;
+    const percentage = Math.round((completed / totalSections) * 100);
+    console.log('CV Completion calculation:', { completed, totalSections, percentage });
+    return percentage;
   };
   const dashboardCvProgress = getDashboardCVCompletionPercentage();
-  const dashboardCompletedSections = Object.keys(dashboardCompletionStatus || {}).filter(key => dashboardCompletionStatus[key] && key !== 'preview');
-  const dashboardMissingSections = Object.keys(dashboardCompletionStatus || {}).filter(key => !dashboardCompletionStatus[key] && key !== 'preview');
+  const dashboardCompletedSections = Object.keys(completionStatus || {}).filter(key => completionStatus[key] && key !== 'preview');
+  const dashboardMissingSections = Object.keys(completionStatus || {}).filter(key => !completionStatus[key] && key !== 'preview');
   
   // State for real user data
   const [dashboardData, setDashboardData] = useState({
@@ -113,18 +74,16 @@ const JobSeekerDashboard = () => {
     setTimeout(() => setAnimationComplete(true), 100);
     
     // Fetch CV data to ensure completion status is up to date
-    // fetchResumeData(); // This line was removed as per the new_code
+    const fetchCVData = async () => {
+      try {
+        await fetchResumeData();
+      } catch (error) {
+        console.warn("Failed to fetch CV data:", error);
+        // Don't redirect on CV fetch failure, just log the error
+      }
+    };
     
-    // Animate CV progress
-    // const timer = setInterval(() => {
-    //   setCvProgress(prev => {
-    //     if (prev >= cvCompletionData.percentage) {
-    //       clearInterval(timer);
-    //       return cvCompletionData.percentage;
-    //     }
-    //     return prev + 1;
-    //   });
-    // }, 20);
+    fetchCVData();
 
     // Fetch real dashboard data
     fetchDashboardData();
@@ -132,7 +91,7 @@ const JobSeekerDashboard = () => {
     return () => {
       // clearInterval(timer); // This line was removed as per the new_code
     };
-  }, [userId, navigate, resumeData]); // Changed fetchResumeData to resumeData
+  }, [userId, navigate, fetchResumeData]); // Added fetchResumeData to dependencies
 
   const fetchDashboardData = async () => {
     if (!userId) {
@@ -153,10 +112,12 @@ const JobSeekerDashboard = () => {
       };
 
       // Fetch user profile for first name
-      let firstName = 'Gimhani';
+      let firstName = 'User';
       try {
         const userResponse = await axios.get(`http://localhost:5001/api/register/users/${userId}`, config);
-        firstName = userResponse.data.firstName || 'User';
+        // Use username field like in JobSeekerSidebar, fallback to firstName or other fields
+        const rawName = userResponse.data.username || userResponse.data.firstName || userResponse.data.fullName || 'User';
+        firstName = capitalizeFirstWord(rawName);
       } catch (err) {
         console.warn("Could not fetch user profile:", err);
       }
@@ -309,7 +270,7 @@ try {
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
-      <div className="circular-progress" style={{ width: size, height: size }}>
+      <div className="relative" style={{ width: size, height: size }}>
         <svg className="transform -rotate-90" width={size} height={size}>
           <circle
             cx={size / 2}
@@ -332,7 +293,9 @@ try {
             className="transition-all duration-1000 ease-out"
           />
         </svg>
-        <div className="progress-text">{percentage}%</div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-lg font-semibold text-gray-700">{percentage}%</span>
+        </div>
       </div>
     );
   };
@@ -340,12 +303,12 @@ try {
   // Don't render if user is not authenticated or not a job seeker
   if (!isAuthenticated() || !isJobSeeker()) {
     return (
-      <div className="dashboard-containerJS">
-        <div className="main-contentJS">
-          <div className="error-container">
-            <h2>Access Denied</h2>
-            <p>You need to be logged in as a Job Seeker to view the dashboard.</p>
-            <Link to="/login" className="login-button">
+      <div className="min-h-screen flex bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Access Denied</h2>
+            <p className="text-gray-600 mb-4">You need to be logged in as a Job Seeker to view the dashboard.</p>
+            <Link to="/login" className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
               Go to Login
             </Link>
           </div>
@@ -356,126 +319,152 @@ try {
 
   if (loading) {
     return (
-      <div className="dashboard-containerJS">
+      <div className="min-h-screen flex bg-gray-50">
         <JobseekerSidebar />
-        <main className="main-contentJS">
-          <div className="loading-container">
-            <p>Loading your dashboard...</p>
+        <div className="flex-1 lg:ml-0">
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading your dashboard...</p>
+            </div>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="dashboard-containerJS">
+    <div className="min-h-screen flex bg-gray-50">
       <JobseekerSidebar />
-      <div className="main-content-wrapper">
-        <main className="main-contentJS">
-          <header className="header">
-            <h1 className="page-title">
+      <div className="flex-1 lg:ml-0">
+        <div className="p-6">
+          <header className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
               Welcome Back, {dashboardData.firstName}! 👋
             </h1>
-            <nav className="breadcrumb">
-              <Link to="/" className="breadcrumb-link">Home</Link>
-              <span className="breadcrumb-separator">/</span>
+            <nav className="text-sm text-gray-600">
+              <Link to="/" className="text-blue-600 hover:text-blue-700">Home</Link>
+              <span className="mx-2">/</span>
               <span>Dashboard</span>
             </nav>
           </header>
 
           {error && (
-            <div className="error-message">
-              <p>Error: {error}</p>
-              <button onClick={fetchDashboardData} className="retry-button">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <p className="text-red-800">Error: {error}</p>
+              <button onClick={fetchDashboardData} className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors">
                 Try Again
               </button>
             </div>
           )}
 
           {/* Stats Cards */}
-          <section className="stats-container">
-            <div className={`stats-card saved-jobs-card ${animationComplete ? 'animate-fade-in' : ''}`}>
-              <div className="icon-container saved-icon">
-                <FileText className="stats-icon" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <Link to="/JobSeeker/saved-jobs" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="flex items-center">
+                <div className="p-3 bg-yellow-100 rounded-lg">
+                  <FileText className="w-6 h-6 text-yellow-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-2xl font-bold text-gray-800">{dashboardData.savedJobsCount}</p>
+                  <p className="text-sm text-gray-600">Saved Jobs</p>
+                </div>
               </div>
-              <div className="stats-info">
-                <p className="stats-number">{dashboardData.savedJobsCount}</p>
-                <p className="stats-label">Saved Jobs</p>
-              </div>
-            </div>
+            </Link>
 
-            <div className={`stats-card applied-jobs-card ${animationComplete ? 'animate-fade-in' : ''}`} style={{ animationDelay: '0.1s' }}>
-              <div className="icon-container applied-icon">
-                <TrendingUp className="stats-icon" />
+            <Link to="/JobSeeker/applied-jobs" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="flex items-center">
+                <div className="p-3 bg-green-100 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-2xl font-bold text-gray-800">{dashboardData.appliedJobsCount}</p>
+                  <p className="text-sm text-gray-600">Applied Jobs</p>
+                </div>
               </div>
-              <div className="stats-info">
-                <p className="stats-number">{dashboardData.appliedJobsCount}</p>
-                <p className="stats-label">Applied Jobs</p>
-              </div>
-            </div>
+            </Link>
 
-            <div className={`stats-card pending-jobs-card ${animationComplete ? 'animate-fade-in' : ''}`} style={{ animationDelay: '0.2s' }}>
-              <div className="icon-container pending-icon">
-                <Clock className="stats-icon" />
+            <Link to="/JobSeeker/applied-jobs?filter=pending" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="flex items-center">
+                <div className="p-3 bg-orange-100 rounded-lg">
+                  <Clock className="w-6 h-6 text-orange-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-2xl font-bold text-gray-800">{dashboardData.pendingApplications}</p>
+                  <p className="text-sm text-gray-600">Pending Applications</p>
+                </div>
               </div>
-              <div className="stats-info">
-                <p className="stats-number">{dashboardData.pendingApplications}</p>
-                <p className="stats-label">Pending Applications</p>
-              </div>
-            </div>
+            </Link>
 
-            <div className={`stats-card accepted-jobs-card ${animationComplete ? 'animate-fade-in' : ''}`} style={{ animationDelay: '0.3s' }}>
-              <div className="icon-container accepted-icon">
-                <CheckCircle className="stats-icon" />
+            <Link to="/JobSeeker/applied-jobs?filter=accepted" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="flex items-center">
+                <div className="p-3 bg-emerald-100 rounded-lg">
+                  <CheckCircle className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-2xl font-bold text-gray-800">{dashboardData.acceptedApplications}</p>
+                  <p className="text-sm text-gray-600">Accepted Applications</p>
+                </div>
               </div>
-              <div className="stats-info">
-                <p className="stats-number">{dashboardData.acceptedApplications}</p>
-                <p className="stats-label">Accepted Applications</p>
-              </div>
-            </div>
+            </Link>
 
-            <div className={`stats-card rejected-jobs-card ${animationComplete ? 'animate-fade-in' : ''}`} style={{ animationDelay: '0.4s' }}>
-              <div className="icon-container rejected-icon">
-                <X className="stats-icon" />
+            <Link to="/JobSeeker/applied-jobs?filter=rejected" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
+              <div className="flex items-center">
+                <div className="p-3 bg-red-100 rounded-lg">
+                  <X className="w-6 h-6 text-red-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-2xl font-bold text-gray-800">{dashboardData.rejectedApplications}</p>
+                  <p className="text-sm text-gray-600">Rejected Applications</p>
+                </div>
               </div>
-              <div className="stats-info">
-                <p className="stats-number">{dashboardData.rejectedApplications}</p>
-                <p className="stats-label">Rejected Applications</p>
-              </div>
-            </div>
-          </section>
+            </Link>
+          </div>
 
           {/* Main Content Grid */}
-          <div className="content-grid">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Recent Applications */}
-            <div className="recent-applications">
-              <h3 className="chart-title">
-                <Calendar />
-                Recent Applications
-              </h3>
-              <div className="applications-list">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+                  <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                  Recent Applications
+                </h3>
+                {recentApplications.length > 3 && (
+                  <Link 
+                    to="/JobSeeker/applied-jobs"
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                  >
+                    See All
+                  </Link>
+                )}
+              </div>
+              <div className="space-y-4">
                 {recentApplications.length > 0 ? (
-                  recentApplications.map((app, index) => (
-                    <div key={app.id} className={`application-item ${animationComplete ? 'animate-slide-in' : ''}`} style={{ animationDelay: `${index * 0.1}s` }}>
-                      <div className="status-icon" style={{ backgroundColor: getStatusColor(app.status) + '20', color: getStatusColor(app.status) }}>
-                        {getStatusIcon(app.status)}
+                  recentApplications.slice(0, 3).map((app, index) => (
+                    <div key={app.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 rounded-full" style={{ backgroundColor: getStatusColor(app.status) + '20' }}>
+                          <div style={{ color: getStatusColor(app.status) }}>
+                            {getStatusIcon(app.status)}
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-gray-800">{app.jobTitle}</h4>
+                          <p className="text-sm text-gray-600">Applied on {formatDate(app.applyDate)}</p>
+                        </div>
                       </div>
-                      <div className="application-info">
-                        <h4 className="job-title">{app.jobTitle}</h4>
-                        <p className="company-name">Applied on {formatDate(app.applyDate)}</p>
-                      </div>
-                      <div className="application-meta">
-                        <p className="application-status" style={{ color: getStatusColor(app.status) }}>
+                      <div className="text-right">
+                        <p className="text-sm font-medium" style={{ color: getStatusColor(app.status) }}>
                           {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                         </p>
-                        <p className="application-date">{formatDate(app.applyDate)}</p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                  <div className="text-center py-8 text-gray-500">
                     <p>No recent applications</p>
-                    <Link to="/JobSeeker/apply-for-job" style={{ color: '#3b82f6', textDecoration: 'none' }}>
+                    <Link to="/JobSeeker/apply-for-job" className="text-blue-600 hover:text-blue-700 text-sm">
                       Start applying to jobs →
                     </Link>
                   </div>
@@ -484,21 +473,21 @@ try {
             </div>
 
             {/* Application Status Pie Chart */}
-            <div className="chart-card">
-              <h3 className="chart-title">
-                <Target />
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <Target className="w-5 h-5 mr-2 text-blue-600" />
                 Application Status
               </h3>
-              <div className="chart-container">
+              <div className="h-48">
                 {applicationStatusData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={applicationStatusData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
+                        innerRadius={50}
+                        outerRadius={80}
                         paddingAngle={5}
                         dataKey="value"
                       >
@@ -510,17 +499,17 @@ try {
                     </PieChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#64748b' }}>
+                  <div className="flex items-center justify-center h-full text-gray-500">
                     <p>No application data available</p>
                   </div>
                 )}
               </div>
               {applicationStatusData.length > 0 && (
-                <div className="chart-legend">
+                <div className="flex justify-center space-x-4 mt-4">
                   {applicationStatusData.map((entry, index) => (
-                    <div key={index} className="legend-item">
-                      <div className="legend-color" style={{ backgroundColor: entry.color }}></div>
-                      <span className="legend-label">{entry.name}</span>
+                    <div key={index} className="flex items-center space-x-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }}></div>
+                      <span className="text-sm text-gray-600">{entry.name}</span>
                     </div>
                   ))}
                 </div>
@@ -529,23 +518,26 @@ try {
           </div>
 
           {/* Secondary Grid */}
-          <div className="secondary-grid">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* CV Completion */}
-            <div className="chart-card">
-              <h3 className="chart-title">
-                <User />
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <User className="w-5 h-5 mr-2 text-blue-600" />
                 CV Completion
               </h3>
-              <div className="cv-progress-content">
+              <div className="flex items-center space-x-6">
                 <CircularProgress percentage={dashboardCvProgress} />
-                <div className="cv-progress-info">
-                  <p>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600 mb-2">
                     {dashboardCompletedSections.length} of 6 sections completed
                   </p>
-                  <p style={{ fontSize: '0.75rem' }}>
+                  <p className="text-xs text-gray-500 mb-4">
                     Missing: {dashboardMissingSections.map(section => section.charAt(0).toUpperCase() + section.slice(1)).join(', ')}
                   </p>
-                  <button className="complete-cv-btn" onClick={fetchResumeData}>
+                  <button 
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors text-sm"
+                    onClick={fetchResumeData}
+                  >
                     Refresh CV Data
                   </button>
                 </div>
@@ -553,13 +545,13 @@ try {
             </div>
 
             {/* Skill Gap Analysis */}
-            <div className="chart-card">
-              <h3 className="chart-title">
-                <TrendingUp />
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <TrendingUp className="w-5 h-5 mr-2 text-blue-600" />
                 Skill Gap Analysis
               </h3>
-              <div className="chart-container">
-                <ResponsiveContainer width="100%" height={300}>
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={skillMatchData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="skill" />
@@ -570,19 +562,19 @@ try {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="chart-legend">
-                <div className="legend-item">
-                  <div className="legend-color" style={{ backgroundColor: '#3b82f6' }}></div>
-                  <span className="legend-label">Your Level</span>
+              <div className="flex justify-center space-x-4 mt-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                  <span className="text-sm text-gray-600">Your Level</span>
                 </div>
-                <div className="legend-item">
-                  <div className="legend-color" style={{ backgroundColor: '#f59e0b' }}></div>
-                  <span className="legend-label">Required Level</span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-yellow-500 rounded"></div>
+                  <span className="text-sm text-gray-600">Required Level</span>
                 </div>
               </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

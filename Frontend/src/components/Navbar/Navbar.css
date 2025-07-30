@@ -68,7 +68,11 @@
 }
 
 .navbar-logo img {
+<<<<<<< HEAD
+  height: 35px;
+=======
   height: 150px;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   width: auto;
   display: block;
 }
