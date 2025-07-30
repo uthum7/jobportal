@@ -260,8 +260,10 @@ import {
   X,
   User,
   Briefcase,
-  PlusCircle
+  PlusCircle,
+  AlertTriangle
 } from 'lucide-react';
+import axios from 'axios';
 
 const ManageCounselor = () => {
   const navigate = useNavigate();
@@ -270,8 +272,8 @@ const ManageCounselor = () => {
   const [counselors, setCounselors] = useState([]);
   const [selectedCounselor, setSelectedCounselor] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
 
-  // Fetch counselors
   useEffect(() => {
     const fetchCounselors = async () => {
       try {
@@ -294,21 +296,32 @@ const ManageCounselor = () => {
 
   const handleNavigation = (path) => navigate(path);
 
-const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
+  const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this counselor?")) return;
+  const handleDelete = (counselor) => {
+    setSelectedCounselor(counselor);
+    setIsDeleteMode(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:5001/api/users/counselors/${id}`, { method: 'DELETE' });
-      if (res.ok) setCounselors(counselors.filter(c => c._id !== id));
-    } catch (err) {
-      console.error('Error deleting counselor:', err);
+      const response = await axios.delete(`http://localhost:5001/api/users/counselors/${selectedCounselor._id}`);
+      if (response.status === 200) {
+        alert('Counselor deleted successfully');
+        setCounselors(counselors.filter(c => c._id !== selectedCounselor._id));
+        setIsDeleteMode(false);
+        setSelectedCounselor(null);
+      } else {
+        alert('Failed to delete counselor');
+      }
+    } catch (error) {
+      console.error('Error deleting counselor:', error);
+      alert('Error deleting counselor');
     }
   };
 
-  const handleEdit = (counselor) => {
-    setSelectedCounselor({ ...counselor });
-    setIsEditMode(true);
+  const handleEdit = (counselorData) => {
+    navigate(`/admin/viewallbookings/${counselorData._id}`);
   };
 
   const handleUpdate = async () => {
@@ -368,13 +381,11 @@ const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
               <SidebarItem icon={Users} label="Jobseeker" onClick={() => handleNavigation('/admin/managejobseeker')} />
               <SidebarItem icon={Users} label="Counselor" active onClick={() => handleNavigation('/admin/managecounselor')} />
               <SidebarItem icon={Users} label="Counselee" onClick={() => handleNavigation('/admin/managecounselee')} />
-              
             </div>
           </div>
           <div className="pt-6">
             <SidebarItem icon={MessageSquare} label="Messages" onClick={() => handleNavigation('/message/login')} />
             <SidebarItem icon={PlusCircle} label="AddUser" onClick={() => handleNavigation('/admin/adduser')} />
-            
           </div>
         </div>
       </div>
@@ -402,7 +413,6 @@ const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredCounselors.map((c) => (
               <div key={c._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                {/* Card Header */}
                 <div className="px-6 py-5 border-b border-gray-200 flex items-center space-x-4">
                   <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-semibold text-xl">
                     {c.name?.charAt(0).toUpperCase() || "C"}
@@ -412,7 +422,6 @@ const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
                     <p className="text-sm text-gray-600">{c.email}</p>
                   </div>
                 </div>
-                {/* Details */}
                 <div className="p-6 space-y-3">
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <User className="w-4 h-4 text-purple-600" /> <span>ID: {c._id}</span>
@@ -421,7 +430,6 @@ const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
                     <Briefcase className="w-4 h-4 text-blue-600" /> <span>Role: {c.roles?.join(', ') || 'N/A'}</span>
                   </div>
                 </div>
-                {/* Actions */}
                 <div className="px-6 py-4 border-t border-gray-200 flex justify-between">
                   <button onClick={() => handleView(c._id)} className="text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
                     <Eye className="w-4 h-4" /> <span>View</span>
@@ -429,7 +437,7 @@ const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
                   <button onClick={() => handleEdit(c)} className="text-blue-600 hover:text-blue-700 flex items-center space-x-1">
                     <Edit className="w-4 h-4" /> <span>Edit</span>
                   </button>
-                  <button onClick={() => handleDelete(c._id)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
+                  <button onClick={() => handleDelete(c)} className="text-red-600 hover:text-red-700 flex items-center space-x-1">
                     <Trash2 className="w-4 h-4" /> <span>Delete</span>
                   </button>
                 </div>
@@ -437,7 +445,6 @@ const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
             ))}
           </div>
 
-          {/* Edit Modal */}
           {isEditMode && selectedCounselor && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-40 z-50">
               <div className="bg-white p-6 rounded shadow-md w-[90%] max-w-md">
@@ -473,10 +480,56 @@ const handleView = (id) => navigate(`/admin/viewcounselor/${id}`);
               </div>
             </div>
           )}
+
+          {isDeleteMode && selectedCounselor && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-3xl shadow-xl max-w-md w-full mx-4 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
+                      <AlertTriangle className="text-red-600" size={20} />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900">Delete Counselor</h2>
+                  </div>
+                  <button
+                    onClick={() => setIsDeleteMode(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Are you sure you want to delete this counselor? This action cannot be undone.
+                </p>
+
+                <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+                  <h3 className="font-semibold text-gray-900 text-lg">{selectedCounselor.username || 'Unknown Counselor'}</h3>
+                  <p className="text-gray-600">{selectedCounselor.email || 'No Email'}</p>
+                  <p className="text-gray-500 text-sm mt-1">ID: {selectedCounselor._id}</p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIsDeleteMode(false)}
+                    className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-2xl font-medium hover:bg-gray-200 transition-colors"
+                  >
+                    No, Cancel
+                  </button>
+                  <button
+                    onClick={confirmDelete}
+                    className="flex-1 px-6 py-3 bg-red-600 text-white rounded-2xl font-medium hover:bg-red-700 transition-colors"
+                  >
+                    Yes, Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
 
-      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
