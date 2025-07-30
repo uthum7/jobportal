@@ -387,7 +387,11 @@
     display: inline-flex;
   }
   
+<<<<<<< HEAD
   .booking-status.Approved {
+=======
+  .booking-status.confirmed {
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     background-color: #dcfce7;
     color: #16a34a;
   }
@@ -615,7 +619,11 @@
     font-weight: 500;
   }
   
+<<<<<<< HEAD
   .status-badge.Approved {
+=======
+  .status-badge.confirmed {
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     background-color: #dcfce7;
     color: #16a34a;
   }
@@ -685,6 +693,7 @@
     background-color: #e5e7eb;
   }
   
+<<<<<<< HEAD
   /* Loading and Error States */
   .loading-state {
     display: flex;
@@ -777,6 +786,8 @@
     font-size: 0.9rem;
   }
   
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   /* Responsive Design */
   @media (max-width: 768px) {
     .sidebar {
@@ -826,4 +837,9 @@
       min-width: auto;
     }
   }
+<<<<<<< HEAD
 
+=======
+  
+  
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19

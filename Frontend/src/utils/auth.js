@@ -7,6 +7,7 @@ export const saveAuthData = (userData) => {
     console.error('Incomplete user data provided to saveAuthData:', userData);
     return;
   }
+<<<<<<< HEAD
 
   if (userData.role === 'MENTOR' && !userData.counselors_id) {
     console.error("Mentor role detected, but counselors_id is not a standard field.");
@@ -16,6 +17,11 @@ export const saveAuthData = (userData) => {
   console.log('Saving auth data (user object):', userData);
   localStorage.setItem('user', JSON.stringify(userData)); // Store the whole user object
   // No need to store token, role, userId separately if they are in the 'user' object
+=======
+  console.log('Saving auth data (user object):', userData);
+  localStorage.setItem('user', JSON.stringify(userData)); // Store the whole user object
+  localStorage.setItem('token', userData.token); // ✅ Add this line// No need to store token, role, userId separately if they are in the 'user' object
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 };
 
 // Get the entire user object
@@ -48,6 +54,10 @@ export const getUserId = () => {
 
 export const clearAuth = () => {
   localStorage.removeItem('user'); // Just remove the single 'user' object
+<<<<<<< HEAD
+=======
+  localStorage.removeItem('token'); // ✅ Add this too
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   // Any other app-specific items you might want to clear on logout
 };
 

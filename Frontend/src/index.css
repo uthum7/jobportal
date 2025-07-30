@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* src/index.css */
 
 /* 1. Tailwind directives must come first. */
@@ -65,3 +66,8 @@
     }
   }
 }
+=======
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19

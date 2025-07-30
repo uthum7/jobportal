@@ -92,7 +92,11 @@ const Navbar = ({ onLogout }) => {
               <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>
                 About
               </Link>
+<<<<<<< HEAD
               <Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''}>
+=======
+              <Link to="/contact" className={location.pathname === '/message/login' ? 'active' : ''}>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                 Contact
               </Link>
             </>

@@ -1,14 +1,25 @@
 // LoginPage.jsx
+<<<<<<< HEAD
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { saveAuthData } from '../../utils/auth'; // <<<< CORRECT: Import saveAuthData
+=======
+
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { saveAuthData } from '../../utils/auth'; // Keep your auth utility
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 import styles from "./login.module.css";
 import logoPath from "../../assets/img/logo.png";
 import AuthSplash from "../../components/AuthSplash/AuthSplash";
 
 const LoginPage = ({ onLogin, onClose }) => {
   const [formData, setFormData] = useState({
+<<<<<<< HEAD
     username: '', // Assuming this is email
+=======
+    username: '', // This is the email field
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     password: ''
   });
   const [role, setRole] = useState('');
@@ -22,6 +33,15 @@ const LoginPage = ({ onLogin, onClose }) => {
     setIsLoading(true);
     setError(null);
 
+<<<<<<< HEAD
+=======
+    if (!role) {
+      setError("Please select a role to log in.");
+      setIsLoading(false);
+      return;
+    }
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     try {
       const loginData = {
         email: formData.username.trim(),
@@ -35,12 +55,18 @@ const LoginPage = ({ onLogin, onClose }) => {
         body: JSON.stringify(loginData)
       });
 
+<<<<<<< HEAD
       const data = await response.json(); // Expects { token, role, userId (or _id), email, name etc. }
       
+=======
+      const data = await response.json();
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
       if (!response.ok) {
         throw new Error(data.message || 'Login failed. Please check your credentials and role.');
       }
 
+<<<<<<< HEAD
       // --- IMPORTANT AUTHENTICATION DATA HANDLING ---
       if (data.token && data.role && (data.userId || data._id)) {
         const currentUserId = data.userId || data._id; // Prefer userId, fallback to _id
@@ -80,6 +106,48 @@ const LoginPage = ({ onLogin, onClose }) => {
         throw new Error("Login response missing essential data (token, role, or user identifier). Please contact support.");
       }
 
+=======
+      // --- START OF NEW AND UPDATED LOGIC ---
+
+      // SCENARIO 1: The user must reset their password.
+      if (data.passwordResetRequired === true) {
+        if (data.tempToken) {
+          // Immediately navigate to the force reset page and pass the temporary token.
+          // Do NOT save auth data or call onLogin.
+          navigate('/force-reset-password', { 
+            state: { tempToken: data.tempToken } 
+          });
+        } else {
+          // This would be a backend error if the tempToken is missing.
+          throw new Error("Password reset is required, but no temporary token was provided.");
+        }
+
+      // SCENARIO 2: A normal, successful login.
+      } else if (data.token && data.role && (data.userId || data._id)) {
+        const currentUserId = data.userId || data._id;
+
+        const userObjectToSave = {
+          token: data.token,
+          role: data.role.toUpperCase(),
+          userId: currentUserId,
+          email: data.email,
+          name: data.name,
+        };
+
+        saveAuthData(userObjectToSave); // Save to localStorage or context
+        onLogin(userObjectToSave);     // Update the parent component's state (e.g., App.jsx)
+        
+        // Navigation is likely handled by the parent component after onLogin is called.
+
+      } else {
+        // This error means the backend's NORMAL login response is missing key fields.
+        console.error("Login API response missing essential data:", data);
+        throw new Error("Login response from server is incomplete.");
+      }
+
+      // --- END OF NEW AND UPDATED LOGIC ---
+
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
     } catch (err) {
       console.error('Login error:', err);
       setError(err.message || 'Failed to login. An unexpected error occurred.');
@@ -155,6 +223,11 @@ const LoginPage = ({ onLogin, onClose }) => {
               <option value="MENTOR">Mentor</option>
               <option value="JOBSEEKER">Job Seeker</option>
               <option value="ADMIN">Admin</option>
+<<<<<<< HEAD
+=======
+              {/* Note: In a real app, you might have a separate login for Employees */}
+              <option value="EMPLOYEE">Employee</option>
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
             </select>
           </div>
 
@@ -164,6 +237,10 @@ const LoginPage = ({ onLogin, onClose }) => {
             </Link>
           </div>
 
+<<<<<<< HEAD
+=======
+          {/* ✅ FIX: className must use a template literal wrapped in {} */}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
           <button
             type="submit"
             className={`${styles.submitButton} ${styles.btnPrimary}`}

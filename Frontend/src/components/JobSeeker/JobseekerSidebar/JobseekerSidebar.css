@@ -1,0 +1,470 @@
+/*frontend/src/components/JobSeeker/JobseekerSidebar/JobseekerSidebar.css*/
+
+/* Global Body Styles */
+body, html {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Sidebar container styles - Fixed to screen */
+.sidebar {
+  width: 12rem;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  transition: width 0.3s ease;
+  /* Fixed positioning to prevent scrolling with main content */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  /* Remove overflow hidden to allow internal scrolling */
+  overflow: hidden;
+}
+
+/* Profile section at top of sidebar */
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: #001f3f;
+  flex-shrink: 0; /* Prevent shrinking */
+  /* Ensure profile section doesn't get cut */
+  min-height: auto;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+/* Circular profile image */
+.profile-image {
+  width: 4rem; /* Reduced from 5rem to save space */
+  height: 4rem;
+  border-radius: 9999px;
+  transition: width 0.3s ease, height 0.3s ease;
+  object-fit: cover;
+}
+
+/* Profile name text */
+.profile-name {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: white;
+  transition: opacity 0.3s ease;
+  font-size: 0.9rem; /* Slightly smaller to save space */
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Menu section below profile - This is the scrollable area */
+.nav-menu {
+  background-color: #001f3f;
+  flex: 1; /* Take remaining space */
+  overflow-y: auto; /* Allow scrolling within nav menu */
+  overflow-x: hidden;
+  padding-bottom: 1rem;
+  /* Custom scrollbar styles */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* Webkit scrollbar styles for nav-menu */
+.nav-menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.nav-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nav-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.nav-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Each navigation item style - Optimized for space */
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem; /* Increased padding for better touch targets */
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  text-decoration: none;
+  position: relative;
+  font-size: 0.875rem; /* Slightly smaller font */
+  line-height: 1.2;
+  min-height: 2.5rem; /* Ensure consistent height */
+}
+
+/* Hover effect for nav item */
+.nav-item:hover {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+/* Style for active nav item */
+.nav-item.active {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+/* Icon styling inside nav items */
+.nav-icon {
+  width: 1.125rem; /* Slightly larger for better visibility */
+  height: 1.125rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Badge for showing notifications */
+.notification-badge {
+  margin-left: auto;
+  background-color: #10b981;
+  color: white;
+  border-radius: 9999px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  padding: 0 0.25rem;
+  font-weight: 600;
+}
+
+/* Nav item text */
+.nav-text {
+  transition: opacity 0.3s ease;
+  flex: 1;
+}
+
+/* Main Layout Container */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  width: 100%;
+  position: relative;
+}
+
+/* Main Content Wrapper - Contains both content and footer */
+.main-content-wrapper {
+  margin-left: 12rem; /* Match sidebar width */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: calc(100% - 12rem);
+}
+
+/* Main Content Styles */
+.main-content {
+  padding: 2rem;
+  flex: 1; /* Take available space, pushing footer down */
+  position: relative;
+  z-index: 5;
+  background-color: #f8fafc;
+}
+
+/* Footer Styles - Part of main content wrapper */
+.footer {
+  background-color: #1e293b;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 5;
+  margin-top: auto; /* Push to bottom of wrapper */
+}
+
+/* Responsive Design */
+
+/* Large tablets and small laptops (1024px and down) */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 10rem;
+  }
+  
+  .main-content-wrapper {
+    margin-left: 10rem;
+    width: calc(100% - 10rem);
+  }
+  
+  .profile-image {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+  
+  .nav-item {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .nav-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+  }
+}
+
+/* Tablets (768px and down) */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 8rem;
+  }
+  
+  .main-content-wrapper {
+    margin-left: 8rem;
+    width: calc(100% - 8rem);
+  }
+  
+  .main-content {
+    padding: 1.5rem;
+  }
+  
+  .profile-section {
+    padding: 0.8rem;
+  }
+  
+  .profile-image {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .profile-name {
+    font-size: 0.8rem;
+  }
+  
+  .nav-item {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Small tablets and large phones (640px and down) */
+@media (max-width: 640px) {
+  .sidebar {
+    width: 4rem;
+  }
+  
+  .main-content-wrapper {
+    margin-left: 4rem;
+    width: calc(100% - 4rem);
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .profile-section {
+    padding: 0.5rem;
+  }
+  
+  .profile-image {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  .profile-name {
+    opacity: 0;
+    font-size: 0;
+    margin: 0;
+    height: 0;
+    overflow: hidden;
+  }
+  
+  .nav-item {
+    padding: 0.6rem;
+    justify-content: center;
+  }
+  
+  .nav-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+  }
+  
+  .nav-icon {
+    margin-right: 0;
+  }
+  
+  .notification-badge {
+    position: absolute;
+    right: 0.3rem;
+    top: 0.3rem;
+    margin-left: 0;
+    min-width: 1rem;
+    height: 1rem;
+    font-size: 0.625rem;
+  }
+}
+
+/* Mobile phones (480px and down) */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 3.5rem;
+  }
+  
+  .main-content-wrapper {
+    margin-left: 3.5rem;
+    width: calc(100% - 3.5rem);
+  }
+  
+  .main-content {
+    padding: 0.75rem;
+  }
+  
+  .profile-section {
+    padding: 0.4rem;
+  }
+  
+  .profile-image {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .nav-item {
+    padding: 0.5rem;
+  }
+  
+  .notification-badge {
+    width: 0.875rem;
+    height: 0.875rem;
+    font-size: 0.6rem;
+    right: 0.2rem;
+    top: 0.2rem;
+  }
+}
+
+/* Extra small screens (360px and down) */
+@media (max-width: 360px) {
+  .sidebar {
+    width: 3rem;
+  }
+  
+  .main-content-wrapper {
+    margin-left: 3rem;
+    width: calc(100% - 3rem);
+  }
+  
+  .profile-section {
+    padding: 0.3rem;
+  }
+  
+  .profile-image {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+  
+  .nav-item {
+    padding: 0.4rem;
+  }
+  
+  .nav-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+}
+
+.profile-image-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-avatar-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 50%;
+  padding: 0.3rem;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.profile-section:hover .sidebar-avatar-upload-btn {
+  display: flex;
+}
+
+.sidebar-avatar-upload-btn.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.sidebar-avatar-upload-btn input[type="file"] {
+  display: none;
+}
+
+/* Sidebar mobile hidden/visible */
+@media (max-width: 900px) {
+  .sidebar {
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 1200;
+  }
+  .sidebar--mobile-hidden {
+    transform: translateX(-100%);
+  }
+  .sidebar--mobile-open {
+    transform: translateX(0);
+    box-shadow: 2px 0 16px rgba(0,0,0,0.15);
+  }
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(30,41,59,0.35);
+    z-index: 1199;
+    transition: opacity 0.2s;
+  }
+  .sidebar-toggle-open, .sidebar-toggle-close {
+    position: fixed;
+    top: 80px;
+    left: 12px;
+    z-index: 1300;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 8px 10px;
+    font-size: 1.7rem;
+    color: #334155;
+    display: block;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .sidebar-toggle-close {
+    left: auto;
+    right: 12px;
+  }
+}
+@media (min-width: 901px) {
+  .sidebar-toggle-open, .sidebar-toggle-close {
+    display: none !important;
+  }
+  .sidebar {
+    transform: none !important;
+  }
+}
+

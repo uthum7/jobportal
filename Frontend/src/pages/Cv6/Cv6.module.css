@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+=======
+/* Cv6.module.css - Fully Updated & Corrected */
+
+/* ======================================= */
+/* === ROOT VARIABLES & GLOBAL STYLES  === */
+/* ======================================= */
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 :root {
   --primary-color: #4a90e2;
   --secondary-color: #f5f7fa;
@@ -14,6 +22,7 @@
   --PageTitle: #123456;
 }
 
+<<<<<<< HEAD
 /* Page Header Styles */
 .pageHeader {
    text-align: center;
@@ -69,12 +78,15 @@
 }
 
 /* Main Layout */
+=======
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 body {
   font-family: 'Roboto', sans-serif;
   color: var(--text-color);
   background-color: var(--secondary-color);
   margin: 0;
   padding: 0;
+<<<<<<< HEAD
   min-height: 100vh;
 } 
 
@@ -85,6 +97,18 @@ body {
   box-sizing: border-box;
   margin: 0 auto;
   min-height: calc(100vh - 40px);
+=======
+}
+
+/* ======================================= */
+/* ===      MAIN LAYOUT & CONTENT      === */
+/* ======================================= */
+.resumeBuilder {
+  display: flex;
+  background-color: var(--secondary-color);
+  box-sizing: border-box;
+  margin: 0 auto;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   gap: 60px;
 }
 
@@ -94,6 +118,7 @@ body {
   gap: 40px;
   padding: 20px;
   margin: 30px;
+<<<<<<< HEAD
   background-color: transparent;
   box-shadow: var(--shadow-soft);
   border-radius: 12px;
@@ -314,13 +339,38 @@ textarea {
   flex: 1.2 1 0;
   background: var(--preview-bg);
   padding: 5px; 
+=======
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.formContainer {
+  flex: 0.8;
+  background: var(--form-bg);
+  padding: 35px 40px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  height: 1560px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.cvPreview {
+  flex: 1.2;
+  background: var(--preview-bg);
+  padding: 5px;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   border-radius: 12px;
   box-shadow: var(--shadow-medium);
   margin-top: 15px;
   height: 1560px;
+<<<<<<< HEAD
   min-height: 800px;
   width: auto;
   box-sizing: border-box; 
+=======
+  box-sizing: border-box;
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 }
 
 .cvContainer {
@@ -328,6 +378,7 @@ textarea {
   gap: 30px;
   background-color: white;
   border-radius: 8px;
+<<<<<<< HEAD
   overflow: hidden;
   box-shadow: var(--shadow-soft);
   height: 1550px;
@@ -779,3 +830,180 @@ textarea {
     height: 36px;
   }
 }
+=======
+  box-shadow: var(--shadow-soft);
+  height: 1550px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.header {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+/* ===================================================== */
+/* ===   DEDICATED STYLES FOR CV6 EXPERIENCE FORM    === */
+/* ===================================================== */
+
+.experienceForm {
+  background: #f7fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 25px;
+  transition: box-shadow 0.2s;
+  position: relative;
+}
+
+.sectionSubTitle {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--primary-color);
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.inputField, .textareaField {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.textareaField {
+  min-height: 150px;
+  resize: vertical;
+  padding-right: 150px; /* Make space for AI button */
+}
+
+.formColumns {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+.formLeft, .formRight {
+  flex: 1;
+}
+.label {
+  display: block;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.textareaContainer {
+  position: relative;
+}
+
+.aiButton {
+  position: absolute;
+  top: 12px; right: 12px;
+  background-color: var(--primary-color);
+  color: white; padding: 8px 16px; border-radius: 5px; font-size: 14px;
+  font-weight: 600; border: none; cursor: pointer; z-index: 2;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.saveBtn, .addButton, .removeButton {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+}
+
+.saveBtn { background-color: var(--success-color); color: white; }
+.addButton { background-color: var(--primary-color); color: white; }
+.removeButton { background-color: var(--danger-color); color: white; width: 100%; margin-top: 10px; }
+
+/* ======================================= */
+/* ===      CV PREVIEW STYLES          === */
+/* ======================================= */
+.contactInfo, .education {
+  width: 100%;
+  margin-bottom: 20px;
+  /* align-items: flex-start and text-align: left from old code were removed */
+  /* because they are not needed if the children are properly styled. */
+}
+
+.cvLeft { width: 32%; background: #f2f7fc; padding: 35px 25px; display: flex; flex-direction: column; text-align: center; align-items: center; }
+.cvRight { width: 68%; padding: 35px 30px; }
+.verticalLine { border-left: 1px solid var(--border-color); }
+.profileImage { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-color); margin-bottom: 15px; }
+.profileSection h2 { font-size: 20px; font-weight: 600; margin-top: 15px; }
+.h4Headers { border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 20px; font-weight: 600; text-align: left; }
+.educationItem, .experienceItem { margin-bottom: 20px; text-align: left; }
+.educationItem h5, .experienceItem h5 { font-size: 18px; font-weight: 600; margin-bottom: 5px; }
+.educationItem span, .experienceItem span { font-size: 15px; color: #555; display: block; margin-bottom: 5px; }
+.companyName { font-style: italic; color: #666; margin-top: -5px; margin-bottom: 5px; text-align: left; }
+.jobDescription, .contactInfo p, .education p, .profilePara p, .summary p, .references p { font-size: 16px; line-height: 1.6; text-align: left; }
+.skillRow { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+.star { font-size: 20px; color: #e0e0e0; }
+.checked { color: #FFD700; }
+
+/*
+=====================================================
+===   CORRECTED RESPONSIVE & OTHER STYLES         ===
+=====================================================
+*/
+.loading, .error { padding: 30px; text-align: center; }
+
+@media (max-width: 1200px) {
+  .resumeBuilder { flex-direction: column; padding: 24px; gap: 32px; }
+  .content { flex-direction: column; margin: 12px 0; gap: 24px; padding: 0; }
+  .formContainer, .cvPreview { max-width: 100%; width: 100%; min-width: 0; position: static; height: auto; margin: 0 auto; box-sizing: border-box; }
+  .cvContainer { flex-direction: column; gap: 0; height: auto; min-width: 0; }
+  .cvLeft, .cvRight { width: 100%; padding: 24px 12px; min-width: 0; }
+  .verticalLine { display: none; }
+}
+
+@media (max-width: 768px) {
+  .resumeBuilder { padding: 8px 2px; gap: 12px; }
+  .formContainer { padding: 8px 2px; border-radius: 8px; }
+  .cvPreview { padding: 2px; border-radius: 7px; margin-top: 8px; min-height: 200px; }
+  .content { padding: 15px; }
+  
+  .experienceForm { padding: 12px 4px; }
+  .formColumns { flex-direction: column; gap: 10px; }
+  .inputField, .textareaField { font-size: 14px; padding: 10px 8px; }
+  .textareaField { min-height: 50px; padding-right: 15px; }
+  .buttonsContainer { flex-direction: column-reverse; align-items: stretch; gap: 10px; }
+  .saveBtn, .addButton, .removeButton { width: 100%; }
+  
+  .aiButton { position: static; width: 100%; margin-top: 10px; }
+  .textareaContainer { display: flex; flex-direction: column; }
+  
+  .cvContainer { border-radius: 7px; box-shadow: var(--shadow-soft); }
+  .cvLeft, .cvRight { padding: 8px 2px; }
+  .profileImage { width: 60px; height: 60px; margin-bottom: 6px; }
+  .h4Headers { font-size: 13px; padding-bottom: 4px; margin-bottom: 8px; }
+  .educationItem h5, .experienceItem h5 { font-size: 13px; }
+  .educationItem span, .experienceItem span { font-size: 11px; }
+  .jobDescription, .contactInfo p, .education p, .profilePara p, .summary p, .references p { font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .formContainer, .cvPreview { padding: 2px 1px; border-radius: 5px; }
+  .cvLeft, .cvRight { padding: 2px 1px; }
+  .profileImage { width: 36px; height: 36px; }
+}
+>>>>>>> c1587ed030af74a541137562c0abe076b06bda19
