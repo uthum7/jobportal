@@ -6,9 +6,8 @@ import { useNavigate } from "react-router-dom";
 import JobCard from "../../../components/JobSeeker/JobCard/JobCard.jsx";
 import JobseekerSidebar from "../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar.jsx";
 import { getUserId, isAuthenticated, isJobSeeker, getToken } from "../../../utils/auth"; // Import auth utilities
-import "./SavedJobs.css";
-import "../Dashboard/Dashboard.css";
 import { Link } from "react-router-dom";
+import { Search, RefreshCw, Bookmark } from "lucide-react";
 
 const SavedJobs = () => {
   // State variables for managing saved jobs data
@@ -16,6 +15,10 @@ const SavedJobs = () => {
   const [loading, setLoading] = useState(true);             // Tracks loading state for API requests
   const [error, setError] = useState(null);                 // Tracks error state
   const [searchKeyword, setSearchKeyword] = useState("");   // Search keyword state
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [jobsPerPage] = useState(9); // 3x3 grid on desktop
   
   const navigate = useNavigate();
   
@@ -111,12 +114,10 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
     }
   };
 
-  // Function to refresh saved jobs (can be called when a job is unsaved)
   const refreshSavedJobs = () => {
     fetchSavedJobs();
   };
 
-  // Filter saved jobs based on search keyword
   const filteredSavedJobs = savedJobs.filter(job => {
     if (!searchKeyword) return true;
     
@@ -127,19 +128,45 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
     );
   });
 
+  // Pagination logic
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = filteredSavedJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(filteredSavedJobs.length / jobsPerPage);
+
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchKeyword]);
+
+  // Pagination functions
+  const goToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   // Don't render if user is not authenticated or not a job seeker
   if (!isAuthenticated() || !isJobSeeker()) {
     return (
-      <div className="SavedJobsMainContainer">
-        <div className="dashboard-container">
-          <div className="main-content">
-            <div className="error-container">
-              <h2>Access Denied</h2>
-              <p>You need to be logged in as a Job Seeker to view saved jobs.</p>
-              <Link to="/login" className="login-button">
-                Go to Login
-              </Link>
-            </div>
+      <div className="min-h-screen flex bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Access Denied</h2>
+            <p className="text-gray-600 mb-4">You need to be logged in as a Job Seeker to view saved jobs.</p>
+            <Link to="/login" className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              Go to Login
+            </Link>
           </div>
         </div>
       </div>
@@ -147,131 +174,174 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
   }
 
   return (
-    <div className="dashboard-containerJS">
+    <div className="min-h-screen flex bg-gray-50">
       <JobseekerSidebar />
-      <div className="main-content-wrapper">
-        {/* Page header with title and breadcrumb navigation */}
-        <div className="header">
-          <h1 className="page-title">Saved Jobs</h1>
-          <div className="breadcrumb">
-            <Link to="/" className="breadcrumb-link">Home</Link>
-            <span className="breadcrumb-separator">/</span>
-            <Link to="/JobSeeker/saved-jobs" className="breadcrumb-link">Saved Jobs</Link>
-          </div>
-        </div>
-        <div className="saved-jobs-layout">
+      <div className="flex-1 lg:ml-0">
+        <div className="p-6">
+          {/* Page header with title and breadcrumb navigation */}
+          <header className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Saved Jobs</h1>
+            <nav className="text-sm text-gray-600">
+              <Link to="/" className="text-blue-600 hover:text-blue-700">Home</Link>
+              <span className="mx-2">/</span>
+              <Link to="/JobSeeker/saved-jobs" className="text-blue-600 hover:text-blue-700">Saved Jobs</Link>
+            </nav>
+          </header>
+
           {/* Saved Jobs Header Section */}
-          <div className="saved-jobs-header">
-            <div className="saved-jobs-info">
-              <h3>Your Saved Jobs</h3>
-              <p className="saved-jobs-count">
-                {loading ? "Loading..." : `${filteredSavedJobs.length} Job${filteredSavedJobs.length !== 1 ? 's' : ''} Saved`}
-              </p>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">Your Saved Jobs</h3>
+                <p className="text-sm text-gray-600">
+                  {loading ? "Loading..." : `${filteredSavedJobs.length} Job${filteredSavedJobs.length !== 1 ? 's' : ''} Saved`}
+                </p>
+              </div>
+              {savedJobs.length > 0 && (
+                <button 
+                  className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  onClick={refreshSavedJobs}
+                  disabled={loading}
+                >
+                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                  <span>Refresh</span>
+                </button>
+              )}
             </div>
-            {savedJobs.length > 0 && (
-              <button 
-                className="refresh-saved-jobs-btn"
-                onClick={refreshSavedJobs}
-                disabled={loading}
-              >
-                Refresh
-              </button>
-            )}
           </div>
           
           {/* Search Bar */}
           {savedJobs.length > 0 && (
-            <div className="search-bar">
-              <div className="search-input-container">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
                   placeholder="Search by job title, type, or mode..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
-                  className="search-input"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <button 
-                  className="clear-search-btn"
-                  onClick={() => setSearchKeyword("")}
-                  style={{ display: searchKeyword ? 'block' : 'none' }}
-                >
-                  ×
-                </button>
+                {searchKeyword && (
+                  <button 
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    onClick={() => setSearchKeyword("")}
+                  >
+                    ×
+                  </button>
+                )}
               </div>
             </div>
           )}
           
           {/* Error Message */}
           {error && (
-            <div className="error-message">
-              <p>Error: {error}</p>
-              <button onClick={refreshSavedJobs} className="retry-button">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <p className="text-red-800">Error: {error}</p>
+              <button onClick={refreshSavedJobs} className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors">
                 Try Again
               </button>
             </div>
           )}
+
           {/* Saved Job Cards Section */}
-          <div className="saved-job-cards-container">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             {loading ? (
-              <div className="loading-container">
-                <p>Loading your saved jobs...</p>
+              <div className="flex items-center justify-center p-12">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-gray-600">Loading your saved jobs...</p>
+                </div>
               </div>
             ) : filteredSavedJobs.length > 0 ? (
-              <div className="job-cards-grid">
-                {filteredSavedJobs.map((job) => (
-                  <JobCard 
-                    key={job._id} 
-                    job={job} 
-                    onJobUnsaved={refreshSavedJobs} // Pass refresh function to update list when job is unsaved
-                  />
-                ))}
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {currentJobs.map((job) => (
+                    <JobCard 
+                      key={job._id} 
+                      job={job} 
+                      onJobUnsaved={refreshSavedJobs} // Pass refresh function to update list when job is unsaved
+                    />
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-8 flex items-center justify-center">
+                    <div className="flex items-center space-x-2">
+                      {/* Previous button */}
+                      <button
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 1}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      
+                      {/* Page numbers */}
+                      {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                        <button
+                          key={pageNumber}
+                          onClick={() => goToPage(pageNumber)}
+                          className={`px-3 py-2 text-sm font-medium rounded-md ${
+                            currentPage === pageNumber
+                              ? 'bg-blue-600 text-white'
+                              : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      ))}
+                      
+                      {/* Next button */}
+                      <button
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               // Enhanced "No saved jobs found" section
-              <div className="no-saved-jobs-found">
-                {/* Bookmark icon SVG */}
-                <svg
-                  className="no-saved-jobs-icon"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                  />
-                </svg>
-                <h3 className="no-saved-jobs-title">
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Bookmark className="w-8 h-8 text-gray-400" />
+                </div>
+                
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   {savedJobs.length === 0 
                     ? "No saved jobs yet" 
                     : "No saved jobs found"}
                 </h3>
-                <p className="no-saved-jobs-message">
+                
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
                   {savedJobs.length === 0 
                     ? "You haven't saved any jobs yet. Start exploring job opportunities and save the ones that match your interests."
                     : "No saved jobs match your search criteria. Try adjusting your search terms."}
                 </p>
+                
                 {savedJobs.length === 0 ? (
                   <>
-                    <div className="no-saved-jobs-suggestions">
-                      <strong>Get started:</strong>
-                      <ul>
-                        <li>Browse available job listings</li>
-                        <li>Click the "Save Job" button on jobs you're interested in</li>
-                        <li>Come back here to view all your saved jobs</li>
-                        <li>Apply to your saved jobs when you're ready</li>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 max-w-md mx-auto">
+                      <strong className="text-blue-800">Get started:</strong>
+                      <ul className="text-blue-700 text-sm mt-2 space-y-1">
+                        <li>• Browse available job listings</li>
+                        <li>• Click the "Save Job" button on jobs you're interested in</li>
+                        <li>• Come back here to view all your saved jobs</li>
+                        <li>• Apply to your saved jobs when you're ready</li>
                       </ul>
                     </div>
-                    <Link to="/JobSeeker/apply-for-job" className="browse-jobs-button">
+                    <Link to="/JobSeeker/apply-for-job" className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                       Browse Jobs
                     </Link>
                   </>
                 ) : (
                   <button 
-                    className="clear-filters-btn"
+                    className="inline-block bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
                     onClick={() => setSearchKeyword("")}
                   >
                     Clear Search
@@ -287,5 +357,3 @@ if (savedJobsResponse.data && Array.isArray(savedJobsResponse.data.data)) {
 };
 
 export default SavedJobs;
-
-
