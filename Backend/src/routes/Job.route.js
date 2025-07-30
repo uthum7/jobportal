@@ -19,4 +19,10 @@ router.get("/:jobId/applications", getJobApplications); // NEW
 router.delete("/delete/:id", deleteJobPost);
 router.get("/candidates", getAllJobApplications);
 
+// Route to get all keyword filtered jobs 
+router.get("/", getAllFiteredJobs);
+
+// Route to get a specific job by its ID
+router.get("/:id", getJobById);
+
 export default router;

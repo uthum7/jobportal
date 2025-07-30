@@ -1,4 +1,5 @@
 import Job from '../models/Job.model.js';
+import Registeruser  from '../models/Registeruser.js';
 
 // Get dashboard statistics
 export const getDashboardStats = async (req, res) => {
@@ -27,6 +28,17 @@ export const getDashboardStats = async (req, res) => {
             postedDate: { $gte: startOfWeek }
         });
 
+         // Count users by role
+const [counselors, employees, jobseekers, counselees] = await Promise.all([
+    Registeruser.countDocuments({ roles: 'COUNSELOR' }),
+   Registeruser.countDocuments({ roles: 'EMPLOYEE' }),
+   Registeruser.countDocuments({ roles: 'JOBSEEKER' }),
+Registeruser.countDocuments({ roles: 'COUNSELEE' }),
+]);     
+
+        
+
+
         res.json({
             success: true,
             stats: {
@@ -34,9 +46,19 @@ export const getDashboardStats = async (req, res) => {
                 activeJobs,
                 expiredJobs,
                 jobsThisMonth,
-                jobsThisWeek
+                jobsThisWeek,
+                counselors,
+                employees,
+                jobseekers,
+                counselees
+                
             }
         });
+
+
+        console
+
+       
     } catch (error) {
         console.error('Error fetching dashboard stats:', error);
         res.status(500).json({
@@ -45,6 +67,10 @@ export const getDashboardStats = async (req, res) => {
         });
     }
 };
+
+
+
+
 
 // Get monthly job analytics
 export const getMonthlyAnalytics = async (req, res) => {
@@ -280,3 +306,71 @@ export const getRecentActivity = async (req, res) => {
         });
     }
 };
+
+// ✅ 2. Monthly User Analytics (admin chart)
+export const getMonthlyUserAnalytics = async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const rolesList = ["EMPLOYEE", "COUNSELOR", "COUNSELEE", "JOBSEEKER"];
+
+    const userAnalytics = await Registeruser.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(`${currentYear}-01-01`),
+            $lt: new Date(`${currentYear + 1}-01-01`)
+          },
+          roles: { $in: rolesList }
+        }
+      },
+      { $unwind: "$roles" },
+      { $match: { roles: { $in: rolesList } } },
+      {
+        $group: {
+          _id: {
+            month: { $month: "$createdAt" },
+            role: "$roles"
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.month": 1 } }
+    ]);
+
+    const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    const monthlyData = Array.from({ length: 12 }, (_, i) => ({
+      month: months[i],
+      employees: 0,
+      counselors: 0,
+      counselees: 0,
+      jobseekers: 0
+    }));
+
+    userAnalytics.forEach(entry => {
+      const monthIndex = entry._id.month - 1;
+      const role = entry._id.role;
+      const count = entry.count;
+
+      if (role === "EMPLOYEE") monthlyData[monthIndex].employees += count;
+      if (role === "COUNSELOR") monthlyData[monthIndex].counselors += count;
+      if (role === "COUNSELEE") monthlyData[monthIndex].counselees += count;
+      if (role === "JOBSEEKER") monthlyData[monthIndex].jobseekers += count;
+    });
+
+    res.json({
+      success: true,
+      data: monthlyData
+    });
+  } catch (error) {
+    console.error("Error fetching monthly user analytics:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user analytics"
+    });
+  }
+};
+

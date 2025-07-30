@@ -1,6 +1,8 @@
 import mongoose, { Types } from "mongoose";
 
 const JobsSchema = new mongoose.Schema({
+
+    
     JobTitle:{
         type:String,
         required:true
@@ -32,6 +34,8 @@ const JobsSchema = new mongoose.Schema({
     Responsibilities:{
         type:Array
     },
+
+    PostedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Registeruser", required: true },
     postedDate:{
         type:Date,
         default:Date.now
@@ -42,10 +46,12 @@ const JobsSchema = new mongoose.Schema({
         required: true
     }
 
+    
 }
 
 );
+// ✅ Prevent OverwriteModelError
+const Job = mongoose.models.jobs || mongoose.model("Job", JobsSchema);
+  //jobs is the collection name
 
-const Job = mongoose.model("jobs",JobsSchema);
-
-export default Job
+export default Job;
