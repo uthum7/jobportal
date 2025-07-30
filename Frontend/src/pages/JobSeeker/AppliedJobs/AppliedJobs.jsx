@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { getUserId, isAuthenticated, isJobSeeker, getToken } from "../../../utils/auth";
 import JobseekerSidebar from "../../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar.jsx";
 import ViewApplication from "./ViewApplication.jsx";
-import "./AppliedJobs.css";
-import "../Dashboard/Dashboard.css";
+import { Search, RefreshCw, Eye, FileText, AlertCircle, CheckCircle, Clock, X } from "lucide-react";
 
 const AppliedJobsPage = () => {
   const [appliedJobs, setAppliedJobs] = useState([]);
@@ -15,7 +14,12 @@ const AppliedJobsPage = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [showViewApplication, setShowViewApplication] = useState(false);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [jobsPerPage] = useState(6); // Show 6 applications per page
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   
   const userId = getUserId();
   const token = getToken();
@@ -28,8 +32,14 @@ const AppliedJobsPage = () => {
       return;
     }
 
+    // Check for URL parameters to set initial filter
+    const urlFilter = searchParams.get('filter');
+    if (urlFilter && ['all', 'pending', 'accepted', 'rejected'].includes(urlFilter)) {
+      setFilter(urlFilter);
+    }
+
     fetchAppliedJobs();
-  }, [userId, navigate]);
+  }, [userId, navigate, searchParams]);
 
   const fetchAppliedJobs = async () => {
     if (!userId) {
@@ -94,12 +104,49 @@ const AppliedJobsPage = () => {
     return statusMatch && keywordMatch;
   });
 
+  // Pagination logic
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+
+  // Reset to first page when search or filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchKeyword, filter]);
+
+  // Pagination functions
+  const goToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
-      case "pending": return "pending";
-      case "accepted": return "accepted";
-      case "rejected": return "rejected";
-      default: return "pending";
+      case "pending": return "text-yellow-600 bg-yellow-50 border-yellow-200";
+      case "accepted": return "text-green-600 bg-green-50 border-green-200";
+      case "rejected": return "text-red-600 bg-red-50 border-red-200";
+      default: return "text-gray-600 bg-gray-50 border-gray-200";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "pending": return <Clock className="w-4 h-4" />;
+      case "accepted": return <CheckCircle className="w-4 h-4" />;
+      case "rejected": return <X className="w-4 h-4" />;
+      default: return <Clock className="w-4 h-4" />;
     }
   };
 
@@ -112,7 +159,6 @@ const AppliedJobsPage = () => {
   };
 
   const handleViewApplication = (applicationId) => {
-    // Find the application data
     const application = appliedJobs.find(app => app._id === applicationId);
     if (application) {
       setSelectedApplication({
@@ -124,8 +170,7 @@ const AppliedJobsPage = () => {
   };
 
   const handleViewFeedback = (applicationId) => {
-    // Navigate to feedback insights page
-    navigate(`/JobSeeker/application/${applicationId}/feedback`);
+    navigate(`/JobSeeker/feedback-insights/${applicationId}`);
   };
 
   const handleViewDetails = (jobId) => {
@@ -136,16 +181,14 @@ const AppliedJobsPage = () => {
   // Don't render if user is not authenticated or not a job seeker
   if (!isAuthenticated() || !isJobSeeker()) {
     return (
-      <div className="AppliedJobsMainContainer">
-        <div className="dashboard-container">
-          <div className="main-content">
-            <div className="error-container">
-              <h2>Access Denied</h2>
-              <p>You need to be logged in as a Job Seeker to view applied jobs.</p>
-              <Link to="/login" className="login-button">
-                Go to Login
-              </Link>
-            </div>
+      <div className="min-h-screen flex bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Access Denied</h2>
+            <p className="text-gray-600 mb-4">You need to be logged in as a Job Seeker to view applied jobs.</p>
+            <Link to="/login" className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              Go to Login
+            </Link>
           </div>
         </div>
       </div>
@@ -153,202 +196,251 @@ const AppliedJobsPage = () => {
   }
 
   return (
-    <div className="dashboard-containerJS">
+    <div className="min-h-screen flex bg-gray-50">
       <JobseekerSidebar />
-      <div className="main-content-wrapper">
-        {/* Page header with title and breadcrumb navigation */}
-        <div className="header">
-          <h1 className="page-title">Applied Jobs</h1>
-          <div className="breadcrumb">
-            <Link to="/" className="breadcrumb-link">Home</Link>
-            <span className="breadcrumb-separator">/</span>
-            <Link to="/JobSeeker/applied-jobs" className="breadcrumb-link">Applied Jobs</Link>
-          </div>
-        </div>
-        <div className="applied-jobs-layout">
+      <div className="flex-1 lg:ml-0">
+        <div className="p-6">
+          {/* Page header with title and breadcrumb navigation */}
+          <header className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Applied Jobs</h1>
+            <nav className="text-sm text-gray-600">
+              <Link to="/" className="text-blue-600 hover:text-blue-700">Home</Link>
+              <span className="mx-2">/</span>
+              <Link to="/JobSeeker/applied-jobs" className="text-blue-600 hover:text-blue-700">Applied Jobs</Link>
+            </nav>
+          </header>
+
           {/* Applied Jobs Header Section */}
-          <div className="applied-jobs-header">
-            <div className="applied-jobs-info">
-              <h3>Your Job Applications</h3>
-              <p className="applied-jobs-count">
-                {loading ? "Loading..." : `${appliedJobs.length} Application${appliedJobs.length !== 1 ? 's' : ''} Submitted `}
-              </p>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">Your Job Applications</h3>
+                <p className="text-sm text-gray-600">
+                  {loading ? "Loading..." : `${appliedJobs.length} Application${appliedJobs.length !== 1 ? 's' : ''} Submitted`}
+                </p>
+              </div>
+              {appliedJobs.length > 0 && (
+                <button 
+                  className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  onClick={refreshAppliedJobs}
+                  disabled={loading}
+                >
+                  <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                  <span>Refresh</span>
+                </button>
+              )}
             </div>
-            {appliedJobs.length > 0 && (
-              <button 
-                className="refresh-applied-jobs-btn"
-                onClick={refreshAppliedJobs}
-                disabled={loading}
-              >
-                Refresh
-              </button>
-            )}
           </div>
-          {/* Filter Bar */}
+
           {/* Search Bar */}
-          <div className="applied-jobs-search-bar">
-            <div className="applied-jobs-search-input-container">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search by job title, type, or mode..."
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
-                className="applied-jobs-search-input"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <button 
-                className="applied-jobs-clear-search-btn"
-                onClick={() => setSearchKeyword("")}
-                style={{ display: searchKeyword ? 'block' : 'none' }}
-              >
-                ×
-              </button>
+              {searchKeyword && (
+                <button 
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  onClick={() => setSearchKeyword("")}
+                >
+                  ×
+                </button>
+              )}
             </div>
           </div>
-          
-          <div className="filter-bar">
-            {["all", "pending", "accepted", "rejected"].map(status => (
-              <button
-                key={status}
-                onClick={() => setFilter(status)}
-                className={`filter-btn ${filter === status ? "active" : ""}`}
-              >
-                {status === "all" ? "All Applications" : status.charAt(0).toUpperCase() + status.slice(1)}
-                {status !== "all" && (
-                  <span style={{ marginLeft: "8px", fontSize: "12px", opacity: 0.8 }}>
-                    ({appliedJobs.filter(job => job.status === status).length})
-                  </span>
-                )}
-              </button>
-            ))}
+
+          {/* Filter Bar */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div className="flex flex-wrap gap-2">
+              {["all", "pending", "accepted", "rejected"].map(status => (
+                <button
+                  key={status}
+                  onClick={() => setFilter(status)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    filter === status 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {status === "all" ? "All Applications" : status.charAt(0).toUpperCase() + status.slice(1)}
+                  {status !== "all" && (
+                    <span className="ml-2 text-xs opacity-80">
+                      ({appliedJobs.filter(job => job.status === status).length})
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
+
           {/* Error Message */}
           {error && (
-            <div className="error-message">
-              <p>Error: {error}</p>
-              <button onClick={refreshAppliedJobs} className="retry-button">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <p className="text-red-800">Error: {error}</p>
+              <button onClick={refreshAppliedJobs} className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors">
                 Try Again
               </button>
             </div>
           )}
+
           {/* Applied Jobs Container */}
-          <div className="applied-jobs-container">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             {loading ? (
-              <div className="loading-container">
-                <p>Loading your applied jobs...</p>
+              <div className="flex items-center justify-center p-12">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-gray-600">Loading your applied jobs...</p>
+                </div>
               </div>
             ) : filteredJobs.length > 0 ? (
-              <div className="applied-jobs-list">
-                {filteredJobs.map(({ _id, job, appliedDate, status }) => (
-                  <div className="applied-job-card" key={_id}>
-                    <div className="applied-job-content">
-                      <div className="job-main-info">
-                        <h3 className="job-title">{job.JobTitle}</h3>
+              <div className="space-y-4 p-6">
+                {currentJobs.map(({ _id, job, appliedDate, status }) => (
+                  <div className="border border-gray-200 rounded-lg p-6 hover:bg-gray-50 transition-colors" key={_id}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-3">
+                          <h3 className="text-lg font-semibold text-gray-800">{job.JobTitle}</h3>
+                          <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(status)}`}>
+                            {getStatusIcon(status)}
+                            <span>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                          </div>
+                        </div>
                         
-                        <div className="job-details">
-                          <div className="job-detail-item">
-                            <span className="job-detail-label">Type:</span>
-                            <span className="job-detail-value">{job.JobType}</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-500">Type:</span>
+                            <span className="text-sm font-medium text-gray-700">{job.JobType}</span>
                           </div>
-                          <div className="job-detail-item">
-                            <span className="job-detail-label">Mode:</span>
-                            <span className="job-detail-value">{job.JobMode}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-500">Mode:</span>
+                            <span className="text-sm font-medium text-gray-700">{job.JobMode}</span>
                           </div>
-                          <div className="job-detail-item">
-                            <span className="job-detail-label">Experience:</span>
-                            <span className="job-detail-value">{job.JobExperienceYears} Years</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-500">Experience:</span>
+                            <span className="text-sm font-medium text-gray-700">{job.JobExperienceYears} Years</span>
                           </div>
                         </div>
 
-                        <div className="job-dates">
-                          <div className="job-date-item">
-                            <span className="job-date-label">Applied:</span>
-                            <span>{formatDate(appliedDate)}</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-500">Applied:</span>
+                            <span className="text-sm font-medium text-gray-700">{formatDate(appliedDate)}</span>
                           </div>
-                          <div className="job-date-item">
-                            <span className="job-date-label">Deadline:</span>
-                            <span>{formatDate(job.JobDeadline)}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-500">Deadline:</span>
+                            <span className="text-sm font-medium text-gray-700">{formatDate(job.JobDeadline)}</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="job-status-section">
-                        <div className={`status ${getStatusColor(status)}`}>
-                          {status}
-                        </div>
+                      <div className="flex flex-col space-y-2 ml-6">
+                        <button
+                          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                          onClick={() => handleViewApplication(_id)}
+                          title="View your submitted application"
+                        >
+                          <FileText className="w-4 h-4" />
+                          <span>View Application</span>
+                        </button>
                         
-                        <div className="job-actions">
+                        <button
+                          className="flex items-center space-x-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                          onClick={() => handleViewDetails(job._id)}
+                          title="View complete job details"
+                        >
+                          <Eye className="w-4 h-4" />
+                          <span>Job Details</span>
+                        </button>
+                        
+                        {status === "rejected" && (
                           <button
-                            className="action-btn view-application-btn"
-                            onClick={() => handleViewApplication(_id)}
-                            title="View your submitted application"
+                            className="flex items-center space-x-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm"
+                            onClick={() => handleViewFeedback(_id)}
+                            title="View feedback and insights for improvement"
                           >
-                            View Application
+                            <AlertCircle className="w-4 h-4" />
+                            <span>View Feedback</span>
                           </button>
-                          
-                          <button
-                            className="action-btn view-details-btn"
-                            onClick={() => handleViewDetails(job._id)}
-                            title="View complete job details"
-                          >
-                            Job Details
-                          </button>
-                          
-                          {status === "rejected" && (
-                            <button
-                              className="action-btn view-feedback-btn"
-                              onClick={() => handleViewFeedback(_id)}
-                              title="View feedback and insights for improvement"
-                            >
-                              View Feedback
-                            </button>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 ))}
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-8 flex items-center justify-center">
+                    <div className="flex items-center space-x-2">
+                      {/* Previous button */}
+                      <button
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 1}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      
+                      {/* Page numbers */}
+                      {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                        <button
+                          key={pageNumber}
+                          onClick={() => goToPage(pageNumber)}
+                          className={`px-3 py-2 text-sm font-medium rounded-md ${
+                            currentPage === pageNumber
+                              ? 'bg-blue-600 text-white'
+                              : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      ))}
+                      
+                      {/* Next button */}
+                      <button
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
-              <div className="no-applied-jobs-found">
-                {/* Document icon SVG */}
-                <svg
-                  className="no-applied-jobs-icon"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-8 h-8 text-gray-400" />
+                </div>
 
-                <h3 className="no-applied-jobs-title">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   {filter === "all" 
                     ? (searchKeyword ? "No applications found" : "No job applications yet")
-                    :` No ${filter} applications${searchKeyword ? ' found' : ''}`}
+                    : `No ${filter} applications${searchKeyword ? ' found' : ''}`}
                 </h3>
 
-                <p className="no-applied-jobs-message">
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
                   {filter === "all" 
                     ? (searchKeyword 
                         ? "No applications match your search criteria. Try adjusting your search terms or filters."
                         : "You haven't applied to any jobs yet. Start exploring job opportunities and apply to positions that match your skills and interests.")
-                    :` You don't have any applications with ${filter} status${searchKeyword ? ' matching your search' : ''} at the moment.`}
+                    : `You don't have any applications with ${filter} status${searchKeyword ? ' matching your search' : ''} at the moment.`}
                 </p>
 
                 {(filter === "all" && !searchKeyword) && (
-                  <Link to="/JobSeeker/apply-for-job" className="browse-jobs-button">
+                  <Link to="/JobSeeker/apply-for-job" className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                     Browse & Apply for Jobs
                   </Link>
                 )}
                 
                 {(searchKeyword || filter !== "all") && (
                   <button 
-                    className="clear-filters-btn"
+                    className="inline-block bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
                     onClick={() => {
                       setSearchKeyword("");
                       setFilter("all");
@@ -361,15 +453,16 @@ const AppliedJobsPage = () => {
             )}
           </div>
         </div>
-        {/* View Application Modal */}
-        {showViewApplication && selectedApplication && (
-          <ViewApplication
-            applicationId={selectedApplication.id}
-            jobTitle={selectedApplication.jobTitle}
-            onClose={() => setShowViewApplication(false)}
-          />
-        )}
       </div>
+
+      {/* View Application Modal */}
+      {showViewApplication && selectedApplication && (
+        <ViewApplication
+          applicationId={selectedApplication.id}
+          jobTitle={selectedApplication.jobTitle}
+          onClose={() => setShowViewApplication(false)}
+        />
+      )}
     </div>
   );
 };
