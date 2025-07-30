@@ -33,6 +33,24 @@ const RegisteruserSchema = new Schema(
       type: String,
       default: "", // Optional, frontend can fall back to placeholder
     },
+
+      phone: {
+      type: String,
+      default: "",
+      validate: {
+        validator: function (v) {
+          return /^(\+?\d{7,15})?$/.test(v); // basic international phone number format
+        },
+        message: props => `${props.value} is not a valid phone number!`,
+      },
+    },
+
+    // ✅ Newly added address field
+    address: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     isOnline: {
       type: Boolean,
       default: false,

@@ -478,12 +478,35 @@ export const getAdminById = async (req, res) => {
     const user = await Registeruser.findById(req.params.id);
 
     if (!user || !user.roles.some(role => role.toLowerCase() === 'admin')) {
-      return res.status(404).json({ message: 'Admin not found' });
+      return res.status(404).json({ success: false, message: 'Admin not found' });
     }
 
-    res.status(200).json(user);
+    res.status(200).json({ success: true, admin: user });
   } catch (error) {
     console.error('Error fetching admin info:', error);
-    res.status(500).json({ message: 'Error fetching admin info', error });
+    res.status(500).json({ success: false, message: 'Error fetching admin info', error });
+  }
+};
+
+export const updateAdminProfile = async (req, res) => {
+  const { id } = req.params;
+  const { username, email, phone, address } = req.body;
+
+  try {
+    const admin = await Registeruser.findById(id);
+    if (!admin) return res.status(404).json({ success: false, message: 'Admin not found' });
+
+    // Update fields
+    if (username) admin.username = username;
+    if (email) admin.email = email;
+    if (phone) admin.phone = phone;
+    if (address) admin.address = address;
+
+    await admin.save();
+
+    res.json({ success: true, admin });
+  } catch (error) {
+    console.error('Update admin profile error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };
