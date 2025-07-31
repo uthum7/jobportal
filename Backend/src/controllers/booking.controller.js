@@ -529,7 +529,7 @@ export const approveBooking = async (req, res) => {
     // If booking has a price, approve but require payment
     // If no price, directly schedule
     const updateData = {
-      status: booking.price > 0 ? "Approved" : "Scheduled",
+      status:"Approved",
       meeting_link,
       notes: notes || booking.notes
     };
