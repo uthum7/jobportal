@@ -75,6 +75,9 @@
     grid-column: 1 / -1;
 }
 
+.action-buttons-header{
+    display: flex;
+}
 .detail-section h3 {
     margin: 0 0 16px 0;
     font-size: 1.125rem;

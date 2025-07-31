@@ -5,7 +5,7 @@ import CandidateRankingModal from './CandidateRankingModal';
 import { rankCandidates, getScoreColor, getStatusBadgeColor, getScoreLabel, getScoreBreakdownText } from '../../../utils/rankingUtils';
 import '../styles/CandidateModal.css';
 
-const CandidateModal = ({ isOpen, onClose, job }) => {
+const CandidateModal = ({ isOpen, onClose, job, onApplicationStatusUpdate }) => {
     const [applications, setApplications] = useState([]);
     const [rankedApplications, setRankedApplications] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -35,6 +35,17 @@ const CandidateModal = ({ isOpen, onClose, job }) => {
             console.error('Error fetching applications:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Enhanced callback that refreshes both local and parent data
+    const handleStatusUpdateComplete = async () => {
+        // Refresh local applications data
+        await fetchApplications();
+        
+        // Notify parent component to refresh job statistics
+        if (onApplicationStatusUpdate) {
+            await onApplicationStatusUpdate();
         }
     };
 
@@ -152,7 +163,6 @@ const CandidateModal = ({ isOpen, onClose, job }) => {
                                     );
                                 })}
                             </div>
-
                         )}
                     </div>
                 </div>
@@ -166,6 +176,7 @@ const CandidateModal = ({ isOpen, onClose, job }) => {
                 }}
                 candidate={selectedCandidate}
                 job={job}
+                onStatusUpdate={handleStatusUpdateComplete}
             />
         </>
     );

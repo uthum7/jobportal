@@ -1,14 +1,77 @@
 // components/CandidateRankingModal.jsx
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import { calculateCandidateScore, getScoreColor, getStatusBadgeColor, getScoreBreakdownText } from '../../../utils/rankingUtils';
 import '../styles/CandidateRankingModal.css';
 
-const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
+const CandidateRankingModal = ({ isOpen, onClose, candidate, job, onStatusUpdate }) => {
+    const [processingAction, setProcessingAction] = useState(false);
+
     if (!isOpen || !candidate) return null;
 
     const { applicationData } = candidate;
     const scoreResult = calculateCandidateScore(candidate, job?.Requirements, job?.Qualifications);
     const score = scoreResult.score;
+
+    const handleAcceptApplication = async () => {
+        if (processingAction) return;
+
+        try {
+            setProcessingAction(true);
+            
+            const response = await axios.put(`http://localhost:5001/api/applications/${candidate._id}/accept`, {
+                reviewNotes: 'Application accepted by employer'
+            });
+
+            if (response.status === 200) {
+                // Show success message
+                alert('Application accepted successfully!');
+                
+                // Update parent component if callback provided
+                if (onStatusUpdate) {
+                    await onStatusUpdate();
+                }
+                
+                // Close modal
+                onClose();
+            }
+        } catch (error) {
+            console.error('Error accepting application:', error);
+            alert('Failed to accept application. Please try again.');
+        } finally {
+            setProcessingAction(false);
+        }
+    };
+
+    const handleRejectApplication = async () => {
+        if (processingAction) return;
+
+        try {
+            setProcessingAction(true);
+            
+            const response = await axios.put(`http://localhost:5001/api/applications/${candidate._id}/reject`, {
+                reviewNotes: 'Application rejected by employer'
+            });
+
+            if (response.status === 200) {
+                // Show success message
+                alert('Application rejected successfully!');
+                
+                // Update parent component if callback provided
+                if (onStatusUpdate) {
+                    await onStatusUpdate();
+                }
+                
+                // Close modal
+                onClose();
+            }
+        } catch (error) {
+            console.error('Error rejecting application:', error);
+            alert('Failed to reject application. Please try again.');
+        } finally {
+            setProcessingAction(false);
+        }
+    };
 
     const formatDate = (date) => {  
         if (!date) return 'Not specified';
@@ -29,6 +92,11 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
             age--;
         }
         return `${age} years old`;
+    };
+
+    // Simplified: Show buttons only for pending applications
+    const shouldShowActionButtons = (status) => {
+        return status === 'pending';
     };
 
     return (
@@ -52,7 +120,77 @@ const CandidateRankingModal = ({ isOpen, onClose, candidate, job }) => {
                             </div>
                         </div>
                     </div>
-                    <button className="close-btn" onClick={onClose}>×</button>
+                    <div className="header-actions">
+                        {shouldShowActionButtons(candidate.status) && (
+                            <div className="action-buttons-header">
+                                <button 
+                                    className="accept-btn-header"
+                                    onClick={handleAcceptApplication}
+                                    disabled={processingAction}
+                                    style={{
+                                        backgroundColor: '#10b981',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        fontSize: '14px',
+                                        fontWeight: '600',
+                                        cursor: processingAction ? 'not-allowed' : 'pointer',
+                                        opacity: processingAction ? 0.6 : 1,
+                                        marginRight: '8px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px'
+                                    }}
+                                >
+                                    {processingAction ? (
+                                        <>
+                                            <span>⏳</span>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>✓</span>
+                                            Accept
+                                        </>
+                                    )}
+                                </button>
+                                <button 
+                                    className="reject-btn-header"
+                                    onClick={handleRejectApplication}
+                                    disabled={processingAction}
+                                    style={{
+                                        backgroundColor: '#ef4444',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '10px 20px',
+                                        borderRadius: '8px',
+                                        fontSize: '14px',
+                                        fontWeight: '600',
+                                        cursor: processingAction ? 'not-allowed' : 'pointer',
+                                        opacity: processingAction ? 0.6 : 1,
+                                        marginRight: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px'
+                                    }}
+                                >
+                                    {processingAction ? (
+                                        <>
+                                            <span>⏳</span>
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>✗</span>
+                                            Reject
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        )}
+                        <button className="close-btn" onClick={onClose}>×</button>
+                    </div>
                 </div>
 
                 <div className="ranking-modal-body">

@@ -37,6 +37,28 @@ const AllJobs = () => {
         setIsCandidateModalOpen(true);
     };
 
+    // Callback function to refresh jobs data when application status changes
+    const handleApplicationStatusUpdate = async () => {
+        // Refresh the jobs list to get updated statistics
+        await fetchJobs();
+        
+        // Also update the selected job if modal is open
+        if (selectedJob) {
+            try {
+                const response = await axios.get('http://localhost:5001/api/job/with-applications');
+                if (response.status === 200) {
+                    const updatedJobs = response.data.Jobs || [];
+                    const updatedSelectedJob = updatedJobs.find(job => job._id === selectedJob._id);
+                    if (updatedSelectedJob) {
+                        setSelectedJob(updatedSelectedJob);
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating selected job:', error);
+            }
+        }
+    };
+
     const filteredJobs = jobs.filter(job => {
         const matchesSearch = job.JobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             job.JobDescription.toLowerCase().includes(searchTerm.toLowerCase());
@@ -136,6 +158,7 @@ const AllJobs = () => {
                     setSelectedJob(null);
                 }}
                 job={selectedJob}
+                onApplicationStatusUpdate={handleApplicationStatusUpdate}
             />
         </div>
     );

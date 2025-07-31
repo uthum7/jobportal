@@ -36,7 +36,6 @@ const decrypt = (encryptedText) => {
   }
 };
 
-
 // Helper function to encrypt sensitive fields
 const encryptSensitiveData = (applicationData) => {
   const sensitiveFields = ['nic', 'phoneNumber', 'address'];
@@ -308,7 +307,7 @@ export const getApplicationsByJob = async (req, res) => {
     });
     
     res.status(200).json({
-      applications: sanitizedApplications,
+      Applications: sanitizedApplications,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
       total
@@ -386,6 +385,87 @@ export const updateApplicationStatus = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Error updating application status", details: error.message });
+  }
+};
+
+// NEW FUNCTIONS: Accept and Reject Application
+export const acceptApplication = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reviewNotes } = req.body;
+    
+    const application = await Application.findById(id);
+    
+    if (!application) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+    
+    // Update application status to 'shortlisted' (accepted)
+    const updateData = { 
+      status: 'shortlisted',
+      lastUpdated: new Date()
+    };
+    
+    if (reviewNotes) {
+      updateData.reviewNotes = reviewNotes;
+    }
+    
+    const updatedApplication = await Application.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    );
+    
+    res.status(200).json({ 
+      message: "Application accepted successfully", 
+      application: {
+        ...updatedApplication.toObject(),
+        applicationData: decryptSensitiveData(updatedApplication.applicationData)
+      }
+    });
+  } catch (error) {
+    console.error('Error accepting application:', error);
+    res.status(500).json({ error: "Error accepting application", details: error.message });
+  }
+};
+
+export const rejectApplication = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reviewNotes } = req.body;
+    
+    const application = await Application.findById(id);
+    
+    if (!application) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+    
+    // Update application status to 'rejected'
+    const updateData = { 
+      status: 'rejected',
+      lastUpdated: new Date()
+    };
+    
+    if (reviewNotes) {
+      updateData.reviewNotes = reviewNotes;
+    }
+    
+    const updatedApplication = await Application.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    );
+    
+    res.status(200).json({ 
+      message: "Application rejected successfully", 
+      application: {
+        ...updatedApplication.toObject(),
+        applicationData: decryptSensitiveData(updatedApplication.applicationData)
+      }
+    });
+  } catch (error) {
+    console.error('Error rejecting application:', error);
+    res.status(500).json({ error: "Error rejecting application", details: error.message });
   }
 };
 

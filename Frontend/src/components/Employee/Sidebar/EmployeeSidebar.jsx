@@ -105,21 +105,16 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
             name: "Candidates",
             label: "Candidates",
             icon: Users
-        },
-        {
-            name: "Messages",
-            label: "Messages",
-            icon: MessageSquare
         }
     ];
 
-    const accountItems = [
-        {
-            name: "Password",
-            label: "Security",
-            icon: Lock
-        }
-    ];
+    // const accountItems = [
+    //     {
+    //         name: "Password",
+    //         label: "Security",
+    //         icon: Lock
+    //     }
+    // ];
 
     const SidebarItem = ({ icon: Icon, label, active = false, onClick, badge = null }) => (
         <button
@@ -150,8 +145,8 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
         const rolePriority = ['ADMIN', 'EMPLOYEE', 'COUNSELOR', 'JOBSEEKER', 'COUNSELEE'];
         
         for (const role of rolePriority) {
-            if (roles.includes(role)) {
-                return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+            if (roles.includes(role) && role === 'EMPLOYEE') {
+                return "Recruiter";
             }
         }
         
@@ -196,7 +191,7 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
                             ) : error ? (
                                 <div>
                                     <h3 className="font-semibold text-lg text-red-600">Error Loading Profile</h3>
-                                    <p className="text-sm text-gray-600 mt-1">Employee</p>
+                                    <p className="text-sm text-gray-600 mt-1">Recruiter</p>
                                 </div>
                             ) : (
                                 <div>
@@ -231,10 +226,14 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
                                 />
                             </Link>
                         ))}
+
+                        <Link to="/message/messagehome" className="w-full flex items-center p-2 text-gray-700 hover:bg-gray-100">
+                            <MessageSquare className="mr-2" /> Messages
+                        </Link>
                     </div>
 
                     {/* Account Section */}
-                    <div className="pt-8">
+                    {/* <div className="pt-8">
                         <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-4 px-2">Account</h5>
                         <div className="space-y-2">
                             {accountItems.map((item) => (
@@ -252,7 +251,7 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
                                 </Link>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

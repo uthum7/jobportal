@@ -2,14 +2,12 @@ import mongoose from "mongoose";
 
 const applicationSchema = new mongoose.Schema({
   jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job', required: true },
-<<<<<<< HEAD
-  userId: { type: String, required: true },
-=======
+
   userId: {
     type: String, // Keep as String to match existing data
     required: true
   },
->>>>>>> c1cc46141ef92494b755a49cf946b6bbfd350a1a
+
   applicationData: {
     fullName: { type: String, required: true },
     nic: { type: String, required: true },

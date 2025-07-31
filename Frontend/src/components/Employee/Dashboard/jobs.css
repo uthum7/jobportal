@@ -19,7 +19,7 @@
 }
 
 .jobs-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -107,7 +107,7 @@
   gap: 0.5rem;
 }
 
-.stat-item2{
+.stat-item2 {
   background-color: #06b6d4;
 }
 .stat-label {
@@ -155,7 +155,7 @@
 }
 
 .job-card-modern::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -175,7 +175,7 @@
 .job-card-modern:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: #4f46e5;
+  border-color: #10b981;
 }
 
 /* Job Card Header */
@@ -409,7 +409,7 @@
 
 .view-details-btn {
   padding: 0.5rem 1rem;
-  background: #4f46e5;
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
   border: none;
   border-radius: 8px;
@@ -420,7 +420,7 @@
 }
 
 .view-details-btn:hover {
-  background: #3730a3;
+  background: linear-gradient(135deg, #10b981, #059669);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
 }
@@ -471,12 +471,12 @@
   color: #64748b;
 }
 
-.pagination-controls{
+.pagination-controls {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.pagination-btn{
+.pagination-btn {
   padding: 0.5rem 1rem;
   background: transparent;
   color: #4f46e5;
@@ -488,7 +488,8 @@
   transition: all 0.3s ease;
 }
 
-.pagination-numbers, .pagination-number{
+.pagination-numbers,
+.pagination-number {
   padding: 0.5rem 1rem;
   background: transparent;
   color: #4f46e5;
@@ -500,7 +501,7 @@
   transition: all 0.3s ease;
 }
 
-.pagination-info{
+.pagination-info {
   font-size: 0.875rem;
   color: #64748b;
   margin-left: 1rem;
@@ -513,32 +514,32 @@
     gap: 1rem;
     align-items: flex-start;
   }
-  
+
   .jobs-actions {
     width: 100%;
     justify-content: flex-start;
   }
-  
+
   .search-input {
     width: 200px;
   }
-  
+
   .jobs-stats {
     flex-wrap: wrap;
     gap: 1rem;
   }
-  
+
   .jobs-grid {
     grid-template-columns: 1fr;
     padding: 1rem;
   }
-  
+
   .job-card-header {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
-  
+
   .job-actions {
     align-self: flex-end;
     margin-left: 0;
@@ -549,29 +550,29 @@
   .jobs-header {
     padding: 1.5rem;
   }
-  
+
   .jobs-stats {
     padding: 1rem 1.5rem;
   }
-  
+
   .jobs-grid {
     padding: 1rem;
   }
-  
+
   .job-card-modern {
     padding: 1rem;
   }
-  
+
   .search-input {
     width: 150px;
   }
-  
+
   .job-card-footer {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
-  
+
   .view-details-btn {
     width: 100%;
   }

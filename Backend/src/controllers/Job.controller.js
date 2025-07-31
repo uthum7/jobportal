@@ -174,6 +174,81 @@ export const getJobsWithApplications = async (req, res) => {
     }
 }
 
+// export const getJobsWithApplications = async (req, res) => {
+//     try {
+//         const jobsWithApplications = await Job.aggregate([
+//             {
+//                 $lookup: {
+//                     from: "applications",
+//                     localField: "_id",
+//                     foreignField: "jobId",
+//                     as: "applications"
+//                 }
+//             },
+//             {
+//                 $addFields: {
+//                     applicationCount: { $size: "$applications" },
+//                     pendingCount: {
+//                         $size: {
+//                             $filter: {
+//                                 input: "$applications",
+//                                 cond: { 
+//                                     $or: [
+//                                         { $eq: ["$this.status", "pending"] },
+//                                         { $eq: ["$this.status", "reviewed"] }
+//                                     ]
+//                                 }
+//                             }
+//                         }
+//                     },
+//                     acceptedCount: {
+//                         $size: {
+//                             $filter: {
+//                                 input: "$applications",
+//                                 cond: { 
+//                                     $or: [
+//                                         { $eq: ["$this.status", "shortlisted"] },
+//                                         { $eq: ["$this.status", "hired"] }
+//                                     ]
+//                                 }
+//                             }
+//                         }
+//                     },
+//                     rejectedCount: {
+//                         $size: {
+//                             $filter: {
+//                                 input: "$applications",
+//                                 cond: { $eq: ["$this.status", "rejected"] }
+//                             }
+//                         }
+//                     }
+//                 }
+//             },
+//             {
+//                 $project: {
+//                     applications: 0 // Remove the full applications array from response
+//                 }
+//             },
+//             {
+//                 $sort: { postedDate: -1 }
+//             }
+//         ]);
+
+//         res.status(200).json({
+//             "Message": "Success",
+//             "Jobs": jobsWithApplications
+//         });
+//     } catch (err) {
+//         res.status(500).json({
+//             "Error": err.message
+//         });
+//     }
+// };
+
+
+
+
+
 // NEW: Get applications for a specific job
 export const getJobApplications = async (req, res) => {
     try {

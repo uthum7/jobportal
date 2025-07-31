@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "./style.css";
 import axios from 'axios';
+import { Users, Briefcase, CheckCircle, Clock, Calendar } from 'lucide-react';
 import EmployeeDashboardChart from './Chart/EmployeeDashboardChart';
 import EmployeeDashboardJobs from './Jobs/EmployeeDashboardJobs';
 import JobTypeChart from './Chart/JobTypeChart';
@@ -110,12 +111,12 @@ const EmployeeDashboard = () => {
         return "User";
     };
 
-    const StatCard = ({ iconText, title, value, subtitle, color, trend, bgColor }) => (
+    const StatCard = ({ icon: Icon, title, value, subtitle, color, trend, bgColor }) => (
         <div className={`stat-card ${color}`}>
             <div className="stat-card-content">
                 <div className="stat-icon-wrapper">
                     <div className={`stat-icon ${bgColor}`}>
-                        <span className="stat-icon-text">{iconText}</span>
+                        <Icon size={30} />
                     </div>
                 </div>
                 <div className="stat-details">
@@ -165,7 +166,7 @@ const EmployeeDashboard = () => {
             {/* Stats Cards */}
             <div className="stats-container">
                 <StatCard
-                    iconText="💼"
+                    icon={Users}
                     title="Total Jobs"
                     value={dashboardStats.totalJobs}
                     subtitle="All posted positions"
@@ -174,7 +175,7 @@ const EmployeeDashboard = () => {
                     trend="+12%"
                 />
                 <StatCard
-                    iconText="✅"
+                    icon={Users}
                     title="Active Jobs"
                     value={dashboardStats.activeJobs}
                     subtitle="Currently accepting applications"
@@ -183,7 +184,7 @@ const EmployeeDashboard = () => {
                     trend="+8%"
                 />
                 <StatCard
-                    iconText="⏰"
+                    icon={Users}
                     title="Expired Jobs"
                     value={dashboardStats.expiredJobs}
                     subtitle="Past deadline"
@@ -191,7 +192,7 @@ const EmployeeDashboard = () => {
                     bgColor="orange"
                 />
                 <StatCard
-                    iconText="📅"
+                    icon={Users}
                     title="This Month"
                     value={dashboardStats.jobsThisMonth}
                     subtitle="Jobs posted this month"
