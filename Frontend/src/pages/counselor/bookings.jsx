@@ -208,7 +208,8 @@ export default function CounselorBookings() {
       
       const response = await bookingAPI.updateBooking(bookingId, {
         status: "Payment Pending",
-        price: parseFloat(amount)
+        price: parseFloat(amount),
+        payment_status: "Pending"
       })
       
       if (response.success) {
