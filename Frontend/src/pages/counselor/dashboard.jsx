@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import {
   FaHome,
@@ -20,111 +20,222 @@ import {
   FaCheck,
   FaTimes,
   FaExclamationTriangle,
+  FaSpinner,
 } from "react-icons/fa"
 import "./dashboard.css"
-
-// Sample data for upcoming sessions
-const upcomingSessions = [
-  {
-    id: 1,
-    counselee: {
-      name: "Alexander Mitchell",
-      avatar:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/depositphotos_65103937-stock-illustration-male-avatar-profile-picture-vector.jpg-sGxy88AMCTZclrYwVI5URVtYVKxafN.jpeg",
-      email: "alexander.mitchell@gmail.com",
-    },
-    date: "05 January 2025",
-    time: "9:00 AM - 10:00 AM",
-    topic: "Career Development Strategy",
-    status: "Approved",
-    type: "Video Call",
-  },
-  {
-    id: 2,
-    counselee: {
-      name: "Emily Johnson",
-      avatar: "/placeholder.svg?height=40&width=40",
-      email: "emily.johnson@gmail.com",
-    },
-    date: "06 January 2025",
-    time: "2:00 PM - 3:00 PM",
-    topic: "Resume Review",
-    status: "Pending",
-    type: "Video Call",
-  },
-  {
-    id: 3,
-    counselee: {
-      name: "Michael Brown",
-      avatar: "/placeholder.svg?height=40&width=40",
-      email: "michael.brown@gmail.com",
-    },
-    date: "07 January 2025",
-    time: "11:00 AM - 12:00 PM",
-    topic: "Interview Preparation",
-    status: "Approved",
-    type: "Phone Call",
-  },
-]
-
-// Sample data for recent reviews
-const recentReviews = [
-  {
-    id: 1,
-    counselee: {
-      name: "David Wilson",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    rating: 5,
-    comment: "Excellent session! Very insightful and provided practical advice for my career transition.",
-    date: "December 28, 2024",
-  },
-  {
-    id: 2,
-    counselee: {
-      name: "Sarah Thompson",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    rating: 4,
-    comment: "Great advice on improving my resume. Would definitely recommend.",
-    date: "December 25, 2024",
-  },
-  {
-    id: 3,
-    counselee: {
-      name: "James Rodriguez",
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    rating: 5,
-    comment: "Very helpful session. The mock interview practice was exactly what I needed.",
-    date: "December 20, 2024",
-  },
-]
+import { bookingAPI } from "../../services/api.jsx"
+import { getCounselorById } from "../../services/counselorService"
 
 export default function CounselorDashboard() {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState("upcoming")
-
-  // Filter sessions based on search query
-  const filteredSessions = upcomingSessions.filter(
-    (session) =>
-      session.counselee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      session.counselee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      session.topic.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
-
-  // Stats data
-  const stats = {
-    totalSessions: 45,
-    completedSessions: 32,
-    upcomingSessions: 13,
-    averageRating: 4.8,
-    totalEarnings: 3600,
-    pendingPayments: 450,
-  }
+  const [sessions, setSessions] = useState([])
+  const [filteredSessions, setFilteredSessions] = useState([])
+  const [stats, setStats] = useState({
+    totalSessions: 0,
+    completedSessions: 0,
+    upcomingSessions: 0,
+    averageRating: 0,
+    totalReviews: 0,
+    performancePercentage: 0,
+    totalEarnings: 0,
+    pendingPayments: 0,
+  })
+  const [recentReviews, setRecentReviews] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [counselorProfile, setCounselorProfile] = useState(null)
+  const [actionLoading, setActionLoading] = useState({})
 
   const userstring = localStorage.getItem("user") 
   const user = userstring ? JSON.parse(userstring) : null
+  const counselorId = user?.counselors_id
+
+  // Fetch counselor data and sessions
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!counselorId) {
+        setError("Counselor ID not found. Please log in again.")
+        setLoading(false)
+        return
+      }
+
+      try {
+        setLoading(true)
+        setError(null)
+
+        // Fetch counselor profile
+        const profileResponse = await getCounselorById(counselorId)
+        if (profileResponse.success) {
+          setCounselorProfile(profileResponse.data)
+        }
+
+        // Fetch bookings/sessions
+        const bookingsResponse = await bookingAPI.getBookingsByCounselor(counselorId)
+        if (bookingsResponse.success) {
+          const bookings = bookingsResponse.data || []
+          setSessions(bookings)
+
+          // Calculate stats from bookings
+          const totalSessions = bookings.length
+          const completedSessions = bookings.filter(b => b.status === "Completed").length
+          const upcomingSessions = bookings.filter(b => 
+            ["Pending", "Approved", "Scheduled"].includes(b.status) &&
+            new Date(b.date) >= new Date()
+          ).length
+          
+          // Get rating and reviews from counselor profile (with fallbacks)
+          const counselorData = profileResponse.success ? profileResponse.data : null
+          const averageRating = counselorData?.rating || 4.7
+          const totalReviews = counselorData?.reviews || 102
+          
+          // Calculate performance based on rating (out of 5) converted to percentage
+          // Performance = (rating / 5) * 100
+          const performancePercentage = Math.round((averageRating / 5) * 100)
+          
+          // Calculate earnings (sum of completed sessions with price)
+          const totalEarnings = bookings
+            .filter(b => b.status === "Completed" && b.price)
+            .reduce((sum, b) => sum + (b.price || 0), 0)
+          
+          // Calculate pending payments
+          const pendingPayments = bookings
+            .filter(b => b.status === "Payment Pending" && b.price)
+            .reduce((sum, b) => sum + (b.price || 0), 0)
+
+          setStats({
+            totalSessions,
+            completedSessions,
+            upcomingSessions,
+            averageRating,
+            totalReviews,
+            performancePercentage,
+            totalEarnings,
+            pendingPayments,
+          })
+        }
+
+        // For reviews, we'll use a placeholder for now
+        // You might want to implement a proper reviews system
+        setRecentReviews([
+          {
+            id: 1,
+            counselee: {
+              name: "David Wilson",
+              avatar: "/placeholder.svg?height=40&width=40",
+            },
+            rating: 5,
+            comment: "Excellent session! Very insightful and provided practical advice for my career transition.",
+            date: "December 28, 2024",
+          },
+          {
+            id: 2,
+            counselee: {
+              name: "Sarah Thompson",
+              avatar: "/placeholder.svg?height=40&width=40",
+            },
+            rating: 4,
+            comment: "Great advice on improving my resume. Would definitely recommend.",
+            date: "December 25, 2024",
+          },
+        ])
+
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err)
+        setError(err.message || "Failed to load dashboard data")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [counselorId])
+
+  // Filter sessions based on search query and active tab
+  useEffect(() => {
+    if (!sessions.length) {
+      setFilteredSessions([])
+      return
+    }
+
+    let filtered = sessions
+
+    // Filter by tab
+    const today = new Date()
+    if (activeTab === "upcoming") {
+      filtered = sessions.filter(session => 
+        ["Pending", "Approved", "Scheduled"].includes(session.status) &&
+        new Date(session.date) >= today
+      )
+    } else if (activeTab === "past") {
+      filtered = sessions.filter(session => 
+        session.status === "Completed" ||
+        (new Date(session.date) < today && session.status !== "Cancelled")
+      )
+    } else if (activeTab === "cancelled") {
+      filtered = sessions.filter(session => session.status === "Cancelled")
+    }
+
+    // Filter by search query
+    if (searchQuery) {
+      filtered = filtered.filter(session =>
+        session.user_id?.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        session.user_id?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        session.topic?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    }
+
+    setFilteredSessions(filtered)
+  }, [sessions, activeTab, searchQuery])
+
+  // Handle session status change
+  const handleStatusChange = async (sessionId, newStatus) => {
+    try {
+      setActionLoading(prev => ({ ...prev, [sessionId]: true }))
+      
+      const response = await bookingAPI.updateBooking(sessionId, { status: newStatus })
+      
+      if (response.success) {
+        // Update local state
+        setSessions(prev => 
+          prev.map(session => 
+            session._id === sessionId 
+              ? { ...session, status: newStatus }
+              : session
+          )
+        )
+        
+        const statusMessages = {
+          "Approved": "Session approved successfully",
+          "Cancelled": "Session cancelled successfully",
+          "Scheduled": "Session scheduled successfully"
+        }
+        
+        alert(statusMessages[newStatus] || `Session ${newStatus.toLowerCase()} successfully`)
+      } else {
+        throw new Error(response.message || "Failed to update session")
+      }
+    } catch (error) {
+      console.error("Error updating session:", error)
+      alert(error.message || "Failed to update session")
+    } finally {
+      setActionLoading(prev => ({ ...prev, [sessionId]: false }))
+    }
+  }
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    } catch {
+      return dateString
+    }
+  }
+
   console.log("User data from localStorage:", user)
 
   return (
@@ -133,12 +244,12 @@ export default function CounselorDashboard() {
       <aside className="sidebar">
         <div className="sidebar-profile">
           <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg"
-            alt="James Anderson"
+            src={counselorProfile?.image || user?.profilePic || "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg"}
+            alt={user?.name || "Counselor"}
             className="profile-image"
           />
-          <h3 className="profile-name">{user.name}</h3>
-          <p className="profile-title">{user.specialty}</p>
+          <h3 className="profile-name">{counselorProfile?.name || user?.name}</h3>
+          <p className="profile-title">{counselorProfile?.specialty || user?.specialty}</p>
         </div>
 
         <nav className="sidebar-menu">
@@ -221,11 +332,18 @@ export default function CounselorDashboard() {
       {/* Main Content */}
       <main className="main-content">
         <div className="main-header">
-          <h1>Welcome Back, James!</h1>
+          <h1>Welcome Back, {counselorProfile?.name || user?.name || "Counselor"}!</h1>
           <div className="breadcrumb">
             <Link to="/">Home</Link> / Dashboard
           </div>
         </div>
+
+        {error && (
+          <div className="error-banner">
+            <FaExclamationTriangle className="error-icon" />
+            <span>{error}</span>
+          </div>
+        )}
 
         {/* Stats Grid */}
         <div className="stats-grid">
@@ -234,7 +352,7 @@ export default function CounselorDashboard() {
               <FaCalendarAlt />
             </div>
             <div className="stat-content">
-              <h2>{stats.totalSessions}</h2>
+              <h2>{loading ? "..." : stats.totalSessions}</h2>
               <p>Total Sessions</p>
             </div>
             <div className="stat-footer">
@@ -248,7 +366,7 @@ export default function CounselorDashboard() {
               <FaStar />
             </div>
             <div className="stat-content">
-              <h2>{stats.averageRating}</h2>
+              <h2>{loading ? "..." : stats.averageRating.toFixed(1)}</h2>
               <p>Average Rating</p>
             </div>
             <div className="stat-footer">
@@ -257,6 +375,7 @@ export default function CounselorDashboard() {
                   <FaStar key={i} className={i < Math.floor(stats.averageRating) ? "star-filled" : "star-empty"} />
                 ))}
               </div>
+              <span className="stat-detail">{stats.totalReviews} reviews</span>
             </div>
           </div>
 
@@ -265,7 +384,7 @@ export default function CounselorDashboard() {
               <FaMoneyBillWave />
             </div>
             <div className="stat-content">
-              <h2>${stats.totalEarnings}</h2>
+              <h2>{loading ? "..." : `$${stats.totalEarnings}`}</h2>
               <p>Total Earnings</p>
             </div>
             <div className="stat-footer">
@@ -278,11 +397,13 @@ export default function CounselorDashboard() {
               <FaChartLine />
             </div>
             <div className="stat-content">
-              <h2>92%</h2>
+              <h2>{loading ? "..." : `${stats.performancePercentage}%`}</h2>
               <p>Performance</p>
             </div>
             <div className="stat-footer">
-              <span className="stat-detail positive">↑ 8% from last month</span>
+              <span className="stat-detail positive">
+                Based on {stats.averageRating}/5 rating
+              </span>
             </div>
           </div>
         </div>
@@ -328,19 +449,27 @@ export default function CounselorDashboard() {
           </div>
 
           <div className="sessions-list">
-            {filteredSessions.length > 0 ? (
+            {loading ? (
+              <div className="loading-state">
+                <FaSpinner className="loading-spinner" />
+                <p>Loading sessions...</p>
+              </div>
+            ) : filteredSessions.length > 0 ? (
               filteredSessions.map((session) => (
-                <div key={session.id} className="session-card">
+                <div key={session._id} className="session-card">
                   <div className="session-header">
                     <div className="counselee-info">
                       <img
-                        src={session.counselee.avatar || "/placeholder.svg"}
-                        alt={session.counselee.name}
+                        src={session.user_id?.profilePic || "/placeholder.svg"}
+                        alt={session.user_id?.username || "User"}
                         className="counselee-avatar"
+                        onError={(e) => {
+                          e.target.src = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/depositphotos_65103937-stock-illustration-male-avatar-profile-picture-vector.jpg-sGxy88AMCTZclrYwVI5URVtYVKxafN.jpeg"
+                        }}
                       />
                       <div>
-                        <h3 className="counselee-name">{session.counselee.name}</h3>
-                        <p className="counselee-email">{session.counselee.email}</p>
+                        <h3 className="counselee-name">{session.user_id?.username || "Unknown User"}</h3>
+                        <p className="counselee-email">{session.user_id?.email || "No email"}</p>
                       </div>
                     </div>
                     <div className="session-actions">
@@ -353,7 +482,7 @@ export default function CounselorDashboard() {
                   <div className="session-details">
                     <div className="detail-item">
                       <span className="detail-label">Date:</span>
-                      <span className="detail-value">{session.date}</span>
+                      <span className="detail-value">{formatDate(session.date) || session.date}</span>
                     </div>
                     <div className="detail-item">
                       <span className="detail-label">Time:</span>
@@ -365,21 +494,33 @@ export default function CounselorDashboard() {
                     </div>
                     <div className="detail-item">
                       <span className="detail-label">Type:</span>
-                      <span className="detail-value">{session.type}</span>
+                      <span className="detail-value">{session.type || "Video Call"}</span>
                     </div>
                   </div>
 
                   <div className="session-footer">
-                    <div className={`session-status ${session.status.toLowerCase()}`}>{session.status}</div>
+                    <div className={`session-status ${session.status?.toLowerCase() || 'pending'}`}>{session.status}</div>
                     <div className="session-buttons">
-                      <button className="view-details-btn">View Details</button>
+                      <Link to="/counselor/bookings" className="view-details-btn">View Details</Link>
                       {session.status === "Approved" && <button className="start-session-btn">Start Session</button>}
                       {session.status === "Pending" && (
                         <>
-                          <button className="accept-btn">
-                            <FaCheck /> Accept
+                          <button 
+                            className="accept-btn"
+                            onClick={() => handleStatusChange(session._id, "Approved")}
+                            disabled={actionLoading[session._id]}
+                          >
+                            {actionLoading[session._id] ? (
+                              <FaSpinner className="btn-spinner" />
+                            ) : (
+                              <><FaCheck /> Accept</>
+                            )}
                           </button>
-                          <button className="decline-btn">
+                          <button 
+                            className="decline-btn"
+                            onClick={() => handleStatusChange(session._id, "Cancelled")}
+                            disabled={actionLoading[session._id]}
+                          >
                             <FaTimes /> Decline
                           </button>
                         </>
