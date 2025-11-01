@@ -21,30 +21,13 @@ const AdminNavbar = ({ onLogout }) => {
     <nav className="admin-navbar"> {/* Main navbar class */}
       <div className="admin-navbar-container"> {/* Inner container for max-width and centering */}
         <div className="admin-navbar-brand">
-<<<<<<< HEAD
-          <Link to="/admin">
-=======
           <Link to="/">
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
             <img src={logoPath} alt="Admin Dashboard Logo" className="admin-navbar-logo-img" />
             {/* Optional: <span className="admin-brand-text">Admin Panel</span> */}
           </Link>
         </div>
         <div className="admin-nav-links">
           <Link 
-<<<<<<< HEAD
-            to="/admin" 
-            className={`admin-nav-link ${location.pathname === '/admin' || location.pathname.startsWith('/admin/dashboard') ? 'active' : ''}`}
-          >
-            Admin
-          </Link>
-          
-          <Link 
-            to="/jobseeker/dashboard" 
-            className={`admin-nav-link ${location.pathname.startsWith('/jobseeker/dashboard') ? 'active' : ''}`}
-          >
-            Manage Jobseker {/* Or "Manage Counselors" as you had */}
-=======
             to="/" 
             className={`admin-nav-link ${location.pathname === '/' || location.pathname.startsWith('/') }`}
           >
@@ -56,27 +39,14 @@ const AdminNavbar = ({ onLogout }) => {
             className={`admin-nav-link ${location.pathname.startsWith('/jobseeker/dashboard') ? 'active' : ''}`}
           >
             About {/* Or "Manage Counselors" as you had */}
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
           </Link>
           <Link 
             to="/admin/managecounselor" 
             className={`admin-nav-link ${location.pathname.startsWith('/admin/managecounselor') ? 'active' : ''}`}
           >
-<<<<<<< HEAD
-            Manage Counselor {/* Or "Manage Counselors" as you had */}
-          </Link>
-          <Link 
-            to="/counselee/dashboard" 
-            className={`admin-nav-link ${location.pathname.startsWith('/counselee/dashboard') ? 'active' : ''}`}
-          >
-            Manage Counselee {/* Or "Manage Counselors" as you had */}
-          </Link>
-          {/* Add more admin links here as needed */}
-=======
             Contact Us {/* Or "Manage Counselors" as you had */}
           </Link>
          
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         </div>
         <div className="admin-navbar-actions">
           <button 

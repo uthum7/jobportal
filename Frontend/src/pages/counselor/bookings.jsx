@@ -1,10 +1,6 @@
 "use client"
 
-<<<<<<< HEAD
-import { useState, useEffect } from "react"
-=======
 import { useState } from "react"
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 import { Link } from "react-router-dom"
 import {
   FaHome,
@@ -24,14 +20,6 @@ import {
   FaCheck,
   FaTimes,
   FaExclamationTriangle,
-<<<<<<< HEAD
-  FaSpinner,
-  FaMapMarkerAlt,
-} from "react-icons/fa"
-import { bookingAPI } from "../../services/api.jsx"
-import "./bookings.css"
-import "./booking-payment-styles.css"
-=======
 } from "react-icons/fa"
 import "./bookings.css"
 
@@ -109,83 +97,11 @@ const bookingsData = [
     notes: "Strategies for upcoming salary negotiation.",
   },
 ]
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
 
 export default function CounselorBookings() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sortBy, setSortBy] = useState("date")
-<<<<<<< HEAD
-  const [bookings, setBookings] = useState([])
-  const [selectedBooking, setSelectedBooking] = useState(null)
-  const [showDetailsModal, setShowDetailsModal] = useState(false)
-  const [sessionNotes, setSessionNotes] = useState("")
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [actionLoading, setActionLoading] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pagination, setPagination] = useState({})
-
-  // Get user from localStorage
-  const userString = localStorage.getItem("user")
-  const user = userString ? JSON.parse(userString) : null
-  const counselorId = user?.counselors_id
-
-  // Fetch bookings for this counselor
-  const fetchBookings = async () => {
-    if (!counselorId) {
-      setError("Counselor ID not found. Please log in again.")
-      setLoading(false)
-      return
-    }
-
-    try {
-      setLoading(true)
-      setError(null)
-
-      const params = {
-        page: currentPage,
-        limit: 10,
-        ...(statusFilter !== "all" && { status: statusFilter }),
-        ...(sortBy === "date" && { sort: "-createdAt" }),
-        ...(sortBy === "name" && { sort: "user_id.username" }),
-        ...(sortBy === "status" && { sort: "status" }),
-      }
-
-      const response = await bookingAPI.getBookingsByCounselor(counselorId, params)
-      
-      if (response.success) {
-        setBookings(response.data || [])
-        setPagination(response.pagination || {})
-      } else {
-        throw new Error(response.message || "Failed to fetch bookings")
-      }
-    } catch (err) {
-      console.error("Error fetching bookings:", err)
-      setError(err.message || "Failed to load bookings")
-      setBookings([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Fetch bookings on component mount and when filters change
-  useEffect(() => {
-    fetchBookings()
-  }, [counselorId, currentPage, statusFilter, sortBy])
-
-  // Filter bookings based on search query
-  const filteredBookings = bookings.filter((booking) => {
-    if (!searchQuery) return true
-    
-    const searchLower = searchQuery.toLowerCase()
-    return (
-      booking.user_id?.username?.toLowerCase().includes(searchLower) ||
-      booking.user_id?.email?.toLowerCase().includes(searchLower) ||
-      booking.topic?.toLowerCase().includes(searchLower) ||
-      booking.location?.toLowerCase().includes(searchLower)
-    )
-=======
   const [bookings] = useState(bookingsData)
   const [selectedBooking, setSelectedBooking] = useState(null)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
@@ -213,23 +129,14 @@ export default function CounselorBookings() {
       return a.status.localeCompare(b.status)
     }
     return 0
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   })
 
   const handleStatusFilterChange = (status) => {
     setStatusFilter(status)
-<<<<<<< HEAD
-    setCurrentPage(1) // Reset to first page when filtering
-=======
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   }
 
   const handleSortChange = (sortOption) => {
     setSortBy(sortOption)
-<<<<<<< HEAD
-    setCurrentPage(1) // Reset to first page when sorting
-=======
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   }
 
   const handleViewDetails = (booking) => {
@@ -241,148 +148,6 @@ export default function CounselorBookings() {
   const handleCloseModal = () => {
     setShowDetailsModal(false)
     setSelectedBooking(null)
-<<<<<<< HEAD
-    setSessionNotes("")
-  }
-
-  const handleSaveNotes = async () => {
-    if (!selectedBooking) return
-
-    try {
-      setActionLoading(prev => ({ ...prev, saveNotes: true }))
-      
-      const response = await bookingAPI.updateBooking(selectedBooking._id, {
-        notes: sessionNotes
-      })
-      
-      if (response.success) {
-        // Update local state
-        setBookings(prev => 
-          prev.map(booking => 
-            booking._id === selectedBooking._id 
-              ? { ...booking, notes: sessionNotes }
-              : booking
-          )
-        )
-        handleCloseModal()
-        alert("Notes saved successfully")
-      } else {
-        throw new Error(response.message || "Failed to save notes")
-      }
-    } catch (error) {
-      console.error("Error saving notes:", error)
-      alert(error.message || "Failed to save notes")
-    } finally {
-      setActionLoading(prev => ({ ...prev, saveNotes: false }))
-    }
-  }
-
-  const handleStatusChange = async (bookingId, newStatus, additionalData = {}) => {
-    try {
-      setActionLoading(prev => ({ ...prev, [bookingId]: true }))
-      
-      let response;
-      
-      if (newStatus === "Approved") {
-        // Use the approve endpoint
-        response = await bookingAPI.approveBooking(bookingId, additionalData)
-      } else {
-        // Use regular update for other status changes
-        response = await bookingAPI.updateBooking(bookingId, {
-          status: newStatus,
-          ...additionalData
-        })
-      }
-      
-      if (response.success) {
-        // Refresh bookings
-        await fetchBookings()
-        
-        const statusMessages = {
-          "Approved": "Booking approved successfully",
-          "Payment Pending": "Payment request sent to counselee",
-          "Scheduled": "Booking scheduled successfully",
-          "Cancelled": "Booking cancelled successfully"
-        }
-        
-        alert(statusMessages[newStatus] || `Booking ${newStatus.toLowerCase()} successfully`)
-      } else {
-        throw new Error(response.message || "Failed to update booking")
-      }
-    } catch (error) {
-      console.error("Error updating booking:", error)
-      alert(error.message || "Failed to update booking")
-    } finally {
-      setActionLoading(prev => ({ ...prev, [bookingId]: false }))
-    }
-  }
-
-  const handleRequestPayment = async (bookingId, price = 0) => {
-    const amount = price || prompt("Enter the session price (in USD):", "50")
-    if (!amount || isNaN(amount) || amount <= 0) {
-      alert("Please enter a valid price")
-      return
-    }
-
-    try {
-      setActionLoading(prev => ({ ...prev, [bookingId]: true }))
-      
-      const response = await bookingAPI.updateBooking(bookingId, {
-        status: "Payment Pending",
-        price: parseFloat(amount)
-      })
-      
-      if (response.success) {
-        await fetchBookings()
-        alert(`Payment request sent for $${amount}`)
-      } else {
-        throw new Error(response.message || "Failed to request payment")
-      }
-    } catch (error) {
-      console.error("Error requesting payment:", error)
-      alert(error.message || "Failed to request payment")
-    } finally {
-      setActionLoading(prev => ({ ...prev, [bookingId]: false }))
-    }
-  }
-
-  // Get status class for styling
-  const getStatusClass = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'pending':
-        return 'pending'
-      case 'approved':
-        return 'approved'
-      case 'payment pending':
-        return 'payment-pending'
-      case 'scheduled':
-        return 'scheduled'
-      case 'completed':
-        return 'completed'
-      case 'cancelled':
-        return 'cancelled'
-      case 'rescheduled':
-        return 'rescheduled'
-      default:
-        return 'pending'
-    }
-  }
-
-  // Format date for display
-  const formatDate = (dateString) => {
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    } catch {
-      return dateString
-    }
-  }
-
-
-=======
   }
 
   const handleSaveNotes = () => {
@@ -406,28 +171,18 @@ export default function CounselorBookings() {
     // For now, we'll just log the action
   }
 
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
   return (
     <div className="dashboard-layout">
       {/* Left Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-profile">
           <img
-<<<<<<< HEAD
-            src={user?.profilePic || "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg"}
-            alt={user?.fullName || "Counselor"}
-            className="profile-image"
-          />
-          <h3 className="profile-name">{user.name }</h3>
-          <p className="profile-title">{user.specialty}</p>
-=======
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Young-and-confident-male-teacher-1024x683.jpg-R6ysbV9y1tkPVjRz96mm0z4KBc2S62.jpeg"
             alt="James Anderson"
             className="profile-image"
           />
           <h3 className="profile-name">James Anderson</h3>
           <p className="profile-title">Career Development Specialist</p>
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
         </div>
 
         <nav className="sidebar-menu">
@@ -522,11 +277,7 @@ export default function CounselorBookings() {
             <div className="search-box">
               <input
                 type="text"
-<<<<<<< HEAD
-                placeholder="Search by counselee name, email, or topic..."
-=======
                 placeholder="Search bookings..."
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="search-input"
@@ -549,65 +300,28 @@ export default function CounselorBookings() {
                     All
                   </button>
                   <button
-<<<<<<< HEAD
-=======
                     className={`filter-option ${statusFilter === "confirmed" ? "active" : ""}`}
                     onClick={() => handleStatusFilterChange("confirmed")}
                   >
                     Confirmed
                   </button>
                   <button
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                     className={`filter-option ${statusFilter === "pending" ? "active" : ""}`}
                     onClick={() => handleStatusFilterChange("pending")}
                   >
                     Pending
                   </button>
                   <button
-<<<<<<< HEAD
-                    className={`filter-option ${statusFilter === "approved" ? "active" : ""}`}
-                    onClick={() => handleStatusFilterChange("approved")}
-                  >
-                    Approved
-                  </button>
-                  <button
-                    className={`filter-option ${statusFilter === "scheduled" ? "active" : ""}`}
-                    onClick={() => handleStatusFilterChange("scheduled")}
-                  >
-                    Scheduled
-                  </button>
-                  <button
-                    className={`filter-option ${statusFilter === "payment pending" ? "active" : ""}`}
-                    onClick={() => handleStatusFilterChange("payment pending")}
-                  >
-                    Payment Pending
-                  </button>
-                  <button
-                    className={`filter-option ${statusFilter === "cancelled" ? "active" : ""}`}
-                    onClick={() => handleStatusFilterChange("cancelled")}
-                  >
-                    Cancelled
-                  </button>
-                  <button
-=======
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                     className={`filter-option ${statusFilter === "completed" ? "active" : ""}`}
                     onClick={() => handleStatusFilterChange("completed")}
                   >
                     Completed
                   </button>
                   <button
-<<<<<<< HEAD
-                    className={`filter-option ${statusFilter === "rescheduled" ? "active" : ""}`}
-                    onClick={() => handleStatusFilterChange("rescheduled")}
-                  >
-                    Rescheduled
-=======
                     className={`filter-option ${statusFilter === "cancelled" ? "active" : ""}`}
                     onClick={() => handleStatusFilterChange("cancelled")}
                   >
                     Cancelled
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                   </button>
                 </div>
               </div>
@@ -642,188 +356,6 @@ export default function CounselorBookings() {
 
           {/* Bookings List */}
           <div className="bookings-list">
-<<<<<<< HEAD
-            {loading ? (
-              <div className="loading-state">
-                <FaSpinner className="loading-spinner" />
-                <p>Loading your bookings...</p>
-              </div>
-            ) : error ? (
-              <div className="error-state">
-                <FaExclamationTriangle className="error-icon" />
-                <h3>Error Loading Bookings</h3>
-                <p>{error}</p>
-                <button onClick={fetchBookings} className="retry-btn">
-                  Try Again
-                </button>
-              </div>
-            ) : filteredBookings.length > 0 ? (
-              <>
-                {filteredBookings.map((booking) => (
-                  <div key={booking._id} className="booking-card">
-                    <div className="booking-left">
-                      <div className="booking-counselee">
-                        <img
-                          src={booking.user_id?.profilePic || "/placeholder.svg"}
-                          alt={booking.user_id?.username || "User"}
-                          className="counselee-avatar"
-                          onError={(e) => {
-                            e.target.src = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/depositphotos_65103937-stock-illustration-male-avatar-profile-picture-vector.jpg-sGxy88AMCTZclrYwVI5URVtYVKxafN.jpeg"
-                          }}
-                        />
-                        <div className="counselee-details">
-                          <h3 className="counselee-name">{booking.user_id?.username || "Unknown User"}</h3>
-                          <p className="counselee-email">{booking.user_id?.email || "No email"}</p>
-                        </div>
-                      </div>
-                      <div className="booking-details">
-                        <div className="booking-detail">
-                          <FaCalendarAlt className="detail-icon" />
-                          <span>{formatDate(booking.date) || booking.date}</span>
-                        </div>
-                        <div className="booking-detail">
-                          <FaClock className="detail-icon" />
-                          <span>{booking.time}</span>
-                        </div>
-                        <div className="booking-detail">
-                          <FaMapMarkerAlt className="detail-icon" />
-                          <span>{booking.location}</span>
-                        </div>
-                        <div className="booking-detail">
-                          {booking.type === "Video Call" ? (
-                            <FaVideo className="detail-icon" />
-                          ) : (
-                            <FaPhone className="detail-icon" />
-                          )}
-                          <span>{booking.type}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="booking-right">
-                      <div className="booking-topic">
-                        <h4>Topic:</h4>
-                        <p>{booking.topic}</p>
-                        {booking.notes && (
-                          <>
-                            <h4>Notes:</h4>
-                            <p className="booking-notes">{booking.notes}</p>
-                          </>
-                        )}
-                      </div>
-                      <div className="booking-actions">
-                        <div className={`booking-status ${getStatusClass(booking.status)}`}>
-                          {booking.status}
-                        </div>
-                        <div className="action-buttons">
-                          <button 
-                            className="view-details-btn" 
-                            onClick={() => handleViewDetails(booking)}
-                          >
-                            View Details
-                          </button>
-                          {booking.status === "Pending" && (
-                            <div className="status-action-buttons">
-                              <button 
-                                className="accept-btn" 
-                                onClick={() => handleStatusChange(booking._id, "Approved")}
-                                disabled={actionLoading[booking._id]}
-                              >
-                                {actionLoading[booking._id] ? (
-                                  <><FaSpinner className="btn-spinner" /> Processing...</>
-                                ) : (
-                                  <><FaCheck /> Accept</>
-                                )}
-                              </button>
-                              <button 
-                                className="decline-btn" 
-                                onClick={() => handleStatusChange(booking._id, "Cancelled")}
-                                disabled={actionLoading[booking._id]}
-                              >
-                                <FaTimes /> Decline
-                              </button>
-                            </div>
-                          )}
-                          {booking.status === "Approved" && (
-                            <div className="status-action-buttons">
-                              <button 
-                                className="request-payment-btn" 
-                                onClick={() => handleRequestPayment(booking._id, booking.price)}
-                                disabled={actionLoading[booking._id]}
-                              >
-                                {actionLoading[booking._id] ? (
-                                  <><FaSpinner className="btn-spinner" /> Processing...</>
-                                ) : (
-                                  "Request Payment"
-                                )}
-                              </button>
-                              <button className="start-session-btn">
-                                Start Session
-                              </button>
-                            </div>
-                          )}
-                          {booking.status === "Scheduled" && (
-                            <div className="status-action-buttons">
-                              <button className="start-session-btn">
-                                Start Session
-                              </button>
-                              {booking.meeting_link && (
-                                <a 
-                                  href={booking.meeting_link} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="join-meeting-btn"
-                                >
-                                  Join Meeting
-                                </a>
-                              )}
-                            </div>
-                          )}
-                          {booking.status === "Payment Pending" && (
-                            <div className="status-info">
-                              <p className="payment-info">
-                                Waiting for counselee to complete payment of ${booking.price || 0}
-                              </p>
-                            </div>
-                          )}
-                          {booking.status === "Completed" && (
-                            <button 
-                              className="add-notes-btn" 
-                              onClick={() => handleViewDetails(booking)}
-                            >
-                              Add Notes
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                {/* Pagination */}
-                {pagination.total_pages > 1 && (
-                  <div className="pagination">
-                    <button
-                      className="pagination-btn"
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </button>
-                    <span className="pagination-info">
-                      Page {pagination.current_page} of {pagination.total_pages}
-                      ({pagination.total_items} total bookings)
-                    </span>
-                    <button
-                      className="pagination-btn"
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.total_pages))}
-                      disabled={currentPage === pagination.total_pages}
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
-              </>
-=======
             {sortedBookings.length > 0 ? (
               sortedBookings.map((booking) => (
                 <div key={booking.id} className="booking-card">
@@ -890,23 +422,11 @@ export default function CounselorBookings() {
                   </div>
                 </div>
               ))
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
             ) : (
               <div className="no-bookings">
                 <FaExclamationTriangle className="no-bookings-icon" />
                 <h3>No bookings found</h3>
-<<<<<<< HEAD
-                <p>
-                  {searchQuery 
-                    ? "Try adjusting your search criteria" 
-                    : statusFilter !== "all" 
-                    ? `No ${statusFilter} bookings found`
-                    : "You don't have any bookings yet"
-                  }
-                </p>
-=======
                 <p>Try adjusting your search or filter criteria</p>
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
               </div>
             )}
           </div>
@@ -928,19 +448,11 @@ export default function CounselorBookings() {
                 <h3>Counselee Information</h3>
                 <div className="detail-row">
                   <div className="detail-label">Name:</div>
-<<<<<<< HEAD
-                  <div className="detail-value">{selectedBooking.user_id?.username || "Unknown User"}</div>
-                </div>
-                <div className="detail-row">
-                  <div className="detail-label">Email:</div>
-                  <div className="detail-value">{selectedBooking.user_id?.email || "No email"}</div>
-=======
                   <div className="detail-value">{selectedBooking.counselee.name}</div>
                 </div>
                 <div className="detail-row">
                   <div className="detail-label">Email:</div>
                   <div className="detail-value">{selectedBooking.counselee.email}</div>
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                 </div>
               </div>
 
@@ -948,11 +460,7 @@ export default function CounselorBookings() {
                 <h3>Session Information</h3>
                 <div className="detail-row">
                   <div className="detail-label">Date:</div>
-<<<<<<< HEAD
-                  <div className="detail-value">{formatDate(selectedBooking.date) || selectedBooking.date}</div>
-=======
                   <div className="detail-value">{selectedBooking.date}</div>
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                 </div>
                 <div className="detail-row">
                   <div className="detail-label">Time:</div>
@@ -967,23 +475,9 @@ export default function CounselorBookings() {
                   <div className="detail-value">{selectedBooking.type}</div>
                 </div>
                 <div className="detail-row">
-<<<<<<< HEAD
-                  <div className="detail-label">Location:</div>
-                  <div className="detail-value">{selectedBooking.location}</div>
-                </div>
-                <div className="detail-row">
-                  <div className="detail-label">Duration:</div>
-                  <div className="detail-value">{selectedBooking.duration || 60} minutes</div>
-                </div>
-                <div className="detail-row">
-                  <div className="detail-label">Status:</div>
-                  <div className="detail-value">
-                    <span className={`status-badge ${getStatusClass(selectedBooking.status)}`}>
-=======
                   <div className="detail-label">Status:</div>
                   <div className="detail-value">
                     <span className={`status-badge ${selectedBooking.status.toLowerCase()}`}>
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
                       {selectedBooking.status}
                     </span>
                   </div>
@@ -1002,21 +496,8 @@ export default function CounselorBookings() {
               </div>
             </div>
             <div className="modal-footer">
-<<<<<<< HEAD
-              <button 
-                className="save-notes-btn" 
-                onClick={handleSaveNotes}
-                disabled={actionLoading.saveNotes}
-              >
-                {actionLoading.saveNotes ? (
-                  <><FaSpinner className="btn-spinner" /> Saving...</>
-                ) : (
-                  "Save Notes"
-                )}
-=======
               <button className="save-notes-btn" onClick={handleSaveNotes}>
                 Save Notes
->>>>>>> c1587ed030af74a541137562c0abe076b06bda19
               </button>
               <button className="cancel-btn" onClick={handleCloseModal}>
                 Cancel
