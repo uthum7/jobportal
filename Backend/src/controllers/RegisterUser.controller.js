@@ -1,6 +1,7 @@
 import Registeruser from '../models/Registeruser.js';
 import Job from "../models/Job.model.js";
 import Booking from '../models/bookings.js';  // Capital B
+import cloudinary from '../lib/cloudinary.js';
 
 import { Application } from '../models/application.model.js';
 import mongoose from 'mongoose';  // or import { Types } from 'mongoose';
@@ -490,7 +491,7 @@ export const getAdminById = async (req, res) => {
 
 export const updateAdminProfile = async (req, res) => {
   const { id } = req.params;
-  const { username, email, phone, address } = req.body;
+  const { username, email, phone, address, profilePic } = req.body;
 
   try {
     const admin = await Registeruser.findById(id);
@@ -501,6 +502,20 @@ export const updateAdminProfile = async (req, res) => {
     if (email) admin.email = email;
     if (phone) admin.phone = phone;
     if (address) admin.address = address;
+
+    // Handle profile picture upload to Cloudinary
+    if (profilePic) {
+      try {
+        const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+          folder: 'admin_profiles',
+          resource_type: 'auto'
+        });
+        admin.profilePic = uploadResponse.secure_url;
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        return res.status(500).json({ success: false, message: 'Error uploading image to Cloudinary' });
+      }
+    }
 
     await admin.save();
 

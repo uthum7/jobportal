@@ -17,16 +17,15 @@ const Sidebar = () => {
     clearUnreadMessage,
   } = useChatStore();
 
-  const user = useAuthStore((state) => state.user);
-  const { onlineUsers } = useAuthStore();
+  const { authUser, onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   // 👉 Connect socket after login
   useEffect(() => {
-    if (user?._id) {
-      connectSocket(user._id);
+    if (authUser?._id) {
+      connectSocket(authUser._id);
     }
-  }, [user]);
+  }, [authUser]);
 
   // 👉 Fetch users on load
   useEffect(() => {
