@@ -402,7 +402,7 @@ export const acceptApplication = async (req, res) => {
     
     // Update application status to 'shortlisted' (accepted)
     const updateData = { 
-      status: 'shortlisted',
+      status: 'accepted',
       lastUpdated: new Date()
     };
     

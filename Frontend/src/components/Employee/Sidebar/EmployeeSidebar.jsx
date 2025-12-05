@@ -10,7 +10,7 @@ import {
   MessageSquare,
   Lock
 } from 'lucide-react';
-import hansi from "../../../assets/img/hansi.jpg"; // Keep as fallback
+import user from "../../../assets/img/user.jpg"; // Keep as fallback
 import './Sidebar.css';
 
 const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSidebarOpen }) => {
@@ -146,7 +146,7 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
         
         for (const role of rolePriority) {
             if (roles.includes(role) && role === 'EMPLOYEE') {
-                return "Recruiter";
+                return "Employee";
             }
         }
         
@@ -158,7 +158,7 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
         if (employeeData.profilePic && employeeData.profilePic.trim() !== '') {
             return employeeData.profilePic;
         }
-        return hansi; // Fallback to default image
+        return user; // Fallback to default image
     };
 
     return (
@@ -175,7 +175,7 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
                                 alt="User Profile"
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
-                                    e.target.src = hansi; // Fallback if profile pic fails to load
+                                    e.target.src = user; // Fallback if profile pic fails to load
                                 }}
                             />
                             <div className={`absolute bottom-1 right-1 w-4 h-4 border-2 border-slate-800 rounded-full ${
