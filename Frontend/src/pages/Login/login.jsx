@@ -42,8 +42,8 @@ const LoginPage = ({ onLogin, onClose }) => {
         body: JSON.stringify(loginData)
       });
 
-      const data = await response.json(); // Expects { token, role, userId (or _id), email, name etc. }
-      
+      const data = await response.json();
+
       if (!response.ok) {
         throw new Error(data.message || 'Login failed. Please check your credentials and role.');
       }
@@ -67,32 +67,18 @@ const LoginPage = ({ onLogin, onClose }) => {
       } else if (data.token && data.role && (data.userId || data._id)) {
         const currentUserId = data.userId || data._id;
 
-        // Create the user object to be saved and passed to App's context
-        console.log("Login successful, saving user data:", data);
-        let userObjectToSave;
-        if (data.role === "MENTOR") { 
-          userObjectToSave = {
-            counselors_id: data.counselors_id || null,
-            token: data.token,
-            role: data.role.toUpperCase(), // Standardize role to uppercase
-            userId: currentUserId,
-            email: data.email, // Assuming backend sends email
-            name: data.username,   // Assuming backend sends name
-            specialty: data.specialty || null, // Add specialty if available
-          };
-        } else {
-          userObjectToSave = {
-            token: data.token,
-            role: data.role.toUpperCase(), // Standardize role to uppercase
-            userId: currentUserId,
-            email: data.email, // Assuming backend sends email
-            name: data.username,   // Assuming backend sends name
+        const userObjectToSave = {
+          token: data.token,
+          role: data.role.toUpperCase(),
+          userId: currentUserId,
+          email: data.email,
+          name: data.name,
         };
-      }
-        saveAuthData(userObjectToSave); // <<<< CORRECT: Use saveAuthData from auth.js
 
-        onLogin(userObjectToSave); // This calls App.jsx's handleLogin, passing the same complete object
-        // App.jsx's useEffect will handle navigation to the correct dashboard.
+        saveAuthData(userObjectToSave); // Save to localStorage or context
+        onLogin(userObjectToSave);     // Update the parent component's state (e.g., App.jsx)
+        
+        // Navigation is likely handled by the parent component after onLogin is called.
 
       } else {
         // This error means the backend's NORMAL login response is missing key fields.

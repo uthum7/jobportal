@@ -20,11 +20,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    counselors_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "counselors",
-      default: null, 
-    },
   },
   { timestamps: true }// Automatically adds createdAt and updatedAt timestamps
 );

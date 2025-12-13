@@ -262,7 +262,7 @@ const ApplyForAjob = () => {
 
                 {/* Experience Level Filter */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-3 flex items-center">
                     <Briefcase className="w-4 h-4 mr-2" />
                     Experience Level
                   </label>
@@ -283,7 +283,7 @@ const ApplyForAjob = () => {
 
                 {/* Posted Date Filter */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-3 flex items-center">
                     <Calendar className="w-4 h-4 mr-2" />
                     Posted Date
                   </label>
@@ -304,7 +304,7 @@ const ApplyForAjob = () => {
 
                 {/* Job Type Filter */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-3 flex items-center">
                     <Clock className="w-4 h-4 mr-2" />
                     Job Type
                   </label>
@@ -325,7 +325,7 @@ const ApplyForAjob = () => {
 
                 {/* Job Mode Filter */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-3 flex items-center">
                     <MapPin className="w-4 h-4 mr-2" />
                     Job Mode
                   </label>
@@ -346,7 +346,7 @@ const ApplyForAjob = () => {
 
                 {/* Application Status Filter */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
+                  <label className="text-sm font-medium text-gray-700 mb-3 flex items-center">
                     <CheckCircle className="w-4 h-4 mr-2" />
                     Application Status
                   </label>

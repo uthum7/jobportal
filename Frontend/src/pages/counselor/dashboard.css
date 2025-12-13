@@ -470,7 +470,7 @@
     font-weight: 500;
   }
   
-  .session-status.Approved {
+  .session-status.confirmed {
     background: #dcfce7;
     color: #16a34a;
   }

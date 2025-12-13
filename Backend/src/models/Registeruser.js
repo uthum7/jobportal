@@ -3,7 +3,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-
 const Schema = mongoose.Schema;
 
 const RegisteruserSchema = new Schema(
@@ -59,7 +58,7 @@ const RegisteruserSchema = new Schema(
     roles: {
       type: [String],
       required: [true, "At least one role is required"],
-      enum: ["COUNSELOR", "MENTOR", "COUNSELEE", "MENTEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
+      enum: ["COUNSELOR", "COUNSELEE", "JOBSEEKER", "ADMIN", "EMPLOYEE"],
       validate: {
         validator: function (roles) {
           return roles && roles.length > 0;
@@ -72,13 +71,6 @@ const RegisteruserSchema = new Schema(
         type: Boolean,
         default: false // Default to false for self-registered users
     },
-    // Reference to counselor profile if user is a MENTOR
-    counselors_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Counselor',
-        required: false // Only required if user has MENTOR role
-    },
-    // --- ADD THESE TWO NEW FIELDS HERE ---
     resetPasswordToken: {
       type: String,
       default: undefined,
@@ -86,6 +78,12 @@ const RegisteruserSchema = new Schema(
     resetPasswordExpires: {
       type: Date,
       default: undefined,
+    },
+
+   
+    phone: {
+      type: String,
+      default: "", // Optional, validate if needed
     },
     
   },
@@ -96,21 +94,17 @@ const RegisteruserSchema = new Schema(
 RegisteruserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-    try {
-        
-        this.password = await bcrypt.hash(this.password, 10);
-        next();
-    } catch (err) {
-        next(err);
-    }
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 // ✅ Compare password method
 RegisteruserSchema.methods.matchPassword = async function (enteredPassword) {
-  console.log("Entered Password:", enteredPassword);
-  console.log("Stored Password:", this.password);
-  
-
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

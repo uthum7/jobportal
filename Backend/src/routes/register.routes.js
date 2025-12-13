@@ -3,7 +3,6 @@
 import express from "express";
 import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
-import Counselor from "../models/counselors.model.js";
 import Registeruser from "../models/Registeruser.js";
 
 // --- Middleware ---
@@ -14,9 +13,8 @@ import { protectRoute } from '../middleware/registerauth.middleware.js';
 import {
     forgotPassword,
     resetPassword,
-    forceResetPassword
+    forceResetPassword 
 } from "../controllers/registerauth.controller.js";
-import { addCounselee } from "../controllers/counselees.controller.js";
 
 
 const router = express.Router();
@@ -40,7 +38,6 @@ router.post(
         message: "All fields are required, and roles must be a non-empty array." 
       });
     }
-   
 
     // --- ⬇ CRITICAL SECURITY UPDATE ⬇ ---
     // Define which roles are allowed for public, self-registration
@@ -103,9 +100,8 @@ router.post(
     }
     const requestedRole = String(role).toUpperCase();
     const user = await Registeruser.findOne({ email: email.toLowerCase() });
-    console.log("User found:", user);
     
-    if (!user || !await user.matchPassword(password)) {
+    if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ message: "Invalid credentials." });
     }
 
@@ -113,62 +109,32 @@ router.post(
       return res.status(403).json({ message: "You do not have permission to log in with this role." });
     }
 
-    try {
-      const user = await Registeruser.findOne({ email: email.toLowerCase() });
-      if (!user) {
-        console.log("Login failed: User not found for email:", email);
-        return res.status(401).json({ message: "Invalid credentials or role." }); // Generic message
-      }
-      
-      // Check if the user actually has the role they are trying to log in with
-      if (!user.roles.map(r => r.toUpperCase()).includes(requestedRole)) {
-        console.log(`Login failed: Role mismatch for user ${email}. User roles: ${user.roles.join(', ')}, Requested role: ${requestedRole}`);
-        return res.status(401).json({ message: "You do not have permission to log in with this role." });
-      }
+    // --- ⬇ THIS IS THE NEW LOGIC YOU'LL ADD TO THE CONTROLLER LATER ⬇ ---
+    // Check for the password reset flag
+    if (user.passwordResetRequired) {
+        const payload = { userId: user._id };
+        const tempToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '15m' });
+        
+        return res.status(200).json({
+            message: "Password reset is required.",
+            passwordResetRequired: true,
+            tempToken: tempToken,
+        });
+    }
+    // --- ⬆ END OF NEW LOGIC PREVIEW ⬆ ---
 
-      const isPasswordValid = await user.matchPassword(password); // Use instance method
-      if (!isPasswordValid) {
-        console.log("Login failed: Invalid password for user:", email);
-        return res.status(401).json({ message: "Invalid credentials or role." }); // Generic message
-      }
+    const payload = { userId: user._id, roles: user.roles, currentRole: requestedRole };
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" });
 
-      let roleObj;
-      if (requestedRole === "MENTOR") {
-        roleObj = await Counselor.findOne({ _id: user.counselors_id });
-      } else if(requestedRole === "MENTEE") {
-        roleObj = {};
-      }
-      // --- CORRECTED JWT PAYLOAD ---
-      const payload = {
-        userId: user._id,      // <<<<---- CHANGE 'id' TO 'userId' HERE ---->>>>
-        roles: user.roles,     // Include all user's roles in the token
-        currentRole: requestedRole, // The specific role they logged in as for this session
-      };
-
-      const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" });
-
-      console.log("Login successful for:", email, "as role:", requestedRole);
-     console.log(roleObj)
-      // Create response object step by step for debugging
-      const responseData = {
+    res.status(200).json({
         token,
         userId: user._id,
         username: user.username,
         email: user.email,
-        role: requestedRole,      // The role they logged in as for this session
-        allRoles: user.roles,     // All roles the user possesses
-        message: "Login successful.",
-        counselors_id: user.counselors_id ? user.counselors_id.toString() : null, // Ensure string or null
-        fullName: user.fullName || user.username, // Add full name
-        profilePic: user.profilePic || null, // Add profile picture
-        specialty: roleObj ? roleObj.specialty || null : null, // Add specialty if available
-      };
-      
-      res.status(200).json(responseData);
-    } catch (error) {
-      console.error("Login error:", error);
-      res.status(500).json({ message: "Internal server error." });
-    }
+        role: requestedRole,
+        allRoles: user.roles,
+        message: "Login successful."
+    });
   })
 );
 
@@ -188,38 +154,6 @@ router.post('/force-reset-password', asyncHandler(forceResetPassword));
 // --- ⬆ END OF NEW ROUTE ⬆ ---
 
 
-// --- GET USER BY ID ROUTE ---
-router.get(
-  "/users/:userId",
-  protectRoute,
-  asyncHandler(async (req, res) => {
-    try {
-      const { userId } = req.params;
-      
-      const user = await Registeruser.findById(userId).select('-password');
-      
-      if (!user) {
-        return res.status(404).json({ message: "User not found." });
-      }
-      
-      res.status(200).json({
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        roles: user.roles,
-        fullName: user.fullName,
-        profilePic: user.profilePic,
-        phone: user.phone,
-        isOnline: user.isOnline,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      });
-    } catch (error) {
-      console.error("Get user error:", error);
-      res.status(500).json({ message: "Internal server error." });
-    }
-  })
-);
 // --- LOGOUT ROUTE ---
 router.post(
   "/logout",
@@ -227,5 +161,6 @@ router.post(
     res.status(200).json({ message: "Logged out successfully." });
   })
 );
+
 
 export default router;

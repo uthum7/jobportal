@@ -15,6 +15,7 @@ import {
 
 // Import your auth helpers (adjust the path accordingly)
 import { getUserId, getToken } from '../../utils/auth';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const AdminProfilePage = () => {
   const navigate = useNavigate();
@@ -25,15 +26,17 @@ const AdminProfilePage = () => {
     email: '',
     phone: '',
     address: '',
-    profileImage: '/api/placeholder/80/80'
+    profilePic: ''
   });
   const [formData, setFormData] = useState({ ...profileData });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Use your auth utils for consistent ID and token retrieval
   const adminId = getUserId();
   const token = getToken();
+  const { authUser, checkAuth } = useAuthStore();
 
   useEffect(() => {
     if (!adminId) {
@@ -79,6 +82,62 @@ const AdminProfilePage = () => {
   const handleCancel = () => {
     setFormData({ ...profileData });
     setEditingField(null);
+  };
+
+  // Handle profile image upload
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        const base64Image = reader.result;
+        
+        const res = await fetch(`http://localhost:5001/api/users/admin/${adminId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ profilePic: base64Image })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          setProfileData(data.admin);
+          setFormData(data.admin);
+          setError(null);
+          // Refresh auth state to update profile picture in messaging system
+          await checkAuth();
+        } else {
+          alert(data.message || 'Failed to upload profile picture');
+        }
+        setUploadingImage(false);
+      };
+      reader.onerror = () => {
+        alert('Error reading file');
+        setUploadingImage(false);
+      };
+    } catch (err) {
+      alert('Error uploading profile picture');
+      setUploadingImage(false);
+    }
   };
 
   // Save updated field to backend
@@ -200,7 +259,7 @@ const AdminProfilePage = () => {
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
                   <img 
-                    src={profileData.profileImage || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face"}
+                    src={profileData.profilePic || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face"}
                     alt="Profile" 
                     className="w-full h-full object-cover"
                   />
@@ -302,7 +361,7 @@ const AdminProfilePage = () => {
                     <div className="relative inline-block">
                       <div className="w-20 h-20 bg-gray-300 rounded-full overflow-hidden mx-auto mb-4">
                         <img 
-                          src={profileData.profileImage || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face"}
+                          src={profileData.profilePic || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face"}
                           alt="Profile" 
                           className="w-full h-full object-cover"
                         />
@@ -315,10 +374,26 @@ const AdminProfilePage = () => {
                     <h2 className="text-xl font-semibold text-gray-800 mb-1">{profileData.username || 'Admin User'}</h2>
                     <p className="text-gray-600 mb-4">Admin</p>
                     
-                    <button className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center space-x-2">
-                      <Camera className="w-4 h-4" />
-                      <span>Change Profile</span>
-                    </button>
+                    <label className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center space-x-2 cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        disabled={uploadingImage}
+                      />
+                      {uploadingImage ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          <span>Uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Camera className="w-4 h-4" />
+                          <span>Change Profile</span>
+                        </>
+                      )}
+                    </label>
                   </div>
                   
                   <div className="mt-6 space-y-4">

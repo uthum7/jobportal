@@ -69,9 +69,6 @@ export default function CounselorDeleteAccount() {
     setConfirmText("")
     setErrorMessage("")
   }
-   const userstring = localStorage.getItem("user")
-  const user = userstring ? JSON.parse(userstring) : null
-  console.log("User data from localStorage:", user)
 
   return (
     <div className="dashboard-layout">
@@ -83,8 +80,8 @@ export default function CounselorDeleteAccount() {
             alt="James Anderson"
             className="profile-image"
           />
-         <h3 className="profile-name">{user.name}</h3>
-          <p className="profile-title">{user.specialty}</p>
+          <h3 className="profile-name">James Anderson</h3>
+          <p className="profile-title">Career Development Specialist</p>
         </div>
 
         <nav className="sidebar-menu">

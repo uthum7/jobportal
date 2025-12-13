@@ -14,14 +14,13 @@ import messageRoutes from "./routes/message.route.js";
 
 import registerUserRoutes from "./routes/register.routes.js";
 import cvRoutes from "./routes/cv.routes.js";
-import jobPostRoutes from "./routes/JobPost.route.js";
-import counselorsRoutes from "./routes/counselors.route.js";
-import bookingRoutes from "./routes/booking.route.js";
-import counseleesRoutes from "./routes/counselees.route.js";
-import paymentRoutes from "./routes/payment.route.js";
+import jobPostRoutes from "./routes/Job.route.js";
+import aiRoutes from "./routes/gemini.route.js";
 import dashboardRoutes from "./routes/dashboard.route.js";
-// --- FIX 1: Correctly import the AI routes ---
-import aiRoutes from "./routes/gemini.route.js"; // Renamed variable to camelCase `aiRoutes` for consistency
+import savedJobRoutes from "./routes/savedJob.route.js";
+import appliedJobRoutes from "./routes/appliedJobs.route.js";
+import applicationRoutes from "./routes/application.route.js";
+import adminRoutes from './routes/admin.routes.js';
 
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
@@ -36,19 +35,18 @@ if (!MONGO_URL) {
   process.exit(1);
 }
 
-// Stripe webhook route needs raw body, so we register it before JSON parsing
-app.use("/api/payments/webhook", express.raw({type: 'application/json'}));
+console.log(`🛠 Environment: ${process.env.NODE_ENV || "development"}`);
 
-// JSON parsing for all other routes
-app.use(express.json());
+// ✅ --- Apply Middleware BEFORE routes ---
+app.use(express.json()); // ✅ Fix: must be before all routes that use req.body
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ CORS: Configure allowed origins
+// ✅ CORS: only apply once
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:5176"
+  "http://localhost:5176",
+  "http://localhost:5174"
 ];
 
 app.use(
@@ -90,14 +88,13 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/register", registerUserRoutes);
 app.use("/api/cv", cvRoutes);
 app.use("/api/job", jobPostRoutes);
-app.use("/api/counselors", counselorsRoutes);
-app.use("/api/bookings", bookingRoutes);
-app.use("/api/counselees", counseleesRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/dashboard", dashboardRoutes);
-// --- FIX 2: Connect the AI routes to your app ---
-app.use("/api/ai", aiRoutes); // This will make your route available at /api/ai/...
-console.log("API routes registered.");
+app.use('/api/saved-jobs', savedJobRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/applied-jobs', appliedJobRoutes);
+app.use('/api/admin', adminRoutes);
+
+app.use("/api/ai", aiRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 
 console.log("✅ API routes registered.");

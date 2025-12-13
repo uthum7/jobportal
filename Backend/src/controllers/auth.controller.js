@@ -1,3 +1,4 @@
+
 import Registeruser from "../models/Registeruser.js";
 import { generateToken } from "../lib/utils.js";
 import bcrypt from "bcryptjs";
@@ -116,43 +117,6 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-// Change Password controller
-export const changePassword = async (req, res) => {
-  console.log("Change Password request received");
-  try {
-    console.log("Request body:", req.body);
-    const { oldPassword, newPassword, userId } = req.body;
-    
-    if (!oldPassword || !newPassword) {
-      return res.status(400).json({ message: "Old and new password are required" });
-    }
-    
-    if (newPassword.length < 6) {
-      return res.status(400).json({ message: "New password must be at least 6 characters" });
-    }
-    
-    const user = await Registeruser.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      console.log("Old password does not match for user:", user.email);
-      return res.status(400).json({ message: "Old password is incorrect" });
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-    
-    res.status(200).json({ message: "Password changed successfully" });
-  } catch (error) {
-    console.log("Error in changePassword controller", error.message);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
 // Check current authenticated user
 export const checkAuth = async (req, res) => {
   try {
@@ -163,3 +127,4 @@ export const checkAuth = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+

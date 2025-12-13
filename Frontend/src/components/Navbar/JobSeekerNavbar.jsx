@@ -25,12 +25,10 @@ const JobSeekerNavbar = ({ onLogout }) => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const handleLinkClick = () => {
     if (isMenuOpen) toggleMenu();
-
   };
 
   return (
     <nav className="jobseeker-navbar">
-
       <div className="jobseeker-navbar-container">
         <div className="jobseeker-navbar-brand">
           <Link to="/" onClick={handleLinkClick}>
@@ -108,11 +106,9 @@ const JobSeekerNavbar = ({ onLogout }) => {
             Logout
           </button>
         </div>
-
       </div>
     </nav>
   );
 };
 
 export default JobSeekerNavbar;
-

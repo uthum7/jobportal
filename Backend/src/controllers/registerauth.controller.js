@@ -2,14 +2,9 @@
 
 import Registeruser from "../models/Registeruser.js";
 import UserCv from "../models/UserCv.js";
-import Counselors from "../models/counselors.model.js";
-
-// --- NEW IMPORTS for Password Reset ---
+import { sendEmail } from "../lib/utils.js"; // Your email sending utility
 import crypto from 'crypto';
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import { generateToken } from "../lib/utils.js";
-import { sendEmail } from "../lib/utils.js"; // Add this if sendEmail is in utils, or adjust path as needed
 
 // =====================================================================
 // --- STANDARD AUTHENTICATION CONTROLLERS ---
@@ -70,26 +65,26 @@ export const login = async (req, res) => {
         if (!user.roles.includes(requestedRole)) {
           return res.status(403).json({ message: "You do not have permission to log in with this role." });
         }
-        generateToken(user._id, res);
-        if (user.roles && user.roles[0] === 'MENTOR') {
-            console.log("Mentor login detected, including counselors_id if available.");
-            res.status(200).json({
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                role: user.roles[0],
-                counselors_id: user.counselors_id || null // Include counselors_id if it exists
-
-            });
-        } else {
-            res.status(200).json({
-                _id: user._id,
-                username: user.username,
-                email: user.email,
-                role: user.roles[0]
-                
+        if (user.passwordResetRequired) {
+            return res.status(403).json({
+                message: "Account not activated. Please use the activation link sent to your email to set your password."
             });
         }
+        const payload = {
+            userId: user._id,
+            roles: user.roles,
+            currentRole: requestedRole
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+        res.status(200).json({
+            token,
+            userId: user._id,
+            username: user.username,
+            email: user.email,
+            role: requestedRole,
+            allRoles: user.roles,
+            message: "Login successful."
+        });
     } catch (error) {
         console.error("Login error:", error.message);
         res.status(500).json({ message: "Internal server error during login." });
@@ -181,9 +176,7 @@ export const resetPassword = async (req, res) => {
             return res.status(400).json({ message: "Token is invalid or has expired." });
         }
 
-        // Hash the new password before saving
-        user.password = await bcrypt.hash(newPassword, 10);
-        // Clear the token fields
+        user.password = newPassword;
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
         await user.save();
