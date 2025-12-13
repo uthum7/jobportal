@@ -9,6 +9,9 @@
   height: 100%;
 }
 
+.chart-container-2{
+  height: 800px;
+}
 .chart-container:hover {
   box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
 }
@@ -35,7 +38,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, #10b981, #059669);
 }
 
 .chart-title-section {

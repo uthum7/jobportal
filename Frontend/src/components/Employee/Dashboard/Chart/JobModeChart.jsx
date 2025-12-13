@@ -19,6 +19,63 @@ const JobModeChart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Function to normalize and group job modes
+  const normalizeJobModes = (jobModes) => {
+    const normalizedMap = new Map();
+    
+    // Define mapping for common job mode variations
+    const jobModeMapping = {
+      'remote': 'Remote',
+      'work from home': 'Remote',
+      'wfh': 'Remote',
+      'telecommute': 'Remote',
+      'on-site': 'On-site',
+      'onsite': 'On-site',
+      'on site': 'On-site',
+      'office': 'On-site',
+      'in-office': 'On-site',
+      'hybrid': 'Hybrid',
+      'flexible': 'Hybrid',
+      'mixed': 'Hybrid',
+      'freelance': 'Freelance',
+      'freelancer': 'Freelance',
+      'independent': 'Freelance',
+      'contract': 'Contract',
+      'contractor': 'Contract',
+      'consulting': 'Contract',
+      'temporary': 'Contract'
+    };
+    
+    jobModes.forEach(mode => {
+      // Convert to lowercase and trim whitespace for comparison
+      const rawValue = (mode._id || 'Unknown').toLowerCase().trim();
+      
+      // Check if we have a mapping for this value
+      const displayName = jobModeMapping[rawValue] || 
+                         rawValue.charAt(0).toUpperCase() + rawValue.slice(1);
+      
+      // Use the display name as the key to group similar variations
+      const normalizedKey = displayName.toLowerCase();
+      
+      if (normalizedMap.has(normalizedKey)) {
+        // Add to existing count
+        normalizedMap.set(normalizedKey, {
+          displayName,
+          count: normalizedMap.get(normalizedKey).count + mode.count
+        });
+      } else {
+        // Create new entry
+        normalizedMap.set(normalizedKey, {
+          displayName,
+          count: mode.count
+        });
+      }
+    });
+    
+    // Convert map back to array format and sort by count (descending)
+    return Array.from(normalizedMap.values()).sort((a, b) => b.count - a.count);
+  };
+
   useEffect(() => {
     const fetchJobModes = async () => {
       try {
@@ -26,7 +83,10 @@ const JobModeChart = () => {
         const response = await axios.get("http://localhost:5001/api/dashboard/analytics/job-modes");
         
         if (response.data.success) {
-          const jobModes = response.data.jobModes;
+          const rawJobModes = response.data.jobModes;
+          
+          // Normalize and group similar job modes
+          const normalizedJobModes = normalizeJobModes(rawJobModes);
           
           const modeColors = {
             'Remote': '#10b981',
@@ -36,16 +96,16 @@ const JobModeChart = () => {
             'Contract': '#06b6d4'
           };
 
-          const labels = jobModes.map(mode => mode._id || 'Unknown');
-          const colors = jobModes.map(mode => 
-            modeColors[mode._id] || '#64748b'
+          const labels = normalizedJobModes.map(mode => mode.displayName);
+          const colors = labels.map(label => 
+            modeColors[label] || '#64748b'
           );
 
           setChartData({
             labels: labels,
             datasets: [{
               label: 'Jobs by Mode',
-              data: jobModes.map(mode => mode.count),
+              data: normalizedJobModes.map(mode => mode.count),
               backgroundColor: colors,
               borderColor: colors,
               borderWidth: 2,

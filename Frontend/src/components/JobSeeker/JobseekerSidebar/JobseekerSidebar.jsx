@@ -7,6 +7,7 @@ import jobseeker from '/src/assets/img/JobSeeker/jobseeker.png';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../../store/useAuthStore';
 import axios from 'axios';
+import { getToken } from '../../../utils/auth';
 
 function capitalizeWords(str) {
   if (!str) return '';
@@ -45,12 +46,21 @@ const JobseekerSidebar = () => {
     }
     setSidebarLoading(true);
     setSidebarError('');
-    axios.get(`http://localhost:5001/api/register/users/${userId}`)
+    
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${getToken()}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    axios.get(`http://localhost:5001/api/register/users/${userId}`, config)
       .then(res => {
         setSidebarUser(res.data);
         setSidebarLoading(false);
       })
       .catch(err => {
+        console.warn("Could not fetch user profile for sidebar:", err);
         setSidebarError('Could not load user info');
         setSidebarLoading(false);
       });

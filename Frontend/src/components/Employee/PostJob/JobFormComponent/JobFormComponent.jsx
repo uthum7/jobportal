@@ -1,6 +1,7 @@
 import axios from "axios";
 import "./formstyle.css";
 import { useRef, useState } from "react";
+import { PlusIcon } from "lucide-react";
 
 // Custom Alert System
 const showAlert = (type, title, message, duration = 4000) => {
@@ -214,10 +215,11 @@ const JobFormComponent = () => {
       JobType: jobType.current.value,
       JobDeadline: deadline.current.value ? new Date(deadline.current.value) : null,
       JobDescription: jobDescription.current.value,
-      Requirements: requirements,
-      Qualifications: qualifications,
-      Responsibilities: responsibilities,
-      Tags: tags,
+      JobRequirements: requirements,
+      JobQualifications: qualifications,
+      JobResponsibilities: responsibilities,
+      JobTags: tags,
+      PostedBy: JSON.parse(localStorage.getItem("user")).userId
     }
 
     try {
@@ -615,7 +617,7 @@ const JobFormComponent = () => {
                 onClick={handleAddRequirement}
                 disabled={requirements.length >= 10}
               >
-                ➕ Add Requirement
+                Add Requirement
               </button>
             </div>
             
@@ -667,7 +669,7 @@ const JobFormComponent = () => {
                 onClick={handleAddQualification}
                 disabled={qualifications.length >= 10}
               >
-                ➕ Add Qualification
+                Add Qualification
               </button>
             </div>
             
@@ -719,7 +721,7 @@ const JobFormComponent = () => {
                 onClick={handleAddResponsibility}
                 disabled={responsibilities.length >= 15}
               >
-                ➕ Add Responsibility
+                Add Responsibility
               </button>
             </div>
             
@@ -771,7 +773,7 @@ const JobFormComponent = () => {
                 onClick={handleAddTag}
                 disabled={tags.length >= 20}
               >
-                ➕ Add Tag
+                 Add Tag
               </button>
             </div>
             

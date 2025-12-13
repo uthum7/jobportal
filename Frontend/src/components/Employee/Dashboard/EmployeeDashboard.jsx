@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import "./style.css";
 import axios from 'axios';
+import { Users, Briefcase, CheckCircle, Clock, Calendar } from 'lucide-react';
 import EmployeeDashboardChart from './Chart/EmployeeDashboardChart';
 import EmployeeDashboardJobs from './Jobs/EmployeeDashboardJobs';
 import JobTypeChart from './Chart/JobTypeChart';
@@ -16,9 +17,65 @@ const EmployeeDashboard = () => {
         jobsThisWeek: 0,
         experienceDistribution: []
     });
+    const [employeeData, setEmployeeData] = useState({
+        fullName: '',
+        username: ''
+    });
     const [loading, setLoading] = useState(true);
+    const [employeeLoading, setEmployeeLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Get employee ID from localStorage
+    const getEmployeeId = () => {
+        try {
+            const userString = localStorage.getItem('user');
+            if (!userString) {
+                console.error('No user data found in localStorage');
+                return null;
+            }
+            
+            const userData = JSON.parse(userString);
+            
+            if (userData.userId) {
+                return userData.userId;
+            }
+            
+            console.error('No userId found in user data:', userData);
+            return null;
+        } catch (err) {
+            console.error('Error parsing user data from localStorage:', err);
+            return null;
+        }
+    };
+
+    // Fetch employee data
+    useEffect(() => {
+        const fetchEmployeeData = async () => {
+            try {
+                setEmployeeLoading(true);
+                const employeeId = getEmployeeId();
+                
+                if (!employeeId) {
+                    throw new Error('No employee ID found');
+                }
+
+                const response = await axios.get(`http://localhost:5001/api/users/employees/${employeeId}`);
+                
+                if (response.status === 200) {
+                    setEmployeeData(response.data);
+                }
+            } catch (err) {
+                console.error('Error fetching employee data:', err);
+                // Keep default values if API fails, don't set error for this
+            } finally {
+                setEmployeeLoading(false);
+            }
+        };
+
+        fetchEmployeeData();
+    }, []);
+
+    // Fetch dashboard stats
     useEffect(() => {
         const fetchDashboardStats = async () => {
             try {
@@ -38,12 +95,28 @@ const EmployeeDashboard = () => {
         fetchDashboardStats();
     }, []);
 
-    const StatCard = ({ iconText, title, value, subtitle, color, trend, bgColor }) => (
+    // Get display name for the user
+    const getDisplayName = () => {
+        if (employeeLoading) return "Loading...";
+        
+        if (employeeData.fullName && employeeData.fullName.trim() !== '') {
+            // Extract first name from full name
+            return employeeData.fullName.split(' ')[0];
+        }
+        
+        if (employeeData.username && employeeData.username.trim() !== '') {
+            return employeeData.username;
+        }
+        
+        return "User";
+    };
+
+    const StatCard = ({ icon: Icon, title, value, subtitle, color, trend, bgColor }) => (
         <div className={`stat-card ${color}`}>
             <div className="stat-card-content">
                 <div className="stat-icon-wrapper">
                     <div className={`stat-icon ${bgColor}`}>
-                        <span className="stat-icon-text">{iconText}</span>
+                        <Icon size={30} />
                     </div>
                 </div>
                 <div className="stat-details">
@@ -82,7 +155,9 @@ const EmployeeDashboard = () => {
             <div className="dashboard-header">
                 <div className="header-content">
                     <div className="welcome-section">
-                        <h1 className="dashboard-title">Welcome Back, Hansamali! 👋</h1>
+                        <h1 className="dashboard-title">
+                            Welcome Back, {getDisplayName()}! 👋
+                        </h1>
                         <p className="dashboard-subtitle">Here's what's happening with your job postings today</p>
                     </div>
                 </div>
@@ -91,7 +166,7 @@ const EmployeeDashboard = () => {
             {/* Stats Cards */}
             <div className="stats-container">
                 <StatCard
-                    iconText="💼"
+                    icon={Users}
                     title="Total Jobs"
                     value={dashboardStats.totalJobs}
                     subtitle="All posted positions"
@@ -100,7 +175,7 @@ const EmployeeDashboard = () => {
                     trend="+12%"
                 />
                 <StatCard
-                    iconText="✅"
+                    icon={Users}
                     title="Active Jobs"
                     value={dashboardStats.activeJobs}
                     subtitle="Currently accepting applications"
@@ -109,7 +184,7 @@ const EmployeeDashboard = () => {
                     trend="+8%"
                 />
                 <StatCard
-                    iconText="⏰"
+                    icon={Users}
                     title="Expired Jobs"
                     value={dashboardStats.expiredJobs}
                     subtitle="Past deadline"
@@ -117,7 +192,7 @@ const EmployeeDashboard = () => {
                     bgColor="orange"
                 />
                 <StatCard
-                    iconText="📅"
+                    icon={Users}
                     title="This Month"
                     value={dashboardStats.jobsThisMonth}
                     subtitle="Jobs posted this month"

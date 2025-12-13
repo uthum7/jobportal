@@ -26,9 +26,27 @@ ChartJS.register(
 );
 
 const EmployeeDashboardChart = () => {
+  const [originalData, setOriginalData] = useState(null);
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState('all');
+
+  const months = [
+    { value: 'all', label: 'All Months' },
+    { value: '0', label: 'January' },
+    { value: '1', label: 'February' },
+    { value: '2', label: 'March' },
+    { value: '3', label: 'April' },
+    { value: '4', label: 'May' },
+    { value: '5', label: 'June' },
+    { value: '6', label: 'July' },
+    { value: '7', label: 'August' },
+    { value: '8', label: 'September' },
+    { value: '9', label: 'October' },
+    { value: '10', label: 'November' },
+    { value: '11', label: 'December' }
+  ];
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -39,59 +57,17 @@ const EmployeeDashboardChart = () => {
         if (response.data.success) {
           const { months, jobsData, deadlinesData, seniorJobsData } = response.data.analytics;
           
-          setChartData({
+          // Store original data
+          const original = {
             labels: months,
-            datasets: [
-              {
-                label: 'Jobs Posted',
-                data: jobsData,
-                borderColor: '#4f46e5',
-                backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 6,
-                pointHoverRadius: 8,
-                pointBackgroundColor: '#4f46e5',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointHoverBackgroundColor: '#4f46e5',
-                pointHoverBorderColor: '#ffffff',
-                fill: true,
-              },
-              {
-                label: 'Job Deadlines',
-                data: deadlinesData,
-                borderColor: '#06b6d4',
-                backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 6,
-                pointHoverRadius: 8,
-                pointBackgroundColor: '#06b6d4',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointHoverBackgroundColor: '#06b6d4',
-                pointHoverBorderColor: '#ffffff',
-                fill: true,
-              },
-              {
-                label: 'Senior Level Jobs',
-                data: seniorJobsData,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 6,
-                pointHoverRadius: 8,
-                pointBackgroundColor: '#10b981',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointHoverBackgroundColor: '#10b981',
-                pointHoverBorderColor: '#ffffff',
-                fill: true,
-              },
-            ],
-          });
+            jobsData,
+            deadlinesData,
+            seniorJobsData
+          };
+          setOriginalData(original);
+          
+          // Set initial chart data (all months)
+          setChartData(createChartData(original, 'all'));
         }
       } catch (err) {
         console.error('Error fetching analytics:', err);
@@ -103,6 +79,139 @@ const EmployeeDashboardChart = () => {
 
     fetchAnalytics();
   }, []);
+
+  // Filter data when month selection changes
+  useEffect(() => {
+    if (originalData) {
+      setChartData(createChartData(originalData, selectedMonth));
+    }
+  }, [selectedMonth, originalData]);
+
+  const createChartData = (data, month) => {
+    if (month === 'all') {
+      // Show all months
+      return {
+        labels: data.labels,
+        datasets: [
+          {
+            label: 'Jobs Posted',
+            data: data.jobsData,
+            borderColor: '#4f46e5',
+            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+            tension: 0.4,
+            borderWidth: 3,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#4f46e5',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: '#4f46e5',
+            pointHoverBorderColor: '#ffffff',
+            fill: true,
+          },
+          {
+            label: 'Job Deadlines',
+            data: data.deadlinesData,
+            borderColor: '#06b6d4',
+            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+            tension: 0.4,
+            borderWidth: 3,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#06b6d4',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: '#06b6d4',
+            pointHoverBorderColor: '#ffffff',
+            fill: true,
+          },
+          {
+            label: 'Senior Level Jobs',
+            data: data.seniorJobsData,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            borderWidth: 3,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: '#10b981',
+            pointHoverBorderColor: '#ffffff',
+            fill: true,
+          },
+        ],
+      };
+    } else {
+      // Show data from January to selected month
+      const monthIndex = parseInt(month);
+      const endIndex = monthIndex + 1; // +1 because slice is exclusive of end index
+      
+      const filteredLabels = data.labels.slice(0, endIndex);
+      const filteredJobsData = data.jobsData.slice(0, endIndex);
+      const filteredDeadlinesData = data.deadlinesData.slice(0, endIndex);
+      const filteredSeniorJobsData = data.seniorJobsData.slice(0, endIndex);
+
+      return {
+        labels: filteredLabels,
+        datasets: [
+          {
+            label: 'Jobs Posted',
+            data: filteredJobsData,
+            borderColor: '#4f46e5',
+            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+            tension: 0.4,
+            borderWidth: 3,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#4f46e5',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: '#4f46e5',
+            pointHoverBorderColor: '#ffffff',
+            fill: true,
+          },
+          {
+            label: 'Job Deadlines',
+            data: filteredDeadlinesData,
+            borderColor: '#06b6d4',
+            backgroundColor: 'rgba(6, 182, 212, 0.1)',
+            tension: 0.4,
+            borderWidth: 3,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#06b6d4',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: '#06b6d4',
+            pointHoverBorderColor: '#ffffff',
+            fill: true,
+          },
+          {
+            label: 'Senior Level Jobs',
+            data: filteredSeniorJobsData,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            borderWidth: 3,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverBackgroundColor: '#10b981',
+            pointHoverBorderColor: '#ffffff',
+            fill: true,
+          },
+        ],
+      };
+    }
+  };
+
+  const handleMonthChange = (event) => {
+    setSelectedMonth(event.target.value);
+  };
 
   const options = {
     responsive: true,
@@ -238,18 +347,24 @@ const EmployeeDashboardChart = () => {
   }
 
   return (
-    <div className="chart-container">
+    <div className="chart-container chart-container-2">
       <div className="chart-header">
         <div className="chart-title-section">
           <h2>Monthly Analytics</h2>
           <p>Tracking your recruitment performance throughout the year</p>
         </div>
         <div className="chart-actions">
-          <select className="chart-filter">
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
+          <select 
+            className="chart-filter" 
+            value={selectedMonth} 
+            onChange={handleMonthChange}
+          >
+            {months.map(month => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
           </select>
-          <button className="chart-export-btn">Export</button>
         </div>
       </div>
       <div className="chart-wrapper">

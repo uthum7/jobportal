@@ -25,15 +25,13 @@ body {
 
 /* Header Section */
 .dashboard-header {
-  /* background: linear-gradient(135deg, #b2efd1 0%, #24d494 100%); */
   border-radius: 24px;
   margin-top: 0px;
   padding: 2.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
   position: relative;
   overflow: hidden;
-  width:auto;
+  width: auto;
 }
 
 .dashboard-header::before {
@@ -126,22 +124,26 @@ body {
   font-size: 1.2rem;
 }
 
-/* Stats Container */
+/* Stats Container - Updated for compact horizontal layout */
 .stats-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
 .stat-card {
   background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 1.25rem;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); */
   transition: all 0.3s ease;
   position: relative;
   border: 1px solid #f1f5f9;
+  min-height: 80px;
+  height:100px;
+  padding:20px;
+  text-align: left;
 }
 
 .stat-card::before {
@@ -150,11 +152,11 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  border-radius: 20px 20px 0 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
 }
 
-.stat-card.primary::before {
+/* .stat-card.primary::before {
   background: linear-gradient(90deg, #4f46e5, #7c3aed);
 }
 
@@ -168,94 +170,93 @@ body {
 
 .stat-card.info::before {
   background: linear-gradient(90deg, #8b5cf6, #a855f7);
-}
+} */
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
+/* Updated stat card content for horizontal layout */
 .stat-card-content {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+  height: 100%;
 }
 
 .stat-icon-wrapper {
   flex-shrink: 0;
+  order: 2; /* Move icon to the right */
 }
 
 .stat-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 1.2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon.blue {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.5), rgba(124, 58, 237, 0.5));
   color: white;
 }
 
 .stat-icon.green {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.5), rgba(5, 150, 105, 0.5));
   color: white;
 }
 
 .stat-icon.orange {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.5), rgba(217, 119, 6, 0.5));
   color: white;
 }
 
 .stat-icon.purple {
-  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(168, 85, 247, 0.5));
   color: white;
 }
 
 .stat-icon-text {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .stat-details {
   flex: 1;
+  order: 1; /* Move details to the left */
 }
 
 .stat-number {
-  font-size: 2.5rem;
+  font-size: 1.875rem;
   font-weight: 800;
   color: #1e293b;
   line-height: 1;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.125rem;
 }
 
 .stat-label {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #475569;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 
 .stat-subtitle {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #64748b;
+  line-height: 1.2;
 }
 
+/* Hide trend for compact layout */
 .stat-trend {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: #10b981;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-left: auto;
-}
-
-.trend-arrow {
-  font-size: 1rem;
+  display: none;
 }
 
 /* Charts Section */
@@ -357,6 +358,10 @@ body {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
   }
+  
+  .stats-container {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -375,7 +380,7 @@ body {
   }
   
   .stats-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .side-charts {
@@ -394,17 +399,15 @@ body {
   }
   
   .stat-card {
-    padding: 1.5rem;
-  }
-  
-  .stat-card-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
+    padding: 1rem;
   }
   
   .stat-number {
-    font-size: 2rem;
+    font-size: 1.5rem;
+  }
+  
+  .stats-container {
+    grid-template-columns: 1fr;
   }
   
   .action-button {

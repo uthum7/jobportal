@@ -1,4 +1,3 @@
-
 import Registeruser from "../models/Registeruser.js";
 import { generateToken } from "../lib/utils.js";
 import bcrypt from "bcryptjs";
@@ -127,4 +126,3 @@ export const checkAuth = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-

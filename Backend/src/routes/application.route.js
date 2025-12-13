@@ -6,6 +6,8 @@ import {
   getApplicationsByUser,
   getApplicationsByJob,
   updateApplicationStatus,
+  acceptApplication,
+  rejectApplication,
   deleteApplication,
   getAllApplications
 } from "../controllers/application.controller.js";
@@ -35,6 +37,13 @@ router.get("/job/:jobId", getApplicationsByJob);
 // Update application status (for employers/admins)
 // PUT /api/applications/:id/status
 router.put("/:id/status", updateApplicationStatus);
+
+// NEW ROUTES: Accept and Reject applications
+// PUT /api/applications/:id/accept
+router.put("/:id/accept", acceptApplication);
+
+// PUT /api/applications/:id/reject
+router.put("/:id/reject", rejectApplication);
 
 // Delete an application
 // DELETE /api/applications/:id

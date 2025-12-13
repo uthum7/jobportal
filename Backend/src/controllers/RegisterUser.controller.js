@@ -81,6 +81,8 @@ export const getCounseleeById = async (req, res) => {
 export const getEmployeeById = async (req, res) => {
   try {
     const user = await Registeruser.findById(req.params.id);
+    console.log('Fetching employee by ID:', req.params.id);
+    console.log('User found:', user);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'employee')) {
       return res.status(404).json({ message: 'Employee not found' });
     }

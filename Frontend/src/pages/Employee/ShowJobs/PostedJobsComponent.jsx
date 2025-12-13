@@ -9,7 +9,7 @@ const showAlert = (type, title, message, duration = 4000) => {
 
   const alertDiv = document.createElement('div');
   alertDiv.className = `custom-alert custom-alert-${type}`;
-  
+
   const alertContent = `
     <div class="alert-icon">
       ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}
@@ -20,10 +20,10 @@ const showAlert = (type, title, message, duration = 4000) => {
     </div>
     <button class="alert-close" onclick="this.parentElement.remove()">×</button>
   `;
-  
+
   alertDiv.innerHTML = alertContent;
   document.body.appendChild(alertDiv);
-  
+
   setTimeout(() => alertDiv.classList.add('show'), 100);
   setTimeout(() => {
     alertDiv.classList.remove('show');
@@ -48,30 +48,22 @@ const PostedJobsComponent = () => {
     try {
       setLoading(true);
       const response = await axios.get('http://localhost:5001/api/job/all');
-      
+
       if (response.status === 200) {
         // Debug logging to see what we're getting
         console.log('Full API Response:', response);
         console.log('Response Data:', response.data);
         console.log('Response Data Type:', typeof response.data);
         console.log('Is Array:', Array.isArray(response.data));
-        
+
         // Try different possible data structures
         let jobsData = [];
+
         
-        // if (Array.isArray(response.data)) {
-        //   jobsData = response.data;
-        // } else if (response.data?.jobs && Array.isArray(response.data.jobs)) {
-        //   jobsData = response.data.jobs;
-        // } else if (response.data?.data && Array.isArray(response.data.data)) {
-        //   jobsData = response.data.data;
-        // } else if (response.data?.result && Array.isArray(response.data.result)) {
-        //   jobsData = response.data.result;
-        // }
-        
+
         console.log('Final jobs data:', response.data.Jobs);
-        setJobs(response.data.Jobs);
-        
+        setJobs(response.data.Jobs.filter(job => job.PostedBy === JSON.parse(localStorage.getItem("user")).userId) || []);
+
         // Only show success alert if we actually have jobs
         if (jobsData.length > 0) {
           showAlert('success', 'Jobs Loaded Successfully', `Found ${jobsData.length} job posting${jobsData.length !== 1 ? 's' : ''}`);
@@ -134,28 +126,28 @@ const PostedJobsComponent = () => {
       console.log('Invalid job object:', job);
       return false;
     }
-    
+
     const matchesSearch = (job.JobTitle || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (job.JobDescription || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (job.Tags || []).some(tag => (tag || '').toLowerCase().includes(searchTerm.toLowerCase()));
-    
+      (job.JobDescription || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (job.Tags || []).some(tag => (tag || '').toLowerCase().includes(searchTerm.toLowerCase()));
+
     // Normalize job type and mode for comparison (handle case sensitivity and variations)
     const normalizeJobType = (type) => {
       if (!type) return '';
       return type.toLowerCase().replace(/-/g, ' ').trim();
     };
-    
+
     const normalizeJobMode = (mode) => {
       if (!mode) return '';
       return mode.toLowerCase().trim();
     };
-    
+
     const jobType = normalizeJobType(job.JobType);
     const jobMode = normalizeJobMode(job.JobMode);
-    
+
     const matchesType = filterType === 'all' || jobType === filterType;
     const matchesMode = filterMode === 'all' || jobMode === filterMode;
-    
+
     return matchesSearch && matchesType && matchesMode;
   }) : [];
 
@@ -204,7 +196,7 @@ const PostedJobsComponent = () => {
           />
           <span className="search-icon">🔍</span>
         </div>
-        
+
         <div className="filter-container">
           <select
             value={filterType}
@@ -217,7 +209,7 @@ const PostedJobsComponent = () => {
             <option value="internship">Internship</option>
             <option value="project base">Project Based</option>
           </select>
-          
+
           <select
             value={filterMode}
             onChange={(e) => setFilterMode(e.target.value)}
@@ -234,7 +226,7 @@ const PostedJobsComponent = () => {
       {/* Results Summary */}
       <div className="results-summary">
         <span className="results-count">
-          {filteredJobs.length === jobs.length 
+          {filteredJobs.length === jobs.length
             ? `Showing all ${jobs.length || 0} job${jobs.length !== 1 ? 's' : ''}`
             : `Showing ${filteredJobs.length} of ${jobs.length || 0} job${jobs.length !== 1 ? 's' : ''}`
           }
@@ -245,13 +237,13 @@ const PostedJobsComponent = () => {
       <div className="jobs-container">
         {/* Debug info - remove this in production */}
 
-        
+
         {filteredJobs.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📋</div>
             <h3>No Jobs Found</h3>
             <p>
-              {(jobs.length || 0) === 0 
+              {(jobs.length || 0) === 0
                 ? "No job postings available. Create your first job posting to get started."
                 : "No jobs match your current filters. Try adjusting your search criteria."
               }
@@ -267,7 +259,7 @@ const PostedJobsComponent = () => {
             {filteredJobs.map((job) => {
               // Add safety checks for job object
               if (!job || !job._id) return null;
-              
+
               const status = getStatusBadge(job.JobDeadline);
               return (
                 <div key={job._id} className="job-card" onClick={() => handleJobClick(job)}>
@@ -283,7 +275,7 @@ const PostedJobsComponent = () => {
                       {status.text}
                     </div>
                   </div>
-                  
+
                   <div className="job-card-body">
                     <div className="job-info">
                       <div className="info-item">
@@ -301,16 +293,16 @@ const PostedJobsComponent = () => {
                         <span className="info-value">{formatDate(job.JobDeadline)}</span>
                       </div>
                     </div>
-                    
+
                     {job.JobDescription && (
                       <p className="job-description">
-                        {job.JobDescription.length > 120 
-                          ? `${job.JobDescription.substring(0, 120)}...` 
+                        {job.JobDescription.length > 120
+                          ? `${job.JobDescription.substring(0, 120)}...`
                           : job.JobDescription
                         }
                       </p>
                     )}
-                    
+
                     {job.Tags && Array.isArray(job.Tags) && job.Tags.length > 0 && (
                       <div className="tags-container">
                         {job.Tags.slice(0, 3).map((tag, index) => (
@@ -322,7 +314,7 @@ const PostedJobsComponent = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="job-card-footer">
                     <div className="stats">
                       <span className="stat-item">
@@ -358,7 +350,7 @@ const PostedJobsComponent = () => {
               </div>
               <button className="modal-close" onClick={closeModal}>✕</button>
             </div>
-            
+
             <div className="modal-content">
               <div className="modal-section">
                 <div className="section-info">
@@ -445,7 +437,7 @@ const PostedJobsComponent = () => {
                 </div>
               )}
             </div>
-            
+
             <div className="modal-footer">
               <button className="btn-secondary" onClick={closeModal}>
                 Close
