@@ -96,10 +96,11 @@ const AppliedJobsPage = () => {
     const statusMatch = filter === "all" || job.status === filter;
     
     // Then filter by search keyword
+    const jobObj = job?.job || {};
     const keywordMatch = !searchKeyword || 
-      job.job.JobTitle.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      job.job.JobType.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      job.job.JobMode.toLowerCase().includes(searchKeyword.toLowerCase());
+      (jobObj.JobTitle || '').toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      (jobObj.JobType || '').toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      (jobObj.JobMode || '').toLowerCase().includes(searchKeyword.toLowerCase());
     
     return statusMatch && keywordMatch;
   });
@@ -163,7 +164,7 @@ const AppliedJobsPage = () => {
     if (application) {
       setSelectedApplication({
         id: applicationId,
-        jobTitle: application.job.JobTitle
+        jobTitle: application?.job?.JobTitle || 'Unknown Job'
       });
       setShowViewApplication(true);
     }
@@ -304,7 +305,7 @@ const AppliedJobsPage = () => {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-3">
-                          <h3 className="text-lg font-semibold text-gray-800">{job.JobTitle}</h3>
+                          <h3 className="text-lg font-semibold text-gray-800">{job?.JobTitle || 'Untitled Job'}</h3>
                           <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(status)}`}>
                             {getStatusIcon(status)}
                             <span>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
@@ -314,15 +315,15 @@ const AppliedJobsPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                           <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-500">Type:</span>
-                            <span className="text-sm font-medium text-gray-700">{job.JobType}</span>
+                            <span className="text-sm font-medium text-gray-700">{job?.JobType || 'N/A'}</span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-500">Mode:</span>
-                            <span className="text-sm font-medium text-gray-700">{job.JobMode}</span>
+                            <span className="text-sm font-medium text-gray-700">{job?.JobMode || 'N/A'}</span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-500">Experience:</span>
-                            <span className="text-sm font-medium text-gray-700">{job.JobExperienceYears} Years</span>
+                            <span className="text-sm font-medium text-gray-700">{job?.JobExperienceYears ?? '0'} Years</span>
                           </div>
                         </div>
 
@@ -333,7 +334,7 @@ const AppliedJobsPage = () => {
                           </div>
                           <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-500">Deadline:</span>
-                            <span className="text-sm font-medium text-gray-700">{formatDate(job.JobDeadline)}</span>
+                            <span className="text-sm font-medium text-gray-700">{job?.JobDeadline ? formatDate(job.JobDeadline) : 'N/A'}</span>
                           </div>
                         </div>
                       </div>
@@ -350,7 +351,7 @@ const AppliedJobsPage = () => {
                         
                         <button
                           className="flex items-center space-x-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
-                          onClick={() => handleViewDetails(job._id)}
+                          onClick={() => job?._id && handleViewDetails(job._id)}
                           title="View complete job details"
                         >
                           <Eye className="w-4 h-4" />

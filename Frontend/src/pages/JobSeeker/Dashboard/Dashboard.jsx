@@ -185,14 +185,15 @@ try {
       });
 
       // Set recent applications (last 5 applications)
-      const recentApps = appliedJobsData
-        .sort((a, b) => new Date(b.appliedDate) - new Date(a.appliedDate))
+      const recentApps = (appliedJobsData || [])
+        .filter(app => app && app._id)
+        .sort((a, b) => new Date(b?.appliedDate || 0) - new Date(a?.appliedDate || 0))
         .slice(0, 5)
         .map(app => ({
           id: app._id,
-          jobTitle: app.job.JobTitle,
-          applyDate: app.appliedDate,
-          status: app.status
+          jobTitle: app?.job?.JobTitle || 'Unknown Job',
+          applyDate: app?.appliedDate || new Date().toISOString(),
+          status: app?.status || 'pending'
         }));
       
       setRecentApplications(recentApps);
