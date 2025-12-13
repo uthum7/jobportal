@@ -6,26 +6,30 @@ dotenv.config();
 // Check if Stripe secret key is available
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
+let stripe = null;
+
 if (!stripeSecretKey) {
-  console.error('❌ STRIPE_SECRET_KEY is not set in environment variables');
-  throw new Error('Stripe configuration error: STRIPE_SECRET_KEY is required');
+  console.warn('⚠️ STRIPE_SECRET_KEY is not set - Stripe features will be disabled');
+} else {
+  if (!stripeSecretKey.startsWith('sk_')) {
+    console.error('❌ Invalid Stripe secret key format. It should start with "sk_"');
+    throw new Error('Stripe configuration error: Invalid secret key format');
+  }
+
+  console.log('✅ Stripe configuration loaded successfully');
+  console.log(`🔐 Using Stripe key: ${stripeSecretKey.substring(0, 20)}...`);
+
+  // Initialize Stripe with your secret key
+  stripe = new Stripe(stripeSecretKey);
 }
-
-if (!stripeSecretKey.startsWith('sk_')) {
-  console.error('❌ Invalid Stripe secret key format. It should start with "sk_"');
-  throw new Error('Stripe configuration error: Invalid secret key format');
-}
-
-console.log('✅ Stripe configuration loaded successfully');
-console.log(`🔐 Using Stripe key: ${stripeSecretKey.substring(0, 20)}...`);
-
-// Initialize Stripe with your secret key
-const stripe = new Stripe(stripeSecretKey);
 
 export default stripe;
 
 // Helper function to create a payment intent
 export const createPaymentIntent = async (amount, currency = 'usd', metadata = {}) => {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in environment variables.');
+  }
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Stripe expects amount in cents
@@ -45,6 +49,9 @@ export const createPaymentIntent = async (amount, currency = 'usd', metadata = {
 
 // Helper function to retrieve a payment intent
 export const retrievePaymentIntent = async (paymentIntentId) => {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in environment variables.');
+  }
   try {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
     return paymentIntent;
@@ -56,6 +63,9 @@ export const retrievePaymentIntent = async (paymentIntentId) => {
 
 // Helper function to confirm a payment intent
 export const confirmPaymentIntent = async (paymentIntentId, paymentMethodId) => {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in environment variables.');
+  }
   try {
     const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId, {
       payment_method: paymentMethodId,
@@ -69,6 +79,9 @@ export const confirmPaymentIntent = async (paymentIntentId, paymentMethodId) => 
 
 // Helper function to create a refund
 export const createRefund = async (paymentIntentId, amount = null, reason = 'requested_by_customer') => {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in environment variables.');
+  }
   try {
     const refundData = {
       payment_intent: paymentIntentId,
@@ -89,6 +102,9 @@ export const createRefund = async (paymentIntentId, amount = null, reason = 'req
 
 // Helper function to construct webhook events
 export const constructWebhookEvent = (payload, signature, endpointSecret) => {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY in environment variables.');
+  }
   try {
     const event = stripe.webhooks.constructEvent(payload, signature, endpointSecret);
     return event;

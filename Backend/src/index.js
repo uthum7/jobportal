@@ -19,6 +19,7 @@ import counselorsRoutes from "./routes/counselors.route.js";
 import bookingRoutes from "./routes/booking.route.js";
 import counseleesRoutes from "./routes/counselees.route.js";
 import paymentRoutes from "./routes/payment.route.js";
+import dashboardRoutes from "./routes/dashboard.route.js";
 // --- FIX 1: Correctly import the AI routes ---
 import aiRoutes from "./routes/gemini.route.js"; // Renamed variable to camelCase `aiRoutes` for consistency
 
@@ -93,6 +94,7 @@ app.use("/api/counselors", counselorsRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/counselees", counseleesRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 // --- FIX 2: Connect the AI routes to your app ---
 app.use("/api/ai", aiRoutes); // This will make your route available at /api/ai/...
 console.log("API routes registered.");
