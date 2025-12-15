@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -8,12 +8,19 @@ import {
   PlusCircle,
   Users,
   MessageSquare,
-  Lock
+  Lock,
+  Camera,
+  ChevronRight,
+  ChevronLeft
 } from 'lucide-react';
-import user from "../../../assets/img/user.jpg"; // Keep as fallback
-import './Sidebar.css';
+import user from "../../../assets/img/user.jpg";
+import { useAuthStore } from '../../../store/useAuthStore';
 
-const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSidebarOpen }) => {
+const EmployeeSidebar = ({ activeTab, setActiveTab }) => {
+    const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
+    const [selectedImg, setSelectedImg] = useState(null);
+    const fileInputRef = useRef();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [employeeData, setEmployeeData] = useState({
         fullName: 'Loading...',
         roles: ['EMPLOYEE'],
@@ -78,6 +85,19 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
     const handleTabClick = (tabName, e) => {
         e.preventDefault();
         setActiveTab(tabName);
+        setSidebarOpen(false); // Close mobile sidebar on navigation
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async () => {
+            const base64Image = reader.result;
+            setSelectedImg(base64Image);
+            await updateProfile({ profilePic: base64Image });
+        };
     };
 
     const navigationItems = [
@@ -119,18 +139,18 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
     const SidebarItem = ({ icon: Icon, label, active = false, onClick, badge = null }) => (
         <button
             onClick={onClick}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 group mt-5 mb-5 ${
+            className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 active 
-                    ? 'bg-green-100 border-r-[3px] border-r-green-500 text-green-700' 
-                    : 'text-gray-800 hover:bg-slate-100 hover:text-green-800 '
+                    ? 'bg-emerald-50 text-emerald-600 border-r-2 border-emerald-600' 
+                    : 'text-gray-600 hover:bg-gray-50'
             }`}
         >
             <div className="flex items-center space-x-3">
-                <Icon className={`w-5 h-5 ${active ? 'text-green-700' : 'text-gray-800 group-hover:text-green-800'}`} />
-                <span className="text-sm font-medium">{label}</span>
+                <Icon className="w-4 h-4" />
+                <span>{label}</span>
             </div>
             {badge && (
-                <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] h-5 flex items-center justify-center font-bold">
+                <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-emerald-600 rounded-full">
                     {badge}
                 </span>
             )}
@@ -155,113 +175,120 @@ const EmployeeSidebar = ({ activeTab, setActiveTab, sidebarOpen = true, setSideb
 
     // Helper function to get profile image
     const getProfileImage = () => {
+        if (selectedImg) return selectedImg;
         if (employeeData.profilePic && employeeData.profilePic.trim() !== '') {
             return employeeData.profilePic;
         }
-        return user; // Fallback to default image
+        if (authUser?.profilePic) return authUser.profilePic;
+        return user;
     };
+
+    const capitalizeWords = (str) => {
+        if (!str) return '';
+        return str.replace(/\b\w/g, (c) => c.toUpperCase());
+    };
+
+    const displayName = employeeData.fullName
+        ? capitalizeWords(employeeData.fullName)
+        : capitalizeWords(employeeData.username || authUser?.username || authUser?.fullName || authUser?.name || 'Employee');
 
     return (
         <>
+            {/* Sidebar toggle button for mobile, below navbar */}
+            {!sidebarOpen && (
+                <button
+                    className="fixed top-20 left-3 z-50 bg-gray-100 border-none rounded-full shadow-md p-2 text-xl text-gray-700 block cursor-pointer transition-colors hover:bg-gray-200 lg:hidden"
+                    aria-label="Open sidebar menu"
+                    onClick={() => setSidebarOpen(true)}
+                >
+                    <ChevronRight />
+                </button>
+            )}
+            
+            {/* Overlay for mobile sidebar */}
+            {sidebarOpen && (
+                <div 
+                    className="fixed inset-0 bg-gray-900 bg-opacity-35 z-40 lg:hidden" 
+                    onClick={() => setSidebarOpen(false)}
+                ></div>
+            )}
+            
             {/* Sidebar */}
-            <div className={`sidebar-employee fixed inset-y-0 left-0 z-40 w-64 shadow-2xl transform transition-transform duration-300 lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div className={`lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto bg-white shadow-lg transform transition-transform duration-300 lg:transform-none ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`} style={{ width: '260px' }}>
                 
+                {/* Close button for mobile sidebar */}
+                {sidebarOpen && (
+                    <button
+                        className="fixed top-20 right-3 z-50 bg-gray-100 border-none rounded-full shadow-md p-2 text-xl text-gray-700 cursor-pointer transition-colors hover:bg-gray-200 lg:hidden"
+                        aria-label="Close sidebar menu"
+                        onClick={(e) => { e.stopPropagation(); setSidebarOpen(false); }}
+                    >
+                        <ChevronLeft />
+                    </button>
+                )}
+
                 {/* Profile Section */}
-                <div className="p-6 border-b border-slate-700 mt-10">
-                    <div className="flex flex-col items-center text-center">
-                        <div className="w-16 h-16 rounded-full overflow-hidden relative mb-3 ring-4 ring-blue-500">
-                            <img
-                                src={getProfileImage()}
-                                alt="User Profile"
+                <div className="p-6 border-b border-gray-200">
+                    <div className="flex items-center space-x-3">
+                        <div className="relative w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
+                            <img 
+                                src={getProfileImage()} 
+                                alt="Profile" 
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
-                                    e.target.src = user; // Fallback if profile pic fails to load
+                                    e.target.src = user;
                                 }}
                             />
-                            <div className={`absolute bottom-1 right-1 w-4 h-4 border-2 border-slate-800 rounded-full ${
-                                employeeData.isOnline ? 'bg-green-500' : 'bg-gray-400'
-                            }`}></div>
+                            <label
+                                htmlFor="sidebar-avatar-upload"
+                                className={`absolute bottom-0 right-0 bg-white rounded-full p-1 cursor-pointer shadow-md flex items-center justify-center z-10 transition-opacity ${isUpdatingProfile ? 'opacity-60 pointer-events-none' : 'hover:shadow-lg'}`}
+                                title={isUpdatingProfile ? 'Uploading...' : 'Change photo'}
+                            >
+                                <Camera size={14} className="text-gray-600" />
+                                <input
+                                    type="file"
+                                    id="sidebar-avatar-upload"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    disabled={isUpdatingProfile}
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                />
+                            </label>
                         </div>
                         <div>
-                            {loading ? (
-                                <div className="animate-pulse">
-                                    <div className="h-5 bg-gray-300 rounded w-32 mb-2"></div>
-                                    <div className="h-4 bg-gray-300 rounded w-20"></div>
-                                </div>
-                            ) : error ? (
-                                <div>
-                                    <h3 className="font-semibold text-lg text-red-600">Error Loading Profile</h3>
-                                    <p className="text-sm text-gray-600 mt-1">Recruiter</p>
-                                </div>
-                            ) : (
-                                <div>
-                                    <h3 className="font-semibold text-lg">
-                                        {employeeData.fullName || employeeData.username || 'Unknown User'}
-                                    </h3>
-                                    <p className="text-sm text-gray-600 mt-1">
-                                        {getDisplayRole(employeeData.roles)}
-                                    </p>
-                                </div>
-                            )}
+                            <h3 className="font-semibold text-gray-800">
+                                {loading ? 'Loading...' : error ? 'Employee' : displayName}
+                            </h3>
+                            <p className="text-sm text-gray-600">Recruiter</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Navigation Section */}
+                {/* Navigation Menu */}
                 <div className="px-4 py-6">
-                    <h4 className="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-4 px-2">Main Menu</h4>
                     <div className="space-y-2">
                         {navigationItems.map((item) => (
-                            <Link
-                                key={item.name}
-                                to="#"
-                                onClick={(e) => handleTabClick(item.name, e)}
-                            >
+                            <div key={item.name} onClick={(e) => handleTabClick(item.name, e)}>
                                 <SidebarItem
                                     icon={item.icon}
                                     label={item.label}
                                     active={activeTab === item.name}
                                     onClick={(e) => handleTabClick(item.name, e)}
-                                    badge={item.name === "Messages" ? "3" : null}
                                 />
-                            </Link>
+                            </div>
                         ))}
 
-                        <Link to="/message/messagehome" className="w-full flex items-center p-2 text-gray-700 hover:bg-gray-100">
-                            <MessageSquare className="mr-2" /> Messages
+                        <Link 
+                            to="/message/messagehome" 
+                            className="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-50"
+                        >
+                            <MessageSquare className="w-4 h-4" />
+                            <span>Messages</span>
                         </Link>
                     </div>
-
-                    {/* Account Section */}
-                    {/* <div className="pt-8">
-                        <h5 className="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-4 px-2">Account</h5>
-                        <div className="space-y-2">
-                            {accountItems.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    to="#"
-                                    onClick={(e) => handleTabClick(item.name, e)}
-                                >
-                                    <SidebarItem
-                                        icon={item.icon}
-                                        label={item.label}
-                                        active={activeTab === item.name}
-                                        onClick={(e) => handleTabClick(item.name, e)}
-                                    />
-                                </Link>
-                            ))}
-                        </div>
-                    </div> */}
                 </div>
             </div>
-
-            {/* Mobile Overlay */}
-            {sidebarOpen && setSidebarOpen && (
-                <div 
-                    className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden" 
-                    onClick={() => setSidebarOpen(false)} 
-                />
-            )}
         </>
     );
 };

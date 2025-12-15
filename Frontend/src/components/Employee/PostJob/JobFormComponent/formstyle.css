@@ -5,39 +5,33 @@
   box-sizing: border-box;
 }
 
-/* Main Form Wrapper */
+/* Main Form Wrapper - Updated to match JobSeeker style */
 .job-form-wrapper {
   max-width: 1200px;
   margin: 0;
   padding: 2rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #f9fafb;
   min-height: 100vh;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Form Header */
+/* Form Header - Updated to match JobSeeker style */
 .job-form-header {
-  text-align: center;
-  margin-bottom: 3rem;
-  width:80vw;
-  padding: 3rem 2rem;
-  margin-top: -120px;
-  border-radius: 24px;
-  color: rgb(69, 52, 225);
-  box-shadow: 0 20px 40px -10px rgba(102, 126, 234, 0.4);
+  text-align: left;
+  margin-bottom: 2rem;
+  width: 80vw;
+  padding: 0;
+  margin-top: 0;
+  border-radius: 0;
+  color: #1f2937;
+  box-shadow: none;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  background: transparent;
 }
 
 .job-form-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  animation: float 8s ease-in-out infinite;
+  content: none;
 }
 
 @keyframes float {
@@ -46,100 +40,83 @@
 }
 
 .form-title {
-  font-size: 2.75rem;
-  font-weight: 800;
+  font-size: 1.875rem;
+  font-weight: 700;
   margin: 0 0 0.5rem 0;
-  /* text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
-  color:#1e293b;
+  color: #1f2937;
   position: relative;
   z-index: 2;
-  background: linear-gradient(45deg, #1b1c20, #000000);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
 }
 
 .form-subtitle {
-  font-size: 1.2rem;
-  opacity: 0.95;
+  font-size: 0.875rem;
   margin: 0;
   font-weight: 400;
   position: relative;
   z-index: 2;
-  color: rgba(45, 37, 37, 0.9);
+  color: #6b7280;
 }
 
-/* Main Form Container */
+/* Main Form Container - Updated to match JobSeeker style */
 .job-form-component {
   background: white;
-  border-radius: 28px;
-  padding: 3.5rem;
-  width:80vw;
-  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  width: 80vw;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
   position: relative;
 }
 
 .job-form-component::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  /* background: linear-gradient(90deg, #2cefb7, #21d26b, #26ec61, #60ed0e); */
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-radius: 28px 28px 0 0;
+  content: none;
 }
 
-/* Form Sections */
+/* Form Sections - Updated to match JobSeeker style */
 .form-section {
-  margin-bottom: 3.5rem;
-  padding: 2.5rem;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
-  border-radius: 24px;
-  border: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
   position: relative;
-  transition: all 0.3s ease;
+  transition: none;
 }
 
 .form-section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  transform: none;
+  box-shadow: none;
 }
 
 .section-header {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #e2e8f0;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .section-icon {
-  font-size: 2.25rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  padding: 1rem;
-  border-radius: 20px;
+  font-size: 1.25rem;
+  background: #059669;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: none;
   position: relative;
   overflow: hidden;
 }
 
 .section-icon::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: translateX(-100%);
-  animation: shimmer 3s infinite;
+  content: none;
 }
 
 @keyframes shimmer {
@@ -149,21 +126,21 @@
 }
 
 .section-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #1e293b;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
   margin: 0;
-  background: linear-gradient(135deg, #1e293b, #475569);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
 }
 
 .section-description {
-  font-size: 0.95rem;
-  color: #64748b;
+  font-size: 0.75rem;
+  color: #6b7280;
   margin: 0.25rem 0 0 0;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 /* Form Grid */
@@ -184,12 +161,12 @@
   grid-column: 1 / -1;
 }
 
-/* Form Labels */
+/* Form Labels - Updated to match JobSeeker style */
 .form-label {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
   color: #374151;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.25rem;

@@ -56,6 +56,7 @@ import JobDetails from "./pages/JobSeeker/JobDetails/JobDetails.jsx";
 import AppliedJobsPage from "./pages/JobSeeker/AppliedJobs/AppliedJobs.jsx";
 import SavedJobs from "./pages/JobSeeker/SavedJobs/SavedJobs.jsx";
 import FeedbackInsights from './pages/JobSeeker/feedbackInsights/FeedbackInsights.jsx';
+import JobSeekerProfile from './pages/JobSeeker/JobSeekerProfile.jsx';
 
 // Counselee components
 import CounseleeDashboard from "./pages/counselee/dashboard.jsx";
@@ -257,6 +258,7 @@ function App() {
           <Route path="/JobSeeker/applied-jobs" element={<RoleBasedRoute element={<AppliedJobsPage />} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
           <Route path="/JobSeeker/saved-jobs" element={<RoleBasedRoute element={<SavedJobs />} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
           <Route path="/JobSeeker/application/:applicationId/feedback" element={<RoleBasedRoute element={<FeedbackInsights />} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
+          <Route path="/JobSeeker/profile" element={<RoleBasedRoute element={<JobSeekerProfile />} allowedRoles={['ADMIN', 'JOBSEEKER']} userRole={user?.role} />} />
 
           {/* CV BUILDER ROUTES */}
           {/* ✅ FIX: Removed duplicate /cv route */}

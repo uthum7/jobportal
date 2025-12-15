@@ -6,25 +6,23 @@ import PostJobComponent from '../../components/Employee/PostJob/PostJobComponent
 import PostedJobComponent from '../Employee/ShowJobs/PostedJobsComponent';
 import AllCandidates from './Candidates/AllCandidates';
 import AllJobs from '../../components/Employee/Jobs/AllJobs';
-import AdminProfilePage from '../Admin/MyProfile';
+import EmployeeProfile from './EmployeeProfile';
 
 const EmployeePage = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
 
   return (
-    <div className="employee-page">
-      <aside className="sidebar-employee">
-        <EmployeeSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-        
-      </aside>
-      <main className="main-content">
-        {activeTab === "Dashboard" && <EmployeeDashboard />}
-        {activeTab === "PostJobSpecs" && <PostJobComponent />}
-        {activeTab === "PostedJob" && <PostedJobComponent />}
-        {activeTab === "Profile" && <AdminProfilePage/>}
-        {activeTab === "Candidates" && <AllJobs />}
-        {/* Add more tabs as needed */}
-      </main>
+    <div className="min-h-screen flex bg-gray-50">
+      <EmployeeSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="flex-1 lg:ml-0">
+        <div className="p-6">
+          {activeTab === "Dashboard" && <EmployeeDashboard />}
+          {activeTab === "PostJobSpecs" && <PostJobComponent />}
+          {activeTab === "PostedJob" && <PostedJobComponent />}
+          {activeTab === "Profile" && <EmployeeProfile/>}
+          {activeTab === "Candidates" && <AllJobs />}
+        </div>
+      </div>
     </div>
   );
 };

@@ -7,9 +7,9 @@ import {
 
 import { getUserId, getToken } from '../../utils/auth';
 import { useAuthStore } from '../../store/useAuthStore';
-import AdminSidebar from '../../components/Admin/Sidebar/AdminSidebar';
+import JobseekerSidebar from '../../components/JobSeeker/JobseekerSidebar/JobseekerSidebar';
 
-const AdminProfilePage = () => {
+const JobSeekerProfile = () => {
   const navigate = useNavigate();
   const [editingField, setEditingField] = useState(null);
   const [profileData, setProfileData] = useState({
@@ -24,29 +24,29 @@ const AdminProfilePage = () => {
   const [error, setError] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const adminId = getUserId();
+  const jobseekerId = getUserId();
   const token = getToken();
   const { authUser, checkAuth, updateProfile } = useAuthStore();
 
   useEffect(() => {
-    if (!adminId) {
-      setError('Admin ID not found. Please log in again.');
+    if (!jobseekerId) {
+      setError('Job Seeker ID not found. Please log in again.');
       setLoading(false);
       return;
     }
 
-    const fetchAdminProfile = async () => {
+    const fetchJobSeekerProfile = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:5001/api/users/admin/${adminId}`, {
+        const res = await fetch(`http://localhost:5001/api/users/jobseekers/${jobseekerId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
 
         console.log('Profile data:', data);
-        if (res.ok && data.success) {
-          setProfileData(data.admin);
-          setFormData(data.admin);
+        if (res.ok) {
+          setProfileData(data);
+          setFormData(data);
           setError(null);
         } else {
           setError(data.message || 'Failed to fetch profile');
@@ -58,8 +58,8 @@ const AdminProfilePage = () => {
       }
     };
 
-    fetchAdminProfile();
-  }, [adminId, token]);
+    fetchJobSeekerProfile();
+  }, [jobseekerId, token]);
 
   // Handle form input changes
   const handleInputChange = (field, value) => {
@@ -100,7 +100,7 @@ const AdminProfilePage = () => {
       reader.onloadend = async () => {
         const base64Image = reader.result;
         
-        const res = await fetch(`http://localhost:5001/api/users/admin/${adminId}`, {
+        const res = await fetch(`http://localhost:5001/api/users/jobseekers/${jobseekerId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -110,15 +110,15 @@ const AdminProfilePage = () => {
         });
         const data = await res.json();
 
-        if (res.ok && data.success) {
-          setProfileData(data.admin);
-          setFormData(data.admin);
+        if (res.ok) {
+          setProfileData(data);
+          setFormData(data);
           setError(null);
           // Update both auth store and local state
           await updateProfile({ profilePic: base64Image });
           await checkAuth();
         } else {
-          alert(data.message || 'Failed to upload profile picture');
+          alert(data.message || 'Failed to upload image');
         }
         setUploadingImage(false);
       };
@@ -132,10 +132,10 @@ const AdminProfilePage = () => {
     }
   };
 
-  // Save updated field to backend
+  // Save a specific field
   const handleSave = async (field) => {
     try {
-      const res = await fetch(`http://localhost:5001/api/users/employees/${adminId}`, {
+      const res = await fetch(`http://localhost:5001/api/users/jobseekers/${jobseekerId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -145,9 +145,9 @@ const AdminProfilePage = () => {
       });
       const data = await res.json();
 
-      if (res.ok && data.success) {
-        setProfileData(data.admin);
-        setFormData(data.admin);
+      if (res.ok) {
+        setProfileData(data);
+        setFormData(data);
         setEditingField(null);
         setError(null);
       } else {
@@ -222,7 +222,7 @@ const AdminProfilePage = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      <AdminSidebar activePage="profile" />
+      <JobseekerSidebar />
       <div className="flex-1 lg:ml-0">
         <div className="p-6">
           <header className="mb-8">
@@ -230,7 +230,7 @@ const AdminProfilePage = () => {
               My Profile
             </h1>
             <nav className="text-sm text-gray-600">
-              <span>Admin</span>
+              <span>Job Seeker</span>
               <span className="mx-2">/</span>
               <span className="text-emerald-600">My Profile</span>
             </nav>
@@ -254,8 +254,8 @@ const AdminProfilePage = () => {
                       </div>
                     </div>
                     
-                    <h2 className="text-xl font-semibold text-gray-800 mb-1">{profileData.username || 'Admin User'}</h2>
-                    <p className="text-gray-600 mb-4">Admin</p>
+                    <h2 className="text-xl font-semibold text-gray-800 mb-1">{profileData.username || 'Job Seeker'}</h2>
+                    <p className="text-gray-600 mb-4">Job Seeker</p>
                     
                     <label className="w-full bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center space-x-2 cursor-pointer">
                       <input
@@ -320,7 +320,7 @@ const AdminProfilePage = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <ProfileField
-                      label="Admin Name"
+                      label="Job Seeker Name"
                       field="username"
                       value={profileData.username}
                     />
@@ -367,4 +367,4 @@ const AdminProfilePage = () => {
   );
 };
 
-export default AdminProfilePage;
+export default JobSeekerProfile;

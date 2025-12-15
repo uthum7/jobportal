@@ -8,16 +8,21 @@
 }
 
 .candidate-card{
-    padding: 20px;
-    border: 1px solid #464444;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background: white;
 }
 .candidates-container{
-    margin-top: -100px;
-    margin-left: 50px;
-    border: 1px solid #464444;
-    border-radius: 8px;
+    margin-top: 0;
+    margin-left: 0;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
     overflow: hidden;
-    width:80vw;
+    width: 80vw;
+    background: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 

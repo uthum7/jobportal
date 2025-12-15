@@ -146,39 +146,79 @@ export const updateCounselee = async (req, res) => {
 
 export const updateEmployee = async (req, res) => {
   try {
-    const { name, email, roles } = req.body;
     const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'employee')) {
       return res.status(404).json({ message: 'Employee not found' });
     }
 
-    user.name = name;
-    user.email = email;
-    user.roles = roles;
+    // Update only the fields that are provided
+    const { name, email, roles, username, phone, address, profilePic } = req.body;
+    
+    if (name !== undefined) user.name = name;
+    if (email !== undefined) user.email = email;
+    if (roles !== undefined) user.roles = roles;
+    if (username !== undefined) user.username = username;
+    if (phone !== undefined) user.phone = phone;
+    if (address !== undefined) user.address = address;
+    
+    // Handle profile picture upload to Cloudinary
+    if (profilePic) {
+      try {
+        const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+          folder: 'employee_profiles',
+          resource_type: 'auto'
+        });
+        user.profilePic = uploadResponse.secure_url;
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        return res.status(500).json({ message: 'Error uploading image to Cloudinary' });
+      }
+    }
 
     const updated = await user.save();
     res.status(200).json(updated);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating employee', error });
+    console.error('Error updating employee:', error);
+    res.status(500).json({ message: 'Error updating employee', error: error.message });
   }
 };
 
 export const updateJobseeker = async (req, res) => {
   try {
-    const { name, email, roles } = req.body;
     const user = await Registeruser.findById(req.params.id);
     if (!user || !user.roles.some(role => role.toLowerCase() === 'jobseeker')) {
       return res.status(404).json({ message: 'Jobseeker not found' });
     }
 
-    user.name = name;
-    user.email = email;
-    user.roles = roles;
+    // Update only the fields that are provided
+    const { name, email, roles, username, phone, address, profilePic } = req.body;
+    
+    if (name !== undefined) user.name = name;
+    if (email !== undefined) user.email = email;
+    if (roles !== undefined) user.roles = roles;
+    if (username !== undefined) user.username = username;
+    if (phone !== undefined) user.phone = phone;
+    if (address !== undefined) user.address = address;
+    
+    // Handle profile picture upload to Cloudinary
+    if (profilePic) {
+      try {
+        const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+          folder: 'jobseeker_profiles',
+          resource_type: 'auto'
+        });
+        user.profilePic = uploadResponse.secure_url;
+      } catch (uploadError) {
+        console.error('Cloudinary upload error:', uploadError);
+        return res.status(500).json({ message: 'Error uploading image to Cloudinary' });
+      }
+    }
 
     const updated = await user.save();
     res.status(200).json(updated);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating jobseeker', error });
+    console.error('Error updating jobseeker:', error);
+    res.status(500).json({ message: 'Error updating jobseeker', error: error.message });
   }
 };
 

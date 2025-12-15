@@ -1,18 +1,19 @@
-/* Employee Sidebar Styles */
+/* Employee Sidebar Styles - Updated to match JobSeeker style */
 .employee-sidebar {
-  width: 300px;
-  height: 100vh;
-  /* background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); */
-  color: #0a192f;
+  width: 260px;
+  height: calc(100vh - 70px);
+  background: white;
+  color: #1f2937;
   display: flex;
   flex-direction: column;
   position: fixed;
   left: 0;
-  top: 100;
+  top: 70px;
   overflow-y: auto;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  z-index: 1000;
+  z-index: 80;
+  border-right: 1px solid #e5e7eb;
 }
 
 /* Custom Scrollbar */
@@ -21,23 +22,23 @@
 }
 
 .employee-sidebar::-webkit-scrollbar-track {
-  /* background: rgba(255, 255, 255, 0.1); */
+  background: #f9fafb;
 }
 
 .employee-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: #d1d5db;
   border-radius: 3px;
 }
 
 .employee-sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: #9ca3af;
 }
 
-/* Brand Section */
+/* Brand Section - Updated to match JobSeeker style */
 .sidebar-brand {
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #e5e7eb;
+  background: white;
 }
 
 .brand-logo {
@@ -48,61 +49,58 @@
 
 .brand-icon {
   font-size: 1.5rem;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: #059669;
+  color: white;
   padding: 0.5rem;
-  border-radius: 10px;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .brand-text {
-  font-size: 1.25rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
 }
 
-/* Profile Section */
+/* Profile Section - Updated to match JobSeeker style */
 .profile-section {
-  padding: 2rem 1.5rem;
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: white;
 }
 
 .profile-image-container {
   position: relative;
   display: inline-block;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .profile-image {
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
+  border: none;
+  transition: all 0.2s ease;
 }
 
 .profile-image:hover {
-  transform: scale(1.05);
-  border-color: #3b82f6;
+  transform: none;
+  opacity: 0.9;
 }
 
 .online-indicator {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 18px;
-  height: 18px;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
   background: #10b981;
-  border: 3px solid #1e293b;
+  border: 2px solid white;
   border-radius: 50%;
-  animation: pulse 2s infinite;
+  animation: none;
 }
 
 @keyframes pulse {
@@ -118,31 +116,24 @@
 }
 
 .profile-info {
-  text-align: center;
+  text-align: left;
 }
 
 .profile-name {
-  font-size: 1.1rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  margin: 0 0 0.25rem 0;
-  color: #0a192f;
+  margin: 0 0 0.125rem 0;
+  color: #1f2937;
 }
 
 .profile-role {
   font-size: 0.875rem;
-  color: #0a192f;
-  margin: 0 0 1rem 0;
+  color: #6b7280;
+  margin: 0;
 }
 
 .profile-stats {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  margin-top: 1rem;
+  display: none;
 }
 
 .stat-item {
@@ -170,7 +161,7 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Navigation Section */
+/* Navigation Section - Updated to match JobSeeker style */
 .sidebar-nav {
   flex: 1;
   padding: 1.5rem 0;
@@ -179,64 +170,55 @@
 }
 
 .nav-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .nav-section-title {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0 0 0.75rem 1.5rem;
+  display: none;
 }
 
 .nav-items {
   display: flex;
   flex-direction: column;
+  padding: 0 1rem;
+  gap: 0.5rem;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  padding: 0.875rem 1.5rem;
-  color: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 0.75rem;
+  color: #6b7280;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.875rem;
-  border-left: 3px solid transparent;
-  transition: all 0.3s ease;
+  border-right: 2px solid transparent;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
   position: relative;
   gap: 0.75rem;
 }
 
 .nav-item:hover {
-  color: white;
-  background: rgba(59, 130, 246, 0.1);
-  border-left-color: #3b82f6;
-  transform: translateX(2px);
+  color: #059669;
+  background: #f9fafb;
+  border-right-color: transparent;
 }
 
 .nav-item.active {
-  color: white;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
-  border-left-color: #3b82f6;
-  font-weight: 600;
+  color: #059669;
+  background: #d1fae5;
+  border-right-color: #059669;
+  font-weight: 500;
 }
 
 .nav-item.active::before {
-  content: '';
-  position: absolute;
-  right: 1.5rem;
-  width: 6px;
-  height: 6px;
-  background: #3b82f6;
-  border-radius: 50%;
+  content: none;
 }
 
 .nav-icon {
-  font-size: 1.125rem;
-  width: 20px;
+  font-size: 1rem;
+  width: 16px;
   text-align: center;
   flex-shrink: 0;
 }
@@ -246,138 +228,104 @@
 }
 
 .nav-badge {
-  background: #ef4444;
+  background: #059669;
   color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.625rem;
+  font-weight: 700;
   padding: 0.125rem 0.5rem;
-  border-radius: 10px;
+  border-radius: 9999px;
   min-width: 18px;
   text-align: center;
 }
 
-/* Logout Section */
+/* Logout Section - Updated to match JobSeeker style */
 .logout-section {
   margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0;
+  border-top: none;
 }
 
 .logout-item {
-  color: rgba(239, 68, 68, 0.8) !important;
+  color: #6b7280 !important;
 }
 
 .logout-item:hover {
   color: #ef4444 !important;
-  background: rgba(239, 68, 68, 0.1) !important;
-  border-left-color: #ef4444 !important;
+  background: #fef2f2 !important;
+  border-right-color: transparent !important;
 }
 
-/* Footer */
+/* Footer - Simplified to match JobSeeker style */
 .sidebar-footer {
-  padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: none;
 }
 
 .upgrade-card {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  padding: 1.5rem;
-  border-radius: 16px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+  display: none;
 }
 
 .upgrade-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+  display: none;
 }
 
 .upgrade-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  display: none;
 }
 
 .upgrade-card h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-  color: white;
+  display: none;
 }
 
 .upgrade-card p {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0 0 1rem 0;
-  line-height: 1.4;
+  display: none;
 }
 
 .upgrade-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  display: none;
 }
 
 .upgrade-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
+  display: none;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Responsive Design - Updated to match JobSeeker style */
+@media (max-width: 1024px) {
   .employee-sidebar {
-    width: 250px;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    z-index: 90;
   }
   
   .employee-sidebar.open {
     transform: translateX(0);
   }
-  
-  .profile-stats {
-    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .employee-sidebar {
+    width: 260px;
   }
   
-  .stat-number {
-    font-size: 1rem;
+  .nav-item {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
   }
   
-  .upgrade-card {
+  .sidebar-brand,
+  .profile-section {
     padding: 1rem;
   }
 }
 
-@media (max-width: 480px) {
-  .employee-sidebar {
-    width: 280px;
-  }
-  
-  .nav-item {
-    padding: 0.75rem 1rem;
-  }
-  
-  .sidebar-brand,
-  .profile-section,
-  .sidebar-footer {
-    padding: 1rem;
+/* Ensure footer doesn't overlap with sidebar */
+.employee-sidebar ~ footer,
+.sidebar-employee ~ footer {
+  margin-left: 260px;
+}
+
+@media (max-width: 1024px) {
+  .employee-sidebar ~ footer,
+  .sidebar-employee ~ footer {
+    margin-left: 0;
   }
 }

@@ -38,7 +38,7 @@
 }
 
 .jobseeker-navbar-logo-img {
-  height: 35px;
+  height: 150px;
   width: auto;
   margin-right: 10px; 
 }
@@ -49,7 +49,7 @@
   align-items: center;
   gap: 15px; 
   margin-left: auto;  
-  margin-right: auto; 
+  margin-right: 0; 
 }
 
 /* Individual Navigation Link Styling */
@@ -93,7 +93,7 @@
 .jobseeker-navbar-actions {
   display: flex; 
   align-items: center;
-  margin-left: 1rem; 
+  margin-left: auto; 
   flex-shrink: 0; 
 }
 

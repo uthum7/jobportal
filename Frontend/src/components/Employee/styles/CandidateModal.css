@@ -15,27 +15,28 @@
 
 .candidate-modal {
     background: white;
-    border-radius: 12px;
+    border-radius: 0.5rem;
     width: 90%;
     max-width: 900px;
     max-height: 90vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px;
+    padding: 1.5rem;
     border-bottom: 1px solid #e5e7eb;
-    background-color: #f8fafc;
+    background-color: white;
 }
 
 .modal-title-section h2 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #1f2937;
 }
@@ -49,7 +50,7 @@
 .close-btn {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
     color: #6b7280;
     width: 32px;
@@ -57,7 +58,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 0.5rem;
     transition: all 0.2s ease;
 }
 

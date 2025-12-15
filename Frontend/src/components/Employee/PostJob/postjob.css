@@ -4,16 +4,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 2rem;
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .main-header h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #333;
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1f2937;
     margin: 0;
     font-family: "Inria Sans", sans-serif;
-    font-size: 40px;
 }

@@ -1,11 +1,11 @@
-/* Chart Container Base Styles */
+/* Chart Container Base Styles - Updated to match JobSeeker style */
 .chart-container {
   background: white;
-  border-radius: 20px;
+  border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border: 1px solid #f1f5f9;
-  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
   height: 100%;
 }
 
@@ -13,18 +13,18 @@
   height: 800px;
 }
 .chart-container:hover {
-  box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .chart-container.small-chart {
   height: 400px;
 }
 
-/* Chart Header */
+/* Chart Header - Updated to match JobSeeker style */
 .chart-header {
-  padding: 1.5rem 2rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-bottom: 1px solid #e2e8f0;
+  padding: 1.5rem 1.5rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -32,13 +32,7 @@
 }
 
 .chart-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(135deg, #10b981, #059669);
+  content: none;
 }
 
 .chart-title-section {
@@ -46,22 +40,22 @@
 }
 
 .chart-header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
   margin: 0 0 0.25rem 0;
 }
 
 .chart-header h3 {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #1e293b;
+  color: #1f2937;
   margin: 0 0 0.25rem 0;
 }
 
 .chart-header p {
-  color: #64748b;
-  font-size: 0.875rem;
+  color: #6b7280;
+  font-size: 0.75rem;
   margin: 0;
 }
 
@@ -74,37 +68,35 @@
 .chart-filter {
   padding: 0.5rem 0.75rem;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-size: 0.875rem;
   background: white;
   color: #374151;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   min-width: 80px;
 }
 
 .chart-filter:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .chart-export-btn {
   padding: 0.5rem 1rem;
-  background: #4f46e5;
+  background: #2563eb;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .chart-export-btn:hover {
-  background: #3730a3;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+  background: #1d4ed8;
 }
 
 /* Chart Wrapper */
@@ -144,7 +136,7 @@
   width: 32px;
   height: 32px;
   border: 3px solid #f3f4f6;
-  border-top: 3px solid #4f46e5;
+  border-top: 3px solid #2563eb;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
