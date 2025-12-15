@@ -48,15 +48,15 @@ const AdminProfilePage = () => {
     const fetchAdminProfile = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:5001/api/users/employees/${adminId}`, {
+        const res = await fetch(`http://localhost:5001/api/users/admin/${adminId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
 
         console.log('Profile data:', data);
-        if (res.ok && data) {
-          setProfileData(data.admin||data);
-          setFormData(data.admin||data);
+        if (res.ok && data.success) {
+          setProfileData(data.admin);
+          setFormData(data.admin);
           setError(null);
         } else {
           setError(data.message || 'Failed to fetch profile');
@@ -249,14 +249,14 @@ const AdminProfilePage = () => {
     <div className="min-h-screen mt-[-100px] bg-gray-50">
       <div className="flex">
         {/* Sidebar */}
-        {/* <div
+        <div
           className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
           lg:translate-x-0 lg:static lg:inset-0
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
         >
           <div className="flex flex-col h-full">
             {/* Profile Section */}
-            {/* <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b border-gray-200">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
                   <img 
@@ -270,10 +270,10 @@ const AdminProfilePage = () => {
                   <p className="text-sm text-gray-600">Admin</p>
                 </div>
               </div>
-            </div> */}
+            </div>
 
             {/* Navigation */}
-            {/* <div className="flex-1 px-4 py-6">
+            <div className="flex-1 px-4 py-6">
               <h4 className="text-sm font-medium text-gray-500 mb-4">Main Navigation</h4>
               <div className="space-y-2">
                 <SidebarItem 
@@ -327,9 +327,9 @@ const AdminProfilePage = () => {
                   />
                 </div>
               </div>
-            </div> 
+            </div>
           </div>
-        </div> */}
+        </div>
 
         {/* Main Content */}
         <div className="flex-1 lg:ml-0">
@@ -347,7 +347,7 @@ const AdminProfilePage = () => {
             {/* Breadcrumb */}
             <div className="mb-6">
               <nav className="flex items-center space-x-2 text-sm text-gray-600">
-                <span>Employee</span>
+                <span>Admin</span>
                 <span>/</span>
                 <span className="text-emerald-600">My Profile</span>
               </nav>
